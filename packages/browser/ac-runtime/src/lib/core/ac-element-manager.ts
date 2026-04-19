@@ -1,67 +1,14 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acMakeReactive } from './reactive';
 import { AcTemplateEngine } from './template-engine';
-import { acElementRegistry } from './element-registry';
-export { AcInput, AcOutput, AcViewChild, AcEventEmitter, getAcInputMetadata, getAcOutputMetadata, getAcViewChildMetadata } from './decorators';
-import { getAcViewChildMetadata } from './decorators';
 import { Autocode } from '@autocode-ts/autocode';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
-export { acElementRegistry } from './element-registry';
+import { AC_ELEMENT_METADATA_KEY } from '../consts/symbols.const';
+import { acElementRegistry } from './ac-element-registry';
+import { getAcViewChildMetadata } from '../decorators/_decorators.export';
+import { IAcElementMetadata } from '../interfaces/ac-element-metadata.interface';
 
-export interface IAcElementMetadata {
-    selector: string;
-    template?: string;
-    templateUrl?: string;
-    styles?: string | string[];
-    styleUrls?: string[];
-}
 
-const ELEMENT_METADATA_KEY = Symbol('element_metadata');
-
-export interface IAcOnInit {
-    acOnInit(): void;
-}
-
-export interface IAcOnDestroy {
-    acOnDestroy(): void;
-}
-
-export interface IAcOnConnected {
-    acOnConnected(): void;
-}
-
-export interface IAcOnDisconnected {
-    acOnDisconnected(): void;
-}
-
-export interface IAcChangeDetails {
-    key: string;
-    property?: string;
-    oldValue?: any;
-    newValue?: any;
-}
-
-export interface IAcOnChange {
-    acOnChange(change: IAcChangeDetails): void;
-}
-
-export interface IAcOnPropertyChange {
-    acOnPropertyChange(change: IAcChangeDetails): void;
-}
-
-export function AcElement(metadata: IAcElementMetadata) {
-    return function (constructor: Function) {
-        (constructor as any)[ELEMENT_METADATA_KEY] = metadata;
-
-        // Auto-register element in global registry
-        acElementRegistry.register(metadata.selector, constructor, metadata);
-    };
-}
-
-export function getIAcElementMetadata(target: any): IAcElementMetadata {
-    // Handle both constructor and instance
-    const constructor = target.prototype ? target : target.constructor;
-    return (constructor as any)[ELEMENT_METADATA_KEY];
-}
 
 export class AcElementManager {
     private element!: HTMLElement;
@@ -72,12 +19,61 @@ export class AcElementManager {
 
     constructor(instance: any, element?: HTMLElement) {
         this.instance = instance;
-        this.metadata = (instance.constructor as any)[ELEMENT_METADATA_KEY];
+        this.metadata = (instance.constructor as any)[AC_ELEMENT_METADATA_KEY];
         if (!this.metadata) {
             throw new Error(`No metadata found for ${instance.constructor.name}. Did you forget @AcElement decorator?`);
         }
         if (element) {
             this.element = element;
+        }
+
+        // Link manager to instance for lifecycle access
+        Object.defineProperty(instance, '__ac_manager__', {
+            value: this,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        });
+    }
+
+    public async destroy() {
+        if (this.instance.__ac_destroyed__) return;
+
+        // 1. Call disconnected hook
+        await acInitRuntimeElementDisconnected(this.instance);
+
+        // 2. Call destroy hook
+        if (typeof this.instance.acOnDestroy === 'function') {
+            try {
+                this.instance.acOnDestroy();
+            } catch (e) {
+                AC_RUNTIME_CONFIG.logError(`Error in acOnDestroy for ${this.instance.constructor.name}:`, e);
+            }
+        }
+
+        // 3. Mark as destroyed
+        Object.defineProperty(this.instance, '__ac_destroyed__', {
+            value: true,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        });
+
+        // 4. Destroy template engine (and all its sub-engines/effects)
+        if (this.templateEngine) {
+            this.templateEngine.destroy();
+        }
+
+        // 5. Cleanup registry
+        const instanceId = this.element?.getAttribute('ac-engine-element');
+        if (instanceId) {
+            acElementRegistry.removeInstance({ uuid: instanceId });
+
+            // Cleanup styles
+            const instanceStyle = document.querySelector(`[ac-engine-style-for="${instanceId}"]`);
+            if (instanceStyle) {
+                instanceStyle.remove();
+            }
         }
     }
 
@@ -274,7 +270,7 @@ export async function acBootstrapElements() {
                 if (node instanceof HTMLElement) {
                     await acCheckAndCallDisconnected(node);
 
-                    // Delayed destruction check: 
+                    // Delayed destruction check:
                     // If the element is re-inserted in the same task (a "move"), isConnected will be true
                     // and we skip destruction, keeping the state intact.
                     setTimeout(async () => {
@@ -301,27 +297,23 @@ export async function acCheckAndDestroyElementInstances(element: HTMLElement) {
         if (instanceId) {
             const instance = acElementRegistry.getInstance({ uuid: instanceId });
             if (instance) {
-                if (instance.__ac_destroyed__) return;
-
-                // Call acOnDisconnected first
-                await acInitRuntimeElementDisconnected(instance);
-
-                if (typeof instance.acOnDestroy === 'function') {
-                    instance.acOnDestroy();
-                }
-
-                Object.defineProperty(instance, '__ac_destroyed__', {
-                    value: true,
-                    enumerable: false,
-                    writable: true,
-                    configurable: true
-                });
-
-                acElementRegistry.removeInstance({ uuid: instanceId });
-
-                const instanceStyle = document.querySelector(`[ac-engine-style-for="${instanceId}"]`);
-                if (instanceStyle) {
-                    instanceStyle.remove();
+                const manager = (instance as any).__ac_manager__;
+                if (manager && typeof manager.destroy === 'function') {
+                    await manager.destroy();
+                } else {
+                    // Fallback cleanup if manager is not available
+                    if (instance.__ac_destroyed__) return;
+                    await acInitRuntimeElementDisconnected(instance);
+                    if (typeof instance.acOnDestroy === 'function') {
+                        instance.acOnDestroy();
+                    }
+                    Object.defineProperty(instance, '__ac_destroyed__', {
+                        value: true,
+                        enumerable: false,
+                        writable: true,
+                        configurable: true
+                    });
+                    acElementRegistry.removeInstance({ uuid: instanceId });
                 }
             }
         }

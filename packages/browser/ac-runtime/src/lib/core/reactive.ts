@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
-import { getAcInputMetadata, getAcOutputMetadata, getAcViewChildMetadata } from './decorators';
+import { getAcInputMetadata, getAcOutputMetadata, getAcViewChildMetadata } from '../decorators/_decorators.export';
 
 export type EffectFn = () => (Promise<void> | void | (() => void));
 

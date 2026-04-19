@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable no-useless-escape */
 import { acEffect, acMakeReactive, Effect } from './reactive';
 import { acPipeRegistry, evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
-import { acElementRegistry } from './element-registry';
-import { getAcInputMetadata, getAcOutputMetadata, getAcViewChildMetadata } from './decorators';
-import { AcElementManager, acInitRuntimeElementInstance, acInitRuntimeElementConnected, acSetEngineElementEngineUUID, acSetEngineElementStyles } from './element.base';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
+import { getAcInputMetadata } from '../decorators/ac-input.decorator';
+import { getAcViewChildMetadata } from '../decorators/ac-view-child.decorator';
+import { acElementRegistry } from './ac-element-registry';
+import { AcElementManager, acInitRuntimeElementConnected, acInitRuntimeElementInstance, acSetEngineElementEngineUUID, acSetEngineElementStyles } from './ac-element-manager';
+import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 
 export class AcTemplateEngine {
     private childElements = new Map<HTMLElement, any>(); // Track child element instances
@@ -280,7 +285,7 @@ export class AcTemplateEngine {
                                         el.setAttribute(attrToBind, escapedValue);
                                     }
                                 }
-                                
+
                             }
                         };
 
@@ -355,8 +360,8 @@ export class AcTemplateEngine {
             }
         }
 
-        // If it was a container or an outlet was handled, we prevent the default 
-        // recursive traversal of the element's children because we've already 
+        // If it was a container or an outlet was handled, we prevent the default
+        // recursive traversal of the element's children because we've already
         // handled them (either via handleContainer or by rendering the outlet).
         return (tagName === 'ac-container' || outletHandled);
     }
@@ -779,7 +784,7 @@ export class AcTemplateEngine {
 
         this.effect(() => {
             const listOrPromise = this.evaluateExpression(listExpression);
-            
+
             const renderFor = (list: any) => {
                 if (!Array.isArray(list)) return;
 
