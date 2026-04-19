@@ -1,0 +1,24 @@
+{
+  "name": "@autocode-ts/tests-browser",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@autocode-ts/ac-browser": "workspace:*",
+    "@autocode-ts/ac-runtime": "workspace:*",
+    "@autocode-ts/autocode": "workspace:*",
+    "@autocode-ts/ac-datagrid-on-ag-grid": "workspace:*",
+    "@autocode-ts/ac-sqlite-dao-browser": "workspace:*",
+    "@coreui/coreui": "^5.0.0",
+    "bootstrap": "^5.3.3"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}

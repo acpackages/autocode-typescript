@@ -1,0 +1,219 @@
+@import "_datagrid";
+@import "_sidebar";
+
+[ac-engine-element],
+ac-router {
+  display: contents;
+}
+
+.select-week .calendar-row.current {
+  cursor: pointer;
+}
+
+.header-row {
+  min-height: 31px;
+}
+
+[data-coreui-theme="dark"] {
+  --cui-body-bg: #181818;
+  --cui-tertiary-bg: #171717;
+  --cui-dark-bg-subtle: #292929;
+  --cui-primary: #e36314;
+}
+
+:root,
+[data-coreui-theme=light] {
+  --cui-tertiary-bg: #ffffff;
+  --cui-link-color: white;
+  --cui-primary: #e36314;
+}
+
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm,
+.container {
+  max-width: 100%;
+}
+
+.header {
+  --cui-header-padding-x: 0rem;
+  --cui-header-padding-y: 0rem;
+}
+
+.footer {
+  height: 25px;
+  min-height: 25px;
+  position: fixed;
+  bottom: 0px;
+  width: 100vw;
+  z-index: 100000;
+  --cui-footer-padding-y: 0px;
+  --cui-footer-bg: #181818;
+  --cui-footer-border-color: #323a49;
+  --cui-footer-color: white;
+  --cui-footer-padding-x: 0px;
+}
+
+.body-container {
+  height: calc(100vh - 25px);
+}
+
+.dropdown-menu.show {
+  border: var(--cui-border-width) var(--cui-border-style) var(--cui-border-color) !important;
+}
+
+.page-root {
+  height: calc(100vh - 60px);
+}
+
+.key-value-input tfoot td {
+  border-bottom: none;
+}
+
+.key-value-input input,
+.key-value-input select {
+  background-color: transparent;
+}
+
+.ac-tooltip {
+  z-index: 9999999999999999999999;
+}
+
+.app-page {
+  // height: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-fill {
+  flex-grow: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+c-tabs,
+c-tab-panel {
+  height: -webkit-fill-available;
+}
+
+.card,
+.card-body {
+  overflow: hidden;
+}
+
+.quantity-input {
+  width: 50%;
+  min-width: 50%;
+}
+
+.spin {
+  animation-name: spin;
+  animation-duration: 2000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.text-overflow-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 25px;
+  white-space: nowrap;
+}
+
+.border-radius-0 {
+  border-radius: 0px !important;
+}
+
+.no-white-space {
+  white-space: nowrap;
+}
+
+.v-align-middle {
+  vertical-align: middle;
+}
+
+.app-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.page-container {
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #181818;
+}
+
+.no-word-break {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+.tab-content {
+  overflow-y: auto !important;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item {
+  cursor: pointer;
+}
+
+.progress {
+  border: solid 1px;
+  background: transparent;
+  flex-direction: column;
+
+  .progress-bar {
+    height: 100%;
+  }
+
+  .progress-label {
+    margin-top: -17px;
+    height: 0px;
+    text-align: center;
+  }
+}
+
+.datagrid-media-thumb{
+  height:20px;
+  width:20px;
+  border-radius: 3px;
+  object-fit: contain;
+  margin: auto;
+}
+.datagrid-media-cell{
+  text-align: center;
+  margin-top: -2px;
+}
+
+.ac-resize-handle{
+  background: transparent!important;
+}

@@ -1,48 +1,43 @@
-/// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import path from 'path';
 
-export default defineConfig(() => ({
+export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/tests/browser',
   server: {
-    port: 4200,
-    host: 'localhost',
+    port: 3000,
   },
-  preview: {
-    port: 4300,
-    host: 'localhost',
-  },
-  plugins: [nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
-   resolve: {
+  resolve: {
     alias: {
-      // '@autocode-ts/autocode': path.resolve(__dirname, '../../packages/common/autocode/src'),
-      // '@autocode-ts/ac-browser': path.resolve(__dirname, '../../packages/browser/ac-browser/src'),
-      // '@autocode-ts/ac-datagrid-on-ag-grid': path.resolve(__dirname, '../../packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src'),
-      // '@autocode-ts/ac-data-dictionary': path.resolve(__dirname, '../../packages/common/ac-data-dictionary/src'),
-      // add others as needed
+      '@autocode-ts/ac-browser': path.resolve(__dirname, '../../packages/browser/ac-browser/src/ac-browser.ts'),
+      '@autocode-ts/ac-runtime': path.resolve(__dirname, '../../packages/browser/ac-runtime/src/ac-runtime.ts'),
+      '@autocode-ts/autocode': path.resolve(__dirname, '../../packages/common/autocode/src/autocode.ts'),
+      '@autocode-ts/ac-datagrid-on-ag-grid': path.resolve(__dirname, '../../packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src/ac-datagrid-on-ag-grid.ts'),
+      '@autocode-ts/ac-sqlite-dao-browser': path.resolve(__dirname, '../../packages/browser/ac-sqlite-dao-browser/src/index.ts'),
+      '@autocode-ts/ac-tiptap-editor-input': path.resolve(__dirname, '../../packages/browser/ac-tiptap-editor-input/src/index.ts'),
+      '@autocode-ts/ac-quill-editor-input': path.resolve(__dirname, '../../packages/browser/ac-quill-editor-input/src/ac-quill-editor-input.ts'),
+      '@autocode-ts/ac-ws-client': path.resolve(__dirname, '../../packages/common/ac-ws-client/src/ac-ws-client.ts'),
+      '@autocode-ts/ac-sql': path.resolve(__dirname, '../../packages/common/ac-sql/src/ac-sql.ts'),
+      '@autocode-ts/ac-data-dictionary': path.resolve(__dirname, '../../packages/common/ac-data-dictionary/src/ac-data-dictionary.ts'),
+      '@autocode-ts/ac-report-engine': path.resolve(__dirname, '../../packages/browser/ac-report-engine/src/ac-report-engine.ts'),
+      '@autocode-ts/ac-data-dictionary-components': path.resolve(__dirname, '../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts'),
+      // '@autocode-ts/ac-runtime-ts': path.resolve(__dirname, '../../packages/browser/ac-runtime-ts/src/index.ts'),
+      '@autocode-ts/ac-builder': path.resolve(__dirname, '../../packages/browser/ac-builder/src/index.ts'),
+      '@autocode-ts/ac-bootstrap-builder-elements': path.resolve(__dirname, '../../packages/browser/extensions/builder/ac-bootstrap-builder-elements/src/index.ts'),
+      '@autocode-ts/ac-dd-builder-elements': path.resolve(__dirname, '../../packages/browser/extensions/builder/ac-dd-builder-elements/src/index.ts'),
+      '@autocode-ts/ac-data-dictionary-editor': path.resolve(__dirname, '../../packages/browser/ac-data-dictionary-editor/src/index.ts'),
+      '@autocode-ts/ac-icons': path.resolve(__dirname, '../../packages/browser/ac-icons/src/ac-icons.ts'),
+      '@autocode-ts/ac-extensions': path.resolve(__dirname, '../../packages/common/ac-extensions/src/ac-extensions.ts'),
+      '@autocode-ts/ac-pipes': path.resolve(__dirname, '../../packages/common/ac-pipes/src/ac-pipes.ts'),
+      '@autocode-ts/ac-data-bridge': path.resolve(__dirname, '../../packages/common/ac-data-bridge/src/ac-data-bridge.ts'),
     },
   },
-
+  optimizeDeps: {
+    include: ['@coreui/coreui', 'bootstrap', 'reflect-metadata'],
+    exclude: ['typescript']
+  },
   build: {
-    outDir: '../../dist/tests/browser',
-    emptyOutDir: true,
-    reportCompressedSize: true,
     commonjsOptions: {
-      transformMixedEsModules: true,
+      include: [/node_modules/],
     },
   },
-  test: {
-    watch: false,
-    globals: true,
-    environment: 'jsdom',
-    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx,css}'],
-    reporters: ['default'],
-    coverage: {
-      reportsDirectory: '../../coverage/tests/browser',
-      provider: 'v8' as const,
-    },
-  },
-}));
+});
