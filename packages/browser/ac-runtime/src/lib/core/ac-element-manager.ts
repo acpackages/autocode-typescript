@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { acMakeReactive } from './reactive';
+import { acMakeReactive, proxyMap, targetMap } from './reactive';
 import { AcTemplateEngine } from './../engine/_engine.export';
-import { Autocode } from '@autocode-ts/autocode';
+import { acNullifyInstanceProperties, Autocode } from '@autocode-ts/autocode';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
 import { AC_ELEMENT_METADATA_KEY } from '../consts/symbols.const';
 import { acElementRegistry } from './ac-element-registry';
 import { getAcViewChildMetadata } from '../decorators/_decorators.export';
 import { IAcElementMetadata } from '../interfaces/ac-element-metadata.interface';
+import { clearElement } from '../utils/functions';
 
 export class AcElementManager {
   private element!: HTMLElement;
@@ -15,10 +16,13 @@ export class AcElementManager {
   private templateEngine!: AcTemplateEngine;
   private uuid!: string;
   private parentEngine?:AcTemplateEngine;
+  private orgInstance:any;
 
   constructor({instance,element,parentEngine}:{instance: any, element?: HTMLElement,parentEngine?:AcTemplateEngine}) {
     this.instance = instance;
+    this.orgInstance = instance;
     this.parentEngine = parentEngine;
+    this.instance['__ac_manager__'] = this;
     this.metadata = (instance.constructor as any)[AC_ELEMENT_METADATA_KEY];
     if (!this.metadata) {
       throw new Error(`No metadata found for ${instance.constructor.name}. Did you forget @AcElement decorator?`);
@@ -26,6 +30,10 @@ export class AcElementManager {
     if (element) {
       this.element = element;
     }
+  }
+
+  private applyStyles(styles: string | string[]) {
+    acSetEngineElementStyles(styles, this.uuid);
   }
 
   public async bootstrap() {
@@ -37,8 +45,11 @@ export class AcElementManager {
     }
     // Initialize reactivity
     this.instance = acMakeReactive(this.instance);
-    this.setUUID();
-
+    const uuid = acSetEngineElementEngineUUID(this.element, this.instance);
+    if (uuid) {
+      this.uuid = uuid;
+    }
+    acElementRegistry.registerInstance({ instance: this.instance, uuid: this.uuid });
     // Initialize template engine with reactive instance
     this.templateEngine = new AcTemplateEngine({context:this.instance,parentEngine:this.parentEngine});
 
@@ -70,10 +81,33 @@ export class AcElementManager {
     AcElementManager.resolveViewChild(this.instance, this.templateEngine);
 
     await acInitRuntimeElementInstance(this.instance);
-    // Trigger connected hook immediately after init if bootstrapped manually or during scan
-    await acInitRuntimeElementConnected(this.instance);
+  }
 
-    acElementRegistry.registerInstance({ instance: this.instance, uuid: this.uuid })
+  destroy(){
+    if(this.element){
+      (this.element as any).acInstance = null;
+      this.element.remove();
+      clearElement(this.element);
+    }
+    if(this.templateEngine){
+      this.templateEngine.destroy();
+    }
+    proxyMap.delete(this.orgInstance);
+    targetMap.delete(this.orgInstance);
+    proxyMap.delete(this.instance);
+    targetMap.delete(this.instance);
+    acElementRegistry.removeInstance({uuid:this.uuid});
+    console.log("Destroying element manager",this.metadata.selector);
+    acNullifyInstanceProperties({instance:this});
+  }
+
+  private async loadStyleUrls(urls: string[]) {
+    const promises = urls.map(async (url) => {
+      const response = await fetch(url);
+      return await response.text();
+    });
+    const styles = await Promise.all(promises);
+    this.applyStyles(styles);
   }
 
   public static resolveViewChild(instance: any, templateEngine: AcTemplateEngine) {
@@ -118,19 +152,6 @@ export class AcElementManager {
     }
   }
 
-  private applyStyles(styles: string | string[]) {
-    acSetEngineElementStyles(styles, this.uuid);
-  }
-
-  private async loadStyleUrls(urls: string[]) {
-    const promises = urls.map(async (url) => {
-      const response = await fetch(url);
-      return await response.text();
-    });
-    const styles = await Promise.all(promises);
-    this.applyStyles(styles);
-  }
-
   private render(): void {
     const template = this.metadata.template || '';
     for (let child of this.element.childNodes) {
@@ -141,13 +162,6 @@ export class AcElementManager {
 
     // Use the preserved templateEngine
     this.templateEngine.compile(this.element);
-  }
-
-  private setUUID() {
-    const uuid = acSetEngineElementEngineUUID(this.element, this.instance);
-    if (uuid) {
-      this.uuid = uuid;
-    }
   }
 }
 

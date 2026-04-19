@@ -17,8 +17,8 @@ const subscriberStack: Subscriber[] = [];
  * targetMap: object -> property key -> Set of effects
  * proxyMap: object -> its proxy (to reuse proxies)
  */
-const targetMap = new WeakMap<object, Map<string | symbol, Set<Subscriber>>>();
-const proxyMap = new WeakMap<object, any>();
+export const targetMap = new WeakMap<object, Map<string | symbol, Set<Subscriber>>>();
+export const proxyMap = new WeakMap<object, any>();
 const IS_REACTIVE = '__is_reactive__';
 
 /**
@@ -209,7 +209,7 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
   }
 
   // Set reactive descriptors on the raw object to bridge raw instance updates (arrow functions)
-  acSetReactiveDescriptors(target);
+  // acSetReactiveDescriptors(target);
 
   const resolvedRoot = rootTarget || target;
 
@@ -222,6 +222,11 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
       // Skip tracking for symbols/private properties
       if (typeof key !== 'symbol' && !String(key).startsWith('__')) {
         acTrack(target, key);
+      }
+
+      // bind methods so `this` === proxy
+      if (typeof res === 'function') {
+        return res.bind(receiver);
       }
 
       // Deep reactivity: wrap nested objects/arrays lazily on request
@@ -283,7 +288,10 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
 
       if (hasKey && res) {
         acTrigger(target, key);
-
+        acTrigger(target, ITERATE_KEY);
+        if (isArray && target.length !== oldLength) {
+          acTrigger(target, 'length');
+        }
         if (
           resolvedRoot &&
           (resolvedRoot as any).__ac_initialized__ &&
@@ -302,10 +310,6 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
           } finally {
             (resolvedRoot as any).__is_executing_on_changes__ = false;
           }
-        }
-
-        if (isArray && target.length !== oldLength) {
-          acTrigger(target, 'length');
         }
       }
       return res;

@@ -81,8 +81,8 @@ import { AcElement, AcInput, AcOutput, AcViewChild, IAcOnInit } from '@autocode-
 }`
   ]
 })
-export class AppHeaderElement implements IAcOnInit{
-  @AcViewChild('headerContainer') headerContainer?:HTMLElement;
+export class AppHeaderElement implements IAcOnInit {
+  @AcViewChild('headerContainer') headerContainer?: HTMLElement;
   @AcInput() actionsTemplate?: any;
   @AcInput() addLabel: string = "";
   @AcInput() dropdownItems: IAppMenuItem[] = [];
@@ -94,7 +94,7 @@ export class AppHeaderElement implements IAcOnInit{
   @AcInput() description: string = "";
 
   ACI_SVG_SOLID = ACI_SVG_SOLID;
-  element!:HTMLElement;
+  element!: HTMLElement;
   isModal: boolean = false;
 
   acOnInit(): void {
@@ -102,10 +102,10 @@ export class AppHeaderElement implements IAcOnInit{
   }
 
   private checkInModal() {
-    if(this.element && this.element.isConnected){
+    if (this.element && this.element.isConnected) {
       this.isModal = acElementHasParentTag({ element: this.element, tag: 'ac-modal' });
     }
-    else{
+    else {
       setTimeout(() => {
         this.checkInModal();
       }, 50);

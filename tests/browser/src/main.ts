@@ -41,6 +41,7 @@ import {
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS } from '@autocode-ts/ac-datagrid-on-ag-grid';
+import { acInit } from '@autocode-ts/ac-browser';
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
@@ -63,6 +64,8 @@ AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['domLayout'] = 'normal';
 // AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['maxBlocksInCache'] = 10;
 // AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['rowBuffer'] = 5;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['paginationPageSize'] = 50;
+
+acInit();
 
 console.log("🚀 [Main] Starting application initialization...");
 

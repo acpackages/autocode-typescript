@@ -13,12 +13,13 @@ import { AcElementManager, acInitRuntimeElementConnected, acInitRuntimeElementIn
 import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 import { acElementRegistry } from '../core/ac-element-registry';
 import { createElementFromHtml } from '../utils/functions';
+import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
 
 export class AcTemplateEngine {
   private childElements = new Map<HTMLElement, any>(); // Track child element instances
   private templates = new Map<string, HTMLTemplateElement>();
   private references = new Map<string, any>();
-  private effects = new Set<Effect>(); // Track reactive effects for cleanup
+  private effects = new Set<Effect>();
   private parent?: AcTemplateEngine;
   private context:any;
 
@@ -30,6 +31,13 @@ export class AcTemplateEngine {
   public compile(element: HTMLElement | DocumentFragment) {
     this.findAndRegisterTemplates(element);
     this.traverse(element);
+  }
+
+  destroy(){
+    for(const e of this.effects){
+      e.destroy();
+    }
+    acNullifyInstanceProperties({instance:this});
   }
 
   // Get child element instances for ViewChild resolution
