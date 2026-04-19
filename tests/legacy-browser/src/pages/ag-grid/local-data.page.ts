@@ -58,13 +58,13 @@ export class AggridLocalData extends HTMLElement {
 
     // this.getElementsByClassName("aggrid-container")[0].append(this.datagrid.element);
     this.datagridApi.columnDefinitions = [
-      { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65,pinnedOn:'LEFT' },
-      { field: 'customer_id', title: "Id" ,visible:true},
+      { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65, pinnedOn: 'LEFT' },
+      { field: 'customer_id', title: "Id", visible: true },
       { field: 'first_name', title: "First Name", allowEdit: true },
       { field: 'last_name', title: "Last Name", allowEdit: true },
       { field: 'company', title: "Company", allowEdit: true },
       { field: 'city', title: "City", allowEdit: true },
-      { field: 'country', title: "Country" , allowEdit: true},
+      { field: 'country', title: "Country", allowEdit: true },
       { field: 'phone_1', title: "Phone 1" },
       { field: 'phone_2', title: "Phone 2" },
       { field: 'email', title: "Email" },
@@ -132,7 +132,7 @@ export class AggridLocalData extends HTMLElement {
         {
           label: 'Select All Rows',
           callback: () => {
-            this.rowSelectionExtension.setAllRowsSelection({ isSelected: true });
+            // this.rowSelectionExtension.setAllRowsSelection({ isSelected: true });
           }
         },
         {
@@ -157,7 +157,7 @@ export class AggridLocalData extends HTMLElement {
         {
           label: 'Auto Add New Row',
           callback: () => {
-            this.datagridApi.addRow({data:{'customer_id':Autocode.uuid()}});
+            this.datagridApi.addRow({ data: { 'customer_id': Autocode.uuid() } });
           }
         },
       ]
@@ -177,17 +177,17 @@ export class AggridLocalData extends HTMLElement {
   }
 
   setLocalData() {
-      const data: any[] = [];
-      const multiplier = 1;
-      let index: number = 0;
-      for (let i = 0; i < multiplier; i++) {
-        for (const row of customersData.splice(0,10)) {
-          index++;
-          data.push({ index: index, ...row });
-        }
+    const data: any[] = [];
+    const multiplier = 1;
+    let index: number = 0;
+    for (let i = 0; i < multiplier; i++) {
+      for (const row of customersData.splice(0, 10)) {
+        index++;
+        data.push({ index: index, ...row });
       }
-      setTimeout(() => {
-        this.datagridApi.dataManager.data = data;
-      }, 10);
     }
+    setTimeout(() => {
+      this.datagridApi.dataManager.data = data;
+    }, 10);
+  }
 }

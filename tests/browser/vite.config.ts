@@ -20,6 +20,9 @@ export default defineConfig({
       '@autocode-ts/ac-data-dictionary': path.resolve(__dirname, '../../packages/common/ac-data-dictionary/src/ac-data-dictionary.ts'),
       '@autocode-ts/ac-report-engine': path.resolve(__dirname, '../../packages/browser/ac-report-engine/src/ac-report-engine.ts'),
       '@autocode-ts/ac-data-dictionary-components': path.resolve(__dirname, '../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts'),
+      '@autocode-ts/ac-dde-code-generator': path.resolve(__dirname, '../../packages/browser/extensions/data-dictionary-editor/ac-dde-code-generator/src/index.ts'),
+      '@autocode-ts/ac-dde-browser-storage': path.resolve(__dirname, '../../packages/browser/extensions/data-dictionary-editor/ac-dde-browser-storage/src/index.ts'),
+
       // '@autocode-ts/ac-runtime-ts': path.resolve(__dirname, '../../packages/browser/ac-runtime-ts/src/index.ts'),
       '@autocode-ts/ac-builder': path.resolve(__dirname, '../../packages/browser/ac-builder/src/index.ts'),
       '@autocode-ts/ac-bootstrap-builder-elements': path.resolve(__dirname, '../../packages/browser/extensions/builder/ac-bootstrap-builder-elements/src/index.ts'),

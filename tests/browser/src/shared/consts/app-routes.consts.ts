@@ -5,6 +5,7 @@ export const APP_ROUTES = {
     tree:'/ag-grid/tree'
   },
   builder:{
+    basic: '/builder/basic',
     designer:'/designer',
     runtimeElement:'/runtime-element'
   },
@@ -28,15 +29,17 @@ export const APP_ROUTES = {
     tree:'/datagrid/tree'
   },
   draggable:{
+    advanced: '/draggable/advanced',
     axisLock:'/draggable/axis-lock',
     basic:'/draggable/basic',
-    cloneRever:'/draggable/clone-revert',
+    cloneRevert:'/draggable/clone-revert',
     groupped:'/draggable/groupped',
     snapGrid:'/draggable/snap-grid',
     sortable:'/sortable'
   },
   drawer:'/drawer',
   dropdown:'/dropdown',
+  filePreview: '/file-preview',
   inputs:{
     basic:'/basic',
     elements:'/elements',
@@ -53,30 +56,36 @@ export const APP_ROUTES = {
     tooltip:'/popover/tooltip'
   },
   repeater:{
+    local: '/repeater/local',
     offline:'/repeater/offline',
     onDemand:'/repeater/on-demand'
   },
-  reports:'/reports',
+  reports: {
+    basic: '/reports/basic'
+  },
   resizable:{
     basic:'/resizable',
     panels:'/resizable/panels',
   },
   scrollTrack:'/scroll-track',
   scrollable:{
+    virtual: '/scrollable/virtual',
     dom:'/scrollable/dom',
-    template:'/scorllable/template'
+    template:'/scrollable/template'
   },
   slides:'/slides',
   tabs:{
     basic:'/tabs',
     window:'/tabs/window'
   },
+  templateEngine: '/template-engine',
   utils:{
     appBrowser:'/utils/app-browser',
     dataCache:'/utils/data-cache',
     dataManager:'/utils/data-manager',
     storage:'/utils/storage',
-    http:'/utils/http'
+    http:'/utils/http',
+    webSocket: '/utils/web-socket'
   },
   webSocket:{
     client:'/web-socket/client'
