@@ -185,7 +185,14 @@ export class AcEvents {
   /**
    * Unsubscribe using subscriptionId (recommended & safe)
    */
-  unsubscribe({ event, callback, subscriptionId }: { event?: string; callback?: Function; subscriptionId?: string }): boolean {
+  unsubscribe({ event, callback, subscriptionId, subscriptionIds }: { event?: string; callback?: Function; subscriptionId?: string,subscriptionIds?:string[] }): boolean {
+    if(subscriptionIds && subscriptionIds.length > 0){
+      for(const id of subscriptionIds){
+        this.unsubscribe({subscriptionId:id});
+      }
+      return true;
+    }
+
     if (event && callback) {
       const name = event.toLowerCase();
       const eventMap = this.events.get(name);

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
-import { acRouter } from '../core/router';
+import { acRouter } from '../core/ac-router';
 import { AcElement, getAcElementMetadata } from '../decorators/ac-element.decorator';
 import { AcInput } from '../decorators/ac-input.decorator';
 import { IAcRouteSnapshot } from '../interfaces/ac-route-snapshot.interface';
+import { clearElement } from '../utils/functions';
 
 @AcElement({
   selector: 'ac-router',
@@ -47,7 +48,7 @@ export class AcRouterElement {
       AC_RUNTIME_CONFIG.logError('[AcRouter] handleRouteChange called but this.element is undefined on instance:', this);
       return;
     }
-    this.element.innerHTML = '';
+    clearElement(this.element);
 
     const ComponentClass = snapshot.element;
     if (!ComponentClass) return;

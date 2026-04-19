@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acMakeReactive } from './reactive';
-import { AcTemplateEngine } from './template-engine';
+import { AcTemplateEngine } from './../engine/_engine.export';
 import { Autocode } from '@autocode-ts/autocode';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
 import { AC_ELEMENT_METADATA_KEY } from '../consts/symbols.const';
 import { acElementRegistry } from './ac-element-registry';
 import { getAcViewChildMetadata } from '../decorators/_decorators.export';
 import { IAcElementMetadata } from '../interfaces/ac-element-metadata.interface';
-
-
 
 export class AcElementManager {
     private element!: HTMLElement;
@@ -25,55 +23,6 @@ export class AcElementManager {
         }
         if (element) {
             this.element = element;
-        }
-
-        // Link manager to instance for lifecycle access
-        Object.defineProperty(instance, '__ac_manager__', {
-            value: this,
-            enumerable: false,
-            writable: true,
-            configurable: true
-        });
-    }
-
-    public async destroy() {
-        if (this.instance.__ac_destroyed__) return;
-
-        // 1. Call disconnected hook
-        await acInitRuntimeElementDisconnected(this.instance);
-
-        // 2. Call destroy hook
-        if (typeof this.instance.acOnDestroy === 'function') {
-            try {
-                this.instance.acOnDestroy();
-            } catch (e) {
-                AC_RUNTIME_CONFIG.logError(`Error in acOnDestroy for ${this.instance.constructor.name}:`, e);
-            }
-        }
-
-        // 3. Mark as destroyed
-        Object.defineProperty(this.instance, '__ac_destroyed__', {
-            value: true,
-            enumerable: false,
-            writable: true,
-            configurable: true
-        });
-
-        // 4. Destroy template engine (and all its sub-engines/effects)
-        if (this.templateEngine) {
-            this.templateEngine.destroy();
-        }
-
-        // 5. Cleanup registry
-        const instanceId = this.element?.getAttribute('ac-engine-element');
-        if (instanceId) {
-            acElementRegistry.removeInstance({ uuid: instanceId });
-
-            // Cleanup styles
-            const instanceStyle = document.querySelector(`[ac-engine-style-for="${instanceId}"]`);
-            if (instanceStyle) {
-                instanceStyle.remove();
-            }
         }
     }
 
@@ -184,6 +133,10 @@ export class AcElementManager {
 
     private render(): void {
         const template = this.metadata.template || '';
+        for(let child of this.element.childNodes){
+                                    child.remove();
+                                    (child as any) = null;
+                                  }
         this.element.innerHTML = template;
 
         // Use the preserved templateEngine

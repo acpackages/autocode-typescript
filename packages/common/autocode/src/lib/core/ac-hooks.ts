@@ -212,7 +212,14 @@ export class AcHooks {
   /**
    * Unsubscribe using subscriptionId (only reliable way)
    */
-  unsubscribe({ hook, callback, subscriptionId }: { hook?: string; callback?: Function; subscriptionId?: string }): boolean {
+  unsubscribe({ hook, callback, subscriptionId, subscriptionIds }: { hook?: string; callback?: Function; subscriptionId?: string,subscriptionIds?: string[] }): boolean {
+    if(subscriptionIds && subscriptionIds.length > 0){
+      for(const id of subscriptionIds){
+        this.unsubscribe({subscriptionId:id});
+      }
+      return true;
+    }
+
     if (hook && callback) {
       const name = hook.toLowerCase();
       const hookMap = this.hooks.get(name);
@@ -225,6 +232,7 @@ export class AcHooks {
         }
       }
     }
+
     if (!subscriptionId) return false;
 
     let removed = false;
@@ -235,6 +243,7 @@ export class AcHooks {
         removed = true;
       }
     }
+
 
     return removed;
   }

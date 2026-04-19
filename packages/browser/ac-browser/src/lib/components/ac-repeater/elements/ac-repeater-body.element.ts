@@ -8,7 +8,6 @@ import { AcEnumRepeaterHook } from "../enums/ac-enum-repeater-hooks.enum";
 import { IAcRepeaterDisplayedRowsChangeEvent } from "../interfaces/event-args/ac-repeater-displayed-rows-change-event.interface";
 import { IAcRepeaterBodyHookArgs } from "../interfaces/hook-args/ac-repeater-body-hook-args.interface";
 import { AcRepeaterRowElement } from "./ac-repeater-row.element";
-import { IAcRepeaterRow } from "../interfaces/ac-repeater-row.interface";
 import { AcElementBase } from "../../../core/_core.export";
 import { AcRepeaterElement } from "./ac-repeater.element";
 import { AC_REPEATER_TAG } from "../consts/ac-repeater-tag.const";
@@ -17,6 +16,7 @@ export class AcRepeaterBodyElement extends AcElementBase {
   private repeater: AcRepeaterElement;
   private repeaterApi: AcRepeaterApi;
   private scrollable!: AcScrollable;
+  private currentRows:AcRepeaterRowElement[] = [];
 
   private autoBindRepeater() {
     if (this.isConnected) {
@@ -42,6 +42,20 @@ export class AcRepeaterBodyElement extends AcElementBase {
         this.autoBindRepeater();
       },duration:50,key:'autoInit'});
     }
+  }
+
+  private clearBody(){
+    for(const row of this.currentRows){
+      row.remove();
+      row.destroy();
+    }
+    this.innerHTML = '';
+    this.currentRows = [];
+  }
+
+  override destroy(): void {
+    this.clearBody();
+    super.destroy();
   }
 
   handleElementScroll(event: any) {
@@ -83,13 +97,14 @@ export class AcRepeaterBodyElement extends AcElementBase {
   }
 
   setDisplayRows() {
-    this.innerHTML = '';
+    this.clearBody();
     for (const row of this.repeaterApi.displayedRepeaterRows) {
       const repeaterRow = new AcRepeaterRowElement();
       repeaterRow.setRow({
         repeaterApi: this.repeaterApi,
         repeaterRow: row
       })
+      this.currentRows.push(repeaterRow);
       this.append(repeaterRow);
     }
   }

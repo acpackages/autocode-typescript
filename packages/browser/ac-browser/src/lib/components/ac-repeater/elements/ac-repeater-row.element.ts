@@ -5,7 +5,6 @@ import { AcRepeaterCssClassName } from "../consts/ac-repeater-css-class-name.con
 import { AcRepeaterApi } from "../core/ac-repeater-api";
 import { IAcRepeaterRow } from "../interfaces/ac-repeater-row.interface";
 import { AcEnumRepeaterHook } from "../enums/ac-enum-repeater-hooks.enum";
-import { IIAcRepeaterRowHookArgs } from "../interfaces/hook-args/ac-repeater-row-hook-args.interface";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_REPEATER_TAG, IAcRepeaterRowRendererElementArgs } from "../_ac-repeater.export";
 
@@ -13,10 +12,23 @@ export class AcRepeaterRowElement extends AcElementBase {
   private repeaterApi: AcRepeaterApi;
   private repeaterRow!: IAcRepeaterRow;
   swappingRowPosition: boolean = false;
+  private renderingElement:HTMLElement|null = null;
+  private hookSubscriptionIds:string[] = [];
+
+  private clearRenderingElement(){
+    if(this.renderingElement){
+      this.renderingElement.remove();
+      this.renderingElement = null;
+    }
+  }
+
+  override destroy(): void {
+    this.repeaterRow.instance = null;
+    this.repeaterApi.hooks.unsubscribe({subscriptionIds:this.hookSubscriptionIds});
+  }
 
   initElement() {
     this.style.display = "block";
-    this.repeaterRow.instance = this;
     this.setAttribute(AcRepeaterAttributeName.IAcRepeaterRowId, this.repeaterRow.rowId);
     acAddClassToElement({ class_: AcRepeaterCssClassName.IAcRepeaterRow, element: this });
     if (this.repeaterRow.index == 0 || this.repeaterRow.index % 2 == 0) {
@@ -25,15 +37,15 @@ export class AcRepeaterRowElement extends AcElementBase {
     else {
       acAddClassToElement({ class_: AcRepeaterCssClassName.IAcRepeaterRowOdd, element: this });
     }
-    this.repeaterApi.hooks.subscribe({
+    this.hookSubscriptionIds.push(this.repeaterApi.hooks.subscribe({
       hook: AcEnumRepeaterHook.RowUpdate,
       callback: (args: any) => {
         if (args.repeaterRow.rowId == this.repeaterRow.rowId) {
           this.refresh();
         }
       }
-    });
-    this.registerListeners();
+    }));
+    // this.registerListeners();
     this.render();
   }
 
@@ -99,13 +111,15 @@ export class AcRepeaterRowElement extends AcElementBase {
   }
 
   render() {
+    this.clearRenderingElement();
     if (this.repeaterApi.rowRendererFunction) {
       this.innerHTML = '';
       const args: IAcRepeaterRowRendererElementArgs = {
         rowElement: this,
         row: this.repeaterRow
       };
-      this.append(this.repeaterApi.rowRendererFunction(args));
+      this.renderingElement = this.repeaterApi.rowRendererFunction(args);
+      this.append(this.renderingElement);
     } else {
       this.innerHTML = JSON.stringify(this.repeaterRow.data);
     }
