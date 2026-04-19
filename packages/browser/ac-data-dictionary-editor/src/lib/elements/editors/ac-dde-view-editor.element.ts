@@ -30,7 +30,6 @@ export class AcDDEViewEditor {
 
   editorInitialized: boolean = false;
   delayedCallback:AcDelayedCallback = new AcDelayedCallback();
-  private _ddeEventSubId?: string;
 
   constructor({ editorApi }: { editorApi: AcDDEApi }) {
     this.editorApi = editorApi;
@@ -95,21 +94,11 @@ export class AcDDEViewEditor {
 
     this.initElement();
 
-    this._ddeEventSubId = this.editorApi.on({
+    this.editorApi.on({
       event: AcEnumDDEEvent.StateChange, callback: () => {
         this.refreshEditorState();
       }
     })
-  }
-
-  destroy() {
-    if (this._ddeEventSubId) {
-      this.editorApi.off({ subscriptionId: this._ddeEventSubId });
-    }
-    this.delayedCallback.destroy();
-    this.viewsDatagrid.destroy();
-    this.viewColumnsDatagrid.destroy();
-    this.viewMaster.destroy();
   }
 
   private initElement() {

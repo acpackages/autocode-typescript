@@ -47,17 +47,8 @@ export class ConvertToDestinationSheetDetailsElement {
   isExpanded:boolean = false;
   acScrollable?:AcScrollable;
 
-  private initTimeout?: any;
-
   acOnInit(){
     this.initRowsScrollable();
-  }
-
-  acOnDestroy() {
-    if (this.initTimeout) clearTimeout(this.initTimeout);
-    if (this.acScrollable) {
-      this.acScrollable.destroy();
-    }
   }
 
   initRowsScrollable(){
@@ -103,7 +94,7 @@ export class ConvertToDestinationSheetDetailsElement {
     // this.acScrollable.setItems(items);
     }
     else{
-      this.initTimeout = setTimeout(() => {
+      setTimeout(() => {
         this.initRowsScrollable();
       }, 150);
     }

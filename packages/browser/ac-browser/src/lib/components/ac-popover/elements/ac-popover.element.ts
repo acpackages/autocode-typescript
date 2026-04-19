@@ -20,8 +20,6 @@ export class AcPopover {
   private hideTimeout?: any;
   private delayedCallback: AcDelayedCallback = new AcDelayedCallback();
 
-  private _managedListeners: Array<{ target: EventTarget, type: string, handler: any, options?: any }> = [];
-
   constructor(anchor: HTMLElement, options: AcPopoverOptions = {}) {
     this.anchor = anchor;
     this.options = {
@@ -39,8 +37,8 @@ export class AcPopover {
     this.popoverEl.style.display = 'none';
 
     if (this.options.trigger === 'click') {
-      this.addEventListenerManaged(this.anchor, 'click', () => this.toggle());
-      this.addEventListenerManaged(document, 'click', (e: MouseEvent) => {
+      this.anchor.addEventListener('click', () => this.toggle());
+      document.addEventListener('click', (e) => {
         if (
           this.isVisible &&
           !this.popoverEl.contains(e.target as Node) &&
@@ -50,44 +48,21 @@ export class AcPopover {
         }
       });
     } else if (this.options.trigger === 'hover') {
-      this.addEventListenerManaged(this.anchor, 'mouseenter', () => this.show());
-      this.addEventListenerManaged(this.anchor, 'mouseleave', () => this.scheduleHide());
-      this.addEventListenerManaged(this.popoverEl, 'mouseenter', () => this.cancelHide());
-      this.addEventListenerManaged(this.popoverEl, 'mouseleave', () => this.scheduleHide());
+      this.anchor.addEventListener('mouseenter', () => this.show());
+      this.anchor.addEventListener('mouseleave', () => this.scheduleHide());
+      this.popoverEl.addEventListener('mouseenter', () => this.cancelHide());
+      this.popoverEl.addEventListener('mouseleave', () => this.scheduleHide());
     }
 
-    this.addEventListenerManaged(document, 'keydown', (e: KeyboardEvent) => {
+    document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isVisible) {
         this.hide();
       }
     });
-
-    // Auto-destroy when anchor is removed from DOM
-    this.setupAutoDestroy();
-  }
-
-  private addEventListenerManaged(target: EventTarget, type: string, handler: any, options?: any) {
-    target.addEventListener(type, handler, options);
-    this._managedListeners.push({ target, type, handler, options });
-  }
-
-  private setupAutoDestroy() {
-    const checkInterval = setInterval(() => {
-      if (!this.anchor.isConnected) {
-        clearInterval(checkInterval);
-        this.destroy();
-      }
-    }, 1000);
   }
 
   destroy() {
-    this._managedListeners.forEach(({ target, type, handler, options }) => {
-      target.removeEventListener(type, handler, options);
-    });
-    this._managedListeners = [];
-
     this.delayedCallback.destroy();
-    this.popoverEl.remove();
     acNullifyInstanceProperties({ instance: this });
   }
 

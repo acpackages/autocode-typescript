@@ -13,8 +13,6 @@ export class AcBuilderPropertiesPanel {
   element: HTMLElement = document.createElement('div');
   elementProperties: IAcBuilderElementProperty[] = [];
   inputsContainer: HTMLElement;
-  private _subId: string;
-
   constructor({ builderApi }: { builderApi: AcBuilderApi }) {
     this.builderApi = builderApi;
     acAddClassToElement({element:this.element,class_:"ac-builder-properties-tab-container"});
@@ -26,16 +24,12 @@ export class AcBuilderPropertiesPanel {
       </div>
     `;
     this.inputsContainer = this.element.querySelector('.ac-builder-properties-panel') as HTMLElement;
-    this._subId = this.builderApi.hooks.subscribe({
+    this.builderApi.hooks.subscribe({
       hook: AcEnumBuilderHook.ElementSelect, callback: (args: any) => {
         this.setElementProperties();
       }
     });
     new AcFilterableElements({ element: this.element });
-  }
-
-  destroy() {
-    this.builderApi.hooks.unsubscribe({ hook: AcEnumBuilderHook.ElementSelect, subscriptionId: this._subId });
   }
 
   private getCategoryElement({ categoryName }: { categoryName: string }) {

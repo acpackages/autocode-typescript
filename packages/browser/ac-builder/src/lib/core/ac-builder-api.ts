@@ -283,13 +283,4 @@ export class AcBuilderApi {
   toJson(): IAcBuilderState {
     return this.builderState.toJson();
   }
-
-  destroy() {
-    this.delayedCallback.cancelAll();
-    this.runtime?.destroy();
-    this.eventHandler.destroy();
-    this.events.destroy();
-    this.hooks.destroy();
-    // acNullifyInstanceProperties({ instance: this });
-  }
 }

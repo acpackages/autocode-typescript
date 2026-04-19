@@ -71,8 +71,8 @@ export class AcDropdown extends AcElementBase {
     this.scrollHandler = () => this.updatePosition();
     this.resizeHandler = () => this.updatePosition();
 
-    this.addEventListenerManaged(window, "scroll", this.scrollHandler, true);
-    this.addEventListenerManaged(window, "resize", this.resizeHandler);
+    window.addEventListener("scroll", this.scrollHandler, true);
+    window.addEventListener("resize", this.resizeHandler);
 
     this.querySelectorAll(`[${AcDropdownAttributeName.acDropdownTarget}]`).forEach((el) => {
       this.setTargetElement({ element: el as HTMLElement });
@@ -127,7 +127,22 @@ export class AcDropdown extends AcElementBase {
   }
 
   override destroy(): void {
+    window.removeEventListener("scroll", this.scrollHandler, true);
+    window.removeEventListener("resize", this.resizeHandler);
+
+    this.triggerElement?.removeEventListener("keydown", this.keydownHandler);
+    this.targetElement?.removeEventListener("keydown", this.keydownHandler);
+    if (this.triggerClickHandler) this.triggerElement?.removeEventListener("click", this.triggerClickHandler);
+    if (this.triggerEnterHandler) this.triggerElement?.removeEventListener("mouseenter", this.triggerEnterHandler);
+    if (this.triggerLeaveHandler) this.triggerElement?.removeEventListener("mouseleave", this.triggerLeaveHandler);
+    if (this.targetEnterHandler) this.targetElement?.removeEventListener("mouseenter", this.targetEnterHandler);
+    if (this.targetLeaveHandler) this.targetElement?.removeEventListener("mouseleave", this.targetLeaveHandler);
+
+    if (this.observer) {
+      this.observer.disconnect();
+    }
     document.removeEventListener("click", this.outsideClickHandler);
+
     super.destroy();
   }
 
@@ -147,13 +162,13 @@ export class AcDropdown extends AcElementBase {
     element.style.position = "fixed";
     element.style.display = "none";
     element.style.zIndex = "9999";
-    this.addEventListenerManaged(element, "keydown", this.keydownHandler);
+    element.addEventListener("keydown", this.keydownHandler);
 
     if (this.trigger === "hover") {
       this.targetEnterHandler = () => this.open();
       this.targetLeaveHandler = () => this.close();
-      this.addEventListenerManaged(element, "mouseenter", this.targetEnterHandler);
-      this.addEventListenerManaged(element, "mouseleave", this.targetLeaveHandler);
+      element.addEventListener("mouseenter", this.targetEnterHandler);
+      element.addEventListener("mouseleave", this.targetLeaveHandler);
     }
   }
 
@@ -163,25 +178,26 @@ export class AcDropdown extends AcElementBase {
     this.triggerElement.setAttribute("aria-haspopup", "true");
     this.triggerElement.setAttribute("aria-expanded", "false");
     this.triggerElement.setAttribute("aria-controls", this.targetElement?.id ?? `${this.id}-menu`);
-    this.addEventListenerManaged(this.triggerElement, "keydown", this.keydownHandler);
+    this.triggerElement.addEventListener("keydown", this.keydownHandler);
 
-    this.observeIntersectionManaged(this.triggerElement, (entries) => {
+    this.observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting && this.isOpen) this.close();
       }
     });
+    this.observer.observe(this.triggerElement);
 
     if (this.trigger === "click") {
       this.triggerClickHandler = (e) => {
         e.preventDefault();
         this.toggle();
       };
-      this.addEventListenerManaged(this.triggerElement, "click", this.triggerClickHandler);
+      this.triggerElement.addEventListener("click", this.triggerClickHandler);
     } else if (this.trigger === "hover") {
       this.triggerEnterHandler = () => this.open();
       this.triggerLeaveHandler = () => this.close();
-      this.addEventListenerManaged(this.triggerElement, "mouseenter", this.triggerEnterHandler);
-      this.addEventListenerManaged(this.triggerElement, "mouseleave", this.triggerLeaveHandler);
+      this.triggerElement.addEventListener("mouseenter", this.triggerEnterHandler);
+      this.triggerElement.addEventListener("mouseleave", this.triggerLeaveHandler);
     }
   }
 

@@ -36,19 +36,10 @@ export class AcDraggableElement {
   originalCursor:any;
   handleElements: HTMLElement[] = [];
 
-  private _managedListeners: Array<{ target: EventTarget, type: string, handler: any, options?: any }> = [];
-  private _activeDragListeners: Array<{ target: EventTarget, type: string, handler: any, options?: any }> = [];
-  private _activePreview?: HTMLElement;
 
   constructor({ draggableApi, element }: { draggableApi: AcDraggableApi, element: HTMLElement }) {
     this.draggableApi = draggableApi;
     this.element = element;
-    this.initElement();
-  }
-
-  protected addEventListenerManaged(target: EventTarget, type: string, handler: any, options?: any): void {
-    target.addEventListener(type, handler, options);
-    this._managedListeners.push({ target, type, handler, options });
   }
 
   initElement(): void {
@@ -91,7 +82,6 @@ export class AcDraggableElement {
           event:e
         };
         preview = this.draggableApi.draggingPlaceholderCreator(creatorArgs);
-        this._activePreview = preview as any;
 
         if(preview){
           acCopyElementStyles({ fromElement: this.element, toElement: preview });
@@ -139,7 +129,6 @@ export class AcDraggableElement {
         };
 
         const onMouseUp = (upEvent: MouseEvent | TouchEvent): void => {
-          this._clearActiveDragListeners();
           document.body.style.userSelect = this.originalUserSelect;
           document.body.style.cursor = this.originalCursor;
           let validDrop: boolean = false;
@@ -192,49 +181,28 @@ export class AcDraggableElement {
             }
 
           }
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+          document.removeEventListener('touchmove', onMouseMove);
+          document.removeEventListener('touchend', onMouseUp);
         };
 
-        const addDragListener = (target: EventTarget, type: string, handler: any, options?: any) => {
-          target.addEventListener(type, handler, options);
-          this._activeDragListeners.push({ target, type, handler, options });
-        };
-
-        addDragListener(document, 'mousemove', onMouseMove);
-        addDragListener(document, 'mouseup', onMouseUp);
-        addDragListener(document, 'touchmove', onMouseMove, { passive: true });
-        addDragListener(document, 'touchend', onMouseUp, { passive: true });
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('touchmove', onMouseMove, { passive: true });
+        document.addEventListener('touchend', onMouseUp, { passive: true });
 
         this.draggableApi.handleDragStart({ elementInstance: this, event: e });
       }
     };
 
-    this.addEventListenerManaged(this.element, 'mousedown', onMouseDown);
-    this.addEventListenerManaged(this.element, 'touchstart', onMouseDown, { passive: true });
-  }
-
-  private _clearActiveDragListeners() {
-    this._activeDragListeners.forEach(({ target, type, handler, options }) => {
-      target.removeEventListener(type, handler, options);
-    });
-    this._activeDragListeners = [];
-    if (this._activePreview) {
-      this._activePreview.remove();
-      this._activePreview = undefined;
-    }
+    this.element.addEventListener('mousedown', onMouseDown);
+    this.element.addEventListener('touchstart', onMouseDown, { passive: true });
   }
 
   registerHandle(element:HTMLElement){
     this.handleElements.push(element);
     element.style.cursor = 'grab';
-  }
-
-  destroy() {
-    this._clearActiveDragListeners();
-    this._managedListeners.forEach(({ target, type, handler, options }) => {
-      target.removeEventListener(type, handler, options);
-    });
-    this._managedListeners = [];
-    acNullifyInstanceProperties({ instance: this });
   }
 
 }

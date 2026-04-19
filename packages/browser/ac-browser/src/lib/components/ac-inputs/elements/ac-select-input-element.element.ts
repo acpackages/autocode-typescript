@@ -201,19 +201,8 @@ export class AcSelectInputElement extends AcInputBase {
     });
 
     this.listEl.addEventListener("scroll", this.handleScroll.bind(this), { passive: true });
-    this.addEventListenerManaged(window, "scroll", () => { if (this.isDropdownOpen) this.popper?.update(); }, true);
-    this.addEventListenerManaged(window, "resize", () => { if (this.isDropdownOpen) this.popper?.update(); });
-  }
-
-  override destroy(): void {
-    this.closeDropdown();
-    if (this.scrollable) {
-      this.scrollable.destroy();
-    }
-    if (this.dropdownContainer && this.dropdownContainer.parentNode) {
-      this.dropdownContainer.remove();
-    }
-    super.destroy();
+    window.addEventListener("scroll", () => { if (this.isDropdownOpen) this.popper?.update(); }, true);
+    window.addEventListener("resize", () => { if (this.isDropdownOpen) this.popper?.update(); });
   }
 
   override attributeChangedCallback(name: string, oldValue: any, newValue: any) {

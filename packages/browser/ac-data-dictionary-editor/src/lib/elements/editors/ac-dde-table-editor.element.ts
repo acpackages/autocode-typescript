@@ -36,7 +36,7 @@ export class AcDDETableEditor {
   state: IAcDDETableEditorState = {};
 
   editorInitialized: boolean = false;
-  private _ddeEventSubId?: string;
+
 
   constructor({ editorApi }: { editorApi: AcDDEApi }) {
     this.editorApi = editorApi;
@@ -123,22 +123,11 @@ export class AcDDETableEditor {
 
     this.initElement();
 
-    this._ddeEventSubId = this.editorApi.on({
+    this.editorApi.on({
       event: AcEnumDDEEvent.StateChange, callback: () => {
         this.refreshEditorState();
       }
     })
-  }
-
-  destroy() {
-    if (this._ddeEventSubId) {
-      this.editorApi.off({ subscriptionId: this._ddeEventSubId });
-    }
-    this.delayedCallback.destroy();
-    this.tablesDatagrid.destroy();
-    this.tableColumnsDatagrid.destroy();
-    this.tableRelationshipsDatagrid.destroy();
-    this.tableTriggersDatagrid.destroy();
   }
 
   private initElement() {

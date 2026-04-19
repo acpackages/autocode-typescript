@@ -133,15 +133,6 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   init?(params: ICellRendererParams | any): AgPromise<void> | void {
       this.params = params;
       this.agGridExtension = params.agGridExtension;
-      if (this.params && this.params.eGridCell) {
-        this.params.eGridCell.removeEventListener('focusout', this.handleBlur);
-        this.params.eGridCell.removeEventListener('focusin', this.handleFocus);
-      }
-      if (this.element) {
-        this.element.removeEventListener('change', this.handleInputAndChange);
-        this.element.removeEventListener('input', this.handleInputAndChange);
-        this.element.removeEventListener('keyup', this.handleCellKeyUp);
-      }
       this.datagridColumn = params.datagridColumn;
       this.datagridApi = params.datagridApi;
       this.datagridRow = this.datagridApi!.getRow({ rowId: params.data[this.agGridExtension!.rowKey] });

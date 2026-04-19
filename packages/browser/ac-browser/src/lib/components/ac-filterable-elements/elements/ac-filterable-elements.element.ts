@@ -58,7 +58,7 @@ export class AcFilterableElements extends AcElementBase{
   }
 
   registerInputElement({element}:{element:HTMLInputElement}){
-    this.addEventListenerManaged(element,'input',(event)=>{
+    element.addEventListener('input',(event)=>{
       this.filter({query:element.value});
     });
   }

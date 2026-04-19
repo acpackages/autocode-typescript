@@ -272,10 +272,6 @@ export class AcDDEApi {
     return this.events.subscribe({ event, callback });
   }
 
-  off({ subscriptionId }: { subscriptionId: string }): void {
-    this.events.unsubscribe({ subscriptionId });
-  }
-
   setDataDictionaryJson({ dataDictionaryJson, dataDictionaryName }: { dataDictionaryName?: string, dataDictionaryJson: any }) {
     let version: number = 0;
     if (dataDictionaryJson[AcDataDictionary.KeyVersion]) {
@@ -464,18 +460,6 @@ export class AcDDEApi {
 
   setState(state: IAcDDEState): void {
     this.editorState.apply({ state: state });
-  }
-
-  destroy() {
-    for (const ext of Object.values(this.extensions)) {
-      ext.destroy();
-    }
-    this.eventHandler.destroy();
-    this.dataStorage.destroy();
-    this.editorState.destroy();
-    this.events.destroy();
-    this.hooks.destroy();
-    // acNullifyInstanceProperties({ instance: this });
   }
 
 }

@@ -141,7 +141,7 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   private attachEvents() {
-    this.addEventListenerManaged(this.textInputElement, 'input', () => {
+    this.textInputElement.addEventListener('input', () => {
       const term = this.textInputElement.value.toLowerCase();
       this._filteredOptions = this._tagOptions.filter(opt => {
         const label = String(opt[this.labelKey]);
@@ -153,7 +153,7 @@ export class AcTagsInputElement extends AcInputBase {
       this.ensureHighlightInView();
     });
 
-    this.addEventListenerManaged(this.textInputElement, 'keydown', (e: KeyboardEvent) => {
+    this.textInputElement.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         if (this.highlightingIndex >= 0) {
@@ -185,35 +185,22 @@ export class AcTagsInputElement extends AcInputBase {
       }
     });
 
-    this.addEventListenerManaged(this.textInputElement, 'focus', () => {
+    this.textInputElement.addEventListener('focus', () => {
       this._filteredOptions = this._tagOptions.filter(opt => !this.value.split(this.separator).map(v => v.trim()).includes(opt[this.valueKey]));
       this.openDropdown();
       this.renderVirtualList();
       this.ensureHighlightInView();
     });
 
-    this.addEventListenerManaged(this.textInputElement, 'blur', () => {
-      this.delayedCallback.add({
-        callback: () => {
-          if (this.textInputElement.value.trim()) this.addTag(this.textInputElement.value.trim());
-          this.closeDropdown();
-        }, duration: 150
-      });
+    this.textInputElement.addEventListener('blur', () => {
+      this.delayedCallback.add({callback:() => {
+        if (this.textInputElement.value.trim()) this.addTag(this.textInputElement.value.trim());
+        this.closeDropdown();
+      }, duration:150});
     });
 
-    this.addEventListenerManaged(window, 'scroll', () => { if (this.isDropdownOpen) this.positionDropdown(); }, true);
-    this.addEventListenerManaged(window, 'resize', () => { if (this.isDropdownOpen) this.positionDropdown(); });
-  }
-
-  override destroy(): void {
-    this.closeDropdown();
-    if (this.scrollable) {
-      this.scrollable.destroy();
-    }
-    if (this.dropdownContainer && this.dropdownContainer.parentNode) {
-      this.dropdownContainer.remove();
-    }
-    super.destroy();
+    window.addEventListener('scroll', () => { if (this.isDropdownOpen) this.positionDropdown(); }, true);
+    window.addEventListener('resize', () => { if (this.isDropdownOpen) this.positionDropdown(); });
   }
 
   private addTag(option: any) {

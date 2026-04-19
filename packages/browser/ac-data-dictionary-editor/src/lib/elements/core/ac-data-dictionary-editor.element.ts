@@ -39,24 +39,6 @@ export class AcDataDictionaryEditor extends AcElementBase{
   triggersDatagrid?: AcDDETriggersDatagrid;
   viewsDatagrid?: AcDDEViewsDatagrid;
   viewColumnsDatagrid?: AcDDEViewColumnsDatagrid;
-  override destroy(): void {
-    if (this.editorApi) {
-      this.editorApi.destroy();
-    }
-    this.tableEditor?.destroy();
-    this.viewEditor?.destroy();
-    this.header?.destroy();
-    this.functionsDatagrid?.destroy();
-    this.relationshipsDatagrid?.destroy();
-    this.storedProceduresDatagrid?.destroy();
-    this.tablesDatagrid?.destroy();
-    this.tableColumnsDatagrid?.destroy();
-    this.triggersDatagrid?.destroy();
-    this.viewsDatagrid?.destroy();
-    this.viewColumnsDatagrid?.destroy();
-    super.destroy();
-  }
-
   override init() {
     super.init();
     this.editorApi = new AcDDEApi({editor:this});

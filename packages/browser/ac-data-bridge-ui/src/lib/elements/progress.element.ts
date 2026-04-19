@@ -56,23 +56,15 @@ export class AcDataBridgeProgressElement {
   percentage?:number;
   title?:string;
   totalCount?:number;
-  private subId?: string;
-  private initTimeout?: any;
+  subTasks:IAcDataBridgeProgress[] = [];
 
   acOnInit() {
     this.initProgress();
   }
 
-  acOnDestroy() {
-    if (this.initTimeout) clearTimeout(this.initTimeout);
-    if (this.subId && this.dataBridge) {
-      this.dataBridge.off({ event: 'taskProgress', subscriptionId: this.subId });
-    }
-  }
-
   initProgress(){
     if(this.dataBridge){
-      this.subId = this.dataBridge.on({event:'taskProgress',callback:({progress,isRoot}:{progress:IAcDataBridgeProgress,isRoot:boolean})=>{
+      this.dataBridge.on({event:'taskProgress',callback:({progress,isRoot}:{progress:IAcDataBridgeProgress,isRoot:boolean})=>{
         if(this.id == progress.id){
           if(this.completedCount != progress.completedCount){
             this.completedCount = progress.completedCount;
@@ -96,7 +88,7 @@ export class AcDataBridgeProgressElement {
       }});
     }
     else{
-      this.initTimeout = setTimeout(() => {
+      setTimeout(() => {
         this.initProgress();
       }, 10);
     }

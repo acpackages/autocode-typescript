@@ -2,9 +2,7 @@ import { AcElement } from "@autocode-ts/ac-runtime";
 
 @AcElement({
   selector: 'dashboard-page',
-  template: `
-    =
-  `,
+  template: ``,
   styles: `
     .card {
       transition: transform 0.2s;

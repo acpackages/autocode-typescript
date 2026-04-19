@@ -91,11 +91,6 @@ export class AcDDDatagridElement extends AcElementBase {
     this.setDatagridColumns();
   }
 
-  override destroy(): void {
-    this.datagrid?.destroy();
-    super.destroy();
-  }
-
   private setDatagridColumns() {
     if(this.sourceValue){
       if(this.sourceType.toUpperCase() == AcEnumSqlEntity.Table){

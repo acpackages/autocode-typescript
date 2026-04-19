@@ -247,7 +247,7 @@ export class AcTiptapEditorInput extends AcInputBase {
 
     // Bind select events
     if (this.headingSelect) {
-      this.addEventListenerManaged(this.headingSelect, 'change', (e) => {
+      this.headingSelect.addEventListener('change', (e) => {
         const level = (e.target as HTMLSelectElement).value;
         if (level) {
           this.editor.chain().focus().toggleHeading({ level: parseInt(level) }).run();
@@ -259,7 +259,7 @@ export class AcTiptapEditorInput extends AcInputBase {
     }
 
     if (this.listSelect) {
-      this.addEventListenerManaged(this.listSelect, 'change', (e) => {
+      this.listSelect.addEventListener('change', (e) => {
         const type = (e.target as HTMLSelectElement).value;
         if (type === 'bulletList') {
           this.editor.chain().focus().toggleBulletList().run();

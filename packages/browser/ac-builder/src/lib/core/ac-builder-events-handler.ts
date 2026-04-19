@@ -121,7 +121,4 @@ export class AcBuilderEventsHandler {
     }
   }
 
-  destroy() {
-    this.delayedCallback.cancelAll();
-  }
 }

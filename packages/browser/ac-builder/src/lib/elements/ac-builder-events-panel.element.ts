@@ -12,9 +12,6 @@ export class AcBuilderEventsPanel {
   element: HTMLElement = document.createElement('div');
   elementEvents: IAcBuilderElementEvent[] = [];
   inputsContainer: HTMLElement;
-  private _renderedInputs: AcElementEventInput[] = [];
-  private _subId: string;
-
   constructor({ builderApi }: { builderApi: AcBuilderApi }) {
     this.builderApi = builderApi;
     acAddClassToElement({element:this.element,class_:"ac-builder-events-tab-container"});
@@ -25,24 +22,12 @@ export class AcBuilderEventsPanel {
         <div class="ac-builder-events-panel ac-builder-scrollable-element ac-builder-scrollable-element" >
         </div>`;
     this.inputsContainer = this.element.querySelector('.ac-builder-events-panel') as HTMLElement;
-    this._subId = this.builderApi.hooks.subscribe({
+    this.builderApi.hooks.subscribe({
       hook: AcEnumBuilderHook.ElementSelect, callback: (args: any) => {
         this.setElementProperties();
       }
     });
     new AcFilterableElements({ element: this.element });
-  }
-
-  destroy() {
-    this.builderApi.hooks.unsubscribe({ hook: AcEnumBuilderHook.ElementSelect, subscriptionId: this._subId });
-    this.clearInputs();
-  }
-
-  private clearInputs() {
-    for (const input of this._renderedInputs) {
-      input.destroy();
-    }
-    this._renderedInputs = [];
   }
 
   private getCategoryElement({ categoryName }: { categoryName: string }) {
@@ -78,14 +63,12 @@ export class AcBuilderEventsPanel {
   renderInputs() {
     for (const event of this.elementEvents) {
       const propertyInput = new AcElementEventInput({ builderApi: this.builderApi, event: event, componentElement: this.builderApi.selectedElement! });
-      this._renderedInputs.push(propertyInput);
       const categoryElement = this.getCategoryElement({ categoryName: event.category });
       (categoryElement.querySelector('.category-inputs-container') as HTMLElement).append(propertyInput.element);
     }
   }
 
   setElementProperties() {
-    this.clearInputs();
     this.inputsContainer.innerHTML = "";
     this.elementEvents = [];
     if (this.builderApi.selectedElement) {

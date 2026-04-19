@@ -19,9 +19,7 @@ export class AcTooltip {
   private isVisible = false;
   private showTimeout?: any;
   private hideTimeout?: any;
-  private delayedCallback: AcDelayedCallback = new AcDelayedCallback();
-
-  private _managedListeners: Array<{ target: EventTarget, type: string, handler: any, options?: any }> = [];
+  private delayedCallback:AcDelayedCallback = new AcDelayedCallback();
 
   constructor({ element, options = {} }: { element: HTMLElement, options?: AcTooltipOptions }) {
     this.anchor = element;
@@ -49,46 +47,22 @@ export class AcTooltip {
           `);
 
     // Hover behavior
-    this.addEventListenerManaged(this.anchor, 'mouseenter', () => this.scheduleShow());
-    this.addEventListenerManaged(this.anchor, 'focus', () => this.scheduleShow());
-    this.addEventListenerManaged(this.anchor, 'mouseleave', () => this.scheduleHide());
-    this.addEventListenerManaged(this.anchor, 'blur', () => this.scheduleHide());
-    this.addEventListenerManaged(this.anchor, 'focusout', () => this.scheduleHide());
-    this.addEventListenerManaged(this.tooltipEl, 'mouseenter', () => this.cancelHide());
-    this.addEventListenerManaged(this.tooltipEl, 'mouseleave', () => this.scheduleHide());
+    this.anchor.addEventListener('mouseenter', () => this.scheduleShow());
+    this.anchor.addEventListener('focus', () => this.scheduleShow());
+    this.anchor.addEventListener('mouseleave', () => this.scheduleHide());
+    this.anchor.addEventListener('blur', () => this.scheduleHide());
+    this.anchor.addEventListener('focusout', () => this.scheduleHide());
+    this.tooltipEl.addEventListener('mouseenter', () => this.cancelHide());
+    this.tooltipEl.addEventListener('mouseleave', () => this.scheduleHide());
 
     // Handle scroll/resize → hide tooltip if element not visible
-    this.addEventListenerManaged(window, 'scroll', () => this.checkVisibility(), true);
-    this.addEventListenerManaged(window, 'resize', () => this.checkVisibility());
-
-    // Auto-destroy when anchor is removed from DOM
-    this.setupAutoDestroy();
+    window.addEventListener('scroll', () => this.checkVisibility(), true);
+    window.addEventListener('resize', () => this.checkVisibility());
   }
 
-  private addEventListenerManaged(target: EventTarget, type: string, handler: any, options?: any) {
-    target.addEventListener(type, handler, options);
-    this._managedListeners.push({ target, type, handler, options });
-  }
-
-  private setupAutoDestroy() {
-    // Check every now and then if anchor is still connected
-    const checkInterval = setInterval(() => {
-      if (!this.anchor.isConnected) {
-        clearInterval(checkInterval);
-        this.destroy();
-      }
-    }, 1000);
-  }
-
-  destroy() {
-    this._managedListeners.forEach(({ target, type, handler, options }) => {
-      target.removeEventListener(type, handler, options);
-    });
-    this._managedListeners = [];
-
+  destroy(){
     this.delayedCallback.destroy();
-    this.tooltipEl.remove();
-    acNullifyInstanceProperties({ instance: this });
+    acNullifyInstanceProperties({instance:this});
   }
 
   private setContent(content: string | HTMLElement) {

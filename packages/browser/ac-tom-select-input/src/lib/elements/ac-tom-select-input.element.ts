@@ -154,14 +154,12 @@ export class AcTomSelectInput extends AcInputBase {
     }
   }
 
-  override destroy() {
-    if (this.tomSelect) {
-      this.tomSelect.destroy();
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.subscriptionId && this.dataManager) {
+      // TODO: Unsubscribe
+      // this.dataManager.hooks.off({ subscriptionId: this.subscriptionId });
     }
-    if (this.dropdownEl && this.dropdownEl.parentNode) {
-      this.dropdownEl.remove();
-    }
-    super.destroy();
   }
 
   override focus(options?: FocusOptions): void {

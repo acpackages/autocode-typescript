@@ -63,12 +63,7 @@ export class AcDatagridOnAgGridCellRenderer implements ICellRendererComp {
   }
 
   init?(params: ICellRendererParams | any): AgPromise<void> | void {
-    if (this.params && this.params.eGridCell) {
-      this.params.eGridCell.removeEventListener('focusout', this.handleBlur);
-      this.params.eGridCell.removeEventListener('focusin', this.handleFocus);
-    }
     requestAnimationFrame(() => {
-      if (!this.element) return;
       this.params = params;
       this.agGridExtension = params.agGridExtension;
       this.datagridColumn = params.datagridColumn;

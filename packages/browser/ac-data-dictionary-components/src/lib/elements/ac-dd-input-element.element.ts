@@ -188,11 +188,6 @@ export class AcDDInputElement extends AcInputBase {
     this.setInputElement();
   }
 
-  override destroy(): void {
-    this.inputElement?.destroy?.();
-    super.destroy();
-  }
-
   private setInputElement() {
     if ((this.tableName && this.columnName) || this.inputName) {
       let inputDefinition: IAcDDInputDefinition | undefined;
@@ -207,9 +202,6 @@ export class AcDDInputElement extends AcInputBase {
         inputDefinition = AcDDInputManager.getInputDefinition({ name: this.inputName });
       }
       if (inputDefinition) {
-        if(this.inputElement && (this.inputElement as any).destroy){
-          (this.inputElement as any).destroy();
-        }
         this.inputElement = new inputDefinition.inputElement();
         if(this.ddTableColumn){
           const defaultValue:any = this.ddTableColumn.getDefaultValue();
@@ -229,10 +221,10 @@ export class AcDDInputElement extends AcInputBase {
         }
         this.innerHTML = "";
         this.append(this.inputElement);
-        this.addEventListenerManaged(this.inputElement, 'input', () => {
+        this.inputElement.addEventListener('input', () => {
           this.value = this.inputElement.value;
         });
-        this.addEventListenerManaged(this.inputElement, 'change', () => {
+        this.inputElement.addEventListener('change', () => {
           this.value = this.inputElement.value;
         });
         if (this.value) {

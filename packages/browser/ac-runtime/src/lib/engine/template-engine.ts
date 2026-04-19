@@ -20,9 +20,11 @@ export class AcTemplateEngine {
   private references = new Map<string, any>();
   private effects = new Set<Effect>(); // Track reactive effects for cleanup
   private parent?: AcTemplateEngine;
+  private context:any;
 
-  constructor(private context: any, parent?: AcTemplateEngine) {
-    this.parent = parent;
+  constructor({context,parentEngine}:{context: any, parentEngine?: AcTemplateEngine}) {
+    this.context = context;
+    this.parent = parentEngine;
   }
 
   public compile(element: HTMLElement | DocumentFragment) {
@@ -219,7 +221,7 @@ export class AcTemplateEngine {
                   }
                 }
 
-                const engine = new AcTemplateEngine(renderContext, definingEngine);
+                const engine = new AcTemplateEngine({context:renderContext,parentEngine:definingEngine});
                 const nodes = Array.from(fragment.childNodes);
 
                 const placeholder = (el as any)._acPlaceholder;
@@ -532,29 +534,11 @@ export class AcTemplateEngine {
 
     const ElementClass = registration.constructor;
     let instance = (el as any).acInstance;
-    let isNew = false;
 
     if (!instance) {
-      instance = acMakeReactive(new ElementClass());
-      (instance as any).element = el;
-      const uuid = acSetEngineElementEngineUUID(el, instance);
-      if (uuid) {
-        acElementRegistry.registerInstance({ instance, uuid });
-      }
-      isNew = true;
-    }
+      const elementManager: AcElementManager = new AcElementManager({ instance: new ElementClass(), element: el, parentEngine: this });
 
-    // Apply References (Selective & Template Scope)
-    this.applyReferenceToInstance(this.context, el, instance);
-    for (const attr of Array.from(el.attributes)) {
-      if (attr.name.startsWith('#')) {
-        const refName = attr.name.slice(1).toLowerCase();
-        this.references.set(refName, instance);
-      }
-    }
-
-    if (isNew) {
-      // Apply Inputs/Attributes only for new instances
+      instance = elementManager.instance;
       this.applyAttributesToInstance(instance, el, registration);
 
       const outputMetadata = getAcOutputMetadata(ElementClass);
@@ -603,38 +587,35 @@ export class AcTemplateEngine {
         }
       }
 
-      if (registration.metadata.template && isNew) el.innerHTML = registration.metadata.template;
 
-      const uuid = el.getAttribute('ac-engine-element');
-      if (registration.metadata.styles && registration.metadata.styles.length > 0 && uuid && isNew) {
-        acSetEngineElementStyles(registration.metadata.styles, uuid);
-      }
-
-      const childEngine = new AcTemplateEngine(instance, this);
       this.registerContentTemplates(el, instance);
-      childEngine.compile(el);
-
-      AcElementManager.resolveViewChild(instance, childEngine);
       this.childElements.set(el, instance);
 
-      acInitRuntimeElementInstance(instance);
-      acInitRuntimeElementConnected(instance);
+      elementManager.bootstrap();
     }
 
+    // Apply References (Selective & Template Scope)
+    this.applyReferenceToInstance(this.context, el, instance);
+    for (const attr of Array.from(el.attributes)) {
+      if (attr.name.startsWith('#')) {
+        const refName = attr.name.slice(1).toLowerCase();
+        this.references.set(refName, instance);
+      }
+    }
     return true;
   }
 
   private handleIfDirective(el: HTMLElement, expression: string) {
     const branchChain: { html: string; expression: string | null }[] = [];
     el.removeAttribute('ac:if');
-    branchChain.push({ html:el.outerHTML, expression });
+    branchChain.push({ html: el.outerHTML, expression });
 
     let next = el.nextElementSibling as HTMLElement;
     while (next) {
       const elseIfExpr = next.getAttribute('ac:else-if');
       if (elseIfExpr !== null) {
         next.removeAttribute('ac:else-if');
-        branchChain.push({ html:next.outerHTML, expression: elseIfExpr });
+        branchChain.push({ html: next.outerHTML, expression: elseIfExpr });
         const toRemove = next;
         next = next.nextElementSibling as HTMLElement;
         toRemove.remove();
@@ -642,7 +623,7 @@ export class AcTemplateEngine {
       }
       if (next.hasAttribute('ac:else')) {
         next.removeAttribute('ac:else');
-        branchChain.push({ html:next.outerHTML, expression: null });
+        branchChain.push({ html: next.outerHTML, expression: null });
         const toRemove = next;
         next = next.nextElementSibling as HTMLElement;
         toRemove.remove();
@@ -759,7 +740,7 @@ export class AcTemplateEngine {
       const subContext = Object.create(this.context);
       setLoopVars(subContext, item, i, count);
 
-      const engine = new AcTemplateEngine(subContext, this);
+      const engine = new AcTemplateEngine({context:subContext, parentEngine:this});
       let nodes: Node[];
 
       if (instance.tagName.toLowerCase() === 'ac-container') {
@@ -1006,7 +987,6 @@ export class AcTemplateEngine {
     }
   }
 
-
   private setExpressionValue(expression: string, value: any) {
     try {
       const scope = this.getScope();
@@ -1094,6 +1074,7 @@ export class AcTemplateEngine {
     }
     return false;
   }
+
   private effect(fn: () => void | (() => void)): Effect {
     const e = acEffect(fn);
     this.effects.add(e);

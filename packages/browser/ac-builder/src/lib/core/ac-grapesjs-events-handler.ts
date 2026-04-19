@@ -15,27 +15,11 @@ export class AcGrapesJSEventsHandler {
   builderIframe?: HTMLIFrameElement;
   builderRoot?: HTMLElement;
   private delayedCallback:AcDelayedCallback = new AcDelayedCallback();
-
-  private mutationObserver?: MutationObserver;
-  private _grapesEvents: Array<{ event: string, handler: any }> = [];
-
   constructor({ builderApi }: { builderApi: AcBuilderApi }) {
     this.builderApi = builderApi;
     this.eventsHandler = builderApi.eventHandler;
     this.grapesJSApi = this.builderApi.builder.grapesJSApi;
     this.registerEventListeners();
-  }
-
-  destroy() {
-    this.delayedCallback.cancelAll();
-    this.mutationObserver?.disconnect();
-    this._grapesEvents.forEach(e => this.grapesJSApi.off(e.event, e.handler));
-    this._grapesEvents = [];
-  }
-
-  private grapesOn(event: string, handler: any) {
-    this.grapesJSApi.on(event, handler);
-    this._grapesEvents.push({ event, handler });
   }
 
   getComponentElement({ component }: { component: any }): IAcComponentElement | undefined {
@@ -88,7 +72,7 @@ export class AcGrapesJSEventsHandler {
   }
 
   registerAttributesChangeListener() {
-    this.mutationObserver = new MutationObserver(mutations => {
+    const observer = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
         if (mutation.type == 'attributes') {
           const element = mutation.target as HTMLElement;
@@ -111,7 +95,7 @@ export class AcGrapesJSEventsHandler {
         }
       });
     });
-    this.mutationObserver.observe(this.builderRoot!, {
+    observer.observe(this.builderRoot!, {
       attributes: true,
       childList: true,
       subtree: true
@@ -126,56 +110,56 @@ export class AcGrapesJSEventsHandler {
 
   registerBlockListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('block:add', (args) => {
+    editor.on('block:add', (args) => {
       this.delayedCallback.add({callback:() => {
         this.builderApi.builder.setFilterableElementsGroups();
       }, duration:1});
     });
-    this.grapesOn('block:remove', (args) => {
+    editor.on('block:remove', (args) => {
       //
     });
-    this.grapesOn('block:remove:before', (args) => {
+    editor.on('block:remove:before', (args) => {
       //
     });
-    this.grapesOn('block:update', (args) => {
+    editor.on('block:update', (args) => {
       //
     });
-    this.grapesOn('block:drag:start', (args) => {
+    editor.on('block:drag:start', (args) => {
       //
     });
-    this.grapesOn('block:drag', (args) => {
+    editor.on('block:drag', (args) => {
       //
     });
-    this.grapesOn('block:drag:stop', (args) => {
+    editor.on('block:drag:stop', (args) => {
       //
     });
-    this.grapesOn('block:category:update', (args) => {
+    editor.on('block:category:update', (args) => {
       //
     });
-    this.grapesOn('block:category:add', (args) => {
+    editor.on('block:category:add', (args) => {
       //
     });
-    this.grapesOn('block:custom', (args) => {
+    editor.on('block:custom', (args) => {
       //
     });
-    this.grapesOn('block', (args) => {
+    editor.on('block', (args) => {
       //
     });
   }
 
   registerCommandListers() {
     const editor = this.grapesJSApi;
-    this.grapesOn('command:run', (args) => {
+    editor.on('command:run', (args) => {
       //
     });
-    this.grapesOn('command:stop', (args) => {
+    editor.on('command:stop', (args) => {
       //
     });
   }
 
   registerElementListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('component:add', (args) => {
+    editor.on('component:add', (args) => {
       const handleFunction = () => {
         if (args && args.view && args.view.el) {
           this.eventsHandler.handleElementAdd({ element: args.view.el });
@@ -188,7 +172,7 @@ export class AcGrapesJSEventsHandler {
       }
       handleFunction();
     });
-    this.grapesOn('component:remove', (component) => {
+    editor.on('component:remove', (component) => {
       if (component && component.view && component.view.el) {
         this.eventsHandler.handleElementRemove({ element: component.view.el });
         const toolbarEl = this.grapesJSApi.Canvas.getToolbarEl();
@@ -197,7 +181,7 @@ export class AcGrapesJSEventsHandler {
         }
       }
     });
-    this.grapesOn('component:selected', (args) => {
+    editor.on('component:selected', (args) => {
       this.renderElementToolbar(args);
       const handleFunction = () => {
         if (args && args.view && args.view.el) {
@@ -206,16 +190,16 @@ export class AcGrapesJSEventsHandler {
       }
       handleFunction();
     });
-    this.grapesOn('component:deselected', (args) => {
+    editor.on('component:deselected', (args) => {
       //
     });
-    this.grapesOn('component:update:attributes', (args) => {
+    editor.on('component:update:attributes', (args) => {
       //
     });
   }
 
   registerEventListeners() {
-    this.grapesOn('run:tlb-edit', () => false);
+    this.grapesJSApi.on('run:tlb-edit', () => false);
     this.registerBlockListeners();
     this.registerCommandListers();
     this.registerElementListeners();
@@ -226,7 +210,7 @@ export class AcGrapesJSEventsHandler {
     this.registerStorageListeners();
     this.registerStyleListeners();
     this.registerTraitListeners();
-    this.grapesOn('load', () => {
+    this.grapesJSApi.on('load', () => {
       this.builderIframe = this.grapesJSApi.Canvas.getFrameEl();
       const iframeDocument = this.builderIframe.contentDocument || this.builderIframe.contentWindow?.document;
       if (iframeDocument) {
@@ -250,145 +234,145 @@ export class AcGrapesJSEventsHandler {
 
   registerLayerListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('layer:root', (args) => {
+    editor.on('layer:root', (args) => {
       //
     });
-    this.grapesOn('layer:Element', (args) => {
+    editor.on('layer:Element', (args) => {
       //
     });
   }
 
   registerModalListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('modal:open', (args) => {
+    editor.on('modal:open', (args) => {
       //
     });
-    this.grapesOn('modal:close', (args) => {
+    editor.on('modal:close', (args) => {
       //
     });
-    this.grapesOn('modal', (args) => {
+    editor.on('modal', (args) => {
       //
     });
   }
 
   registerPageListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('page:add', (args) => {
+    editor.on('page:add', (args) => {
       //
     });
-    this.grapesOn('page:remove', (args) => {
+    editor.on('page:remove', (args) => {
       //
     });
-    this.grapesOn('page:select', (args) => {
+    editor.on('page:select', (args) => {
       //
     });
-    this.grapesOn('page:update', (args) => {
+    editor.on('page:update', (args) => {
       //
     });
-    this.grapesOn('page', (args) => {
+    editor.on('page', (args) => {
       //
     });
   }
 
   registerSelectorListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('selector:add', (args) => {
+    editor.on('selector:add', (args) => {
       //
     });
-    this.grapesOn('selector:remove', (args) => {
+    editor.on('selector:remove', (args) => {
       //
     });
-    this.grapesOn('selector:update', (args) => {
+    editor.on('selector:update', (args) => {
       //
     });
-    this.grapesOn('selector:state', (args) => {
+    editor.on('selector:state', (args) => {
       //
     });
-    this.grapesOn('selector', (args) => {
+    editor.on('selector', (args) => {
       //
     });
   }
 
   registerStorageListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('storage:start', (args) => {
+    editor.on('storage:start', (args) => {
       //
     });
-    this.grapesOn('storage:start:store', (args) => {
+    editor.on('storage:start:store', (args) => {
       //
     });
-    this.grapesOn('storage:start:load', (args) => {
+    editor.on('storage:start:load', (args) => {
       //
     });
-    this.grapesOn('storage:load', (args) => {
+    editor.on('storage:load', (args) => {
       //
     });
-    this.grapesOn('storage:store', (args) => {
+    editor.on('storage:store', (args) => {
       //
     });
-    this.grapesOn('storage:after', (args) => {
+    editor.on('storage:after', (args) => {
       //
     });
-    this.grapesOn('storage:end', (args) => {
+    editor.on('storage:end', (args) => {
       //
     });
-    this.grapesOn('storage:end:store', (args) => {
+    editor.on('storage:end:store', (args) => {
       //
     });
-    this.grapesOn('storage:end:load', (args) => {
+    editor.on('storage:end:load', (args) => {
       //
     });
-    this.grapesOn('storage:error', (args) => {
+    editor.on('storage:error', (args) => {
       //
     });
-    this.grapesOn('storage:error:store', (args) => {
+    editor.on('storage:error:store', (args) => {
       //
     });
-    this.grapesOn('storage:error:load', (args) => {
+    editor.on('storage:error:load', (args) => {
       //
     });
   }
 
   registerStyleListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('style:sector:add', (args) => {
+    editor.on('style:sector:add', (args) => {
       //
     });
-    this.grapesOn('style:sector:remove', (args) => {
+    editor.on('style:sector:remove', (args) => {
       //
     });
-    this.grapesOn('style:sector:update', (args) => {
+    editor.on('style:sector:update', (args) => {
       //
     });
-    this.grapesOn('style:property:add', (args) => {
+    editor.on('style:property:add', (args) => {
       //
     });
-    this.grapesOn('style:property:remove', (args) => {
+    editor.on('style:property:remove', (args) => {
       //
     });
-    this.grapesOn('style:property:update', (args) => {
+    editor.on('style:property:update', (args) => {
       //
     });
-    this.grapesOn('style:target', (args) => {
+    editor.on('style:target', (args) => {
       //
     });
   }
 
   registerTraitListeners() {
     const editor = this.grapesJSApi;
-    this.grapesOn('trait:select', (args) => {
+    editor.on('trait:select', (args) => {
       //
     });
-    this.grapesOn('trait:value', (args) => {
+    editor.on('trait:value', (args) => {
       //
     });
-    this.grapesOn('trait:category:update', (args) => {
+    editor.on('trait:category:update', (args) => {
       //
     });
-    this.grapesOn('trait:custom', (args) => {
+    editor.on('trait:custom', (args) => {
       //
     });
-    this.grapesOn('trait', (args) => {
+    editor.on('trait', (args) => {
       //
     });
   }

@@ -25,18 +25,12 @@ export class AcDraggableTarget {
   draggableApi!: AcDraggableApi;
   element!: HTMLElement;
   originalUserSelect: any;
-  private _managedListeners: Array<{ target: EventTarget, type: string, handler: any, options?: any }> = [];
   id: string = Autocode.uuid();
 
   constructor({ draggableApi, element }: { draggableApi: AcDraggableApi, element: HTMLElement }) {
     this.draggableApi = draggableApi;
     this.element = element;
     this.initElement();
-  }
-
-  protected addEventListenerManaged(target: EventTarget, type: string, handler: any, options?: any): void {
-    target.addEventListener(type, handler, options);
-    this._managedListeners.push({ target, type, handler, options });
   }
 
   initElement(): void {
@@ -69,22 +63,14 @@ export class AcDraggableTarget {
     };
 
     // Mouse events
-    this.addEventListenerManaged(this.element, "mouseenter", onMouseEnter);
-    this.addEventListenerManaged(this.element, "mouseleave", onMouseLeave);
-    this.addEventListenerManaged(this.element, "mousemove", onMouseMove);
+    this.element.addEventListener("mouseenter", onMouseEnter);
+    this.element.addEventListener("mouseleave", onMouseLeave);
+    this.element.addEventListener("mousemove", onMouseMove);
 
     // Touch events
-    this.addEventListenerManaged(this.element, "touchstart", onMouseEnter, { passive: true });
-    this.addEventListenerManaged(this.element, "touchend", onMouseLeave, { passive: true });
-    this.addEventListenerManaged(this.element, "touchcancel", onMouseLeave, { passive: true });
-    this.addEventListenerManaged(this.element, "touchmove", onMouseMove, { passive: true });
-  }
-
-  destroy() {
-    this._managedListeners.forEach(({ target, type, handler, options }) => {
-      target.removeEventListener(type, handler, options);
-    });
-    this._managedListeners = [];
-    acNullifyInstanceProperties({ instance: this });
+    this.element.addEventListener("touchstart", onMouseEnter, { passive: true });
+    this.element.addEventListener("touchend", onMouseLeave, { passive: true });
+    this.element.addEventListener("touchcancel", onMouseLeave, { passive: true });
+    this.element.addEventListener("touchmove", onMouseMove, { passive: true });
   }
 }

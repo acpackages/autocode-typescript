@@ -20,8 +20,6 @@ export class AcBuilder {
   propertiesPanel: AcBuilderPropertiesPanel;
   eventsPanel: AcBuilderEventsPanel;
 
-  private _listeners: Array<{ element: HTMLElement | Window | Document, event: string, handler: any }> = [];
-
   constructor() {
     this.setBuilderElement();
     this.initGrapesJS();
@@ -32,23 +30,6 @@ export class AcBuilder {
     this.eventsPanel = new AcBuilderEventsPanel({ builderApi: this.builderApi });
     (this.element.querySelector('.ac-builder-events-tab') as HTMLElement).append(this.eventsPanel.element);
     acInit({ element: this.element });
-  }
-
-  destroy() {
-    this._listeners.forEach(l => l.element.removeEventListener(l.event, l.handler));
-    this._listeners = [];
-    this.builderApi?.destroy();
-    this.grapesJSEventsHandler?.destroy();
-    this.propertiesPanel?.destroy();
-    this.eventsPanel?.destroy();
-    if (this.grapesJSApi) {
-      this.grapesJSApi.destroy();
-    }
-  }
-
-  private addEventListenerManaged(element: HTMLElement | Window | Document, event: string, handler: any) {
-    element.addEventListener(event, handler);
-    this._listeners.push({ element, event, handler });
   }
 
   initGrapesJS() {
@@ -80,38 +61,38 @@ export class AcBuilder {
 
   private initGrapesJSCommands(): void {
     const btnPreview = this.element.querySelector('.btn-preview') as HTMLElement;
-    this.addEventListenerManaged(btnPreview, 'click', () => {
+    btnPreview.addEventListener('click', () => {
       this.grapesJSApi.runCommand('preview');
     });
 
     const btnDownload = this.element.querySelector('.btn-download') as HTMLElement;
-    this.addEventListenerManaged(btnDownload, 'click', () => {
+    btnDownload.addEventListener('click', () => {
       const jsonData = this.builderApi.toJson();
       AcBrowser.downloadJsonObjectAsFile({ data: jsonData, filename: 'builder-state.json' });
     });
 
     const btnOutline = this.element.querySelector('.btn-outline') as HTMLElement;
-    this.addEventListenerManaged(btnOutline, 'click', () => {
+    btnOutline.addEventListener('click', () => {
       this.grapesJSApi.runCommand('open-layers');
     });
 
     const btnFullscreen = this.element.querySelector('.btn-fullscreen') as HTMLElement;
-    this.addEventListenerManaged(btnFullscreen, 'click', () => {
+    btnFullscreen.addEventListener('click', () => {
       this.grapesJSApi.runCommand('fullscreen');
     });
 
     const btnClear = this.element.querySelector('.btn-clear-canvas') as HTMLElement;
-    this.addEventListenerManaged(btnClear, 'click', () => {
+    btnClear.addEventListener('click', () => {
       this.grapesJSApi.runCommand('core:canvas-clear');
     });
 
     const btnUndo = this.element.querySelector('.btn-undo') as HTMLElement;
-    this.addEventListenerManaged(btnUndo, 'click', () => {
+    btnUndo.addEventListener('click', () => {
       this.grapesJSApi.runCommand('core:undo');
     });
 
     const btnRedo = this.element.querySelector('.btn-redo') as HTMLElement;
-    this.addEventListenerManaged(btnRedo, 'click', () => {
+    btnRedo.addEventListener('click', () => {
       this.grapesJSApi.runCommand('core:redo');
     });
   }
@@ -251,17 +232,17 @@ export class AcBuilder {
 
     };
     const btnDesktop = this.element.querySelector('.btn-desktop') as HTMLElement;
-    this.addEventListenerManaged(btnDesktop, 'click', () => {
+    btnDesktop.addEventListener('click', () => {
       setActiveDevice('desktop');
     });
 
     const btnTablet = this.element.querySelector('.btn-tablet') as HTMLElement;
-    this.addEventListenerManaged(btnTablet, 'click', () => {
+    btnTablet.addEventListener('click', () => {
       setActiveDevice('tablet');
     });
 
     const btnMobile = this.element.querySelector('.btn-mobilePortrait') as HTMLElement;
-    this.addEventListenerManaged(btnMobile, 'click', () => {
+    btnMobile.addEventListener('click', () => {
       setActiveDevice('mobilePortrait');
     });
   }
@@ -281,7 +262,7 @@ export class AcBuilder {
       }
     });
     const btnCode = this.element.querySelector('.btn-script-code') as HTMLElement;
-    this.addEventListenerManaged(btnCode, 'click', () => {
+    btnCode.addEventListener('click', () => {
       this.builderApi.toggleScriptEditor();
       this.builderApi.scriptEditor.refreshHtmlCode();
     });

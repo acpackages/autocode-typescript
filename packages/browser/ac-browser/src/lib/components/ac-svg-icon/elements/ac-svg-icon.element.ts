@@ -71,7 +71,7 @@ export class AcSvgIcon extends AcElementBase {
     }
 
     this.ensureSlotSvgStyle();
-    this.addEventListenerManaged(this.slotEl, 'slotchange', () => this.ensureSlotSvgStyle());
+    this.slotEl.addEventListener('slotchange', () => this.ensureSlotSvgStyle());
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {

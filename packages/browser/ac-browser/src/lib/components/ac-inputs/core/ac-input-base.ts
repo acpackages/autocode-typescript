@@ -206,18 +206,71 @@ export class AcInputBase extends AcElementBase {
 
   checkValidity() { return this.elementInternals.checkValidity(); }
 
-  private _acContextSubscriptionId?: string;
-  private _inputEventListenersUnsubscribe?: () => void;
-
   override destroy() {
     this.hooks.clearSubscriptions();
-    if (this.acContext && this._acContextSubscriptionId) {
-      this.acContext.unsubscribe({ subscriptionId: this._acContextSubscriptionId });
-    }
-    if (this._inputEventListenersUnsubscribe) {
-      this._inputEventListenersUnsubscribe();
-    }
+    this.inputElement.removeEventListener('input', this.handleInput);
+    this.inputElement.removeEventListener('change', this.handleChange);
     super.destroy();
+  }
+
+  override focus(options?: FocusOptions): void {
+    this.inputElement.focus();
+  }
+
+  getValidationMessageFromValidityState(
+    validity: ValidityState,
+    customMessage?: string
+  ): string {
+    if (!validity) return '';
+
+    if (validity.customError && customMessage) {
+      return customMessage;
+    }
+    if (validity.valueMissing) {
+      return 'This field is required.';
+    }
+    if (validity.typeMismatch) {
+      return 'Please enter a valid value.';
+    }
+    if (validity.patternMismatch) {
+      return 'Value does not match the required pattern.';
+    }
+    if (validity.tooLong) {
+      return 'Please shorten this value.';
+    }
+    if (validity.tooShort) {
+      return 'Please lengthen this value.';
+    }
+    if (validity.rangeUnderflow) {
+      return 'Value is too low.';
+    }
+    if (validity.rangeOverflow) {
+      return 'Value is too high.';
+    }
+    if (validity.stepMismatch) {
+      return 'Please enter a valid step value.';
+    }
+    if (validity.badInput) {
+      return 'Please enter a valid input.';
+    }
+
+    return '';
+  }
+
+  handleChange(e: Event) {
+    this.setValue(this.inputElement.value);
+    if(this.dispatchEvent){
+      this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    }
+    this.events.execute({ event: AcEnumInputEvent.Change, args: this.value });
+  }
+
+  handleInput(e: Event) {
+    this.setValue(this.inputElement.value);
+    if(this.dispatchEvent){
+      this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    }
+    this.events.execute({ event: AcEnumInputEvent.Input, args: this.value });
   }
 
   override init(): void {
@@ -232,7 +285,7 @@ export class AcInputBase extends AcElementBase {
       this.readonly = true;
     }
     if (this.elementInternals.form) {
-      this.addEventListenerManaged(this.elementInternals.form, 'submit', () => {
+      this.elementInternals.form.addEventListener('submit', () => {
         this.validate();
       });
     }
@@ -241,16 +294,15 @@ export class AcInputBase extends AcElementBase {
     this.handleChange = this.handleChange.bind(this);
 
     this.refreshReflectedAttributes();
-    this.addEventListenerManaged(this.inputElement, 'input', this.handleInput);
-    this.addEventListenerManaged(this.inputElement, 'change', this.handleChange);
+    this.inputElement.addEventListener('input', this.handleInput);
+    this.inputElement.addEventListener('change', this.handleChange);
     this.innerHTML = '';
     this.appendChild(this.inputElement);
-    this._inputEventListenersUnsubscribe = acListenElementEvents({
-      element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
-        if (this.dispatchEvent) {
-          this.dispatchEvent(event);
-        }
-      }, mouse: true, keyboard: true, pointer: true, focus: true, form: true, touch: true, viewport: true
+    acListenElementEvents({element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
+      if(this.dispatchEvent){
+        this.dispatchEvent(event);
+      }
+      },mouse:true,keyboard:true,pointer:true,focus:true,form:true,touch:true,viewport:true
     });
   }
 
@@ -269,7 +321,7 @@ export class AcInputBase extends AcElementBase {
         this.setValueToAcContext();
       }
       this.elementInternals.setFormValue(this.value);
-      if (this.dispatchEvent) {
+      if(this.dispatchEvent){
         this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
       }
       this.events.execute({ event: AcEnumInputEvent.Change, args: this.value });
@@ -280,10 +332,7 @@ export class AcInputBase extends AcElementBase {
   protected setValueFromAcContext() {
     if (this.acContextKey && this.acContext) {
       this.value = this.acContext[this.acContextKey];
-      if (this._acContextSubscriptionId) {
-        this.acContext.unsubscribe({ subscriptionId: this._acContextSubscriptionId });
-      }
-      this._acContextSubscriptionId = this.acContext.subscribe({
+      this.acContext.on({
         event: AcEnumContextEvent.Change, callback: (args: any) => {
           if (args.property == this.acContextKey) {
             this.setValue(args.value);

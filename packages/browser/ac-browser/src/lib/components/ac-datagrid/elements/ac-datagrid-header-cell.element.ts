@@ -157,14 +157,14 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     });
 
 
-    this.addEventListenerManaged(document, 'mousemove', (event: MouseEvent) => {
+    document.addEventListener('mousemove', (event: MouseEvent) => {
       if (this.isResizing) {
         const newWidth = this.startWidth + (event.clientX - this.startX);
         this.datagridColumn.width = newWidth;
       }
     });
 
-    this.addEventListenerManaged(document, 'mouseup', () => {
+    document.addEventListener('mouseup', () => {
       if (this.isResizing) {
         this.isResizing = false;
         this.ownerDocument.body.style.userSelect = this.originalUserSelect;
