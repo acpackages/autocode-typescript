@@ -78,7 +78,7 @@ export class AcElementManager {
     this.render();
 
     // Resolve ViewChild references BEFORE acOnInit
-    AcElementManager.resolveViewChild(this.instance, this.templateEngine);
+    AcElementManager.resolveViewChild(this.orgInstance, this.templateEngine);
 
     await acInitRuntimeElementInstance(this.instance);
   }
