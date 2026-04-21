@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcFilterableElementsAttributeName } from "@autocode-ts/ac-browser";
+import { acClearElement, AcFilterableElementsAttributeName } from "@autocode-ts/ac-browser";
 import { stringToCamelCase } from "@autocode-ts/ac-extensions";
 import { AcDelayedCallback, AcEvents, AcHooks } from "@autocode-ts/autocode";
 import { Editor } from "grapesjs";
@@ -213,7 +213,7 @@ export class AcBuilderApi {
           }
         }
         else {
-          element.innerHTML = "";
+          acClearElement({element});
         }
 
       }

@@ -3,7 +3,7 @@ import { stringIsJson } from "@autocode-ts/ac-extensions";
 import { AcScrollable } from "../../ac-scrollable/_ac-scrollable.export";
 import { AcInputBase } from "../core/ac-input-base";
 import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 
 export class AcTagsInputElement extends AcInputBase {
   static override get observedAttributes() {
@@ -236,7 +236,7 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   private renderTags() {
-    this.tagsContainer.innerHTML = '';
+    acClearElement({element:this.tagsContainer});
     const values = this.value.split(this.separator).map(v => v.trim()).filter(v => v);
     values.forEach(value => {
       const tagEl = this.ownerDocument.createElement('span');
@@ -327,7 +327,7 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   private renderVirtualList() {
-    this.listEl.innerHTML = '';
+    acClearElement({element:this.listEl});
     if (this._filteredOptions.length) {
       this._filteredOptions.forEach((opt, i) => this.listEl.appendChild(this.buildOptionElement(opt, i)));
     } else {

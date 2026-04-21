@@ -7,7 +7,7 @@ import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { IAcDatagridDisplayedRowsChangeEvent } from "../interfaces/event-args/ac-datagrid-displayed-rows-change-event.interface";
 import { AC_DATAGRID_HOOK } from "../consts/ac-datagrid-hook.const";
 import { IAcDatagridBodyHookArgs } from "../interfaces/hook-args/ac-datagrid-body-hook-args.interface";
-import { acLinkElementScroll, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acLinkElementScroll, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AcScrollable } from "../../_components.export";
 
@@ -43,7 +43,7 @@ export class AcDatagridBody extends AcElementBase {
       row.destroy();
       row = null;
     }
-    this.innerHTML = "";
+    acClearElement({element:this});
     this.datagridRows.length = 0; // Truncate array
     this.datagridRows = [];
   }

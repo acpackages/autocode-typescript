@@ -4,7 +4,7 @@
 import { stringIsJson } from "@autocode-ts/ac-extensions";
 import { IAcOnDemandRequestArgs, AcDataManager, AcEnumConditionOperator, IAcDataRow, AC_DATA_MANAGER_HOOK } from "@autocode-ts/autocode";
 import { createPopper } from '@popperjs/core';
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcScrollable } from "../../_components.export";
 import { AcInputBase, AC_INPUT_TAG } from "../_ac-inputs.export";
 
@@ -299,7 +299,7 @@ export class AcSelectInputElement extends AcInputBase {
 
   override init() {
     super.init();
-    this.innerHTML = '';
+    acClearElement({element:this});
     if (this.hasAttribute('class')) {
       this.textInputElement.setAttribute('class', this.getAttribute('class')!);
     }
@@ -394,7 +394,7 @@ export class AcSelectInputElement extends AcInputBase {
   }
 
   private async renderVirtualList() {
-    this.listEl.innerHTML = "";
+    acClearElement({element:this.listEl});
     this.scrollable.pause();
     this.scrollable.clearAll();
     let rows: IAcDataRow[] = [];
@@ -413,6 +413,7 @@ export class AcSelectInputElement extends AcInputBase {
     }
 
     if (rows.length === 0 && !term) {
+      acClearElement({element:this.listEl});
       this.listEl.innerHTML = `<div style="text-align:center;">No records!</div>`;
     }
     if (this.addOption && !hasMatch && term) {

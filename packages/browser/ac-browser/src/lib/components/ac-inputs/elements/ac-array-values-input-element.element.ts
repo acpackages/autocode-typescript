@@ -5,7 +5,7 @@ import { Autocode } from "@autocode-ts/autocode";
 import { arrayRemoveByIndex } from "@autocode-ts/ac-extensions";
 import { AcInputBase } from "../core/ac-input-base";
 import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { IAcInputValueChangeEvent } from "../interfaces/ac-input-value-change-event.interface";
 import { AcEnumInputEvent } from "../enums/ac-enum-input-event.enum";
 
@@ -68,7 +68,7 @@ export class AcArrayValuesInputElement extends AcInputBase {
       if (itemsElement.childElementCount > 0) {
         this.itemClone = itemsElement.children[0].cloneNode(true) as HTMLElement;
       }
-      this.itemsElement.innerHTML = '';
+      acClearElement({element:this.itemsElement});
     }
     const addItemElements = this.querySelectorAll('[ac-array-values-item-add]');
     if (addItemElements) {

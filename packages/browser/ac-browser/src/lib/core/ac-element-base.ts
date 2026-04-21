@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDelayedCallback, AcEvents, Autocode, acNullifyInstanceProperties } from "@autocode-ts/autocode";
-import { acCloneEvent, acRegisterCustomElement } from "../utils/ac-element-functions";
+import { acClearElement, acCloneEvent, acRegisterCustomElement } from "../utils/ac-element-functions";
 
 export class AcElementBase extends HTMLElement {
   private _isInitialized:boolean = false;
@@ -11,6 +11,7 @@ export class AcElementBase extends HTMLElement {
     this._isInitialized = value;
   }
 
+  autoDestroyOnDisconnect:boolean = true;
   events: AcEvents = new AcEvents();
   acId:string = Autocode.uuid();
   protected delayedCallback:AcDelayedCallback = new AcDelayedCallback();
@@ -39,11 +40,14 @@ export class AcElementBase extends HTMLElement {
   destroy(){
     this.events.destroy();
     this.delayedCallback.destroy();
+    acClearElement({element:this});
     acNullifyInstanceProperties({instance:this});
   }
 
-  disconnectedCallback(){
-    //
+  disconnectedCallback(): void {
+    if(this.autoDestroyOnDisconnect){
+      this.destroy();
+    }
   }
 
   init(){

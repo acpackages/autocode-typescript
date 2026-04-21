@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import './_app.export';
 import './assets/scss/styles.scss';
 import './assets/scss/autocode.scss';
@@ -40,8 +41,11 @@ import {
 
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS } from '@autocode-ts/ac-datagrid-on-ag-grid';
-import { acInit } from '@autocode-ts/ac-browser';
+import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
+import { AcDatagridExtensionManager, acInit } from '@autocode-ts/ac-browser';
+import { AcDataDictionary } from '@autocode-ts/ac-data-dictionary';
+import { dataDictionaryJson as actDataDictionary } from '../../data/accountea-pro';
+import { AcDDInputElement,AcDDInputFieldElement } from '@autocode-ts/ac-data-dictionary-components';
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
@@ -66,9 +70,12 @@ AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['domLayout'] = 'normal';
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['paginationPageSize'] = 50;
 
 acInit();
+AcDataDictionary.registerDataDictionary({ jsonData: actDataDictionary });
+    AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
 
 console.log("🚀 [Main] Starting application initialization...");
-
+AcDDInputElement;
+AcDDInputFieldElement;
 window.addEventListener('DOMContentLoaded', async () => {
   console.log("📂 [Main] DOMContentLoaded event fired.");
 

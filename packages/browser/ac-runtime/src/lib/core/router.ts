@@ -1,12 +1,23 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { AcEventEmitter } from './decorators';
 
-import { IAcRouteSnapshot } from "../interfaces/ac-route-snapshot.interface";
-import { IAcRoute } from "../interfaces/ac-route.interface";
-import { AcEventEmitter } from "./ac-event-emitter";
+export interface AcRoute {
+    path: string;
+    element?: any;
+    redirectTo?: string;
+    outlet?: string; // default: 'primary'
+    data?: any;
+}
+
+export interface IAcRouteSnapshot {
+    path: string;
+    element: any;
+    params: Record<string, string>;
+    data: any;
+    outlet: string;
+}
 
 class AcRouter {
-    private routes: IAcRoute[] = [];
+    private routes: AcRoute[] = [];
     public routeChange = new AcEventEmitter<IAcRouteSnapshot>();
     private isPaused: boolean = false;
     lastSnapshot?:IAcRouteSnapshot;
@@ -24,7 +35,7 @@ class AcRouter {
         this.isPaused = false;
     }
 
-    registerRoutes(routes: IAcRoute[]) {
+    registerRoutes(routes: AcRoute[]) {
         this.routes = routes;
         // Trigger initial check if loaded
         if (document.readyState === 'complete' && !this.isPaused) {
@@ -47,9 +58,9 @@ class AcRouter {
     }
 
     private matchRoute(url: string) {
-        // Simple matching logic.
+        // Simple matching logic. 
         // We need to find ALL routes that match (if we support multiple outlets for same path? No, path is unique).
-        // Actually, usually one URL matches one main component.
+        // Actually, usually one URL matches one main component. 
         // Named outlets are usually for auxiliary routes or the route config defines multiple components for one path.
         // Standard Angular router: config has `component` OR `children`.
         // My plan: config has `component` and `outlet`.
@@ -91,7 +102,7 @@ class AcRouter {
         // Actually, `AcRouter` (the component) will subscribe and filter by outlet name.
 
         matchedRoutes.forEach(route => {
-            const params: Record<string, string> = {};
+            let params: Record<string, string> = {};
 
             if (route.path !== '**' && route.path !== '*') {
                 const regexPath = route.path.replace(/:([^\/]+)/g, '([^/]+)');

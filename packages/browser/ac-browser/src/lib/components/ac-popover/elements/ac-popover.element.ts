@@ -1,6 +1,6 @@
 import { AcDelayedCallback, acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_POPOVER_TAG } from "../consts/ac-popover-tag.const";
 
 type AcPopoverPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -67,7 +67,7 @@ export class AcPopover {
   }
 
   private setContent(content: string | HTMLElement) {
-    this.popoverEl.innerHTML = '';
+    acClearElement({element:this.popoverEl});
     if (typeof content === 'string') {
       this.popoverEl.innerHTML = content;
     } else {

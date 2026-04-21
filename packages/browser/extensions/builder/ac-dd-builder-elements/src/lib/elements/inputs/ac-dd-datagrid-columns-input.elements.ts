@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcModal, acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { acClearElement, AcModal, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcBuilderApi, AcBuilderPropertyInput, AcEnumBuilderHook, IAcBuilderElementPropertyChangeHookArgs } from "@autocode-ts/ac-builder";
 import { AcDataDictionary, AcDDTable, AcDDView } from "@autocode-ts/ac-data-dictionary";
 
@@ -57,7 +57,7 @@ export class AcDDDatagridColumnsInput extends AcBuilderPropertyInput {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.innerHTML = "";
+    acClearElement({element:this});
     this.append(this.displayElement);
   }
 

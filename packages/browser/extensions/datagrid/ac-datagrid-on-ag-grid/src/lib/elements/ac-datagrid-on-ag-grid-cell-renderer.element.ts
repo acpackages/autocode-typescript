@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcDatagridApi, IAcDatagridCell, IAcDatagridColumn, IAcDatagridCellRenderer, IAcDatagridRow, IAcDatagridCellElementArgs, AC_DATAGRID_EVENT, AC_DATAGRID_HOOK } from "@autocode-ts/ac-browser";
+import { AcDatagridApi, IAcDatagridCell, IAcDatagridColumn, IAcDatagridCellRenderer, IAcDatagridRow, IAcDatagridCellElementArgs, AC_DATAGRID_EVENT, AC_DATAGRID_HOOK, acClearElement } from "@autocode-ts/ac-browser";
 import { AgPromise, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
 import { AcDatagridOnAgGridExtension } from "../core/ac-datagrid-on-ag-grid-extension";
 import { AcDelayedCallback, acNullifyInstanceProperties } from "@autocode-ts/autocode";
@@ -85,7 +85,7 @@ export class AcDatagridOnAgGridCellRenderer implements ICellRendererComp {
             };
             renderer.init(initArgs);
             this.renderer = renderer;
-            this.element.innerHTML = '';
+            acClearElement({element:this.element});
             this.element.append(renderer.getElement());
             this.datagridApi?.hooks.execute({ hook: AC_DATAGRID_HOOK.CellRendererElementInit, args: { renderer: this } });
             this.datagridApi?.events.execute({ event: AC_DATAGRID_EVENT.CellRendererElementInit, args: { renderer: this } });

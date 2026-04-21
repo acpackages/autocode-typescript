@@ -225,9 +225,9 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
       }
 
       // bind methods so `this` === proxy
-      if (typeof res === 'function') {
-        return res.bind(receiver);
-      }
+      // if (typeof res === 'function') {
+      //   return res.bind(receiver);
+      // }
 
       // Deep reactivity: wrap nested objects/arrays lazily on request
       if (isPlainObject(res) || Array.isArray(res)) {
@@ -288,6 +288,7 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
 
       if (hasKey && res) {
         acTrigger(target, key);
+        const ITERATE_KEY = Symbol('iterate');
         acTrigger(target, ITERATE_KEY);
         if (isArray && target.length !== oldLength) {
           acTrigger(target, 'length');

@@ -1,4 +1,4 @@
-import { AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { acClearElement, AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputManager } from "../core/ac-dd-input-manager";
 import { AcDataDictionary, AcDDTableColumn } from "@autocode-ts/ac-data-dictionary";
 import { IAcDDInputDefinition } from "../interfaces/ac-dd-input-definition.interface";
@@ -184,7 +184,7 @@ export class AcDDInputElement extends AcInputBase {
 
   override init(): void {
     super.init();
-    this.innerHTML = "";
+    acClearElement({element:this});
     this.setInputElement();
   }
 
@@ -219,7 +219,7 @@ export class AcDDInputElement extends AcInputBase {
             this.setAttribute('required', `true`);
           }
         }
-        this.innerHTML = "";
+        acClearElement({element:this});
         this.append(this.inputElement);
         this.inputElement.addEventListener('input', () => {
           this.value = this.inputElement.value;

@@ -13,7 +13,7 @@ export function createElementFromHtml(html: string): HTMLElement | null {
 }
 
 export function clearElement(element:HTMLElement):void{
-  for(let el of element.children){
+  for(let el of element.childNodes){
     clearElement(el as HTMLElement);
     el.remove();
     (el as any) = null;

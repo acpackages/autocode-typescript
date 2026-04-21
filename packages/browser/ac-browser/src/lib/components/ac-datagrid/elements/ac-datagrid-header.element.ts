@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { IAcDatagridColumn } from "../_ac-datagrid.export";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AC_DATAGRID_EVENT } from "../consts/ac-datagrid-event.const";
@@ -40,7 +40,7 @@ export class AcDatagridHeader extends AcElementBase{
   }
 
   setColumns(){
-    this.innerHTML = "";
+    acClearElement({element:this});
     const hookArgs:IAcDatagridHeaderHookArgs = {
       datagridHeader:this,
       datagridApi:this.datagridApi

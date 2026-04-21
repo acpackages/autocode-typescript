@@ -12,7 +12,7 @@ import { getAcViewChildMetadata } from '../decorators/ac-view-child.decorator';
 import { AcElementManager, acInitRuntimeElementConnected, acInitRuntimeElementInstance, acSetEngineElementEngineUUID, acSetEngineElementStyles } from './../core/ac-element-manager';
 import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 import { acElementRegistry } from '../core/ac-element-registry';
-import { createElementFromHtml } from '../utils/functions';
+import { clearElement, createElementFromHtml } from '../utils/functions';
 import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
 
 export class AcTemplateEngine {
@@ -21,11 +21,13 @@ export class AcTemplateEngine {
   private references = new Map<string, any>();
   private effects = new Set<Effect>();
   private parent?: AcTemplateEngine;
-  private context:any;
+  private context: any;
+  private elementManager?: AcElementManager;
 
-  constructor({context,parentEngine}:{context: any, parentEngine?: AcTemplateEngine}) {
+  constructor({ context, parentEngine, elementManager }: { context: any, parentEngine?: AcTemplateEngine, elementManager?: AcElementManager }) {
     this.context = context;
     this.parent = parentEngine;
+    this.elementManager = elementManager;
   }
 
   public compile(element: HTMLElement | DocumentFragment) {
@@ -33,11 +35,11 @@ export class AcTemplateEngine {
     this.traverse(element);
   }
 
-  destroy(){
-    for(const e of this.effects){
+  destroy() {
+    for (const e of this.effects) {
       e.destroy();
     }
-    acNullifyInstanceProperties({instance:this});
+    acNullifyInstanceProperties({ instance: this });
   }
 
   // Get child element instances for ViewChild resolution
@@ -135,8 +137,15 @@ export class AcTemplateEngine {
       if (attr.name.startsWith('#')) {
         const refName = attr.name.slice(1).toLowerCase();
         this.references.set(refName, el);
+        el.setAttribute("ac-element-ref", refName);
         if (!this.childElements.has(el)) {
           this.childElements.set(el, el);
+        }
+        if (this.parent) {
+          this.parent.references.set(refName, el);
+          if (!this.parent.childElements.has(el)) {
+            this.parent.childElements.set(el, el);
+          }
         }
       }
     });
@@ -229,7 +238,7 @@ export class AcTemplateEngine {
                   }
                 }
 
-                const engine = new AcTemplateEngine({context:renderContext,parentEngine:definingEngine});
+                const engine = new AcTemplateEngine({ context: renderContext, parentEngine: definingEngine });
                 const nodes = Array.from(fragment.childNodes);
 
                 const placeholder = (el as any)._acPlaceholder;
@@ -237,7 +246,7 @@ export class AcTemplateEngine {
                   placeholder.parentNode.insertBefore(fragment, placeholder);
                   nodes.forEach(child => engine.traverse(child));
                 } else {
-                  el.innerHTML = '';
+                  clearElement(el)
                   el.appendChild(fragment);
                   nodes.forEach(child => engine.traverse(child));
                 }
@@ -290,6 +299,7 @@ export class AcTemplateEngine {
                     (el as any)[attrToBind] = val;
                   }
                   if (attrToBind == 'innerhtml') {
+                    clearElement(el);
                     el.innerHTML = stringValue;
                   }
                   else if (attrToBind == 'innertext') {
@@ -377,6 +387,7 @@ export class AcTemplateEngine {
     // If it was a container or an outlet was handled, we prevent the default
     // recursive traversal of the element's children because we've already
     // handled them (either via handleContainer or by rendering the outlet).
+
     return (tagName === 'ac-container' || outletHandled);
   }
 
@@ -668,7 +679,6 @@ export class AcTemplateEngine {
 
           if (condition) {
             const clone = createElementFromHtml(branch.html) as HTMLElement;
-            // console.log(clone.firstChild);
             const parent = endPlaceholder.parentNode;
             if (parent) {
               if (clone.tagName.toLowerCase() === 'ac-container') {
@@ -687,6 +697,9 @@ export class AcTemplateEngine {
       };
 
       renderBranches();
+      if (this.elementManager) {
+        this.elementManager.resolveViewChild();
+      }
     });
   }
 
@@ -748,7 +761,7 @@ export class AcTemplateEngine {
       const subContext = Object.create(this.context);
       setLoopVars(subContext, item, i, count);
 
-      const engine = new AcTemplateEngine({context:subContext, parentEngine:this});
+      const engine = new AcTemplateEngine({ context: subContext, parentEngine: this });
       let nodes: Node[];
 
       if (instance.tagName.toLowerCase() === 'ac-container') {

@@ -1,12 +1,12 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcDataDictionary } from "@autocode-ts/ac-data-dictionary";
 import { AcDDInputManager } from "@autocode-ts/ac-data-dictionary-components";
-import { 
-  AcDatagridExtensionManager, 
-  AcForm 
+import {
+  AcDatagridExtensionManager,
+  AcForm
 } from "@autocode-ts/ac-browser";
 import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
-import { dataDictionaryJson as actDataDictionary } from '../../../../data/accountea-pro';
+
 import { IAppMenuItem } from "src/_app.export";
 
 @AcElement({
@@ -41,7 +41,7 @@ import { IAppMenuItem } from "src/_app.export";
                      </div>
                      <button class="btn btn-primary w-100 fw-bold" (click)="submitForm()">Submit Data Dictionary Form</button>
                   </ac-form>
-                  
+
                   <div class="mt-4 p-3 bg-light rounded border" *if="formValues">
                      <h6 class="small fw-bold border-bottom pb-2 mb-2">Form Values (JSON)</h6>
                      <pre class="small mb-0">{{formValues}}</pre>
@@ -76,8 +76,7 @@ export class DataDictionaryComponentsPage {
   dropdownItems: IAppMenuItem[] = [{ label: 'DD Config', isHeader: true }];
 
   acOnInit() {
-    AcDataDictionary.registerDataDictionary({ jsonData: actDataDictionary });
-    AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
+    //
   }
 
   submitForm() {

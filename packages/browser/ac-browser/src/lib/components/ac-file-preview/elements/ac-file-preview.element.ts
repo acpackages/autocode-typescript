@@ -3,7 +3,7 @@
 import { ACI_SVG_SOLID } from "@autocode-ts/ac-icons";
 import { AcFileUtils } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 
 export class AcFilePreview extends AcElementBase {
   static get observedAttributes() {
@@ -52,6 +52,7 @@ export class AcFilePreview extends AcElementBase {
   setPreview() {
     try {
       let foundPreview: boolean = false;
+      acClearElement({element:this});
       if (this.filePath) {
         const extension: string = this.filePath.split('.').pop()!;
         const fileDetails: { name: string, type: string } | undefined = AcFileUtils.detailsFromExtension({ extension: extension });
@@ -109,7 +110,7 @@ export class AcFilePreview extends AcElementBase {
   }
 
   setExtensionPreview(extension: string) {
-    this.innerHTML = "";
+    acClearElement({element:this});
     let svgName:string = 'file';
     const svgObject:any = ACI_SVG_SOLID;
     if(extension!=""){

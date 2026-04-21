@@ -1,5 +1,5 @@
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
 import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
@@ -28,7 +28,7 @@ export class AcDatagridFooter extends AcElementBase {
   }
 
   setPagination() {
-    this.paginationContainer.innerHTML = "";
+    acClearElement({element:this.paginationContainer});
     if (this.datagridApi && this.datagridApi.usePagination && this.datagridApi.pagination) {
       this.datagridApi.pagination.style.paddingRight = '10px';
       this.datagridApi.pagination.style.marginRight = '5px';
@@ -40,7 +40,7 @@ export class AcDatagridFooter extends AcElementBase {
 
   setSearchInput(){
     this.searchContainer.style.display = 'inline-block';
-    this.searchContainer.innerHTML = '';
+    acClearElement({element:this.searchContainer});
     this.searchContainer.append(this.searchInput);
     this.searchInput.classList.add('ac-datagrid-search-input');
     this.searchInput.placeholder = "Search rows...";

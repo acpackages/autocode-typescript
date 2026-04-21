@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@autocode-ts/ac-browser": "workspace:*",
+    "@autocode-ts/ac-data-dictionary-components": "workspace:*",
     "@autocode-ts/ac-runtime": "workspace:*",
     "@autocode-ts/autocode": "workspace:*",
     "@autocode-ts/ac-datagrid-on-ag-grid": "workspace:*",

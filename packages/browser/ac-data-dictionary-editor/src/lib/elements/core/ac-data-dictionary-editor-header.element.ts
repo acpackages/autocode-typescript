@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { acAddClassToElement, AcTooltip } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, acClearElement, AcTooltip } from "@autocode-ts/ac-browser";
 import { AcEnumDDETab } from "../../enums/ac-enum-dde-tab.enum";
 import { AcDDEApi } from "../../core/ac-dde-api";
 import { AcEnumDDEHook } from "../../enums/ac-enum-dde-hooks.enum";
@@ -156,7 +156,7 @@ export class AcDataDictionaryEditorHeader {
   }
 
   private setDataDictionaryDropdown(){
-    this.element.querySelector('.data-dictionary-select-items')!.innerHTML = "";
+    acClearElement({element:this.element.querySelector('.data-dictionary-select-items')!});
     const createMenuItem:Function = (row:IAcDDEDataDictionary)=>{
       const menuItem:HTMLElement = document.createElement('li');
       menuItem.style.cursor = 'pointer';

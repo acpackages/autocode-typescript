@@ -6,7 +6,7 @@
 import { AcHooks, AcContext, AcContextRegistry, AcEnumContextEvent } from "@autocode-ts/autocode";
 import { AcEnumInputEvent } from "../enums/ac-enum-input-event.enum";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acListenElementEvents } from "../../../utils/ac-element-functions";
+import { acClearElement, acListenElementEvents } from "../../../utils/ac-element-functions";
 
 export class AcInputBase extends AcElementBase {
   static formAssociated = true;
@@ -296,7 +296,7 @@ export class AcInputBase extends AcElementBase {
     this.refreshReflectedAttributes();
     this.inputElement.addEventListener('input', this.handleInput);
     this.inputElement.addEventListener('change', this.handleChange);
-    this.innerHTML = '';
+    acClearElement({element:this});
     this.appendChild(this.inputElement);
     acListenElementEvents({element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
       if(this.dispatchEvent){

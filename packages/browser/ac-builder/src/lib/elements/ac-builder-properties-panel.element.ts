@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { acAddClassToElement, AcCollapse, AcCollapseAttributeName, AcEnumCollapseEvent, AcFilterableElements, AcFilterableElementsAttributeName } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, acClearElement, AcCollapse, AcCollapseAttributeName, AcEnumCollapseEvent, AcFilterableElements, AcFilterableElementsAttributeName } from "@autocode-ts/ac-browser";
 import { AcBuilderCssClassName } from "../consts/ac-builder-css-class-name.const";
 import { AcBuilderApi } from "../core/ac-builder-api";
 import { AcEnumBuilderHook } from "../enums/ac-enum-builder-hook.enum";
@@ -70,7 +70,7 @@ export class AcBuilderPropertiesPanel {
   }
 
   setElementProperties() {
-    this.inputsContainer.innerHTML = "";
+    acClearElement({element:this.inputsContainer});
     this.elementProperties = [];
     if (this.builderApi.selectedElement) {
       const elementName = this.builderApi.selectedElement.name;

@@ -1,8 +1,10 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDelayedCallback, Autocode } from "@autocode-ts/autocode";
 import { IAcScrollableOptions } from "../interfaces/ac-scrollable-options.inteface";
 import { IAcScrollingElement } from "../interfaces/ac-scrolling-element.interface";
 import { AcScrollableAttributeName } from "../consts/ac-scrollable-attribute-name.const";
+import { acClearElement } from "../../../utils/ac-element-functions";
 
 export class AcScrollable {
   private element: HTMLElement;
@@ -248,7 +250,7 @@ export class AcScrollable {
         this.registerScrollingElement({ element: el, height: height, index: index });
       }
     });
-    this.element.innerHTML = '';
+    acClearElement({element:this.element});
     this.render();
   }
 
@@ -291,7 +293,7 @@ export class AcScrollable {
   private render() {
     this.isRendering = true;
     const { startIndex, endIndex } = this.getVisibleRange();
-    this.element.innerHTML = "";
+    acClearElement({element:this.element});
 
     const heights = this.items.length > 0 ? this.heights : this.scrollingElements.map(el => el.height);
 
@@ -372,7 +374,7 @@ export class AcScrollable {
     if (this.resizeObserver) this.resizeObserver.disconnect();
     if (this.elementResizeObserver) this.elementResizeObserver.disconnect();
 
-    this.element.innerHTML = "";
+    acClearElement({element:this.element});
     this.renderedElements = [];
     this.scrollingElements = [];
     this.items = [];

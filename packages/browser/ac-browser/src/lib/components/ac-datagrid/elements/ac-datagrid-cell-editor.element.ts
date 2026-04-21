@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
-import { acAddClassToElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
 import { AcDatagridApi, IAcDatagridColumn, IAcDatagridRow, AC_DATAGRID_HOOK, IAcDatagridCellEditor, IAcDatagridCellElementArgs, IAcDatagridColumnDefinition } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
@@ -21,6 +21,7 @@ export class AcDatagridCellEditor implements IAcDatagridCellEditor {
   }
 
   destroy(): void {
+    acClearElement({element:this.element});
     this.element.remove();
     Object.freeze(this);
     acNullifyInstanceProperties({instance:this});
@@ -53,8 +54,8 @@ export class AcDatagridCellEditor implements IAcDatagridCellEditor {
     else {
       if (this.datagridColumn.columnDefinition.dataType == 'BOOLEAN') {
         this.element = this.datagridCell.element!.ownerDocument.createElement('select');
-        this.element.innerHTML('<option value="true">true</option>');
-        this.element.innerHTML('<option value="false">false</option>')
+        this.element.append('<option value="true">true</option>');
+        this.element.append('<option value="false">false</option>')
       }
       else {
         this.element = this.datagridCell.element!.ownerDocument.createElement('input');

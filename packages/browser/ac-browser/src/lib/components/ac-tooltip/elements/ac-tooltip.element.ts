@@ -1,5 +1,5 @@
 import { AcDelayedCallback, acNullifyInstanceProperties } from "@autocode-ts/autocode";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_TOOLTIP_TAG } from "../_ac-tooltip.export";
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -62,11 +62,12 @@ export class AcTooltip {
 
   destroy(){
     this.delayedCallback.destroy();
+    acClearElement({element:this.tooltipEl});
     acNullifyInstanceProperties({instance:this});
   }
 
   private setContent(content: string | HTMLElement) {
-    this.tooltipEl.innerHTML = '';
+    acClearElement({element:this.tooltipEl});
     if (typeof content === 'string') {
       this.tooltipEl.innerHTML = content;
     } else {

@@ -1,5 +1,5 @@
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcPagination } from "./ac-pagination.element";
 
 import { AcEnumPaginationEvent } from "../enums/ac-enum-pagination-event.enum";
@@ -25,6 +25,7 @@ export class AcPaginationDisplayedRows extends AcElementBase{
 
   render() {
     if (this.pagination) {
+      acClearElement({element:this});
       this.innerHTML = `<b>${this.pagination.startRow}</b> to <b>${this.pagination.endRow}</b> of <b>${this.pagination.totalRows}</b>`;
     }
   }

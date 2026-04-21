@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { dateFormat, parseDateTimeString } from "@autocode-ts/ac-extensions";
-import { acAddClassToElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
 import { IAcDatagridCellRenderer, IAcDatagridCellElementArgs, IAcDatagridColumn, AC_DATAGRID_HOOK, IAcDatagridCell, AcEnumDatagridColumnDataType } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
@@ -13,6 +13,7 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
   public element: HTMLElement = document.createElement('div');
 
   destroy?(): void {
+    acClearElement({element:this.element});
     this.element.remove();
     Object.freeze(this);
   }
@@ -47,6 +48,7 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
 
   render() {
     const value = this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey];
+    acClearElement({element:this.element});
     if(value){
       if(this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Date){
         const parseValue = parseDateTimeString(value);
@@ -63,9 +65,6 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
       else{
         this.element.innerHTML = value;
       }
-    }
-    else{
-      this.element.innerHTML = '';
     }
   }
 

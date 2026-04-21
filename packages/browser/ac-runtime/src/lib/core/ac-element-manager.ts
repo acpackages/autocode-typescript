@@ -15,10 +15,10 @@ export class AcElementManager {
   instance: any;
   private templateEngine!: AcTemplateEngine;
   private uuid!: string;
-  private parentEngine?:AcTemplateEngine;
-  private orgInstance:any;
+  private parentEngine?: AcTemplateEngine;
+  private orgInstance: any;
 
-  constructor({instance,element,parentEngine}:{instance: any, element?: HTMLElement,parentEngine?:AcTemplateEngine}) {
+  constructor({ instance, element, parentEngine }: { instance: any, element?: HTMLElement, parentEngine?: AcTemplateEngine }) {
     this.instance = instance;
     this.orgInstance = instance;
     this.parentEngine = parentEngine;
@@ -51,7 +51,7 @@ export class AcElementManager {
     }
     acElementRegistry.registerInstance({ instance: this.instance, uuid: this.uuid });
     // Initialize template engine with reactive instance
-    this.templateEngine = new AcTemplateEngine({context:this.instance,parentEngine:this.parentEngine});
+    this.templateEngine = new AcTemplateEngine({ context: this.instance, parentEngine: this.parentEngine, elementManager: this });
 
     if (this.metadata.templateUrl) {
       const response = await fetch(this.metadata.templateUrl);
@@ -78,27 +78,26 @@ export class AcElementManager {
     this.render();
 
     // Resolve ViewChild references BEFORE acOnInit
-    AcElementManager.resolveViewChild(this.orgInstance, this.templateEngine);
+    this.resolveViewChild();
 
     await acInitRuntimeElementInstance(this.instance);
   }
 
-  destroy(){
-    if(this.element){
+  destroy() {
+    if (this.element) {
       (this.element as any).acInstance = null;
       this.element.remove();
       clearElement(this.element);
     }
-    if(this.templateEngine){
+    if (this.templateEngine) {
       this.templateEngine.destroy();
     }
     proxyMap.delete(this.orgInstance);
     targetMap.delete(this.orgInstance);
     proxyMap.delete(this.instance);
     targetMap.delete(this.instance);
-    acElementRegistry.removeInstance({uuid:this.uuid});
-    console.log("Destroying element manager",this.metadata.selector);
-    acNullifyInstanceProperties({instance:this});
+    acElementRegistry.removeInstance({ uuid: this.uuid });
+    acNullifyInstanceProperties({ instance: this });
   }
 
   private async loadStyleUrls(urls: string[]) {
@@ -110,44 +109,34 @@ export class AcElementManager {
     this.applyStyles(styles);
   }
 
-  public static resolveViewChild(instance: any, templateEngine: AcTemplateEngine) {
-    const viewChildMetadata = getAcViewChildMetadata(instance.constructor);
+  public resolveViewChild() {
+    const viewChildMetadata = getAcViewChildMetadata(this.orgInstance.constructor);
     if (Object.keys(viewChildMetadata).length > 0) {
-      const childElements = templateEngine.getChildElements();
-      const templates = templateEngine.getTemplates();
+      const templates = this.templateEngine.getTemplates();
 
       for (const [propertyKey, selector] of Object.entries(viewChildMetadata)) {
-        // 1. Try to find in templates first (case-insensitive)
-        const templateName = selector.startsWith('#') ? selector.slice(1).toLowerCase() : selector.toLowerCase();
-        let found = false;
-
-        for (const [name, template] of templates.entries()) {
-          if (name.toLowerCase() === templateName) {
-            instance[propertyKey] = template;
-            found = true;
-            break;
+        if (this.instance[propertyKey] == undefined) {
+          const templateName = selector.startsWith('#') ? selector.slice(1).toLowerCase() : selector.toLowerCase();
+          let found = false;
+          const refElement = this.element.querySelector(`[ac-element-ref=${templateName}]`);
+          if (refElement) {
+            if ((refElement as any).acInstance) {
+              this.instance[propertyKey] = (refElement as any).acInstance;
+            }
+            else {
+              this.instance[propertyKey] = refElement;
+            }
           }
+          for (const [name, template] of templates.entries()) {
+            if (name.toLowerCase() === templateName) {
+              this.instance[propertyKey] = template;
+              found = true;
+              break;
+            }
+          }
+          if (found) continue;
         }
-        if (found) continue;
 
-        // 2. Find matching child element instance or reference (case-insensitive)
-        for (const [el, childInstance] of childElements.entries()) {
-          const elAttrs = Array.from(el.attributes);
-
-          // Check if selector matches a reference attribute (e.g. #myRef)
-          const hasRef = elAttrs.some(attr => attr.name.toLowerCase() === `#${templateName}` || attr.name.toLowerCase() === selector.toLowerCase());
-
-          if (hasRef) {
-            instance[propertyKey] = (el as any).acInstance || childInstance;
-            break;
-          }
-
-          // Check if selector matches tag name (simple fallback)
-          if (el.tagName.toLowerCase() === selector.toLowerCase()) {
-            instance[propertyKey] = (el as any).acInstance || childInstance;
-            break;
-          }
-        }
       }
     }
   }
@@ -158,6 +147,7 @@ export class AcElementManager {
       child.remove();
       (child as any) = null;
     }
+    clearElement(this.element);
     this.element.innerHTML = template;
 
     // Use the preserved templateEngine
@@ -180,7 +170,7 @@ export async function acAutoBootstrap(el: HTMLElement): Promise<any> {
     if (existingId) el.removeAttribute('ac-engine-element');
 
     const instance = new registration.constructor();
-    const manager = new AcElementManager({instance, element:el});
+    const manager = new AcElementManager({ instance, element: el });
     await manager.bootstrap();
     return instance;
   }
@@ -259,13 +249,8 @@ export async function acCheckAndDestroyElementInstances(element: HTMLElement) {
     if (instanceId) {
       const instance = acElementRegistry.getInstance({ uuid: instanceId });
       if (instance) {
-        const manager = (instance as any).__ac_manager__;
-        if (manager && typeof manager.destroy === 'function') {
-          await manager.destroy();
-        } else {
-          // Fallback cleanup if manager is not available
-          if (instance.__ac_destroyed__) return;
-          await acInitRuntimeElementDisconnected(instance);
+        if (instance.__ac_destroyed__) return;
+        await acInitRuntimeElementDisconnected(instance);
           if (typeof instance.acOnDestroy === 'function') {
             instance.acOnDestroy();
           }
@@ -275,8 +260,12 @@ export async function acCheckAndDestroyElementInstances(element: HTMLElement) {
             writable: true,
             configurable: true
           });
-          acElementRegistry.removeInstance({ uuid: instanceId });
+        const manager = (instance as any).__ac_manager__;
+        if (manager && typeof manager.destroy === 'function') {
+          await manager.destroy();
         }
+        acNullifyInstanceProperties({instance:instance});
+        acElementRegistry.removeInstance({ uuid: instanceId });
       }
     }
   }
@@ -288,7 +277,6 @@ export async function acInitRuntimeElementInstance(instance: any) {
       instance.acOnInit();
     }
     catch (ex) {
-      // console.log(instance);
       AC_RUNTIME_CONFIG.logError(ex);
     }
   }

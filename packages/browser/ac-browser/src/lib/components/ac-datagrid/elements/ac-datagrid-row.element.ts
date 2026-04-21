@@ -4,7 +4,7 @@ import { AcDatagridCellElement } from "./ac-datagrid-cell.element";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AC_DATAGRID_CLASS_NAME, AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
 import { AC_DATAGRID_TAG, AcDatagridAttributeName, AC_DATAGRID_HOOK, IAcDatagridRow, IAcDatagridRowHookArgs } from "../_ac-datagrid.export";
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_DATA_MANAGER_HOOK } from "@autocode-ts/autocode";
 
@@ -219,7 +219,7 @@ export class AcDatagridRowElement extends AcElementBase {
   render() {
     if (!this.isRendering) {
       this.isRendering = true;
-      this.container.innerHTML = "";
+      acClearElement({element:this.container});
       for (const cell of this.datagridCells) {
         if (cell.datagridColumn.visible) {
           this.container.append(cell);

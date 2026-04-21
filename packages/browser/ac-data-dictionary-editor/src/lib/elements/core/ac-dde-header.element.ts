@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { acAddClassToElement, acRegisterCustomElement, AcTooltip } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement, AcTooltip } from "@autocode-ts/ac-browser";
 import { AcEnumDDETab } from "../../enums/ac-enum-dde-tab.enum";
 import { AcDDEApi } from "../../core/ac-dde-api";
 import { AcEnumDDEHook } from "../../enums/ac-enum-dde-hooks.enum";
@@ -161,21 +161,21 @@ export class AcDDEHeader extends AcDDEBase {
   }
 
   private setDataDictionaryDropdown() {
-    this.querySelector('.data-dictionary-select-items')!.innerHTML = "";
+    acClearElement({element:this.querySelector('.data-dictionary-select-items')!});
     const createMenuItem: Function = (row: IAcDDEDataDictionary) => {
       const menuItem: HTMLElement = document.createElement('li');
       menuItem.style.cursor = 'pointer';
       acAddClassToElement({ class_: 'dropdown-item', element: menuItem });
       menuItem.innerHTML = row.dataDictionaryName!;
       menuItem.addEventListener('click', () => {
-        this.editorApi.activeDataDictionary = row;
+        this.editorApi!.activeDataDictionary = row;
         // menuItem.callback();
       });
       return menuItem;
     };
-    for (const row of this.editorApi.dataStorage.getDataDictionaries()) {
-      if (this.editorApi.activeDataDictionary == undefined) {
-        this.editorApi.activeDataDictionary = row;
+    for (const row of this.editorApi!.dataStorage.getDataDictionaries()) {
+      if (this.editorApi!.activeDataDictionary == undefined) {
+        this.editorApi!.activeDataDictionary = row;
       }
       this.querySelector('.data-dictionary-select-items')?.append(createMenuItem(row));
     }

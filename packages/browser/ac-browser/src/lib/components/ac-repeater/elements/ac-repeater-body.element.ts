@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { AcScrollable } from "../../ac-scrollable/_ac-scrollable.export";
-import { acAddClassToElement, acGetParentElementWithTag, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acGetParentElementWithTag, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcRepeaterCssClassName } from "../consts/ac-repeater-css-class-name.const";
 import { AcRepeaterApi } from "../core/ac-repeater-api";
 import { AcEnumRepeaterHook } from "../enums/ac-enum-repeater-hooks.enum";
@@ -49,7 +49,7 @@ export class AcRepeaterBodyElement extends AcElementBase {
       row.remove();
       row.destroy();
     }
-    this.innerHTML = '';
+    acClearElement({element:this});
     this.currentRows = [];
   }
 

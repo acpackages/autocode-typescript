@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcElementBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { acClearElement, AcElementBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputElement } from "./ac-dd-input-element.element";
 import { AcDDInputFieldElement } from "./ac-dd-input-field-element.element";
 
@@ -14,7 +14,7 @@ export class AcDDInputFieldBaseElement extends AcElementBase {
     this._ddInput = value;
     const container = this.querySelector('[ac-dd-input-container]');
     if (container) {
-      container.innerHTML = '';
+      acClearElement({element:container as HTMLElement});
       container.append(value);
     }
   }
@@ -27,6 +27,7 @@ export class AcDDInputFieldBaseElement extends AcElementBase {
     this._ddInputLabel = value;
     const container = this.querySelector('[ac-dd-input-label-conatiner]');
     if (container) {
+      acClearElement({element:container as HTMLElement});
       if(this.ddInput && this.ddInput.required){
         value += `<span style="color:red;">*</span>`;
       }
@@ -42,6 +43,7 @@ export class AcDDInputFieldBaseElement extends AcElementBase {
     this._ddInputErrorMessage = value;
     const container = this.querySelector('[ac-dd-input-error-conatiner]') as HTMLElement|null;
     if (container) {
+      acClearElement({element:container});
       container.innerHTML = value;
       if(value == ''){
         container.style.display = 'none';

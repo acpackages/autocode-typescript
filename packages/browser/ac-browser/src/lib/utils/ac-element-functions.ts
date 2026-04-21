@@ -211,7 +211,7 @@ export function acMorphElement({ source, destination, sourceColor, destinationCo
     opacity: "1",
   });
   if (sourceColor) {
-    sourceClone.innerHTML = "";
+    acClearElement({element:sourceClone});
     sourceClone.style.background = `${sourceColor}!important`;
   }
 
@@ -230,7 +230,7 @@ export function acMorphElement({ source, destination, sourceColor, destinationCo
     opacity: "0",
   });
   if (destinationColor) {
-    destClone.innerHTML = "";
+    acClearElement({element:destClone});
     destClone.style.background = `${destinationColor}!important`;
   }
 
@@ -521,7 +521,7 @@ export function acWrapElementWithTag({ element, wrapperTag = "div" }: { element:
   return wrapper;
 }
 
-export function createValidityState(flags: Partial<ValidityState> = {}): any {
+export function acCreateValidityState(flags: Partial<ValidityState> = {}): any {
   return {
     valueMissing: false,
     typeMismatch: false,
@@ -536,4 +536,27 @@ export function createValidityState(flags: Partial<ValidityState> = {}): any {
     valid: Object.keys(flags).length === 0,
     ...flags,
   };
+}
+
+export function acCreateDocumentFragmentFromHtml({html}:{html: string}): DocumentFragment {
+  const template = document.createElement('template');
+  template.innerHTML = html.trim();
+  return template.content.cloneNode(true) as DocumentFragment;
+};
+
+export function acCreateElementFromHtml({html}:{html: string}): HTMLElement | null {
+  const template = document.createElement('template');
+  template.innerHTML = html.trim();
+
+  const el = template.content.firstElementChild;
+  return el instanceof HTMLElement ? el : null;
+}
+
+export function acClearElement({element}:{element:HTMLElement}):void{
+  for(let el of element.childNodes){
+    acClearElement({element:el as HTMLElement});
+    el.remove();
+    (el as any) = null;
+  }
+  element.innerHTML = "";
 }

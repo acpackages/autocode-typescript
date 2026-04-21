@@ -1,6 +1,6 @@
 import { AcElementBase } from "../../../core/_core.export";
 import "../css/ac-repeater-header.css";
-import { acGetParentElementWithTag, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acGetParentElementWithTag, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_REPEATER_TAG } from "../consts/ac-repeater-tag.const";
 import { AcRepeaterApi } from "../core/ac-repeater-api";
 import { AcRepeaterElement } from "./ac-repeater.element";
@@ -278,7 +278,7 @@ export class AcRepeaterHeaderElement extends AcElementBase {
   private refreshFilterRows() {
     const container = (this.filtersPopup ?? this).querySelector('.ac-repeater-filter-rows-container') as HTMLElement;
     if (!container) return;
-    container.innerHTML = '';
+    acClearElement({element:container});
     const filters = this.repeaterApi.dataManager.filterGroup.filters;
     if (filters.length === 0) {
       this.addFilterRow();
@@ -382,7 +382,7 @@ export class AcRepeaterHeaderElement extends AcElementBase {
   private refreshSortRows() {
     const container = (this.sortPopup ?? this).querySelector('.ac-repeater-sort-rows-container') as HTMLElement;
     if (!container) return;
-    container.innerHTML = '';
+    acClearElement({element:container});
     const sorts = this.repeaterApi.dataManager.sortOrder.sortOrders;
     if (sorts.length === 0) {
       this.addSortRow();

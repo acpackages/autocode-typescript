@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AcDatagridCssClassName, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs } from '@autocode-ts/ac-browser';
+import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AcDatagridCssClassName, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement } from '@autocode-ts/ac-browser';
 import { ColDef, createGrid, ModuleRegistry, AllCommunityModule, GridApi, GetRowIdParams, GridOptions, IRowNode, IServerSideGetRowsParams, IServerSideDatasource, SuppressKeyboardEventParams, ClientSideRowModelModule, IServerSideGetRowsRequest, TextFilterModule, NumberFilterModule, DateFilterModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 import { AcDatagridRowSelectionExtensionOnAgGrid } from './ac-datagrid-row-selection-extension-on-ag-grid';
@@ -142,7 +142,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   }
 
   override destroy(): void {
-    this.agGridElement.innerHTML = '';
+    acClearElement({element:this.agGridElement});
+    console.log("Destroying datagrid");
     clearTimeout(this.searchInputTimeout);
 
     if (this.gridApi) {
@@ -482,7 +483,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.setColumnDefs();
     }
     else if (stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.DatagridInit)) {
-      this.datagridApi.datagrid.innerHTML = "";
+      acClearElement({element:this.datagridApi.datagrid});
       this.datagridApi.datagrid.append(this.agGridElement);
     }
     else if (stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.DataChange)) {
@@ -713,6 +714,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     datagrid.afterRowsContainer.classList.add("ac-datagrid-after-rows-container");
 
     this.columnsCustomizerButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
+    acClearElement({element:this.columnsCustomizerButtonContainer});
     this.columnsCustomizerButtonContainer.innerHTML = `<button type="button" class="btn-ac-datagrid-columns-customizer"><ac-svg-icon>${ACI_SVG_SOLID.gear}</ac-svg-icon></button>`;
     (this.columnsCustomizerButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
       this.isColumnsCustomizerOpen = !this.isColumnsCustomizerOpen;
@@ -759,7 +761,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       return;
     }
     const modelType = this.datagridApi.dataManager.type == 'ondemand' ? 'serverSide' : 'clientSide';
-    this.datagridApi.datagrid.innerHTML = "";
+    acClearElement({element:this.datagridApi.datagrid});
     this.datagridApi.datagrid.append(this.agGridElement);
     this.setRowNumbersExtension();
     this.agGridTreeTableExt.init({ agGridExtension: this });
@@ -773,17 +775,17 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.gridApi.destroy();
       (this.gridApi as any) = null;
     }
-    this.agGridElement.innerHTML = "";
+    acClearElement({element:this.agGridElement});
     this.registerModules();
     this.gridApi = createGrid(this.agGridElement, this.gridOptions);
     this.agGridTreeTableExt.gridApi = this.gridApi;
     const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
     if (pagingPanel) {
-      this.leftFooterContainer!.innerHTML = '';
+      acClearElement({element:this.leftFooterContainer});
       this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-page-summary-panel')!);
       this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-row-summary-panel')!);
       this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-page-size')!);
-      pagingPanel.innerHTML = '';
+      acClearElement({element:pagingPanel});
       this.leftFooterContainer!.append(this.addButtonContainer!);
       this.leftFooterContainer!.append(this.searchInputContainer!);
       this.rightFooterContainer!.append(this.columnsCustomizerButtonContainer!);

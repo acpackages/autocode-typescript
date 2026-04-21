@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { acAddClassToElement, acCloneEvent, acListenElementEvents, acRegisterCustomElement, acRemoveClassFromElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acCloneEvent, acListenElementEvents, acRegisterCustomElement, acRemoveClassFromElement } from "../../../utils/ac-element-functions";
 import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AC_DATAGRID_EVENT } from "../consts/ac-datagrid-event.const";
@@ -99,7 +99,7 @@ export class AcDatagridCellElement extends AcElementBase {
     //   });
     // }
     if (this.container) {
-      this.container.innerHTML = '';
+      acClearElement({element:this.container});
       if (this.container.parentNode) {
         this.container.remove();
       }
@@ -127,7 +127,7 @@ export class AcDatagridCellElement extends AcElementBase {
   enterEditMode() {
     this.initEditorElement();
     if (this.cellEditor) {
-      this.container.innerHTML = "";
+      acClearElement({element:this.container});
       this.container.append(this.cellEditor.getElement());
       this.activeComponent = this.cellEditor;
     }
@@ -141,7 +141,7 @@ export class AcDatagridCellElement extends AcElementBase {
     this.isEditing = false;
     acRemoveClassFromElement({ class_: AcDatagridCssClassName.acDatagridCellEditing, element: this });
     if (this.cellEditor) {
-      this.container.innerHTML = "";
+      acClearElement({element:this.container});
       this.cellRenderer.refresh({ datagridApi: this.datagridApi, datagridCell: this.datagridCell });
       this.activeComponent = this.cellRenderer;
       this.container.append(this.cellRenderer.getElement());

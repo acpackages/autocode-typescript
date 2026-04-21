@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcElementBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { acClearElement, AcElementBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputElement, AcDDInputFieldElement } from "@autocode-ts/ac-data-dictionary-components";
 import { Autocode } from "@autocode-ts/autocode";
 
@@ -16,7 +16,7 @@ export class AppInputFieldElement extends AcElementBase {
     value.setAttribute('name',Autocode.uuid());
     const container: HTMLElement = this.querySelector('[ac-dd-input-container]')!;
     if (container) {
-      container.innerHTML = '';
+      acClearElement({element:container});
       container.append(value);
     }
     this.setDDInputStyle();
@@ -43,6 +43,7 @@ export class AppInputFieldElement extends AcElementBase {
           value += `<span class="text-danger">*</span>`;
         }
       }
+      acClearElement({element:container as HTMLElement});
       container.innerHTML = value;
     }
   }
@@ -55,6 +56,7 @@ export class AppInputFieldElement extends AcElementBase {
     this._ddInputErrorMessage = value;
     const container = this.querySelector('[ac-dd-input-error-container]') as HTMLElement | null;
     if (container) {
+      acClearElement({element:container});
       container.innerHTML = value;
       if (value == '') {
         container.style.display = 'none';

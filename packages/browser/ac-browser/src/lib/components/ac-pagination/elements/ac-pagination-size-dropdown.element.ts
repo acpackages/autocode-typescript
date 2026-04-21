@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcPagination, AcEnumPaginationEvent } from "../_ac-pagination.export";
 import { AcPaginationCssClassName } from "../consts/ac-pagination-css-class-name.const";
 
@@ -24,12 +24,12 @@ export class AcPaginationSizeDropdown extends AcElementBase {
     super.init();
     acAddClassToElement({ class_: AcPaginationCssClassName.acPaginationPageSizeSelect, element: this.selectInput });
     this.setSelectDropdownValues();
-    this.innerHTML = "";
+    acClearElement({element:this});
     this.append(this.selectInput);
   }
 
   setSelectDropdownValues() {
-    this.selectInput.innerHTML = "";
+    acClearElement({element:this.selectInput});
     let optionsString = '';
     if (this.pagination) {
       for (const pageSize of this.pagination.pageSizes) {

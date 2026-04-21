@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcRepeaterAttributeName } from "../consts/ac-repeater-attribute-name.const";
 import { AcRepeaterCssClassName } from "../consts/ac-repeater-css-class-name.const";
 import { AcRepeaterApi } from "../core/ac-repeater-api";
@@ -113,7 +113,7 @@ export class AcRepeaterRowElement extends AcElementBase {
   render() {
     this.clearRenderingElement();
     if (this.repeaterApi.rowRendererFunction) {
-      this.innerHTML = '';
+      acClearElement({element:this});
       const args: IAcRepeaterRowRendererElementArgs = {
         rowElement: this,
         row: this.repeaterRow

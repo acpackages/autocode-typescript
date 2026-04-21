@@ -1,11 +1,14 @@
-interface IAcElementRegistration {
+import { AcElementManager } from "./element.base";
+
+// Global registry for AC elements
+interface ElementRegistration {
     selector: string;
     constructor: any;
     metadata: any;
 }
 
 class AcElementRegistry {
-    private elements = new Map<string, IAcElementRegistration>();
+    private elements = new Map<string, ElementRegistration>();
     private instances = new Map<string, any>()
 
     register(selector: string, constructor: any, metadata: any) {
@@ -23,7 +26,7 @@ class AcElementRegistry {
         });
     }
 
-    get(selector: string): IAcElementRegistration | undefined {
+    get(selector: string): ElementRegistration | undefined {
         const normalizedSelector = this.normalizeSelector(selector);
         return this.elements.get(normalizedSelector);
     }
@@ -34,19 +37,19 @@ class AcElementRegistry {
         }
     }
 
-    getByTagName(tagName: string): IAcElementRegistration | undefined {
+    getByTagName(tagName: string): ElementRegistration | undefined {
         // Convert tag name to selector format
         // e.g., "app-child-counter" -> "app-child-counter"
         return this.elements.get(tagName.toLowerCase());
     }
 
-    getByAttribute(attrName: string): IAcElementRegistration | undefined {
+    getByAttribute(attrName: string): ElementRegistration | undefined {
         // Convert attribute to selector format
         // e.g., "app-child-counter" -> "app-child-counter"
         return this.elements.get(attrName.toLowerCase());
     }
 
-    getByElement(el: HTMLElement): IAcElementRegistration | undefined {
+    getByElement(el: HTMLElement): ElementRegistration | undefined {
         const tagName = el.tagName.toLowerCase();
         let registration = this.getByTagName(tagName);
 
@@ -75,7 +78,7 @@ class AcElementRegistry {
         return trimmed.toLowerCase();
     }
 
-    getAllElements(): IAcElementRegistration[] {
+    getAllElements(): ElementRegistration[] {
         return Array.from(this.elements.values());
     }
 

@@ -59,17 +59,6 @@ export class AcDatagridTree {
 
   setTreeChildrenRows(){
     this.hasChildren = false;
-    // if(this.datagridApi.isTreeData && this.datagridApi.treeDataParentKey){
-    //   this.treeDatagridContainer.innerHTML = "";
-    //   const parentValue = this.datagridRow.data[this.datagridApi.treeDataParentKey];
-    //   const treeChildrenDatagridRows =this.datagridApi.dataSource.getTreeChildrenDatagridRows({parentValue:parentValue});
-    //   this.hasChildren = treeChildrenDatagridRows.length > 0;
-    //   for(const treeChild of treeChildrenDatagridRows){
-    //     // treeChild.treeDepth = this.datagridRow.treeDepth + 1;
-    //     const datagridRow = new AcDatagridRowElement({ datagridApi: this.datagridApi, datagridRow: treeChild });
-    //     this.treeDatagridContainer.append(datagridRow.rowWrapper);
-    //   }
-    // }
   }
 
   toggle(){

@@ -234,7 +234,6 @@ export class AcTiptapEditorInput extends AcInputBase {
 
   override connectedCallback() {
     super.connectedCallback();
-    console.dir(this);
 
     this.innerHTML = this.setEditorUi();
 

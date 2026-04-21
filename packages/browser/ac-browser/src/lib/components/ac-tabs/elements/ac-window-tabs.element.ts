@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcContext, AcEnumContextEvent } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement, acSwapElementsWithAnimation } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement, acSwapElementsWithAnimation } from "../../../utils/ac-element-functions";
 import { AcDraggableApi } from "../../ac-draggable/core/ac-draggable-api";
 import { AcSortable } from "../../ac-draggable/elements/ac-sortable.element";
 import { AcEnumDraggableEvent } from "../../ac-draggable/enums/ac-enum-draggable-event.enum";
@@ -77,6 +77,7 @@ export class AcWindowTabs extends AcElementBase {
 
   override async init() {
     super.init();
+    acClearElement({element:this});
     this.innerHTML = `<div class="ac-window-tabs-container"></div><button type="button" class="ac-window-tab-add-button">+</button>`;
     const addButton = this.querySelector('.ac-window-tab-add-button');
     addButton?.addEventListener('click', () => {
@@ -123,6 +124,7 @@ export class AcWindowTabs extends AcElementBase {
       const iconElement:HTMLElement = tab.element!.querySelector('.ac-window-tab-icon') as HTMLElement;
       const titleElement:HTMLElement = tab.element!.querySelector('.ac-window-tab-title') as HTMLElement;
       if(tab.icon){
+        acClearElement({element:iconElement});
         iconElement.innerHTML = tab.icon;
         iconElement.style.display = '';
       }
@@ -140,6 +142,7 @@ export class AcWindowTabs extends AcElementBase {
         closeElement.style.display = 'none';
       }
       if(titleElement && tab.title){
+        acClearElement({element:titleElement});
         titleElement.innerHTML = tab.title;
       }
     }
@@ -182,7 +185,7 @@ export class AcWindowTabs extends AcElementBase {
   public setTabs({ tabs }: { tabs: IAcWindowTab[] }): void {
     const tabContainer = this.querySelector('.ac-window-tabs-container');
     if (tabContainer) {
-      tabContainer.innerHTML = '';
+      acClearElement({element:tabContainer as HTMLElement});
       tabs.forEach((tab, index) => {
         this.addTab({ tab });
       });

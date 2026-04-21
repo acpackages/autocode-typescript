@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { acClearElement, AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputElement } from "./ac-dd-input-element.element";
 import { AcDDInputFieldBaseElement } from "./ac-dd-input-field-base-element.element";
 import { AcDDInputManager } from "../core/ac-dd-input-manager";
@@ -225,7 +225,7 @@ export class AcDDInputFieldElement extends AcInputBase {
 
   override init(): void {
     super.init();
-    this.innerHTML = "";
+    acClearElement({element:this});
     this.append(this.ddInputField);
     this.ddInputField.ddInput = this.ddInput;
     this.setDDInput();
@@ -250,7 +250,7 @@ export class AcDDInputFieldElement extends AcInputBase {
       }
       const container = this.querySelector('ac-dd-input-container');
       if (container) {
-        container.innerHTML = '';
+        acClearElement({element:container as HTMLElement});
         container.append(this.ddInput);
       }
       this.setDDInputClass();

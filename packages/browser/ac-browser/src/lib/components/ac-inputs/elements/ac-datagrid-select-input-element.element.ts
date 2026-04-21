@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcInputBase } from "../core/ac-input-base";
 import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
-import { acCloneEvent, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acCloneEvent, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_EVENT, AcDatagrid, IAcDatagridCell } from "../../_components.export";
 import { AcEnumConditionOperator, AcFilterGroup, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 import { createPopper, Instance as PopperInstance, Placement } from '@popperjs/core';
@@ -322,6 +322,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
   override init() {
     super.init();
+    acClearElement({element:this.addNewContainer});
     this.addNewContainer.innerHTML = `<div><button type="button">Add New Row</button></div>`;
     this.addNewButton = this.addNewContainer.querySelector('button');
     this.addNewButton.style.padding = "4px 8px";
@@ -337,7 +338,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     if (!this.hasAttribute('value-key')) {
       this.valueKey = 'value';
     }
-    this.innerHTML = '';
+    acClearElement({element:this});
     this.append(this.textInputElement);
     this.textInputElement.type = "text";
     this.textInputElement.autocomplete = "off";

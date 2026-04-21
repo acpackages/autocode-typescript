@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
@@ -23,6 +22,8 @@ export class AcDatagrid extends AcElementBase {
     super();
   }
 
+
+
   override destroy(): void {
     this.datagridApi.destroy();
     super.destroy();
@@ -35,41 +36,41 @@ export class AcDatagrid extends AcElementBase {
     acAddClassToElement({ class_: AcDatagridCssClassName.acDatagrid, element: this });
 
     // Create container for header + body (enables horizontal scroll sync)
-    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridContainer, element: this.containerElement });
-    this.containerElement.style.display = 'flex';
-    this.containerElement.style.flexDirection = 'column';
-    this.containerElement.style.flex = '1';
-    this.containerElement.style.overflow = 'hidden';
-    this.containerElement.style.position = 'relative';
+    // acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridContainer, element: this.containerElement });
+    // this.containerElement.style.display = 'flex';
+    // this.containerElement.style.flexDirection = 'column';
+    // this.containerElement.style.flex = '1';
+    // this.containerElement.style.overflow = 'hidden';
+    // this.containerElement.style.position = 'relative';
 
     // Create header
-    this.datagridHeader = new AcDatagridHeader();
-    this.datagridHeader.datagridApi = this.datagridApi;
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeader, element: this.datagridHeader });
+    // this.datagridHeader = new AcDatagridHeader();
+    // this.datagridHeader.datagridApi = this.datagridApi;
+    // acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeader, element: this.datagridHeader });
 
-    // Create body
-    this.datagridBody = new AcDatagridBody();
-    this.datagridBody.datagridApi = this.datagridApi;
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridBody, element: this.datagridBody });
-    this.datagridBody.style.flex = '1';
-    this.datagridBody.style.overflow = 'auto';
+    // // Create body
+    // this.datagridBody = new AcDatagridBody();
+    // this.datagridBody.datagridApi = this.datagridApi;
+    // acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridBody, element: this.datagridBody });
+    // this.datagridBody.style.flex = '1';
+    // this.datagridBody.style.overflow = 'auto';
 
-    // Create footer
-    this.datagridFooter = new AcDatagridFooter();
-    this.datagridFooter.datagridApi = this.datagridApi;
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridFooter, element: this.datagridFooter });
+    // // Create footer
+    // this.datagridFooter = new AcDatagridFooter();
+    // this.datagridFooter.datagridApi = this.datagridApi;
+    // acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridFooter, element: this.datagridFooter });
 
-    // Assemble DOM
-    this.containerElement.append(this.datagridHeader);
-    this.containerElement.append(this.datagridBody);
-    this.containerElement.append(this.afterRowsContainer);
-    this.append(this.containerElement);
-    this.append(this.datagridFooter);
+    // // Assemble DOM
+    // this.containerElement.append(this.datagridHeader);
+    // this.containerElement.append(this.datagridBody);
+    // this.containerElement.append(this.afterRowsContainer);
+    // this.append(this.containerElement);
+    // this.append(this.datagridFooter);
 
-    // Initialize virtual scrolling if enabled
-    if (this.datagridApi.useVirtualScrolling) {
-      this.datagridBody.setVirtualScrolling();
-    }
+    // // Initialize virtual scrolling if enabled
+    // if (this.datagridApi.useVirtualScrolling) {
+    //   this.datagridBody.setVirtualScrolling();
+    // }
 
     // Fire init hook
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.DatagridInit });

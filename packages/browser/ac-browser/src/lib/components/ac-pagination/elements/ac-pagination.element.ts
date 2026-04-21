@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDataManager, AC_DATA_MANAGER_EVENT } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_PAGINATION_TAG, AcEnumPaginationEvent, AcPaginationDisplayedRows } from "../_ac-pagination.export";
 import { AcPaginationCssClassName } from "../consts/ac-pagination-css-class-name.const";
 import { IAcPaginationPageChangeEvent, IAcPaginationPageSizeChangeEvent } from "../interfaces/_interfaces.export";
@@ -101,7 +101,7 @@ export class AcPagination extends AcElementBase {
     this.sizeDropdown.pagination = this;
 
     acAddClassToElement({ class_: AcPaginationCssClassName.acPagination, element: this });
-    this.innerHTML = "";
+    acClearElement({element:this});
 
     this.append(this.navigationButtons);
     this.append(this.displayedRows);

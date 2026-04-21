@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_SVG_ICON_TAG } from "../_ac-svg-icon.element";
 
 export class AcSvgIcon extends AcElementBase {
@@ -16,6 +16,7 @@ export class AcSvgIcon extends AcElementBase {
   }
   set svgCode(value:string){
     this._svgCode = value;
+    acClearElement({element:this});
     this.innerHTML = value;
   }
 
@@ -23,7 +24,6 @@ export class AcSvgIcon extends AcElementBase {
     super.init();
     if (!this.shadowRoot) {
       const shadow = this.attachShadow({ mode: 'open' });
-
       shadow.innerHTML = `
       <style>
         :host {
@@ -123,11 +123,6 @@ export class AcSvgIcon extends AcElementBase {
     svg.style.width = '100%';
     svg.style.height = '100%';
     svg.style.display = 'block';
-  }
-
-  override destroy(): void {
-    this.innerHTML = '';
-    super.destroy();
   }
 
   private async loadFromSrc(url: string): Promise<void> {

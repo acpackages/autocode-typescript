@@ -1,5 +1,5 @@
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 
 export class AcFormFieldErrorMessage extends AcElementBase {
   private originalMessageHtml = "";
@@ -13,6 +13,7 @@ export class AcFormFieldErrorMessage extends AcElementBase {
   setError({message,show = true}:{message?:string,show?:boolean}){
     if(show){
       this.style.display = "block";
+      acClearElement({element:this});
       if(this.originalMessageHtml){
         this.innerHTML = this.originalMessageHtml;
       }

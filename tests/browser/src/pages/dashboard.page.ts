@@ -1,12 +1,17 @@
-import { AcElement } from "@autocode-ts/ac-runtime";
+import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
+import { AppHeaderElement } from "src/_app.export";
 
 @AcElement({
   selector: 'dashboard-page',
   template: `
   <div class="app-page">
+    <ac-container ac:if="showHeader">
+
       <app-header
+      #appHeader
         [title]="'Dashboard'"
       ></app-header>
+    </ac-container>
 </div>
   `,
   styles: `
@@ -22,4 +27,12 @@ import { AcElement } from "@autocode-ts/ac-runtime";
   `
 })
 export class DashboardPage {
+  @AcViewChild('appHeader') appHeader?:AppHeaderElement;
+  showHeader:boolean = false;
+  acOnInit(){
+    setTimeout(() => {
+      this.showHeader = true;
+      console.log(this);
+    }, 1500);
+  }
 }
