@@ -761,8 +761,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       return;
     }
     const modelType = this.datagridApi.dataManager.type == 'ondemand' ? 'serverSide' : 'clientSide';
-    acClearElement({element:this.datagridApi.datagrid});
-    this.datagridApi.datagrid.append(this.agGridElement);
+
     this.setRowNumbersExtension();
     this.agGridTreeTableExt.init({ agGridExtension: this });
     this.gridOptions['rowModelType'] = modelType;
@@ -775,9 +774,10 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.gridApi.destroy();
       (this.gridApi as any) = null;
     }
-    acClearElement({element:this.agGridElement});
+    this.setAgGridElement();
     this.registerModules();
     this.gridApi = createGrid(this.agGridElement, this.gridOptions);
+    console.log(this.gridApi);
     this.agGridTreeTableExt.gridApi = this.gridApi;
     const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
     if (pagingPanel) {
@@ -799,6 +799,16 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     this.agGridSelectionExt.init({ agGridExtension: this });
     if (this.state) {
       this.setState({ state: this.state });
+    }
+  }
+
+  private setAgGridElement(){
+    if(this.datagridApi && this.datagridApi.datagrid.isConnected){
+      acClearElement({element:this.datagridApi.datagrid});
+      this.datagridApi.datagrid.append(this.agGridElement);
+    }
+    else{
+      this.delayedCallback.add({callback:()=>{},duration:50,key:'setAgGridElement'});
     }
   }
 

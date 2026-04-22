@@ -7,10 +7,10 @@ import { App, SIDEBAR_NAV } from '../_app.export';
   template: `
         <div class="sidebar-header pt-1 pb-2">
             <div class="sidebar-brand">
-               <img src="assets/images/logo/logo-full-white.svg" class="sidebar-brand-full mt-1" height="27" name="logo"
+               <img src="assets/images/logo/logo-full-white.svg" class="sidebar-brand-full mt-1" height="23" name="logo"
                 title="Accountea" />
             </div>
-            <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close"></button>
+            <i class="fa fa-bars pt-1 d-none"></i>
         </div>
         <ac-filterable-elements class="flex-fill d-flex" style="flex-direction:column;">
             <div class="px-2 pt-2">

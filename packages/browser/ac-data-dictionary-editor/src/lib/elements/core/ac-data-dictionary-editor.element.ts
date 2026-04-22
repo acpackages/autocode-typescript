@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { acAddClassToElement, AcDatagridExtensionManager, AcElementBase, acInit, acRegisterCustomElement, acSetElementAttributes } from '@autocode-ts/ac-browser';
-import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
+import { AgGridOnAcDatagrid, initAgGrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDataDictionaryEditorHeader } from "./ac-data-dictionary-editor-header.element";
 import { AcDDERelationshipsDatagrid } from "../datagrid/ac-dde-relationships-datagrid.element";
 import { AcDDEFunctionsDatagrid } from "../datagrid/ac-dde-functions-datagrid.element";
@@ -43,14 +43,15 @@ export class AcDataDictionaryEditor extends AcElementBase{
     super.init();
     this.editorApi = new AcDDEApi({editor:this});
 
-    AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
+    // initAgGrid();
+    // AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
 
     this.header = new AcDataDictionaryEditorHeader({ editorApi: this.editorApi });
 
     const hookArgs: IAcDDEHookArgs = {
       editorApi: this.editorApi,
     };
-    acInit({element:this});
+    // acInit({element:this});
 
     this.editorApi.hooks.execute({ hook: AcEnumDDEHook.EditorInit, args: hookArgs });
     this.editorApi.hooks.subscribe({hook:AcEnumDDEHook.EditorTabChange,callback:(args:IAcDDEHookArgs)=>{

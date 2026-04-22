@@ -38,6 +38,7 @@ export class AcDDETablesDatagrid {
         this.setTablesData();
       }
     });
+    console.log(this);
   }
 
   initDatagrid() {

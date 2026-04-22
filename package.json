@@ -34,6 +34,7 @@
     "build:autocode": "nx run autocode:build",
     "dev:angular": "npx nx serve test-angular",
     "dev:browser": "npx nx serve test-browser",
+    "dev:browser:old": "npx nx serve test-browser-legacy",
     "dev:node": "npx nx serve test-node",
     "gen:declaration:json": "node scripts/generate-declaration-json.js"
   },

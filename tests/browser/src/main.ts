@@ -41,7 +41,7 @@ import {
 
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
+import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, AgGridOnAcDatagrid, initAgGrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { AcDatagridExtensionManager, acInit } from '@autocode-ts/ac-browser';
 import { AcDataDictionary } from '@autocode-ts/ac-data-dictionary';
 import { dataDictionaryJson as actDataDictionary } from '../../data/accountea-pro';
@@ -70,6 +70,7 @@ AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['domLayout'] = 'normal';
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['paginationPageSize'] = 50;
 
 acInit();
+initAgGrid();
 AcDataDictionary.registerDataDictionary({ jsonData: actDataDictionary });
     AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
 
