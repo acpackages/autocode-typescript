@@ -151,6 +151,7 @@ export class AcInputBase extends AcElementBase {
   }
 
   elementInternals: ElementInternals;
+  override autoDestroyOnDisconnect: boolean = false;
   hooks: AcHooks = new AcHooks();
   inputElement: HTMLElement | any = this.ownerDocument.createElement('input');
   isInputElementValidHtmlInput: boolean = true;

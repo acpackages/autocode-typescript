@@ -4,8 +4,8 @@
 import { stringIsJson } from "@autocode-ts/ac-extensions";
 import { IAcOnDemandRequestArgs, AcDataManager, AcEnumConditionOperator, IAcDataRow, AC_DATA_MANAGER_HOOK } from "@autocode-ts/autocode";
 import { createPopper } from '@popperjs/core';
-import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AcScrollable } from "../../_components.export";
+import { acClearElement, acIsElementVisibleInContainer, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+// import { AcScrollable } from "../../_components.export";
 import { AcInputBase, AC_INPUT_TAG } from "../_ac-inputs.export";
 
 export class AcSelectInputElement extends AcInputBase {
@@ -98,7 +98,7 @@ export class AcSelectInputElement extends AcInputBase {
   protected listEl!: HTMLDivElement;
   protected maxDropdownHeight = 300;
   protected optionHeight = 32;
-  protected scrollable!: AcScrollable;
+  // protected scrollable!: AcScrollable;
   protected batchSize = 20;
   protected loadedCount = 0;
   protected addOptionText = "";
@@ -115,6 +115,15 @@ export class AcSelectInputElement extends AcInputBase {
     this.dataManager.hooks.subscribe({
       hook: AC_DATA_MANAGER_HOOK.DataChange, callback: () => {
         this.setValueLabel();
+      }
+    });
+  }
+
+  private addNewOption(label: string) {
+    this.addOptionCallback({
+      query: label, callback: (option: any) => {
+        this.dataManager.addRow({ data: option });
+        this.selectOption(option);
       }
     });
   }
@@ -258,25 +267,19 @@ export class AcSelectInputElement extends AcInputBase {
     return el;
   }
 
-  private addNewOption(label: string) {
-    this.addOptionCallback({
-      query: label, callback: (option: any) => {
-        this.dataManager.addRow({ data: option });
-        this.selectOption(option);
-      }
-    });
-  }
-
   closeDropdown() {
     if (this.popper) {
       this.popper.destroy();
       this.popper = undefined;
     }
     this.dropdownContainer.style.display = "none";
-    if (this.dropdownContainer.parentNode) {
-      this.dropdownContainer.remove();
-    }
+    this.dropdownContainer.remove();
     this.isDropdownOpen = false;
+  }
+
+  destroy(): void {
+    this.closeDropdown();
+    super.destroy();
   }
 
   private ensureHighlightInView() {
@@ -330,10 +333,10 @@ export class AcSelectInputElement extends AcInputBase {
 
     this.listEl = this.ownerDocument.createElement("div");
     this.dropdownContainer.appendChild(this.listEl);
-    this.scrollable = new AcScrollable({
-      element: this.listEl,
-      options: { bufferCount: 3, elementHeight: this.optionHeight }
-    });
+    // this.scrollable = new AcScrollable({
+    //   element: this.listEl,
+    //   options: { bufferCount: 3, elementHeight: this.optionHeight }
+    // });
     this.attachEvents();
   }
 
@@ -347,7 +350,7 @@ export class AcSelectInputElement extends AcInputBase {
       this.listEl.appendChild(rowElement);
     }
     this.loadedCount += newRows.length;
-    this.scrollable.registerExistingElements();
+    // this.scrollable.registerExistingElements();
     this.popper?.update();
   }
 
@@ -395,8 +398,8 @@ export class AcSelectInputElement extends AcInputBase {
 
   private async renderVirtualList() {
     acClearElement({element:this.listEl});
-    this.scrollable.pause();
-    this.scrollable.clearAll();
+    // this.scrollable.pause();
+    // this.scrollable.clearAll();
     let rows: IAcDataRow[] = [];
     const startIndex = 0;
     let rowsCount = -1;
@@ -420,12 +423,29 @@ export class AcSelectInputElement extends AcInputBase {
       this.addOptionText = term;
       this.listEl.appendChild(this.buildAddOptionElement(term));
     }
-    this.scrollable.resume();
-    this.scrollable.registerExistingElements();
+    // this.scrollable.resume();
+    // this.scrollable.registerExistingElements();
 
     this.popper?.update();
 
     this.delayedCallback.add({ callback: () => this.applyHighlightStyles() });
+  }
+
+  private scrollToIndex(index: number) {
+    if (index < 0) return;
+    const item = this.listEl.querySelector(`[data-option-index="${index}"]`);
+    if(item && !acIsElementVisibleInContainer({element:item as HTMLElement,container:this.dropdownContainer})){
+      item.scrollIntoView();
+    }
+  }
+
+  private selectOption(option: any) {
+    const label = typeof option === "object" ? option[this.labelKey] : option;
+    const value = typeof option === "object" ? option[this.valueKey] : option;
+    this.textInputElement.value = String(label);
+    this.value = value;
+    this.closeDropdown();
+    this.textInputElement.dispatchEvent(new Event("change"));
   }
 
   setValueLabel() {
@@ -440,20 +460,6 @@ export class AcSelectInputElement extends AcInputBase {
         // }];
       }
     }
-  }
-
-  private scrollToIndex(index: number) {
-    if (index < 0) return;
-    this.scrollable.scrollTo({ index });
-  }
-
-  private selectOption(option: any) {
-    const label = typeof option === "object" ? option[this.labelKey] : option;
-    const value = typeof option === "object" ? option[this.valueKey] : option;
-    this.textInputElement.value = String(label);
-    this.value = value;
-    this.closeDropdown();
-    this.textInputElement.dispatchEvent(new Event("change"));
   }
 
   toggleDropdown() {

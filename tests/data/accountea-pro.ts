@@ -7,7 +7,7 @@ export const dataDictionaryJson = {
       "tableColumns": {
         "access_group_id": {
           "columnName": "access_group_id",
-          "columnType": "UUID",
+          "columnType": "AUTO_INCREMENT",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
@@ -6859,6 +6859,26 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Remarks"
+            }
+          }
+        },
+        "media_for": {
+          "columnName": "media_for",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "For"
+            }
+          }
+        },
+        "media_flag": {
+          "columnName": "media_flag",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Flag"
             }
           }
         }
@@ -25917,6 +25937,7 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_id"
@@ -25924,6 +25945,7 @@ export const dataDictionaryJson = {
         "accountee_image_media_id": {
           "columnName": "accountee_image_media_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_image_media_id"
@@ -25931,6 +25953,7 @@ export const dataDictionaryJson = {
         "accountee_name": {
           "columnName": "accountee_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_name"
@@ -25938,6 +25961,7 @@ export const dataDictionaryJson = {
         "financial_year_end": {
           "columnName": "financial_year_end",
           "columnType": "DATE",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "financial_year_end"
@@ -25945,6 +25969,7 @@ export const dataDictionaryJson = {
         "financial_year_start": {
           "columnName": "financial_year_start",
           "columnType": "DATE",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "financial_year_start"
@@ -25952,6 +25977,7 @@ export const dataDictionaryJson = {
         "is_active": {
           "columnName": "is_active",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "is_active"
@@ -25959,6 +25985,7 @@ export const dataDictionaryJson = {
         "accountee_remarks": {
           "columnName": "accountee_remarks",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_remarks"
@@ -25966,6 +25993,7 @@ export const dataDictionaryJson = {
         "accountee_type": {
           "columnName": "accountee_type",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_type"
@@ -25973,6 +26001,7 @@ export const dataDictionaryJson = {
         "email_addresses": {
           "columnName": "email_addresses",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "email_addresses"
@@ -25980,6 +26009,7 @@ export const dataDictionaryJson = {
         "phone_numbers": {
           "columnName": "phone_numbers",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "phone_numbers"
@@ -25987,6 +26017,7 @@ export const dataDictionaryJson = {
         "addresses": {
           "columnName": "addresses",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "addresses"
@@ -25994,6 +26025,7 @@ export const dataDictionaryJson = {
         "fax_numbers": {
           "columnName": "fax_numbers",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "fax_numbers"
@@ -26001,6 +26033,7 @@ export const dataDictionaryJson = {
         "websites": {
           "columnName": "websites",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "websites"
@@ -26008,6 +26041,7 @@ export const dataDictionaryJson = {
         "bank_accounts": {
           "columnName": "bank_accounts",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "bank_accounts"
@@ -26015,6 +26049,7 @@ export const dataDictionaryJson = {
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "currency_code"
@@ -26022,6 +26057,7 @@ export const dataDictionaryJson = {
         "legal_identifier": {
           "columnName": "legal_identifier",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "legal_identifier"
@@ -26029,6 +26065,7 @@ export const dataDictionaryJson = {
         "accountee_taxing_type": {
           "columnName": "accountee_taxing_type",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "accountee_taxing_type"
@@ -26036,6 +26073,7 @@ export const dataDictionaryJson = {
         "is_remote": {
           "columnName": "is_remote",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_accountees",
           "columnSourceOriginalColumn": "is_remote"

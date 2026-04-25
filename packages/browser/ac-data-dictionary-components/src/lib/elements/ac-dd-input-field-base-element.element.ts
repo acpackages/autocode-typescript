@@ -54,6 +54,8 @@ export class AcDDInputFieldBaseElement extends AcElementBase {
     }
   }
 
+  override autoDestroyOnDisconnect: boolean = false;
+
   ddInputFieldElement!:AcDDInputFieldElement;
 
   override init() {

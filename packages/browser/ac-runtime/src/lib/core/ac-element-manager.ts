@@ -19,13 +19,13 @@ export class AcElementManager {
   private orgInstance: any;
 
   constructor({ instance, element, parentEngine }: { instance: any, element?: HTMLElement, parentEngine?: AcTemplateEngine }) {
-    this.instance = instance;
     this.orgInstance = instance;
+    this.instance = acMakeReactive(instance);
     this.parentEngine = parentEngine;
     this.instance['__ac_manager__'] = this;
-    this.metadata = (instance.constructor as any)[AC_ELEMENT_METADATA_KEY];
+    this.metadata = (this.orgInstance.constructor as any)[AC_ELEMENT_METADATA_KEY];
     if (!this.metadata) {
-      throw new Error(`No metadata found for ${instance.constructor.name}. Did you forget @AcElement decorator?`);
+      throw new Error(`No metadata found for ${this.orgInstance.constructor.name}. Did you forget @AcElement decorator?`);
     }
     if (element) {
       this.element = element;
@@ -43,8 +43,7 @@ export class AcElementManager {
         throw new Error(`Selector ${this.metadata.selector} not found for element ${this.instance.constructor.name}`);
       }
     }
-    // Initialize reactivity
-    this.instance = acMakeReactive(this.instance);
+    // Initialize reactivity (already done in constructor)
     const uuid = acSetEngineElementEngineUUID(this.element, this.instance);
     if (uuid) {
       this.uuid = uuid;
@@ -147,7 +146,6 @@ export class AcElementManager {
       child.remove();
       (child as any) = null;
     }
-    clearElement(this.element);
     this.element.innerHTML = template;
 
     // Use the preserved templateEngine
@@ -263,7 +261,7 @@ export async function acCheckAndDestroyElementInstances(element: HTMLElement) {
         const manager = (instance as any).__ac_manager__;
         if (manager && typeof manager.destroy === 'function') {
           await manager.destroy();
-        }
+        } 
         acNullifyInstanceProperties({instance:instance});
         acElementRegistry.removeInstance({ uuid: instanceId });
       }

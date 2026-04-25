@@ -10,12 +10,11 @@ import {
   AcDataDictionaryEditor,
   AcDDEApi
 } from '@autocode-ts/ac-data-dictionary-editor';
-import { AcCodeGeneratorDDEExtension } from '@autocode-ts/ac-dde-code-generator';
+import { AcCodeGeneratorDDEExtension,AcDDECodeGeneratorDefaultConfig } from '@autocode-ts/ac-dde-code-generator';
 import { AcBrowserStorageDDEExtension } from '@autocode-ts/ac-dde-browser-storage';
 import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDelayedCallback } from "@autocode-ts/autocode";
 
-import { dataDictionaryJson as accounteaPro } from '../../../../data/accountea-pro';
 import { dataDictionaryJson as accountea } from './../../../../data/accountea';
 import { dataDictionaryJson as accounteaPro } from './../../../../data/accountea-pro';
 import { dataDictionaryJson as accounteaProInternal } from './../../../../data/accountea-pro-internal';
@@ -23,6 +22,7 @@ import { dataDictionaryJson as accounteaWeb } from './../../../../data/accountea
 import { dataDictionaryJson as communityDataDictionary } from './../../../../data/sst-community';
 import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/unifi-data-dictionary';
 import { dataDictionaryJson as ddeDataDictionary } from './../../../../data/dde-data-dictionary';
+import { dataDictionaryJson as sagDataDictionary } from './../../../../data/scoresandgames';
 import { IAppMenuItem } from "src/_app.export";
 
 import './../../../../../packages/browser/ac-data-dictionary-editor/src/lib/css/ac-data-dictionary-editor.css';
@@ -60,6 +60,7 @@ export class DataDictionaryEditorPage {
 
   initEditor(){
     if(this.editor){
+      AcDDECodeGeneratorDefaultConfig.viewNameColumnClassPrefix = "";
       const api:AcDDEApi = this.editor.editorApi!;
 
     // Enable Extensions
@@ -70,7 +71,9 @@ export class DataDictionaryEditorPage {
 
     console.log(accounteaPro);
     // Load initial dictionary
-    api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProInternal });
+    api.setDataDictionaryJson({ dataDictionaryJson: sagDataDictionary });
     }
     else{
       this.delayedCallback.add({callback:()=>{

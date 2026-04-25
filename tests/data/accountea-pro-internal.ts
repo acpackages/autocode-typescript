@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea Pro Internal",
-  "version": 0,
+  "version": 2,
   "tables": {
     "accountea_details": {
       "tableName": "accountea_details",
@@ -250,6 +250,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Last Synced On"
             }
           }
+        },
+        "last_sync_value": {
+          "columnName": "last_sync_value",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Sync Value"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -302,7 +312,7 @@ export const dataDictionaryJson = {
         },
         "device_accountee_authorization_token": {
           "columnName": "device_accountee_authorization_token",
-          "columnType": "DATETIME",
+          "columnType": "TEXT",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
@@ -327,6 +337,46 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Authorization Status"
+            }
+          }
+        },
+        "remote_accountee_details": {
+          "columnName": "remote_accountee_details",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remote Accountee Details"
+            }
+          }
+        },
+        "is_remote": {
+          "columnName": "is_remote",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Remote"
+            }
+          }
+        },
+        "is_syncable": {
+          "columnName": "is_syncable",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Syncable"
+            }
+          }
+        },
+        "last_sync_value": {
+          "columnName": "last_sync_value",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Sync Value"
             }
           }
         }

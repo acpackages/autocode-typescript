@@ -25,6 +25,7 @@ export class AcForm extends AcElementBase {
   isWrapped: boolean = false;
   formAddedManually: boolean = false;
   form!: HTMLFormElement | any;
+  autoDestroyOnDisconnect: boolean = false;
   private inputContextListeners: Map<HTMLElement, any> = new Map();
 
   invalidCallback: Function = () => {
@@ -33,6 +34,7 @@ export class AcForm extends AcElementBase {
   resetCallback: Function = (event: any) => {
     this.dispatchEvent(new Event('reset'));
   };
+
   submitCallback: Function = (event: Event) => {
     event.preventDefault();
     this.form.submitted = true;
@@ -76,7 +78,6 @@ export class AcForm extends AcElementBase {
   }
 
   override disconnectedCallback(): void {
-    super.disconnectedCallback();
     if (this.form) {
       this.form.removeEventListener('submit', this.submitCallback);
       this.form.removeEventListener('invalid', this.invalidCallback);
@@ -85,7 +86,7 @@ export class AcForm extends AcElementBase {
         this.form.remove();
       }
     }
-
+    super.disconnectedCallback();
   }
 
   private getInputElements(): any[] {

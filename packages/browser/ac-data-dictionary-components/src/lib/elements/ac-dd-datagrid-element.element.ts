@@ -82,6 +82,7 @@ export class AcDDDatagridElement extends AcElementBase {
   datagridApi!:AcDatagridApi;
 
   columns?: AcDDTableColumn;
+  override autoDestroyOnDisconnect: boolean = false;
 
   override init(): void {
     this.style.display = 'contents';

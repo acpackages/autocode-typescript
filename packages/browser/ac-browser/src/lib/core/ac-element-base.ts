@@ -3,13 +3,7 @@ import { AcDelayedCallback, AcEvents, Autocode, acNullifyInstanceProperties } fr
 import { acClearElement, acCloneEvent, acRegisterCustomElement } from "../utils/ac-element-functions";
 
 export class AcElementBase extends HTMLElement {
-  private _isInitialized:boolean = false;
-  get isInitialized():boolean{
-    return this._isInitialized;
-  }
-  set isInitialized(value:boolean){
-    this._isInitialized = value;
-  }
+  isInitialized:boolean = false;
 
   autoDestroyOnDisconnect:boolean = true;
   events: AcEvents = new AcEvents();

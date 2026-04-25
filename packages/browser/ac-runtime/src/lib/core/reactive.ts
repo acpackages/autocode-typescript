@@ -209,7 +209,7 @@ export function acProxyReactive<T extends object>(target: T, rootTarget?: object
   }
 
   // Set reactive descriptors on the raw object to bridge raw instance updates (arrow functions)
-  // acSetReactiveDescriptors(target);
+  acSetReactiveDescriptors(target);
 
   const resolvedRoot = rootTarget || target;
 

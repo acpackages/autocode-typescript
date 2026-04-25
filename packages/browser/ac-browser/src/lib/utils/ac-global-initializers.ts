@@ -49,6 +49,7 @@ export function acInit({ element, observe = true }: { element?: HTMLElement, obs
 export function acInitTooltip({ element }: { element: HTMLElement }) {
   new AcTooltip({ element: element });
 }
+
 AcAccordion;
 AcCollapse;
 AcDatagrid;

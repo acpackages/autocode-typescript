@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acMakeReactive } from './reactive';
-import { AcTemplateEngine } from './template-engine';
 import { acElementRegistry } from './element-registry';
 export { AcInput, AcOutput, AcViewChild, AcEventEmitter, getAcInputMetadata, getAcOutputMetadata, getAcViewChildMetadata } from './decorators';
 import { getAcViewChildMetadata } from './decorators';
 import { Autocode } from '@autocode-ts/autocode';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
-import { clearElement } from '../utils/functions';
+import { AcTemplateEngine } from '../engine/template-engine';
 export { acElementRegistry } from './element-registry';
 
 export interface IAcElementMetadata {
@@ -190,7 +188,6 @@ export class AcElementManager {
 
     private render(): void {
         const template = this.metadata.template || '';
-        clearElement(this.element);
         this.element.innerHTML = template;
 
         // Use the preserved templateEngine
@@ -277,7 +274,7 @@ export async function acBootstrapElements() {
                 if (node instanceof HTMLElement) {
                     await acCheckAndCallDisconnected(node);
 
-                    // Delayed destruction check:
+                    // Delayed destruction check: 
                     // If the element is re-inserted in the same task (a "move"), isConnected will be true
                     // and we skip destruction, keeping the state intact.
                     setTimeout(async () => {

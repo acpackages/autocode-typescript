@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
-import { clearElement } from '../utils/functions';
 import { AcElement, AcInput, acAutoBootstrap, acElementRegistry, getIAcElementMetadata } from './element.base';
 import { acRouter, IAcRouteSnapshot } from './router';
 
@@ -39,7 +37,7 @@ export class AcRouterElement {
             AC_RUNTIME_CONFIG.logError('[AcRouter] handleRouteChange called but this.element is undefined on instance:', this);
             return;
         }
-        clearElement(this.element);
+        this.element.innerHTML = '';
 
         const ComponentClass = snapshot.element;
         if (!ComponentClass) return;

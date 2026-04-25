@@ -31,6 +31,8 @@ export const AC_DATAGRID_HOOK = {
   DatagridRowCreate: 'datagridRowCreate',
   DataSourceTypeChange: 'datagridSourceTypeChange',
   DisplayedRowsChange: 'displayedRowsChange',
+  ElementConnected: 'elementConnected',
+  ElementDisconnected: 'elementDisconnected',
   ExtensionEnable: 'extensionEnable',
   FooterInit: 'footerInit',
   GetOnDemandDataSuccessCallback: 'getOnDemandDataSuccessCallback',

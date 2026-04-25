@@ -122,6 +122,15 @@ export function objectCopyFrom(destination: any, source: any): any { // All 'any
     return destination;
 }
 
+export function objectCopyKeyValues({source,destination,keys}:{source:any,destination:any,keys:string[]}){
+  for(const key of keys){
+    if(source[key]){
+      destination[key] = JSON.parse(JSON.stringify(source[key]));
+    }
+  }
+  return destination;
+}
+
 export function objectCopyTo(source: any,destination:any): any { // All 'any'
     return objectCopyFrom(destination,source);
 }

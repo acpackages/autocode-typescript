@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcInputBase } from "../core/ac-input-base";
-import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
-import { acClearElement, acCloneEvent, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_DATAGRID_EVENT, AcDatagrid, IAcDatagridCell } from "../../_components.export";
+import { AC_DATAGRID_EVENT, AC_INPUT_TAG, acCloneEvent, AcDatagrid, AcInputBase, acRegisterCustomElement, IAcDatagridCell } from "../../../../ac-browser";
 import { AcEnumConditionOperator, AcFilterGroup, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 import { createPopper, Instance as PopperInstance, Placement } from '@popperjs/core';
 
@@ -17,10 +14,10 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
   set addRow(value: boolean) {
     this.setAttribute('add-row', `${value}`);
-    if(value){
+    if (value) {
       this.addNewButton.style.display = '';
     }
-    else{
+    else {
       this.addNewButton.style.display = 'none';
     }
   }
@@ -88,7 +85,6 @@ export class AcDatagridSelectInputElement extends AcInputBase {
       super.value = val;
       this.setSelectedRowsFromValue();
     }
-
   }
 
   private _searchQuery: string = '';
@@ -99,40 +95,39 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.addNewButton.textContent = `Add "${this.textInputElement.value}"`;
     if (this.datagrid) {
       this.datagrid.afterRowsContainer.style.visibility = 'hidden';
-      this.datagrid.datagridApi.dataManager.searchQuery = val;
-      const event: CustomEvent = new CustomEvent('searchQueryChange', { detail: { searchQuery: this.searchQuery } });
-      this.dispatchEvent(event);
-      this.delayedCallback.add({callback:() => {
-        if(val){
-          this.datagrid.afterRowsContainer.style.visibility = '';
-        }
-        this.highlightRow();
-        this.textInputElement.focus();
-      }, duration:100});
+      this.delayedCallback.add({
+        callback: () => {
+          this.datagrid.datagridApi.dataManager.searchQuery = val;
+          const event: CustomEvent = new CustomEvent('searchQueryChange', { detail: { searchQuery: this.searchQuery } });
+          this.dispatchEvent(event);
+          this.delayedCallback.add({
+            callback: () => {
+              if (val) {
+                this.datagrid.afterRowsContainer.style.visibility = '';
+              }
+            }, duration: 100
+          });
+
+        }, duration: 350, key: 'setSearchQuery'
+      });
     }
   }
 
   private dropdownContainer!: HTMLDivElement;
   private isDropdownOpen = false;
   private popper!: PopperInstance | null;
-  private addNewButton:HTMLButtonElement|any;
+  private addNewButton: HTMLButtonElement | any;
   textInputElement: HTMLInputElement = this.ownerDocument.createElement('input');
   addNewContainer: HTMLElement = this.ownerDocument.createElement('div');
   datagrid: AcDatagrid = new AcDatagrid();
-  private clickOutsideListener?: any = (event: Event) => {
-    const target = event.target as HTMLElement;
-    if (this.textInputElement && !this.textInputElement.contains(target) && this.dropdownContainer && !this.dropdownContainer.contains(target)) {
-      if (!this.isFocused) {
-          this.closeDropdown();
-        }
-    }
-  };
   private visibilityObserver?: IntersectionObserver | null;
   private resizeObserver?: ResizeObserver | null;
   selectedRows: any[] = [];
   previousState: any = {};
   dropdownSize: { height: number, width: number } = { height: 300, width: 600 };
   isFocused: boolean = false;
+  autoDestroyOnDisconnect: boolean = false;
+
   addRowCallback: (({ query, callback }: { query: string, callback: Function }) => void) = ({ query, callback }: { query: string, callback: Function }): void => {
     const newOption = { [this.labelKey]: query, [this.valueKey]: query };
     callback(newOption);
@@ -142,38 +137,41 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.addRowCallback({
       query: label, callback: (option: any) => {
         const row = this.datagrid.datagridApi.dataManager.addRow({ data: option });
-        this.datagrid.datagridApi.focusRow({index:row.index});
+        this.datagrid.datagridApi.focusRow({ index: row.index });
       }
     });
   }
 
   private attachEvents() {
-    this.addNewButton.addEventListener("click", (e:any) => {
+    this.addNewButton.addEventListener("click", (e: any) => {
       e.preventDefault();
       this.addNewOption(this.textInputElement.value);
     });
     this.addNewButton.addEventListener("keydown", (e: any) => {
       if (e.key === "ArrowUp") {
-        if(this.datagrid.datagridApi.dataManager.totalRows == 0){
+        if (this.datagrid.datagridApi.dataManager.totalRows == 0) {
           this.textInputElement.focus();
           return;
         }
-        else{
+        else {
           const activeDatagridCell = this.datagrid.datagridApi.activeDatagridCell;
-          if(activeDatagridCell){
-            this.highlightRow({rowIndex:activeDatagridCell.datagridRow.index});
+          if (activeDatagridCell) {
+            this.highlightRow({ rowIndex: activeDatagridCell.datagridRow.index });
           }
         }
       }
     });
     this.textInputElement.addEventListener("input", (event) => {
       this.dispatchEvent(acCloneEvent(event));
-      this.delayedCallback.add({callback:() => {
-        const term = this.textInputElement.value.toLowerCase();
-        if (term != this.searchQuery) {
-          this.searchQuery = term;
-        }
-      }, duration:100,key:'searchInputTimeout'});
+      this.value = '';
+      this.delayedCallback.add({
+        callback: () => {
+          const term = this.textInputElement.value.toLowerCase();
+          if (term != this.searchQuery) {
+            this.searchQuery = term;
+          }
+        }, duration: 100, key: 'searchInputTimeout'
+      });
 
       this.openDropdown();
     });
@@ -183,31 +181,32 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     });
     this.textInputElement.addEventListener("blur", (event: any) => {
       this.dispatchEvent(acCloneEvent(event));
-      this.delayedCallback.add({callback:()=>{
-        if(!this.dropdownContainer.contains(this.ownerDocument.activeElement) && this.ownerDocument.activeElement != this.textInputElement){
-          this.closeDropdown();
-        }
-      },duration:50,key:'inputBlurCloseDropdown'})
+      this.delayedCallback.add({
+        callback: () => {
+          if (!this.dropdownContainer.contains(this.ownerDocument.activeElement) && this.ownerDocument.activeElement != this.textInputElement) {
+            this.closeDropdown();
+          }
+        }, duration: 1, key: 'inputBlurCloseDropdown'
+      })
     });
     this.textInputElement.addEventListener("click", (event) => {
       this.dispatchEvent(acCloneEvent(event));
-      this.delayedCallback.add({callback:() => this.openDropdown(), duration:150});
+      this.delayedCallback.add({ callback: () => this.openDropdown(), duration: 150 });
     });
     this.textInputElement.addEventListener("keydown", (e: any) => {
       this.dispatchEvent(acCloneEvent(e));
       if (!this.isDropdownOpen) return;
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        if(this.datagrid.datagridApi.dataManager.totalRows == 0){
+        if (this.datagrid.datagridApi.dataManager.totalRows == 0) {
           this.addNewButton.focus();
-          console.log("Focusing on add ne button");
           return;
         }
         let rowIndex: number = 0;
         const activeDatagridCell = this.datagrid.datagridApi.activeDatagridCell;
         if (activeDatagridCell) {
           rowIndex = activeDatagridCell.datagridRow.index + 1;
-          if(activeDatagridCell.datagridRow.isLast){
+          if (activeDatagridCell.datagridRow.isLast) {
             this.addNewButton.focus();
             return;
           }
@@ -266,10 +265,6 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.isFocused = false;
   }
 
-  override disconnectedCallback(): void {
-    this.closeDropdown();
-  }
-
   closeDropdown() {
     this.dropdownContainer.remove();
     this.isDropdownOpen = false;
@@ -283,12 +278,13 @@ export class AcDatagridSelectInputElement extends AcInputBase {
       this.visibilityObserver?.disconnect();
       this.visibilityObserver = null;
     }
-    this.ownerDocument.body.removeEventListener('click', this.clickOutsideListener);
     const event: CustomEvent = new CustomEvent('dropdownClose', {});
     this.dispatchEvent(event);
+    console.log(this.datagrid.datagridApi);
   }
 
   override destroy(): void {
+    console.log("Destroying select input");
     this.closeDropdown();
     if (this.datagrid) {
       this.datagrid.destroy();
@@ -303,7 +299,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
 
   getState() {
-    if(!this.datagrid || !this.datagrid.datagridApi){
+    if (!this.datagrid || !this.datagrid.datagridApi) {
       return null;
     }
     const state = {
@@ -322,7 +318,8 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
   override init() {
     super.init();
-    acClearElement({element:this.addNewContainer});
+    console.log("Initializing datagrid element")
+    this.datagrid.autoDestroyOnDisconnect = false;
     this.addNewContainer.innerHTML = `<div><button type="button">Add New Row</button></div>`;
     this.addNewButton = this.addNewContainer.querySelector('button');
     this.addNewButton.style.padding = "4px 8px";
@@ -338,7 +335,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     if (!this.hasAttribute('value-key')) {
       this.valueKey = 'value';
     }
-    acClearElement({element:this});
+    this.innerHTML = '';
     this.append(this.textInputElement);
     this.textInputElement.type = "text";
     this.textInputElement.autocomplete = "off";
@@ -347,7 +344,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
 
   private notifyState() {
-    if(!this.datagrid || !this.datagrid.datagridApi){
+    if (!this.datagrid || !this.datagrid.datagridApi) {
       return;
     }
     const currentState = this.getState();
@@ -395,24 +392,23 @@ export class AcDatagridSelectInputElement extends AcInputBase {
       ],
     });
 
-    this.delayedCallback.add({callback:() => this.popper?.update(), duration:0});
+    this.delayedCallback.add({ callback: () => this.popper?.update(), duration: 0 });
 
     this.resizeObserver = new ResizeObserver(entries => {
       const rect = (entries[0].target as HTMLElement).getBoundingClientRect();
       this.dropdownSize.width = rect.width;
       this.dropdownSize.height = rect.height;
       this.popper?.update();
-      this.delayedCallback.add({callback:() => {
-        const resizeEvent: CustomEvent = new CustomEvent('dropdownResize', { detail: { dropdownSize: this.dropdownSize } });
-        this.dispatchEvent(resizeEvent);
-        this.notifyState();
-      }, duration:300,key:'resizeCallback'});
+      this.delayedCallback.add({
+        callback: () => {
+          const resizeEvent: CustomEvent = new CustomEvent('dropdownResize', { detail: { dropdownSize: this.dropdownSize } });
+          this.dispatchEvent(resizeEvent);
+          this.notifyState();
+        }, duration: 300, key: 'resizeCallback'
+      });
     });
 
     this.resizeObserver.observe(this.dropdownContainer);
-    this.delayedCallback.add({callback:() => {
-      this.ownerDocument.addEventListener('click', this.clickOutsideListener);
-    }, duration:50,key:'outsideClickListerner'});
 
     this.visibilityObserver = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting && this.isDropdownOpen) this.closeDropdown();
@@ -422,9 +418,11 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.datagrid.datagridApi.dataManager.getData();
     const event: CustomEvent = new CustomEvent('dropdownOpen', {});
     this.dispatchEvent(event);
-    this.delayedCallback.add({callback:() => {
-      this.textInputElement.focus();
-    }, duration:0});
+    this.delayedCallback.add({
+      callback: () => {
+        this.textInputElement.focus();
+      }, duration: 0
+    });
   }
 
   private setSelectedRows({ rows }: { rows: any[] }) {
@@ -445,7 +443,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
   private async setSelectedRowsFromValue(): Promise<void> {
     if (!this.value) return;
-    if(!this.datagrid || !this.datagrid.datagridApi){
+    if (!this.datagrid || !this.datagrid.datagridApi) {
       return;
     }
 
@@ -487,14 +485,14 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
     retry = !this.datagrid.datagridApi.dataManager.isFirstRowsSet;
     if (retry) {
-      this.delayedCallback.add({callback:() => this.setSelectedRowsFromValue(), duration:1});
+      this.delayedCallback.add({ callback: () => this.setSelectedRowsFromValue(), duration: 1 });
       return;
     }
 
     // 🔹 Search in existing rows
     const valueRow =
       this.datagrid.datagridApi.dataManager.allRows.find(
-        row => row.data[this.valueKey] === this.value
+        row => row && row.data[this.valueKey] === this.value
       );
 
     if (valueRow) {
@@ -505,7 +503,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     }
 
     // 🔹 On-demand fetch (awaited)
-    if (this.onDemandFunction) {
+    if (this.onDemandFunction && this.value !=null && this.value != undefined) {
       const filterGroup = new AcFilterGroup();
       filterGroup.addFilter({
         key: this.valueKey,
@@ -539,7 +537,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
 
   setState({ state }: { state: any }) {
-    if(!this.datagrid || !this.datagrid.datagridApi){
+    if (!this.datagrid || !this.datagrid.datagridApi) {
       return;
     }
     if (state.dropdownSize) {
@@ -551,7 +549,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
 
   setValueFromDatagridData() {
-    if(!this.datagrid || !this.datagrid.datagridApi){
+    if (!this.datagrid || !this.datagrid.datagridApi) {
       return;
     }
     const activeDatagridCell = this.datagrid.datagridApi.activeDatagridCell;

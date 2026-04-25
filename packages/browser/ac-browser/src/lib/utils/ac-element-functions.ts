@@ -74,6 +74,46 @@ export function acCopyElementStyles({ fromElement, toElement }: { fromElement: H
   }
 }
 
+export function acCreateDocumentFragmentFromHtml({html}:{html: string}): DocumentFragment {
+  const template = document.createElement('template');
+  template.innerHTML = html.trim();
+  return template.content.cloneNode(true) as DocumentFragment;
+};
+
+export function acCreateElementFromHtml({html}:{html: string}): HTMLElement | null {
+  const template = document.createElement('template');
+  template.innerHTML = html.trim();
+
+  const el = template.content.firstElementChild;
+  return el instanceof HTMLElement ? el : null;
+}
+
+export function acClearElement({element}:{element:HTMLElement}):void{
+  for(let el of element.childNodes){
+    acClearElement({element:el as HTMLElement});
+    el.remove();
+    (el as any) = null;
+  }
+  element.innerHTML = "";
+}
+
+export function acCreateValidityState(flags: Partial<ValidityState> = {}): any {
+  return {
+    valueMissing: false,
+    typeMismatch: false,
+    patternMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    rangeUnderflow: false,
+    rangeOverflow: false,
+    stepMismatch: false,
+    badInput: false,
+    customError: false,
+    valid: Object.keys(flags).length === 0,
+    ...flags,
+  };
+}
+
 export function acElementHasParentTag({ element, tag }: { element: HTMLElement, tag: string }): boolean {
   tag = tag.toLowerCase(); // normalize for comparison
   let parent = element.parentElement;
@@ -96,6 +136,70 @@ export function acGetParentElementWithTag({ element, tag }: { element: HTMLEleme
     parent = parent.parentElement;
   }
   return null;
+}
+
+export function acHideElement({
+  element,
+  animateHeight = false,
+  animateWidth = false,
+  duration = 300,
+}: {
+  element: HTMLElement;
+  animateHeight?: boolean;
+  animateWidth?: boolean;
+  duration?: number;
+}) {
+  const computed = getComputedStyle(element);
+
+  const originalStyles: any = {
+    opacity: element.style.opacity || computed.opacity,
+    display: element.style.display || computed.display,
+  };
+
+  // Handle height
+  if (animateHeight) {
+    originalStyles.height = element.style.height ? element.style.height : "auto";
+    const currentHeight = computed.height;
+    acAnimateElement(element, "height", currentHeight, 0, duration);
+  }
+
+  // Handle width
+  if (animateWidth) {
+    originalStyles.width = element.style.width ? element.style.width : "auto";
+    const currentWidth = computed.width;
+    acAnimateElement(element, "width", currentWidth, 0, duration);
+  }
+
+  element.setAttribute(
+    "ac-show-original-style-values",
+    JSON.stringify(originalStyles)
+  );
+
+  // Animate opacity
+  acAnimateElement(
+    element,
+    "opacity",
+    originalStyles.opacity,
+    0,
+    duration,
+    () => {
+      element.style.display = "none";
+    }
+  );
+}
+
+export function acIsElementVisibleInContainer({element,container}:{element: HTMLElement, container: HTMLElement}) {
+   const elTop = element.offsetTop;
+  const elBottom = elTop + element.offsetHeight;
+
+  const containerTop = container.scrollTop;
+  const containerBottom = containerTop + container.clientHeight;
+  const isVisible =
+   (
+    elTop >= containerTop &&
+    elBottom <= containerBottom
+  );
+  return isVisible;
 }
 
 export function acLinkElementScroll({ source, destination, both = true }: { source: HTMLElement, destination: HTMLElement, both?: boolean }) {
@@ -462,56 +566,6 @@ export function acShowElement({
   }
 }
 
-export function acHideElement({
-  element,
-  animateHeight = false,
-  animateWidth = false,
-  duration = 300,
-}: {
-  element: HTMLElement;
-  animateHeight?: boolean;
-  animateWidth?: boolean;
-  duration?: number;
-}) {
-  const computed = getComputedStyle(element);
-
-  const originalStyles: any = {
-    opacity: element.style.opacity || computed.opacity,
-    display: element.style.display || computed.display,
-  };
-
-  // Handle height
-  if (animateHeight) {
-    originalStyles.height = element.style.height ? element.style.height : "auto";
-    const currentHeight = computed.height;
-    acAnimateElement(element, "height", currentHeight, 0, duration);
-  }
-
-  // Handle width
-  if (animateWidth) {
-    originalStyles.width = element.style.width ? element.style.width : "auto";
-    const currentWidth = computed.width;
-    acAnimateElement(element, "width", currentWidth, 0, duration);
-  }
-
-  element.setAttribute(
-    "ac-show-original-style-values",
-    JSON.stringify(originalStyles)
-  );
-
-  // Animate opacity
-  acAnimateElement(
-    element,
-    "opacity",
-    originalStyles.opacity,
-    0,
-    duration,
-    () => {
-      element.style.display = "none";
-    }
-  );
-}
-
 export function acWrapElementWithTag({ element, wrapperTag = "div" }: { element: HTMLElement, wrapperTag: string }): HTMLElement {
   const wrapper = document.createElement(wrapperTag);
   if (element.isConnected && element.parentNode) {
@@ -521,42 +575,9 @@ export function acWrapElementWithTag({ element, wrapperTag = "div" }: { element:
   return wrapper;
 }
 
-export function acCreateValidityState(flags: Partial<ValidityState> = {}): any {
-  return {
-    valueMissing: false,
-    typeMismatch: false,
-    patternMismatch: false,
-    tooLong: false,
-    tooShort: false,
-    rangeUnderflow: false,
-    rangeOverflow: false,
-    stepMismatch: false,
-    badInput: false,
-    customError: false,
-    valid: Object.keys(flags).length === 0,
-    ...flags,
-  };
-}
 
-export function acCreateDocumentFragmentFromHtml({html}:{html: string}): DocumentFragment {
-  const template = document.createElement('template');
-  template.innerHTML = html.trim();
-  return template.content.cloneNode(true) as DocumentFragment;
-};
 
-export function acCreateElementFromHtml({html}:{html: string}): HTMLElement | null {
-  const template = document.createElement('template');
-  template.innerHTML = html.trim();
 
-  const el = template.content.firstElementChild;
-  return el instanceof HTMLElement ? el : null;
-}
 
-export function acClearElement({element}:{element:HTMLElement}):void{
-  for(let el of element.childNodes){
-    acClearElement({element:el as HTMLElement});
-    el.remove();
-    (el as any) = null;
-  }
-  element.innerHTML = "";
-}
+
+

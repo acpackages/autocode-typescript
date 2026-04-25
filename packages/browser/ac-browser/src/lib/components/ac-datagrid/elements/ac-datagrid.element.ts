@@ -3,7 +3,7 @@
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
-import { AcDatagridCssClassName, AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
+import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AcDatagridBody } from "./ac-datagrid-body.element";
 import { AcDatagridFooter } from "./ac-datagrid-footer.element";
@@ -22,11 +22,21 @@ export class AcDatagrid extends AcElementBase {
     super();
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementConnected });
+  }
 
 
   override destroy(): void {
     this.datagridApi.destroy();
+    console.log("Destroyn datagrid");
     super.destroy();
+  }
+
+  disconnectedCallback(): void {
+    this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementDisconnected });
+    super.disconnectedCallback();
   }
 
   override init(): void {

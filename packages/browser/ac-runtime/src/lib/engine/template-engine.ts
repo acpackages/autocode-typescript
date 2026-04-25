@@ -37,7 +37,7 @@ export class AcTemplateEngine {
 
   destroy() {
     for (const e of this.effects) {
-      e.destroy();
+      // e.destroy();
     }
     acNullifyInstanceProperties({ instance: this });
   }
@@ -69,7 +69,6 @@ export class AcTemplateEngine {
   private processTextNode(node: Text) {
     const originalText = node.textContent || '';
     const regex = /\{\{\s*(.*?)\s*\}\}/g;
-
     if (regex.test(originalText)) {
       this.effect(() => {
         let newText = originalText;
@@ -238,7 +237,7 @@ export class AcTemplateEngine {
                   }
                 }
 
-                const engine = new AcTemplateEngine({ context: renderContext, parentEngine: definingEngine });
+                const engine = new AcTemplateEngine({ context: renderContext, parentEngine: this });
                 const nodes = Array.from(fragment.childNodes);
 
                 const placeholder = (el as any)._acPlaceholder;
@@ -246,7 +245,7 @@ export class AcTemplateEngine {
                   placeholder.parentNode.insertBefore(fragment, placeholder);
                   nodes.forEach(child => engine.traverse(child));
                 } else {
-                  clearElement(el)
+                  el.innerHTML = '';
                   el.appendChild(fragment);
                   nodes.forEach(child => engine.traverse(child));
                 }
@@ -299,7 +298,6 @@ export class AcTemplateEngine {
                     (el as any)[attrToBind] = val;
                   }
                   if (attrToBind == 'innerhtml') {
-                    clearElement(el);
                     el.innerHTML = stringValue;
                   }
                   else if (attrToBind == 'innertext') {
@@ -731,6 +729,8 @@ export class AcTemplateEngine {
     const endPlaceholder = document.createComment(`ac:for-end ${expression}`);
     el.parentNode?.replaceChild(endPlaceholder, el);
     endPlaceholder.parentNode?.insertBefore(startPlaceholder, endPlaceholder);
+    clearElement(el);
+    (el as any) = null;
 
     // Track rendered entries for incremental updates
     interface ForEntry { item: any; nodes: Node[]; subContext: any; }
@@ -758,7 +758,7 @@ export class AcTemplateEngine {
     /** Render a single item and return the entry */
     const renderItem = (item: any, i: number, count: number): ForEntry => {
       const instance = createElementFromHtml(elementHtml) as HTMLElement;
-      const subContext = Object.create(this.context);
+      const subContext = acMakeReactive(Object.create(this.context));
       setLoopVars(subContext, item, i, count);
 
       const engine = new AcTemplateEngine({ context: subContext, parentEngine: this });
@@ -780,15 +780,15 @@ export class AcTemplateEngine {
     const removeEntry = (entry: ForEntry) => {
       for (const node of entry.nodes) {
         if (node instanceof HTMLElement) {
-          this.destroyInstances(node);
-        }
-        if (node.parentNode) {
-          node.parentNode.removeChild(node);
+          clearElement(node);
+          (node as any) = null;
         }
       }
     };
 
     this.effect(() => {
+
+      console.log("Handling for loop",el);
       const listOrPromise = this.evaluateExpression(listExpression);
 
       const renderFor = (list: any) => {
@@ -913,6 +913,8 @@ export class AcTemplateEngine {
       }
     }
     el.remove();
+    clearElement(el);
+    (el as any) = null;
   }
 
   private handleContainer(el: HTMLElement) {
@@ -973,14 +975,14 @@ export class AcTemplateEngine {
   }
 
   private destroyInstances(el: HTMLElement) {
-    this.childElements.delete(el);
-    el.querySelectorAll('*').forEach(child => {
-      this.childElements.delete(child as HTMLElement);
-    });
+    // this.childElements.delete(el);
+    // el.querySelectorAll('*').forEach(child => {
+    //   this.childElements.delete(child as HTMLElement);
+    // });
 
-    // Cleanup all reactive effects managed by this engine instance
-    this.effects.forEach(effect => effect.destroy());
-    this.effects.clear();
+    // // Cleanup all reactive effects managed by this engine instance
+    // this.effects.forEach(effect => effect.destroy());
+    // this.effects.clear();
   }
 
   private evaluateExpression(exp: string, locals?: Record<string, any>, isExpressionEval: boolean = false): any {

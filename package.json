@@ -36,6 +36,7 @@
     "dev:browser": "npx nx serve test-browser",
     "dev:browser:old": "npx nx serve test-browser-legacy",
     "dev:node": "npx nx serve test-node",
+    "dev:runtime": "npx nx serve test-runtime",
     "gen:declaration:json": "node scripts/generate-declaration-json.js"
   },
   "private": true,
