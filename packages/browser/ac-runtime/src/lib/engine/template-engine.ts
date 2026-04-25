@@ -14,10 +14,11 @@ import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 import { acElementRegistry } from '../core/ac-element-registry';
 import { clearElement, createElementFromHtml } from '../utils/functions';
 import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
+import { IAcTemplateDef } from '../interfaces/ac-template-def.interface';
 
 export class AcTemplateEngine {
   private childElements = new Map<HTMLElement, any>(); // Track child element instances
-  private templates = new Map<string, HTMLTemplateElement>();
+  private templates = new Map<string, IAcTemplateDef>();
   private references = new Map<string, any>();
   private effects = new Set<Effect>();
   private parent?: AcTemplateEngine;
@@ -48,7 +49,7 @@ export class AcTemplateEngine {
   }
 
   // Get registered templates for ViewChild resolution
-  public getTemplates(): Map<string, HTMLTemplateElement> {
+  public getTemplates(): Map<string, IAcTemplateDef> {
     return this.templates;
   }
 
@@ -221,35 +222,50 @@ export class AcTemplateEngine {
             }
 
             const renderTemplate = (template: any, extraContext?: any) => {
-              if (template && (template instanceof HTMLTemplateElement || (template instanceof HTMLElement && template.tagName.toLowerCase() === 'ac-template'))) {
-                const fragment = document.createDocumentFragment();
-                const nodesToClone = (template instanceof HTMLTemplateElement) ? template.content.childNodes : template.childNodes;
-                Array.from(nodesToClone).forEach(child => fragment.appendChild(child.cloneNode(true)));
+              if (template) {
+                let html = '';
+                let definitionContext = this.context;
+                let definingEngine = this;
 
-                const definitionContext = (template as any)._acContext || this.context;
-                const definingEngine = (template as any)._acEngine || this;
-                let renderContext = definitionContext;
+                if (template instanceof HTMLTemplateElement || (template instanceof HTMLElement && template.tagName.toLowerCase() === 'ac-template')) {
+                  html = template.innerHTML;
+                  definitionContext = (template as any)._acContext || this.context;
+                  definingEngine = (template as any)._acEngine || this;
+                } else if (typeof template === 'object' && template.html !== undefined) {
+                  html = template.html;
+                  definitionContext = template._acContext || this.context;
+                  definingEngine = template._acEngine || this;
+                } else if (typeof template === 'string') {
+                  html = template;
+                }
 
-                if (extraContext) {
-                  renderContext = Object.create(definitionContext);
-                  for (const [k, v] of Object.entries(extraContext)) {
-                    Object.defineProperty(renderContext, k, { value: v, writable: true, enumerable: true, configurable: true });
+                if (html) {
+                  const fragment = document.createRange().createContextualFragment(html);
+                  const nodes = Array.from(fragment.childNodes);
+
+                  const definitionContextToUse = definitionContext;
+                  const definingEngineToUse = definingEngine;
+                  let renderContext = definitionContextToUse;
+
+                  if (extraContext) {
+                    renderContext = Object.create(definitionContextToUse);
+                    for (const [k, v] of Object.entries(extraContext)) {
+                      Object.defineProperty(renderContext, k, { value: v, writable: true, enumerable: true, configurable: true });
+                    }
                   }
-                }
 
-                const engine = new AcTemplateEngine({ context: renderContext, parentEngine: this });
-                const nodes = Array.from(fragment.childNodes);
-
-                const placeholder = (el as any)._acPlaceholder;
-                if (placeholder && placeholder.parentNode) {
-                  placeholder.parentNode.insertBefore(fragment, placeholder);
-                  nodes.forEach(child => engine.traverse(child));
-                } else {
-                  el.innerHTML = '';
-                  el.appendChild(fragment);
-                  nodes.forEach(child => engine.traverse(child));
+                  const engine = new AcTemplateEngine({ context: renderContext, parentEngine: this });
+                  const placeholder = (el as any)._acPlaceholder;
+                  if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.insertBefore(fragment, placeholder);
+                    nodes.forEach(child => engine.traverse(child));
+                  } else {
+                    el.innerHTML = '';
+                    el.appendChild(fragment);
+                    nodes.forEach(child => engine.traverse(child));
+                  }
+                  currentActiveNodes = nodes;
                 }
-                currentActiveNodes = nodes;
               }
             };
 
@@ -903,10 +919,11 @@ export class AcTemplateEngine {
     const refAttr = Array.from(el.attributes).find(attr => attr.name.startsWith('#'));
     if (refAttr) {
       const refName = refAttr.name.slice(1).toLowerCase();
-      const template = document.createElement('template');
-      template.innerHTML = el.innerHTML;
-      (template as any)._acContext = this.context; // Store definition context
-      (template as any)._acEngine = this; // Store definition engine
+      const template: IAcTemplateDef = {
+        html: el.innerHTML,
+        _acContext: this.context,
+        _acEngine: this
+      };
       this.templates.set(refName, template);
       if (this.context) {
         this.applyReferenceToInstance(this.context, el, template);
@@ -959,9 +976,12 @@ export class AcTemplateEngine {
       const refAttr = Array.from(tpl.attributes).find(attr => attr.name.startsWith('#'));
       if (refAttr) {
         const refName = refAttr.name.slice(1).toLowerCase();
-        (tpl as any)._acContext = this.context; // Store definition context for transcluded templates
-        (tpl as any)._acEngine = this; // Store definition engine
-        instance[refName] = tpl;
+        const template: IAcTemplateDef = {
+          html: tpl.innerHTML,
+          _acContext: this.context,
+          _acEngine: this
+        };
+        instance[refName] = template;
       }
       tpl.remove();
     });
