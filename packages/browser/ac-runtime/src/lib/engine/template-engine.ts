@@ -4,23 +4,24 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-useless-escape */
-import { acEffect, acMakeReactive, Effect } from './../core/reactive';
 import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
 import { getAcInputMetadata } from '../decorators/ac-input.decorator';
 import { getAcViewChildMetadata } from '../decorators/ac-view-child.decorator';
-import { AcElementManager, acInitRuntimeElementConnected, acInitRuntimeElementInstance, acSetEngineElementEngineUUID, acSetEngineElementStyles } from './../core/ac-element-manager';
+import { AcElementManager } from './../core/ac-element-manager';
 import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 import { acElementRegistry } from '../core/ac-element-registry';
 import { clearElement, createElementFromHtml } from '../utils/functions';
 import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
 import { IAcTemplateDef } from '../interfaces/ac-template-def.interface';
+import { acEffect, AcEffect } from '../reactivity/ac-effect';
+import { acMakeReactive } from '../reactivity/ac-reactivity';
 
 export class AcTemplateEngine {
   private childElements = new Map<HTMLElement, any>(); // Track child element instances
   private templates = new Map<string, IAcTemplateDef>();
   private references = new Map<string, any>();
-  private effects = new Set<Effect>();
+  private effects = new Set<AcEffect>();
   private parent?: AcTemplateEngine;
   private context: any;
   private elementManager?: AcElementManager;
@@ -794,17 +795,16 @@ export class AcTemplateEngine {
 
     /** Remove an entry's DOM nodes and destroy instances */
     const removeEntry = (entry: ForEntry) => {
-      for (const node of entry.nodes) {
-        if (node instanceof HTMLElement) {
-          clearElement(node);
-          (node as any) = null;
-        }
+      for (let node of entry.nodes as Element[]) {
+        clearElement(node as any);
+        node.remove();
+        (node as any) = null;
       }
     };
 
     this.effect(() => {
 
-      console.log("Handling for loop",el);
+      console.log("Handling for loop", el);
       const listOrPromise = this.evaluateExpression(listExpression);
 
       const renderFor = (list: any) => {
@@ -848,6 +848,7 @@ export class AcTemplateEngine {
           const fragment = document.createDocumentFragment();
           const newEntries: ForEntry[] = [];
           for (let i = oldCount; i < newCount; i++) {
+            console.log(list[i]);
             const entry = renderItem(list[i], i, newCount);
             for (const node of entry.nodes) {
               fragment.appendChild(node);
@@ -1118,7 +1119,7 @@ export class AcTemplateEngine {
     return false;
   }
 
-  private effect(fn: () => void | (() => void)): Effect {
+  private effect(fn: () => void | (() => void)): AcEffect {
     const e = acEffect(fn);
     this.effects.add(e);
     return e;
