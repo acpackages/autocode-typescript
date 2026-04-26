@@ -1,1 +1,1 @@
-export * from './router-outlet.element';
+export * from './ac-router-outlet.element';
