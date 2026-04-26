@@ -226,7 +226,6 @@ export function acMakeReactive<T extends object>(target: T): T {
     const inputs = getAcInputMetadata(constructor);
     const outputs = getAcOutputMetadata(constructor);
     const viewChildren = getAcViewChildMetadata(constructor);
-
     [inputs, outputs, viewChildren].forEach(meta => {
       Object.keys(meta).forEach(key => {
         if (!(key in target)) {

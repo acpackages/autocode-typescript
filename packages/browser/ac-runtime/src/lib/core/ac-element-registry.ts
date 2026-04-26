@@ -1,4 +1,4 @@
-interface IAcElementDef {
+export interface IAcElementDef {
   selector: string;
   constructor: any;
   metadata: any;

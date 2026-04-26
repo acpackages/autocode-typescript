@@ -2,6 +2,7 @@ import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AC_RUNTIME_CONFIG } from "../consts/ac-runtime-config.const";
 import { AcElementManager } from "./ac-element-manager";
 import { acElementRegistry } from "./ac-element-registry";
+import { AC_RUNTIME_INTERNAL_KEYS } from "../consts/ac-runtime_internal_keys.const";
 
 let isGlobalObserverStarted = false;
 
@@ -70,7 +71,7 @@ export async function acAutoBootstrap(el: HTMLElement): Promise<any> {
     if (existingId) el.removeAttribute('ac-engine-element');
 
     const instance = new registration.constructor();
-    const manager = new AcElementManager({ instance, element: el });
+    const manager = new AcElementManager({ instance, element: el,elementDef:registration });
     await manager.bootstrap();
     return instance;
   }

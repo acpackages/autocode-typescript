@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcTemplateEngine } from './../engine/_engine.export';
 import { acNullifyInstanceProperties, Autocode } from '@autocode-ts/autocode';
 import { AC_ELEMENT_METADATA_KEY } from '../consts/symbols.const';
-import { acElementRegistry } from './ac-element-registry';
+import { acElementRegistry, IAcElementDef } from './ac-element-registry';
 import { getAcViewChildMetadata } from '../decorators/_decorators.export';
 import { IAcElementMetadata } from '../interfaces/ac-element-metadata.interface';
 import { clearElement } from '../utils/functions';
 import { acInitRuntimeElementInstance } from './ac-runtime';
 import { acMakeReactive, proxyMap, targetMap } from '../reactivity/ac-reactivity';
+import { AcElementRenderer } from './ac-element-renderer';
 
 export class AcElementManager {
   private element!: HTMLElement;
   private metadata: IAcElementMetadata;
+  private elementDef: IAcElementDef;
   instance: any;
-  private templateEngine!: AcTemplateEngine;
+  private templateEngine!: AcElementRenderer;
   private uuid!: string;
-  private parentEngine?: AcTemplateEngine;
+  private parentEngine?: AcElementRenderer;
   private orgInstance: any;
 
-  constructor({ instance, element, parentEngine }: { instance: any, element?: HTMLElement, parentEngine?: AcTemplateEngine }) {
+  constructor({ instance, element, parentEngine,elementDef }: { instance: any, element?: HTMLElement, parentEngine?: AcElementRenderer,elementDef:IAcElementDef  }) {
+    this.elementDef = elementDef;
     this.orgInstance = instance;
     this.instance = acMakeReactive(instance);
     this.parentEngine = parentEngine;
@@ -68,7 +70,7 @@ export class AcElementManager {
 
     acElementRegistry.registerInstance({ instance: this.instance, uuid: this.uuid });
     // Initialize template engine with reactive instance
-    this.templateEngine = new AcTemplateEngine({ context: this.instance, parentEngine: this.parentEngine, elementManager: this });
+    this.templateEngine = new AcElementRenderer({ context: this.instance, parentEngine: this.parentEngine, elementManager: this });
 
     if (this.metadata.templateUrl) {
       const response = await fetch(this.metadata.templateUrl);
@@ -129,7 +131,7 @@ export class AcElementManager {
   public resolveViewChild() {
     const viewChildMetadata = getAcViewChildMetadata(this.orgInstance.constructor);
     if (Object.keys(viewChildMetadata).length > 0) {
-      const templates = this.templateEngine.getTemplates();
+      const templates = this.templateEngine.templates;
 
       for (const [propertyKey, selector] of Object.entries(viewChildMetadata)) {
         if (this.instance[propertyKey] == undefined) {
