@@ -4,10 +4,10 @@ import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
 import { AcDatagridApi, IAcDatagridColumn, IAcDatagridRow, AC_DATAGRID_HOOK, IAcDatagridCellEditor, IAcDatagridCellElementArgs, IAcDatagridColumnDefinition } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
-import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { IAcDatagridCell } from "../interfaces/ac-datagrid-cell.interface";
 
-export class AcDatagridCellEditor implements IAcDatagridCellEditor {
+export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   private datagridApi!: AcDatagridApi;
   private datagridCell!: IAcDatagridCell;
   private datagridColumn!: IAcDatagridColumn;
@@ -87,11 +87,11 @@ export class AcDatagridCellEditor implements IAcDatagridCellEditor {
   }
 
   initElement() {
-    this.element.classList.add(AcDatagridCssClassName.acDatagridCellEditorInput);
+    this.element.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId, this.datagridCell.cellId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridCell.datagridColumn.columnId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId, this.datagridCell.datagridRow.rowId);
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridCellEditorInput, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput, element: this.element });
     this.element.style.height = "100%";
     this.element.style.width = "100%";
     this.element.value = this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey];

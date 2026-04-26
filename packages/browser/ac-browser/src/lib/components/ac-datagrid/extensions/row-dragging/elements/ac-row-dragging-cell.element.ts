@@ -3,7 +3,7 @@
 import { AcDraggableAttributeName } from "../../../../ac-draggable/consts/ac-draggable-attribute-name.const";
 import { AcDraggableSortElement } from "../../../../ac-draggable/elements/ac-draggable-sort-element.element";
 import { acAddClassToElement } from "../../../../../utils/ac-element-functions";
-import { AcDatagridCssClassName } from "../../../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../../../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../../../core/ac-datagrid-api";
 import { AcDatagridInternalColumn } from "../../../models/ac-datagrid-internal-column.model";
 import { AcDatagridRowDraggingCssClassName } from "../consts/ac-datagrid-row-dragging-css-class-name.const";
@@ -31,7 +31,7 @@ export class AcDatagridRowDraggingCell {
 
   initElement() {
     acAddClassToElement({ class_: AcDatagridRowDraggingCssClassName.AcDatagridRowDrag, element: this.dragHandle });
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridCell, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCell, element: this.element });
     this.element.append(this.dragHandle);
     this.dragHandle.innerHTML = AcDatagridRowDraggingHtmlPlaceholder.drag;
     this.element.setAttribute(AcDraggableAttributeName.acDraggableHandle,"");

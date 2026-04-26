@@ -20,7 +20,7 @@ import {
   SimpleChanges,
   OnDestroy
 } from '@angular/core';
-import { AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, acAddClassToElement, AcDatagrid, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AcDatagridSelectInputElement, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
+import { AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, acAddClassToElement, AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AcDatagridSelectInputElement, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
 import { IAcNgDatagridColumnDefinition } from '../../../ac-ng-datagrid/interfaces/ac-datagrid-column-definition.interface';
 import { AcDataManager, AcDelayedCallback, acNullifyInstanceProperties, IAcOnDemandRequestArgs } from '@autocode-ts/autocode';
 import { AcRuntimeService } from '@autocode-ts/ac-ng-runtime';
@@ -84,7 +84,7 @@ export class AcNgDatagridSelectComponent implements OnChanges, OnInit, OnDestroy
   @Output() onDatagridInit: EventEmitter<any> = new EventEmitter();
   @Output() stateChange: EventEmitter<any> = new EventEmitter();
 
-  datagrid: AcDatagrid;
+  datagrid: AcDatagridElement;
   datagridApi!: AcDatagridApi;
   selectInput!: AcDatagridSelectInputElement;
   delayedCallback:AcDelayedCallback = new AcDelayedCallback();

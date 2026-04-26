@@ -245,9 +245,7 @@ export class AcDatagridEventHandler {
   }
 
   handleCellValueChange({ datagridCell, event }: { datagridCell: IAcDatagridCell, event?: any }) {
-    // console.log('Cell Value Change');
     if (!this.datagridApi) return;
-    // console.log(datagridCell);
     const hookArgs: IAcDatagridCellHookArgs = {
       datagridApi: this.datagridApi,
       datagridCell: datagridCell,

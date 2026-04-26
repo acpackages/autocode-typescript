@@ -1,5 +1,5 @@
 import { AcBuilderElement, IAcBuilderElement, IAcBuilderElementInitArgs } from "@autocode-ts/ac-builder";
-import { AcDatagrid, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridExtensionManager, AcDatagridOnDemandDataSource, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME } from "@autocode-ts/ac-browser";
+import { AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridExtensionManager, AcDatagridOnDemandDataSource, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME } from "@autocode-ts/ac-browser";
 import { ACI_SVG_SOLID } from "@autocode-ts/ac-icons";
 import { AcDDDatagridElement } from "@autocode-ts/ac-data-dictionary-components";
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
@@ -74,7 +74,7 @@ export class AcDDDatagridBuilderElement extends AcBuilderElement {
 
   ddDatagrid: AcDDDatagridElement = new AcDDDatagridElement();
   datagridApi: AcDatagridApi;
-  datagrid:AcDatagrid;
+  datagrid:AcDatagridElement;
 
   agGridExtension!: AcDatagridOnAgGridExtension;
   columnDraggingExtension!: AcDatagridColumnDraggingExtension;

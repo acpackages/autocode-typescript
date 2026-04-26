@@ -3,6 +3,8 @@ import './_app.export';
 import './assets/scss/styles.scss';
 import './assets/scss/autocode.scss';
 import { acBootstrapElements, acRouter } from "@autocode-ts/ac-runtime";
+import '../../../packages/browser/ac-browser/src/lib/components/ac-datagrid/css/ac-datagrid.css';
+import '../../../packages/browser/ac-browser/src/lib/components/ac-pagination/css/ac-pagination.css';
 import {
   AccordionPage,
   AggridLocalPage,

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { acAddClassToElement } from "../../../../../utils/ac-element-functions";
-import { AcDatagridCssClassName } from "../../../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../../../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../../../core/ac-datagrid-api";
 import { AcDatagridInternalColumn } from "../../../models/ac-datagrid-internal-column.model";
 import { IAcDatagridRow } from "../../../interfaces/ac-datagrid-row.interface";
@@ -22,7 +22,7 @@ export class AcDatagridRowNumberCell {
 
   initElement() {
     acAddClassToElement({ class_: AcDatagridRowNumberCssClassName.acDatagridRowNumberCell, element: this.element });
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridCell, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCell, element: this.element });
     this.render();
     this.setCellWidth();
     // this.element.setAttribute(AcDraggableAttributeName.acDraggableHandle,"");

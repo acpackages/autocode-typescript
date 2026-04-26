@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AC_DATAGRID_EVENT, AC_INPUT_TAG, acCloneEvent, AcDatagrid, AcInputBase, acRegisterCustomElement, IAcDatagridCell } from "../../../../ac-browser";
+import { AC_DATAGRID_EVENT, AC_INPUT_TAG, acCloneEvent, AcDatagridElement, AcInputBase, acRegisterCustomElement, IAcDatagridCell } from "../../../../ac-browser";
 import { AcEnumConditionOperator, AcFilterGroup, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 import { createPopper, Instance as PopperInstance, Placement } from '@popperjs/core';
 
@@ -119,7 +119,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   private addNewButton: HTMLButtonElement | any;
   textInputElement: HTMLInputElement = this.ownerDocument.createElement('input');
   addNewContainer: HTMLElement = this.ownerDocument.createElement('div');
-  datagrid: AcDatagrid = new AcDatagrid();
+  datagrid: AcDatagridElement = new AcDatagridElement();
   private visibilityObserver?: IntersectionObserver | null;
   private resizeObserver?: ResizeObserver | null;
   selectedRows: any[] = [];

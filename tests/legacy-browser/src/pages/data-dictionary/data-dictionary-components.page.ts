@@ -9,7 +9,7 @@ import { dataDictionaryJson as actDataDictionary } from './../../../../data/acco
 // import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/unifi-data-dictionary';
 import { AcDataDictionary } from '@autocode-ts/ac-data-dictionary';
 import { AcDDDatagridElement, AcDDInputElement, AcDDInputFieldElement, AcDDInputManager } from '@autocode-ts/ac-data-dictionary-components';
-import { AcDatagrid, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridExtensionManager, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME, AcForm } from '@autocode-ts/ac-browser';
+import { AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridExtensionManager, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME, AcForm } from '@autocode-ts/ac-browser';
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from '@autocode-ts/autocode';
 import { ProductCategorySelectInput } from '../../components/inputs/product-category-select-input.element';
@@ -19,7 +19,7 @@ export class DataDictionaryComponentsPage extends HTMLElement {
   dataDictionaryEditor!: AcDataDictionaryEditor;
   private form: AcForm | null = null;
 
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   ddDatagrid!: AcDDDatagridElement;
   datagridApi!: AcDatagridApi;
   pageHeader: PageHeader = new PageHeader();

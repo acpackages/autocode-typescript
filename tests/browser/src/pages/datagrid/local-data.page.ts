@@ -1,9 +1,5 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
-import {
-  AcDatagridComponent,
-  AC_DATAGRID_EXTENSION_NAME,
-  AC_DATAGRID_HOOK
-} from "@autocode-ts/ac-browser";
+import { AcDatagridElement,AC_DATAGRID_EXTENSION_NAME,AC_DATAGRID_HOOK} from "@autocode-ts/ac-browser";
 import { customersData } from "../../../../data/customers-data";
 import { IAppMenuItem } from "src/_app.export";
 
@@ -12,7 +8,7 @@ import { IAppMenuItem } from "src/_app.export";
   template: `
     <div class="app-page">
       <app-header
-        [title]="'AcDatagrid : Local Data'"
+        [title]="'AcDatagridElement : Local Data'"
         [dropdownItems]="dropdownItems"
       ></app-header>
       <div class="p-3 flex-fill overflow-hidden d-flex flex-column">
@@ -27,7 +23,7 @@ import { IAppMenuItem } from "src/_app.export";
   `
 })
 export class DatagridLocalPage {
-  @AcViewChild('#grid') grid!: AcDatagridComponent;
+  @AcViewChild('#grid') grid!: AcDatagridElement;
 
   dropdownItems: IAppMenuItem[] = [
     { label: 'Grid Actions', isHeader: true },
@@ -39,7 +35,6 @@ export class DatagridLocalPage {
     const api = this.grid.datagridApi;
 
     // Enable Extensions
-    api.enableExtension({ extensionName: 'agGridOnAcDatagrid' });
     api.enableExtension({ extensionName: AC_DATAGRID_EXTENSION_NAME.RowDragging });
     api.enableExtension({ extensionName: AC_DATAGRID_EXTENSION_NAME.KeyboardActions });
 

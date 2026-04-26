@@ -25,6 +25,7 @@ export class AcRepeaterRowElement extends AcElementBase {
   override destroy(): void {
     this.repeaterRow.instance = null;
     this.repeaterApi.hooks.unsubscribe({subscriptionIds:this.hookSubscriptionIds});
+    super.destroy();
   }
 
   initElement() {

@@ -97,6 +97,14 @@ export function acClearElement({element}:{element:HTMLElement}):void{
   element.innerHTML = "";
 }
 
+export function acDestroyElement(el: HTMLElement) {
+  let clone = el.cloneNode(true) as HTMLElement;
+  el.replaceWith(clone);
+  clone.remove();
+  (clone as any) = null;
+  return null; // drop reference
+}
+
 export function acCreateValidityState(flags: Partial<ValidityState> = {}): any {
   return {
     valueMissing: false,

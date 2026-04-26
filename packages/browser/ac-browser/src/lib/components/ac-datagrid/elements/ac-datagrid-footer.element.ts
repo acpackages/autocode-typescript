@@ -1,11 +1,11 @@
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
-import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 
 
-export class AcDatagridFooter extends AcElementBase {
+export class AcDatagridFooterElement extends AcElementBase {
   private _datagridApi?: AcDatagridApi;
   get datagridApi(): AcDatagridApi|undefined {
     return this._datagridApi;
@@ -14,12 +14,15 @@ export class AcDatagridFooter extends AcElementBase {
     this._datagridApi = value;
   }
 
-  searchInput:HTMLInputElement = this.ownerDocument.createElement('input');
-  paginationContainer: HTMLElement = this.ownerDocument.createElement('div');
-  searchContainer: HTMLElement = this.ownerDocument.createElement('div');
+  searchInput!:HTMLInputElement;
+  paginationContainer!: HTMLElement;
+  searchContainer!: HTMLElement;
 
   override init(): void {
     super.init();
+    this.searchInput = this.ownerDocument.createElement('input');
+    this.paginationContainer = this.ownerDocument.createElement('div');
+    this.searchContainer = this.ownerDocument.createElement('div');
     this.append(this.paginationContainer);
     this.append(this.searchContainer);
     this.setPagination();
@@ -33,7 +36,7 @@ export class AcDatagridFooter extends AcElementBase {
       this.datagridApi.pagination.style.paddingRight = '10px';
       this.datagridApi.pagination.style.marginRight = '5px';
       this.datagridApi.pagination.style.borderRight = 'solid 1px #ccc';
-      acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridFooterPaginationContainer, element: this.paginationContainer });
+      acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooterPaginationContainer, element: this.paginationContainer });
       this.paginationContainer.append(this.datagridApi.pagination);
     }
   }
@@ -54,4 +57,4 @@ export class AcDatagridFooter extends AcElementBase {
   }
 }
 
-acRegisterCustomElement({tag:'ac-datagrid-footer',type:AcDatagridFooter});
+acRegisterCustomElement({tag:'ac-datagrid-footer',type:AcDatagridFooterElement});

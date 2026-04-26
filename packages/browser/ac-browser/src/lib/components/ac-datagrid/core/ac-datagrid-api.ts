@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcPagination } from "../../ac-pagination/elements/ac-pagination.element";
-import { AcDatagrid } from "../elements/ac-datagrid.element";
+import { AcDatagridElement } from "../elements/ac-datagrid.element";
 import { IAcDatagridColumnDefinition } from "../interfaces/ac-datagrid-column-definition.interface";
-import { AcDataManager, AC_DATA_MANAGER_EVENT, AcEnumLogicalOperator, AcEnumSortOrder, AcEvents, AcHooks, AcLogger, Autocode, IAcDataManagerDataEvent, IAcFilter, IAcFilterGroup,acNullifyInstanceProperties } from "@autocode-ts/autocode";
+import { AcDataManager, AC_DATA_MANAGER_EVENT, AcEnumLogicalOperator, AcEnumSortOrder, AcEvents, AcHooks, AcLogger, Autocode, IAcDataManagerDataEvent, IAcFilter, IAcFilterGroup, acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AC_DATAGRID_EVENT } from "../consts/ac-datagrid-event.const";
 import { IAcDatagridColumnDragPlaceholderCreatorArgs } from "../interfaces/callback-args/ac-datagrid-column-drag-placeholder-creator-args.interface";
 import { IAcDatagridRowDragPlaceholderCreatorArgs } from "../interfaces/callback-args/ac-datagrid-row-drag-placeholder-creator-args.interface";
@@ -118,7 +118,8 @@ export class AcDatagridApi {
         title: column.title ?? column.field,
         visible: column.visible,
         index: column.visible ? displayIndex : -1,
-        width: column.width ?? this.defaultColumnDefiniation.width
+        width: column.width ?? this.defaultColumnDefiniation.width,
+        pinnedOn: column.pinnedOn
       };
       this.datagridColumns.push(datagridColumn);
       this.logger.log('Created and added datagridColumn', { field: colDef.field, index: column.index });
@@ -151,6 +152,9 @@ export class AcDatagridApi {
   }
   set data(value: any[]) {
     this.dataManager.data = value;
+    this.dataManager.processRows();
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    this.events.execute({ event: AC_DATAGRID_EVENT.DataChange });
   }
 
   get datagridRows(): IAcDatagridRow[] {
@@ -161,12 +165,18 @@ export class AcDatagridApi {
     return result;
   }
 
+  setColumnWidth({ datagridColumn, width }: { datagridColumn: IAcDatagridColumn, width: number }) {
+    if (width < 30) width = 30;
+    const oldWidth = datagridColumn.width;
+    datagridColumn.width = width;
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.ColumnWidthChange, args: { datagridColumn, width, oldWidth, datagridApi: this } });
+  }
+
   get displayedDatagridRows(): IAcDatagridRow[] {
-    let result: IAcDatagridRow[] = [];
     if (this.dataManager) {
-      result = this.dataManager.displayedRows as IAcDatagridRow[];
+      return this.dataManager.displayedRows as any[];
     }
-    return result;
+    return [];
   }
 
   private _headerHeight: number = 40;
@@ -277,7 +287,7 @@ export class AcDatagridApi {
   };
   activeDatagridCell?: IAcDatagridCell;
   dataTypeIdentified: boolean = false;
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   datagridColumns: IAcDatagridColumn[] = [];
   datagridState: AcDatagridState;
   dataManager: AcDataManager = new AcDataManager();
@@ -294,7 +304,7 @@ export class AcDatagridApi {
   pagination?: AcPagination;
   rowValueChangeTimeoutDuration = 250;
 
-  constructor({ datagrid }: { datagrid: AcDatagrid }) {
+  constructor({ datagrid }: { datagrid: AcDatagridElement }) {
     this.datagrid = datagrid;
     this.dataManager.logger = this.logger;
     this.events = datagrid.events;
@@ -392,7 +402,7 @@ export class AcDatagridApi {
     });
     this.datagridState = new AcDatagridState({ datagridApi: this });
     this.eventHandler = new AcDatagridEventHandler();
-    this.eventHandler.init({datagridApi:this});
+    this.eventHandler.init({ datagridApi: this });
     AcDatagridExtensionManager.registerBuiltInExtensions();
   }
 
@@ -476,7 +486,7 @@ export class AcDatagridApi {
 
     this.hooks.destroy();
 
-    acNullifyInstanceProperties({instance:this});
+    acNullifyInstanceProperties({ instance: this });
   }
 
   enableExtension({ extensionName }: { extensionName: string }): AcDatagridExtension | null {
@@ -512,15 +522,15 @@ export class AcDatagridApi {
     return null;
   }
 
-  ensureRowVisible({ rowId, index, key, value }: { rowId?: string, index?: number, key?: string, value?: any }){
-    const datagridRow = this.getRow({rowId,index,key,value});
-    if(datagridRow){
-       const args: any = {
-          datagridRow,
-          datagridApi: this
-        };
-        this.hooks.execute({ hook: AC_DATAGRID_EVENT.EnsureRowVisible, args: args });
-        this.events.execute({ event: AC_DATAGRID_EVENT.EnsureRowVisible, args: args });
+  ensureRowVisible({ rowId, index, key, value }: { rowId?: string, index?: number, key?: string, value?: any }) {
+    const datagridRow = this.getRow({ rowId, index, key, value });
+    if (datagridRow) {
+      const args: any = {
+        datagridRow,
+        datagridApi: this
+      };
+      this.hooks.execute({ hook: AC_DATAGRID_EVENT.EnsureRowVisible, args: args });
+      this.events.execute({ event: AC_DATAGRID_EVENT.EnsureRowVisible, args: args });
     }
   }
 
@@ -830,4 +840,29 @@ export class AcDatagridApi {
     return datagridRow;
   }
 
+  getPinnedLeftOffset(datagridColumn: IAcDatagridColumn): number {
+    let offset = 0;
+    const columns = this.datagridColumns
+      .filter(c => c.visible && c.pinnedOn === 'LEFT')
+      .sort((a, b) => a.index - b.index);
+
+    for (const col of columns) {
+      if (col.columnId === datagridColumn.columnId) break;
+      offset += col.width;
+    }
+    return offset;
+  }
+
+  getPinnedRightOffset(datagridColumn: IAcDatagridColumn): number {
+    let offset = 0;
+    const columns = this.datagridColumns
+      .filter(c => c.visible && c.pinnedOn === 'RIGHT')
+      .sort((a, b) => b.index - a.index); // Reversed for right-side pinning
+
+    for (const col of columns) {
+      if (col.columnId === datagridColumn.columnId) break;
+      offset += col.width;
+    }
+    return offset;
+  }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { AcDatagrid, AcDatagridApi, AcDatagridExtensionManager, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AC_DATAGRID_EVENT, IAcDatagridCellRendererElementInitEvent, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridAutoAddNewRowExtension } from '@autocode-ts/ac-browser';
+import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AcDatagridRowSelectionExtension, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AC_DATAGRID_EVENT, IAcDatagridCellRendererElementInitEvent, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridAutoAddNewRowExtension } from '@autocode-ts/ac-browser';
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { PageHeader } from '../../components/page-header/page-header.component';
 import { ActionsDatagridColumn } from '../../components/actions-datagrid-column/actions-datagrid-column.component';
@@ -7,7 +7,7 @@ import { customersData } from './../../../../data/customers-data';
 import { Autocode } from '@autocode-ts/autocode';
 
 export class AggridLocalData extends HTMLElement {
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   datagridApi!: AcDatagridApi;
   pageHeader: PageHeader = new PageHeader();
   agGridExtension!: AcDatagridOnAgGridExtension;
@@ -27,12 +27,12 @@ export class AggridLocalData extends HTMLElement {
     this.innerHTML = html;
     this.style.height = '100vh;'
     this.prepend(this.pageHeader.element);
-    this.pageHeader.pageTitle = 'AGGrid on AcDatagrid : Offline Data';
+    this.pageHeader.pageTitle = 'AGGrid on AcDatagridElement : Offline Data';
     this.initDatagrid();
   }
 
   async initDatagrid() {
-    this.datagrid = document.querySelector<AcDatagrid>('#datagrid')!;
+    this.datagrid = document.querySelector<AcDatagridElement>('#datagrid')!;
     AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
     this.datagridApi = this.datagrid.datagridApi;
 

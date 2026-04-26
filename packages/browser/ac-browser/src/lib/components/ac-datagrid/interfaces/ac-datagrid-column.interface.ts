@@ -26,4 +26,5 @@ export interface IAcDatagridColumn {
   title:string;
   visible:boolean;
   width:number;
+  pinnedOn?:'LEFT'|'RIGHT';
 }

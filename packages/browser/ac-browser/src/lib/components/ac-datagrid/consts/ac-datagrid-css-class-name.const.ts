@@ -1,32 +1,3 @@
-export const AcDatagridCssClassName = {
-  acDatagrid: 'ac-datagrid',
-  acDatagridBody: 'ac-datagrid-body',
-  acDatagridCell: 'ac-datagrid-cell',
-  acDatagridCellContainer: 'ac-datagrid-cell-container',
-  acDatagridCellEditing: 'ac-datagrid-cell-editing',
-  acDatagridCellEditorInput: 'ac-datagrid-cell-editor-input',
-  acDatagridCellFocused: 'ac-datagrid-cell-focused',
-  acDatagridCellRenderer: 'ac-datagrid-cell-renderer',
-  acDatagridContainer: 'ac-datagrid-container',
-  acDatagridFooter: 'ac-datagrid-footer',
-  acDatagridFooterPaginationContainer: 'ac-datagrid-footer-pagination-container',
-  acDatagridHeader: 'ac-datagrid-header',
-  acDatagridHeaderRow: 'ac-datagrid-header-row',
-  acDatagridHeaderCell: 'ac-datagrid-header-cell',
-  acDatagridHeaderCellContainer: 'ac-datagrid-header-cell-container',
-  acDatagridHeaderCellFilter: 'ac-datagrid-header-cell-filter',
-  acDatagridHeaderCellLeftContainer: 'ac-datagrid-header-cell-left-container',
-  acDatagridHeaderCellResize: 'ac-datagrid-header-cell-resize',
-  acDatagridHeaderCellRightContainer: 'ac-datagrid-header-cell-right-container',
-  acDatagridHeaderCellSort: 'ac-datagrid-header-cell-sort',
-  acDatagridHeaderCellTitle: 'ac-datagrid-header-cell-title',
-  acDatagridRow: 'ac-datagrid-row',
-  acDatagridRowEven: 'ac-datagrid-row-even',
-  acDatagridRowOdd: 'ac-datagrid-row-odd',
-  acDatagridRowsContainer: 'ac-datagrid-rows-container',
-  acDatagridRowWrapper: 'ac-datagrid-row-wrapper'
-}
-
 export const AC_DATAGRID_CLASS_NAME = {
   acDatagrid: 'ac-datagrid',
   acDatagridContainer: 'ac-datagrid-container',

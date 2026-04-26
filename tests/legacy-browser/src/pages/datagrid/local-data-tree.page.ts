@@ -1,11 +1,11 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import './../../../../../packages/browser/ac-browser/src/lib/components/ac-datagrid/css/ac-datagrid.css';
 import './../../../../../packages/browser/ac-browser/src/lib/components/ac-pagination/css/ac-pagination.css';
-import { AcDatagrid, AcDatagridApi, AC_DATAGRID_EVENT, AcEnumDataSourceType } from '@autocode-ts/ac-browser';
+import { AcDatagridElement, AcDatagridApi, AC_DATAGRID_EVENT, AcEnumDataSourceType } from '@autocode-ts/ac-browser';
 
 export class DatagridLocalDataTree extends HTMLElement {
   public static observedAttributes = [];
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   datagridApi!:AcDatagridApi;
 
   async connectedCallback() {
@@ -14,7 +14,7 @@ export class DatagridLocalDataTree extends HTMLElement {
       <div class="local-datagrid-container" style="height:80vh;"></div>
     `;
     this.innerHTML = html;
-    this.datagrid = new AcDatagrid();
+    this.datagrid = new AcDatagridElement();
     this.datagridApi = this.datagrid.datagridApi;
     this.datagridApi.events.subscribeAllEvents({callback:(eventName:string,eventArgs:any)=>{
       const rowEvents:any[]  = [

@@ -6,7 +6,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 /* eslint-disable @angular-eslint/prefer-standalone */
 import { ApplicationRef, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { acAddClassToElement, AcDatagrid, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
+import { acAddClassToElement, AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
 import { AcRuntimeService } from '@autocode-ts/ac-ng-runtime';
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcDelayedCallback, acNullifyInstanceProperties, IAcOnDemandRequestArgs } from '@autocode-ts/autocode';
 import { IAcNgDatagridColumnDefinition } from '../../interfaces/ac-datagrid-column-definition.interface';
@@ -653,7 +653,7 @@ export class AcNgDatagridEvents {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChanges, OnDestroy, OnInit {
-  @ViewChild('acDatagrid') acDatagridRef: ElementRef<AcDatagrid>;
+  @ViewChild('acDatagrid') acDatagridRef: ElementRef<AcDatagridElement>;
   @Input() datagridClass: string = '';
   @Input() columnDefinitions: IAcNgDatagridColumnDefinition[] = [];
   @Input() columnEditorTemplates: Record<string, TemplateRef<any>> = {};
@@ -667,7 +667,7 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
   @Input() showSearchInput: boolean = true;
   @Input() usePagination: boolean = true;
 
-  datagrid?: AcDatagrid;
+  datagrid?: AcDatagridElement;
   datagridApi?: AcDatagridApi;
 
   columnDraggingExtension?: AcDatagridColumnDraggingExtension;

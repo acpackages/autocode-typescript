@@ -20,7 +20,8 @@ import { AcElement, AcInput, AcOutput, AcViewChild, IAcOnInit } from '@autocode-
     <div class="">
       <div class="float-end d-flex gap-1">
         <span ac:if="showSearchInput">
-          <ac-input #searchInput class="form-control form-control-sm" [attr.placeholder]="searchLabel" (change)="handleSearchChange(searchInput)"/>
+          <!-- <ac-input #searchInput class="form-control form-control-sm" [attr.placeholder]="searchLabel" (change)="handleSearchChange(searchInput)"/> -->
+           <ac-input class="form-control form-control-sm" search-element="true"/>
         </span>
         <button type="button" class="btn btn-sm btn-dark py-1" ac:if="showAddButton" (click)="handleAddClick()">
           <ac-svg-icon ac:bind:svg-code='ACI_SVG_SOLID.plus'></ac-svg-icon>

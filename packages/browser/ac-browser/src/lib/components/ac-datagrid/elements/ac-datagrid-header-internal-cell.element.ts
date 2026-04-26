@@ -52,14 +52,14 @@ export class AcDatagridHeaderInternalCellElement {
 
   // initElement() {
   //   this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridColumn.columnId);
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellLeftContainer, element: this.leftContainer });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellRightContainer, element: this.rightContainer });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCell, element: this.element });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellContainer, element: this.cellContainer });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellTitle, element: this.titleElement });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellFilter, element: this.filterElement });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellSort, element: this.sortElement });
-  //   acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCellResize, element: this.resizeElement });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellLeftContainer, element: this.leftContainer });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellRightContainer, element: this.rightContainer });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCell, element: this.element });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellContainer, element: this.cellContainer });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellTitle, element: this.titleElement });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellFilter, element: this.filterElement });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellSort, element: this.sortElement });
+  //   acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellResize, element: this.resizeElement });
   //   this.element.append(this.cellContainer);
   //   this.cellContainer.setAttribute('draggable', 'true');
   //   this.cellContainer.append(this.leftContainer);
@@ -134,7 +134,7 @@ export class AcDatagridHeaderInternalCellElement {
   // //     if (this.draggablePlaceholder == undefined) {
   // //       this.draggablePlaceholder = this.ownerDocument.createElement('div');
   // //       acAddClassToElement({
-  // //         class_: AcDatagridCssClassName.acDatagridColumnDraggingPlaceholder,
+  // //         class_: AC_DATAGRID_CLASS_NAME.acDatagridColumnDraggingPlaceholder,
   // //         element: this.draggablePlaceholder
   // //       });
   // //       const creatorArgs:IAcDatagridColumnDragPlaceholderCreatorArgs = {

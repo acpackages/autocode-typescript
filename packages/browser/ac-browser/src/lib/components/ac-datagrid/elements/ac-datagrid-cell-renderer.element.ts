@@ -3,7 +3,7 @@ import { dateFormat, parseDateTimeString } from "@autocode-ts/ac-extensions";
 import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
 import { IAcDatagridCellRenderer, IAcDatagridCellElementArgs, IAcDatagridColumn, AC_DATAGRID_HOOK, IAcDatagridCell, AcEnumDatagridColumnDataType } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
-import { AcDatagridCssClassName } from "../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 
 export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
@@ -33,7 +33,7 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
     this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId,this.datagridCell.cellId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId,this.datagridCell.datagridColumn.columnId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId,this.datagridCell.datagridRow.rowId);
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridCellRenderer, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellRenderer, element: this.element });
     this.element.style.height = "100%";
     this.element.style.width = "max-content";
     this.render();
@@ -49,20 +49,20 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
   render() {
     const value = this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey];
     acClearElement({element:this.element});
-    if(value){
-      if(this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Date){
+    if (value !== undefined && value !== null) {
+      if (this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Date) {
         const parseValue = parseDateTimeString(value);
-        if(parseValue){
-          this.element.innerHTML = dateFormat(parseValue,'dd-MM-yyyy');
+        if (parseValue) {
+          this.element.innerHTML = dateFormat(parseValue, 'dd-MM-yyyy');
         }
       }
-      else if(this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Datetime){
+      else if (this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Datetime) {
         const parseValue = parseDateTimeString(value);
-        if(parseValue){
-          this.element.innerHTML = dateFormat(parseValue,'dd-MM-yyyy HH:mm a');
+        if (parseValue) {
+          this.element.innerHTML = dateFormat(parseValue, 'dd-MM-yyyy HH:mm a');
         }
       }
-      else{
+      else {
         this.element.innerHTML = value;
       }
     }

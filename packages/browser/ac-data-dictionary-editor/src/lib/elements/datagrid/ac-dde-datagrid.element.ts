@@ -1,4 +1,4 @@
-import { AcDatagrid, AcDatagridAfterRowsFooterExtension, AcDatagridApi, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumnDefinition } from "@autocode-ts/ac-browser";
+import { AcDatagridElement, AcDatagridAfterRowsFooterExtension, AcDatagridApi, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumnDefinition } from "@autocode-ts/ac-browser";
 import { AcDDEApi } from "../../core/ac-dde-api";
 import { AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AcDatagridOnAgGridExtension } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDelayedCallback } from "@autocode-ts/autocode";
@@ -11,7 +11,7 @@ export class AcDDEDatagrid {
     this.datagridApi.columnDefinitions = value;
   }
 
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   datagridApi!: AcDatagridApi;
   editorApi!: AcDDEApi;
   element!: HTMLElement;
@@ -34,7 +34,7 @@ export class AcDDEDatagrid {
 
   constructor({ editorApi }: { editorApi: AcDDEApi }) {
     this.editorApi = editorApi;
-    this.datagrid = new AcDatagrid();
+    this.datagrid = new AcDatagridElement();
     this.datagridApi = this.datagrid.datagridApi;
     this.datagridApi.defaultColumnDefiniation.allowEdit = true;
     this.datagridApi.showAddButton = true;

@@ -1,5 +1,5 @@
 import { acAddClassToElement } from "../../../../../utils/ac-element-functions";
-import { AcDatagridCssClassName } from "../../../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../../../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../../../core/ac-datagrid-api";
 import { AcDatagridInternalColumn } from "../../../models/ac-datagrid-internal-column.model";
 import { AcDatagridTreeTableCssClassName } from "../consts/ac-datagrid-tree-table-css-class-name.const";
@@ -17,7 +17,7 @@ export class AcDatagridTreeTableChildrenToggleHeaderCell {
 
   initElement() {
     acAddClassToElement({ class_: AcDatagridTreeTableCssClassName.acDatagridTreeTableHeaderCell, element: this.element });
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridHeaderCell, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeaderCell, element: this.element });
     this.setCellWidth();
     // this.element.setAttribute(AcDraggableAttributeName.acDraggableHandle,"");
   }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { acAddClassToElement } from "../../../../../utils/ac-element-functions";
-import { AcDatagridCssClassName } from "../../../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_CLASS_NAME } from "../../../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../../../core/ac-datagrid-api";
 import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extension-name.const";
 import { IAcDatagridRow } from "../../../interfaces/ac-datagrid-row.interface";
@@ -32,7 +32,7 @@ export class AcDatagridRowSelectionCell {
 
   initElement() {
     acAddClassToElement({ class_: AcDatagridRowSelectionCssClassName.acDatagridRowSelect, element: this.input });
-    acAddClassToElement({ class_: AcDatagridCssClassName.acDatagridCell, element: this.element });
+    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCell, element: this.element });
     this.input.setAttribute('type','checkbox');
     this.element.append(this.input);
     this.registerListeners();

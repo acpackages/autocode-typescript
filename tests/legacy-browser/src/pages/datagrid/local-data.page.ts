@@ -5,7 +5,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import './../../../../../packages/browser/ac-browser/src/lib/components/ac-datagrid/css/ac-datagrid.css';
 import './../../../../../packages/browser/ac-browser/src/lib/components/ac-pagination/css/ac-pagination.css';
-import { AcDatagrid, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK } from '@autocode-ts/ac-browser';
+import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK } from '@autocode-ts/ac-browser';
 import { customersData } from './../../../../data/customers-data';
 import { AcDataManager, IAcOnDemandRequestArgs } from '@autocode-ts/autocode';
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
@@ -13,7 +13,7 @@ import { AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AcDatagridOnAgGridExtension, AgG
 
 export class DatagridLocalData extends HTMLElement {
   public static observedAttributes = [];
-  datagrid!: AcDatagrid;
+  datagrid!: AcDatagridElement;
   datagridApi!: AcDatagridApi;
   addNewButton: HTMLElement = document.createElement('button');
 
@@ -26,7 +26,7 @@ export class DatagridLocalData extends HTMLElement {
     this.innerHTML = html;
     const filterInput:HTMLInputElement = this.querySelector('.filter-input') as HTMLInputElement;
 
-    this.datagrid = new AcDatagrid();
+    this.datagrid = new AcDatagridElement();
     this.datagridApi = this.datagrid.datagridApi;
     this.datagridApi.hooks.subscribe({
       hook: AC_DATAGRID_HOOK.FooterInit, callback: () => {

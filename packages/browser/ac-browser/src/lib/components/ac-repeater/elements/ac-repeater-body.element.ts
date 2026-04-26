@@ -15,7 +15,6 @@ import { AC_REPEATER_TAG } from "../consts/ac-repeater-tag.const";
 export class AcRepeaterBodyElement extends AcElementBase {
   private repeater: AcRepeaterElement;
   private repeaterApi: AcRepeaterApi;
-  private scrollable!: AcScrollable;
   private currentRows:AcRepeaterRowElement[] = [];
 
   private autoBindRepeater() {
@@ -27,7 +26,7 @@ export class AcRepeaterBodyElement extends AcElementBase {
         this.repeaterApi.hooks.subscribe({
           hook: AcEnumRepeaterHook.DisplayedRowsChange,
           callback: (event: IAcRepeaterDisplayedRowsChangeEvent) => {
-            this.setDisplayRows();
+            this.setDisplayedRows();
           }
         });
         const hookArgs: IAcRepeaterBodyHookArgs = {
@@ -96,7 +95,7 @@ export class AcRepeaterBodyElement extends AcElementBase {
     });
   }
 
-  setDisplayRows() {
+  setDisplayedRows() {
     this.clearBody();
     for (const row of this.repeaterApi.displayedRepeaterRows) {
       const repeaterRow = new AcRepeaterRowElement();

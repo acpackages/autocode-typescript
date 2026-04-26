@@ -33,7 +33,6 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
       const lastRow = this.datagridApi.addRow({ data: { ...this.autoAddNewRowData},rowId:'___auto_add_row___' });
       this.lastAutoAddRowId = lastRow.rowId;
     }
-    console.log("Adding new row in auto add extension")
   }
 
   override destroy(): void {
