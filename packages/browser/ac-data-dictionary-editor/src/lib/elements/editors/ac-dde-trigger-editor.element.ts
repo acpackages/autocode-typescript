@@ -19,7 +19,7 @@ import { AcDDEElementBase } from '../core/ac-dde-element-base.element';
 import { AC_DDE_TAG } from '../../consts/ac-dde-tag.const';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-export class AcDDETableEditorElement extends AcDDEElementBase{
+export class AcDDETriggerEditorElement extends AcDDEElementBase{
   activeTable?: IAcDDETable;
 
   tableColumnsDatagrid!: AcDDETableColumnsDatagridElement;
@@ -51,21 +51,11 @@ export class AcDDETableEditorElement extends AcDDEElementBase{
     this.innerHTML = `<ac-resizable-panels class="editor-resizable-panels">
       <ac-resizable-panel>
         <div ac-dde-tables-wrapper class="${AcDDECssClassName.acDDETablesContainer}">
-          <${AC_DDE_TAG.tablesDatagrid}></${AC_DDE_TAG.tablesDatagrid}>
+          <${AC_DDE_TAG.triggersDatagrid}></${AC_DDE_TAG.triggersDatagrid}>
         </div>
       </ac-resizable-panel>
       <ac-resizable-panel>
-        <ac-resizable-panels class="detail-resizable-panels" direction="vertical">
-          <ac-resizable-panel ac-dde-tables-columns-wrapper>
-            <${AC_DDE_TAG.tableColumnsDatagrid}></${AC_DDE_TAG.tableColumnsDatagrid}>
-          </ac-resizable-panel>
-          <ac-resizable-panel ac-dde-tables-relationships-wrapper>
-            <${AC_DDE_TAG.relationshipsDatagrid}></${AC_DDE_TAG.relationshipsDatagrid}>
-          </ac-resizable-panel>
-          <ac-resizable-panel ac-dde-tables-triggers-wrapper>
-            <${AC_DDE_TAG.triggersDatagrid}></${AC_DDE_TAG.triggersDatagrid}>
-          </ac-resizable-panel>
-        </ac-resizable-panels>
+        <${AC_DDE_TAG.triggerMaster}></${AC_DDE_TAG.triggerMaster}>
       </ac-resizable-panel>
     </ac-resizable-panels>`;
     acAddClassToElement({ class_: AcDDECssClassName.acDataDictionaryEditor, element: this });
@@ -73,25 +63,17 @@ export class AcDDETableEditorElement extends AcDDEElementBase{
 
     this.editorPanels = this.querySelector('.editor-resizable-panels') as AcResizablePanels;
 
-    this.detailPanels = this.querySelector('.detail-resizable-panels') as AcResizablePanels;
     this.delayedCallback.add({callback:() => {
       this.editorPanels.setPanelSizes({
         panelSizes: [
-          { size: 35, index: 0 },
-          { size: 65, index: 1 }
+          { size: 65, index: 0 },
+          { size: 35, index: 1 }
         ]
       });
-      this.detailPanels.setPanelSizes({
-      panelSizes: [
-        { size: 60, index: 0 },
-        { size: 20, index: 1 },
-        { size: 20, index: 1 }
-      ]
-    });
     }, duration:5});
 
-    this.tablesDatagrid =  this.querySelector(AC_DDE_TAG.tablesDatagrid) as AcDDETablesDatagridElement;
-    this.tablesDatagrid.datagridApi.on({
+    const triggersDatagrid =  this.querySelector(AC_DDE_TAG.tablesDatagrid) as AcDDETablesDatagridElement;
+    triggersDatagrid.datagridApi.on({
       event: AC_DATAGRID_EVENT.ActiveRowChange, callback: (args: IAcDatagridActiveRowChangeEvent) => {
           this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TableEditorActiveTableChange });
           this.activeTable = this.tablesDatagrid.datagridApi!.activeDatagridRow!.data;
@@ -100,14 +82,14 @@ export class AcDDETableEditorElement extends AcDDEElementBase{
           this.tableTriggersDatagrid.applyFilter();
       }
     });
-    this.tablesDatagrid.datagridApi.on({
+    triggersDatagrid.datagridApi.on({
       event: AC_DATAGRID_EVENT.StateChange, callback: (args: IAcDatagridStateChangeEvent) => {
         this.updateEditorState();
       }
     });
 
-    this.tableColumnsDatagrid = this.querySelector(AC_DDE_TAG.tableColumnsDatagrid) as  AcDDETableColumnsDatagridElement;
-    this.tableColumnsDatagrid.filterFunction = (row: IAcDDETableColumn) => {
+    const triggerMaster = this.querySelector(AC_DDE_TAG.tableColumnsDatagrid) as  AcDDETableColumnsDatagridElement;
+    triggerMaster.filterFunction = (row: IAcDDETableColumn) => {
       let tableId: any = undefined;
       if (this.tablesDatagrid && this.tablesDatagrid.datagridApi && this.tablesDatagrid.datagridApi.activeDatagridRow) {
         const activeRow: IAcDDETable = this.tablesDatagrid.datagridApi.activeDatagridRow.data;
@@ -213,4 +195,4 @@ export class AcDDETableEditorElement extends AcDDEElementBase{
   }
 }
 
-acRegisterCustomElement({ tag: AC_DDE_TAG.tableEditor, type: AcDDETableEditorElement });
+acRegisterCustomElement({ tag: AC_DDE_TAG.tableEditor, type: AcDDETriggerEditorElement });

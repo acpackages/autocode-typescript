@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Web",
-  "version": 0,
+  "version": 1,
   "tables": {
     "accountees": {
       "tableName": "accountees",
@@ -66,6 +66,10 @@ export const dataDictionaryJson = {
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
           "propertyValue": "accountee"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_accountees"
         }
       }
     },
@@ -244,6 +248,10 @@ export const dataDictionaryJson = {
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
           "propertyValue": "developer"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_developers"
         }
       }
     },
@@ -450,6 +458,56 @@ export const dataDictionaryJson = {
               "propertyValue": "Full Description"
             }
           }
+        },
+        "is_android_supported": {
+          "columnName": "is_android_supported",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is AndroidSupported?"
+            }
+          }
+        },
+        "is_ios_supported": {
+          "columnName": "is_ios_supported",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is iOS Supported?"
+            }
+          }
+        },
+        "is_windows_supported": {
+          "columnName": "is_windows_supported",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Windows Supported?"
+            }
+          }
+        },
+        "is_macos_supported": {
+          "columnName": "is_macos_supported",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is MacOS Supported?"
+            }
+          }
+        },
+        "is_linux_supported": {
+          "columnName": "is_linux_supported",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Linux Supported"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -460,6 +518,10 @@ export const dataDictionaryJson = {
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
           "propertyValue": "extension"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_extensions"
         }
       }
     },
@@ -675,16 +737,16 @@ export const dataDictionaryJson = {
         }
       }
     },
-    "report_formats": {
-      "tableName": "report_formats",
+    "print_formats": {
+      "tableName": "print_formats",
       "tableColumns": {
-        "report_format_id": {
-          "columnName": "report_format_id",
+        "print_format_id": {
+          "columnName": "print_format_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Report Format Id"
+              "propertyValue": "Print Format Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -692,13 +754,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "report_format_name": {
-          "columnName": "report_format_name",
+        "print_format_name": {
+          "columnName": "print_format_name",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Report Format Name"
+              "propertyValue": "Print Format Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -710,13 +772,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "report_format_label": {
-          "columnName": "report_format_label",
+        "print_format_label": {
+          "columnName": "print_format_label",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Report Format Label"
+              "propertyValue": "Print Format Label"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -754,13 +816,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "report_format_json": {
-          "columnName": "report_format_json",
+        "print_format_json": {
+          "columnName": "print_format_json",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Report Format Json"
+              "propertyValue": "Print Format Json"
             }
           }
         },
@@ -777,16 +839,133 @@ export const dataDictionaryJson = {
               "propertyValue": true
             }
           }
+        },
+        "print_format_type": {
+          "columnName": "print_format_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "PrintFormat Type"
+            }
+          }
         }
       },
       "tableProperties": {
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
-          "propertyValue": "report_formats"
+          "propertyValue": "print_formats"
         },
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
-          "propertyValue": "report_format"
+          "propertyValue": "print_format"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_print_formats"
+        }
+      }
+    },
+    "reports": {
+      "tableName": "reports",
+      "tableColumns": {
+        "report_id": {
+          "columnName": "report_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Report Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "report_name": {
+          "columnName": "report_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Report Name"
+            }
+          }
+        },
+        "report_label": {
+          "columnName": "report_label",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Report Label"
+            }
+          }
+        },
+        "report_script": {
+          "columnName": "report_script",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Report Script"
+            }
+          }
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Updated On"
+            }
+          }
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Current Version Number"
+            }
+          }
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Current Version Label"
+            }
+          }
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Developer"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "reports"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "report"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_reports"
         }
       }
     },
@@ -1099,6 +1278,398 @@ export const dataDictionaryJson = {
       }
     }
   },
+  "views": {
+    "vw_developers": {
+      "viewName": "vw_developers",
+      "viewColumns": {
+        "developer_profile_image_media_details": {
+          "columnName": "developer_profile_image_media_details",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "medias",
+          "columnSourceOriginalColumn": "media_details"
+        },
+        "developer_profile_image_media_path": {
+          "columnName": "developer_profile_image_media_path",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "medias",
+          "columnSourceOriginalColumn": "media_path"
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "developers",
+          "columnSourceOriginalColumn": "developer_id"
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "developers",
+          "columnSourceOriginalColumn": "user_id"
+        },
+        "developer_name": {
+          "columnName": "developer_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "developers",
+          "columnSourceOriginalColumn": "developer_name"
+        },
+        "developer_profile_image_media_id": {
+          "columnName": "developer_profile_image_media_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "developers",
+          "columnSourceOriginalColumn": "developer_profile_image_media_id"
+        }
+      },
+      "viewQuery": "SELECT medias.media_details AS developer_profile_image_media_details, medias.media_path AS developer_profile_image_media_path ,developers.* FROM developers LEFT JOIN medias ON developers.developer_profile_image_media_id = medias.media_id"
+    },
+    "vw_extensions": {
+      "viewName": "vw_extensions",
+      "viewColumns": {
+        "extension_id": {
+          "columnName": "extension_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_id"
+        },
+        "extension_name": {
+          "columnName": "extension_name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_name"
+        },
+        "extension_identifier": {
+          "columnName": "extension_identifier",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_identifier"
+        },
+        "extension_type": {
+          "columnName": "extension_type",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_type"
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "developer_id"
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "current_version_number"
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "current_version_label"
+        },
+        "extension_archive_url": {
+          "columnName": "extension_archive_url",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_archive_url"
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "last_updated_on"
+        },
+        "extension_image_media_id": {
+          "columnName": "extension_image_media_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_image_media_id"
+        },
+        "quick_description": {
+          "columnName": "quick_description",
+          "columnType": "TEXT",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "quick_description"
+        },
+        "full_description": {
+          "columnName": "full_description",
+          "columnType": "TEXT",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "full_description"
+        },
+        "is_android_supported": {
+          "columnName": "is_android_supported",
+          "columnType": "YES_NO",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "is_android_supported"
+        },
+        "is_ios_supported": {
+          "columnName": "is_ios_supported",
+          "columnType": "YES_NO",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "is_ios_supported"
+        },
+        "is_windows_supported": {
+          "columnName": "is_windows_supported",
+          "columnType": "YES_NO",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "is_windows_supported"
+        },
+        "is_macos_supported": {
+          "columnName": "is_macos_supported",
+          "columnType": "YES_NO",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "is_macos_supported"
+        },
+        "is_linux_supported": {
+          "columnName": "is_linux_supported",
+          "columnType": "YES_NO",
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "is_linux_supported"
+        },
+        "developer_name": {
+          "columnName": "developer_name",
+          "columnType": "STRING",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_name"
+        },
+        "developer_profile_image_media_path": {
+          "columnName": "developer_profile_image_media_path",
+          "columnType": "TEXT",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_profile_image_media_path"
+        }
+      },
+      "viewQuery": "SELECT extensions.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM extensions \nLEFT JOIN vw_developers ON extensions.developer_id = vw_developers.developer_id"
+    },
+    "vw_print_formats": {
+      "viewName": "vw_print_formats",
+      "viewColumns": {
+        "print_format_id": {
+          "columnName": "print_format_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_id"
+        },
+        "print_format_name": {
+          "columnName": "print_format_name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_name"
+        },
+        "print_format_label": {
+          "columnName": "print_format_label",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_label"
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "current_version_label"
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "current_version_number"
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "last_updated_on"
+        },
+        "print_format_json": {
+          "columnName": "print_format_json",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_json"
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "developer_id"
+        },
+        "print_format_type": {
+          "columnName": "print_format_type",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_type"
+        },
+        "developer_name": {
+          "columnName": "developer_name",
+          "columnType": "STRING",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_name"
+        },
+        "developer_profile_image_media_path": {
+          "columnName": "developer_profile_image_media_path",
+          "columnType": "TEXT",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_profile_image_media_path"
+        }
+      },
+      "viewQuery": "SELECT print_formats.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM print_formats \nLEFT JOIN vw_developers ON print_formats.developer_id = vw_developers.developer_id"
+    },
+    "vw_reports": {
+      "viewName": "vw_reports",
+      "viewColumns": {
+        "report_id": {
+          "columnName": "report_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "report_id"
+        },
+        "report_name": {
+          "columnName": "report_name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "report_name"
+        },
+        "report_label": {
+          "columnName": "report_label",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "report_label"
+        },
+        "report_script": {
+          "columnName": "report_script",
+          "columnType": "TEXT",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "report_script"
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "last_updated_on"
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "current_version_number"
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "current_version_label"
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "developer_id"
+        },
+        "developer_name": {
+          "columnName": "developer_name",
+          "columnType": "STRING",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_name"
+        },
+        "developer_profile_image_media_path": {
+          "columnName": "developer_profile_image_media_path",
+          "columnType": "TEXT",
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_profile_image_media_path"
+        }
+      },
+      "viewQuery": "SELECT reports.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM reports \nLEFT JOIN vw_developers ON reports.developer_id = vw_developers.developer_id"
+    },
+    "vw_accountees": {
+      "viewName": "vw_accountees",
+      "viewColumns": {
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_id"
+        },
+        "accountee_name": {
+          "columnName": "accountee_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_name"
+        },
+        "accountee_profile_image_media_id": {
+          "columnName": "accountee_profile_image_media_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_profile_image_media_id"
+        },
+        "accountee_type": {
+          "columnName": "accountee_type",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_type"
+        }
+      },
+      "viewQuery": "SELECT * FROM accountees"
+    }
+  },
   "relationships": [
     {
       "destinationColumn": "developer_id",
@@ -1169,7 +1740,7 @@ export const dataDictionaryJson = {
     },
     {
       "destinationColumn": "developer_id",
-      "destinationTable": "report_formats",
+      "destinationTable": "print_formats",
       "sourceColumn": "developer_id",
       "sourceTable": "developers"
     },
@@ -1190,6 +1761,12 @@ export const dataDictionaryJson = {
       "destinationTable": "devices",
       "sourceColumn": "application_id",
       "sourceTable": "applications"
+    },
+    {
+      "destinationColumn": "developer_id",
+      "destinationTable": "reports",
+      "sourceColumn": "developer_id",
+      "sourceTable": "developers"
     }
   ]
 };

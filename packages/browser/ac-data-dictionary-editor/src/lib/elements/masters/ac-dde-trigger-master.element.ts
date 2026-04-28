@@ -1,9 +1,7 @@
-import { AcTextareaInputElement } from "@autocode-ts/ac-browser";
-import { AcDDEAttributeName, AcDDECssClassName, IAcDDETrigger } from "../../_ac-data-dictionary-editor.export";
-import { AcDDEApi } from "../../core/ac-dde-api";
-import { AcDelayedCallback, AcEvents } from "@autocode-ts/autocode";
+import { acRegisterCustomElement, AcTextareaInputElement } from "@autocode-ts/ac-browser";
+import { AC_DDE_TAG, AcDDECssClassName, AcDDEElementBase, IAcDDETrigger } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDETriggerMaster {
+export class AcDDETriggerMaster extends AcDDEElementBase {
   private _trigger: IAcDDETrigger | any;
   get trigger(): IAcDDETrigger {
     return this._trigger;
@@ -14,12 +12,12 @@ export class AcDDETriggerMaster {
   }
 
   changeTimeout:any;
-  element: HTMLElement = document.createElement('div');
-  queryInput: AcTextareaInputElement;
-  events: AcEvents = new AcEvents();
-  delayedCallback:AcDelayedCallback = new AcDelayedCallback();
+  element: HTMLElement = this.ownerDocument.createElement('div');
+  queryInput!: AcTextareaInputElement;
 
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
+  override init() {
+    super.init();
+    this.append(this.element);
     this.element.classList.add(AcDDECssClassName.acDDEMasterContainer);
     this.element.innerHTML = `
     <div class="form-group" style="height:100%">
@@ -51,8 +49,6 @@ export class AcDDETriggerMaster {
       this.events.execute({ event: 'change', args: { trigger: this.trigger } });
     }, duration:300});
   }
-
-  on({ event, callback }: { event: string, callback: Function }) {
-    this.events.subscribe({ event, callback });
-  }
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.triggerMaster, type: AcDDETriggerMaster });

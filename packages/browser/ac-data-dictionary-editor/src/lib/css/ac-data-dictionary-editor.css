@@ -11,6 +11,10 @@
   width: 100%;
 }
 
+.ac-dde-datagrid{
+  width: 100%;
+}
+
 .ac-dde-header {
   height: max-content;
   width: 100%;
@@ -337,3 +341,12 @@ input:checked + .slider:before {
   border: solid 1px #b4b4b4;
 }
 /*  */
+
+.card{
+  width:100%;
+  height: 100%;
+}
+
+ac-resizable-panel{
+  display: block!important;
+}

@@ -8,6 +8,7 @@ import { AcSchemaManagerTables, AcSMDataDictionary, SchemaDetails, TblSchemaDeta
 import { AcDataDictionary, AcDDFunction, AcDDStoredProcedure, AcDDTable, AcDDTableColumn, AcDDTrigger, AcDDView, AcDDViewColumn, AcEnumDDRowOperation, AcEnumDDSelectMode } from "@autocode-ts/ac-data-dictionary";
 import { AcSqlDbTable } from "./ac-sql-db-table";
 import { AcSqlDaoResult } from "../models/ac-sql-dao-result.model";
+import { AcBaseSqlDao } from "../daos/ac-base-sql-dao";
 
 export class AcSqlDbSchemaManager extends AcSqlDbBase {
   acSqlDDTableSchemaDetails = new AcSqlDbTable({
@@ -19,8 +20,8 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
     dataDictionaryName: AcSMDataDictionary.DataDictionaryName,
   });
 
-  constructor({ dataDictionaryName }: { dataDictionaryName?: string } = {}) {
-    super({ dataDictionaryName: dataDictionaryName });
+  constructor({ dataDictionaryName,dao }: { dataDictionaryName?: string,dao?:AcBaseSqlDao } = {}) {
+    super({ dataDictionaryName,dao });
   }
 
   async checkSchemaUpdateAvailableFromVersion(): Promise<AcResult> {
@@ -34,7 +35,7 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
         statement: this.acSqlDDTableSchemaDetails.getSelectStatement(),
         condition: `${TblSchemaDetails.AcSchemaDetailKey} = @key`,
         parameters: {
-          '@key': SchemaDetails.KeyDataDictionaryVersion,
+          '@key': `${SchemaDetails.KeyDataDictionaryVersion}[${this.dataDictionaryName}]`,
         },
         mode: AcEnumDDSelectMode.First, // important
       });
@@ -799,7 +800,7 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
           if (updateDataDictionaryVersion) {
             const versionLogResponse = await this.saveSchemaDetail({
               row: {
-                [TblSchemaDetails.AcSchemaDetailKey]: SchemaDetails.KeyDataDictionaryVersion,
+                [TblSchemaDetails.AcSchemaDetailKey]: `${SchemaDetails.KeyDataDictionaryVersion}[${this.dataDictionaryName}]`,
                 [TblSchemaDetails.AcSchemaDetailNumericValue]: this.acDataDictionary.version,
               }
             });
@@ -846,11 +847,11 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
           dataDictionaryName: AcSMDataDictionary.DataDictionaryName,
         });
 
-        const acSchemaManager = new AcSqlDbSchemaManager();
+        const acSchemaManager = new AcSqlDbSchemaManager({dataDictionaryName: AcSMDataDictionary.DataDictionaryName,dao:this.dao!});
         acSchemaManager.dao = this.dao;
         acSchemaManager.logger = this.logger;
+        acSchemaManager.databaseType = this.databaseType;
         acSchemaManager.useDataDictionary({ dataDictionaryName: AcSMDataDictionary.DataDictionaryName });
-        acSchemaManager.acDataDictionary = this.acDataDictionary;
 
         const initSchemaResult = await acSchemaManager.initDatabase();
         if (initSchemaResult.isSuccess()) {
@@ -901,9 +902,9 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
 
         if (differences["missing_tables_in_database"]) {
           for (const tableName of differences["missing_tables_in_database"]) {
-            this.logger.log(`Creating table ${tableName}`);
             const acDDTable = AcDDTable.getInstance({ tableName, dataDictionaryName: this.dataDictionaryName });
-            const createStatement = acDDTable.getCreateTableStatement();
+            this.logger.log(`Creating table ${acDDTable.tableName} for type ${this.databaseType} in data dictionary ${this.dataDictionaryName}`);
+            const createStatement = acDDTable.getCreateTableStatement({databaseType:this.databaseType});
             this.logger.log(["Executing create table statement...", createStatement]);
             const createResult = await this.dao!.executeStatement({ statement: createStatement });
             if (createResult.isSuccess()) {
@@ -937,7 +938,7 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
                   columnName,
                   dataDictionaryName: this.dataDictionaryName,
                 });
-                const addStatement = acDDTableColumn.getAddColumnStatement({ tableName });
+                const addStatement = acDDTableColumn.getAddColumnStatement({ tableName,databaseType:this.databaseType });
                 this.logger.log(["Executing add table column statement...", addStatement]);
                 const createResult = await this.dao!.executeStatement({ statement: addStatement });
                 if (createResult.isSuccess()) {

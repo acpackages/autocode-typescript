@@ -383,12 +383,12 @@ export class AcMysqlDao extends AcBaseSqlDao {
     let db: Connection | null = null;
     try {
       db = await this._getConnection();
-      const statement = "DESCRIBE `@tableName`";
+      const statement = `DESCRIBE ${tableName};`;
       const { statement: updatedStatement, statementParametersMap } = this.setSqlStatementParameters({
         statement,
         passedParameters: { '@tableName': tableName },
       });
-      const [results] = await db.execute(updatedStatement, statementParametersMap!);
+      const [results] = await db.execute(statement);
       for (const row of results as any[]) {
         const properties: Record<string, any> = {};
         if (row['Null'] !== 'YES') {

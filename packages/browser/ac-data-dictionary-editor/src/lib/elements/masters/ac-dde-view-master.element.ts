@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcTextareaInputElement } from "@autocode-ts/ac-browser";
-import { AcDDEApi } from "../../core/ac-dde-api";
-import { IAcDDEView, IAcDDEViewColumn } from "../../_ac-data-dictionary-editor.export";
-import { AcDelayedCallback, AcEvents } from "@autocode-ts/autocode";
+import { acRegisterCustomElement, AcTextareaInputElement } from "@autocode-ts/ac-browser";
+import { AC_DDE_TAG, AcDDEElementBase, IAcDDEView, IAcDDEViewColumn } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDEViewMaster {
+export class AcDDEViewMaster extends AcDDEElementBase {
   private _view: IAcDDEView | any;
   get view(): IAcDDEView {
     return this._view;
@@ -14,15 +12,13 @@ export class AcDDEViewMaster {
     this.queryInput.value = value.viewQuery ? value.viewQuery : '';
   }
 
-  editorApi!: AcDDEApi;
   element: HTMLElement = document.createElement('div');
-  queryInput: AcTextareaInputElement;
+  queryInput!: AcTextareaInputElement;
   btnSetColumns!: HTMLButtonElement;
-  events: AcEvents = new AcEvents();
-  changeTimeout: any;
-  delayedCallback:AcDelayedCallback = new AcDelayedCallback();
 
-  constructor() {
+  override init() {
+    super.init();
+    this.append(this.element);
     this.element.style.display = 'contents';
     this.element.innerHTML = `
     <div class="card card-body p-2">
@@ -105,18 +101,12 @@ export class AcDDEViewMaster {
   }
 
   notifyChange() {
-    if (this.changeTimeout) {
-      clearTimeout(this.changeTimeout);
-    }
     this.delayedCallback.add({callback:() => {
       this.view.viewQuery = this.queryInput.value;
       this.events.execute({ event: 'change', args: { view: this.view } });
     }, duration:300});
   }
 
-  on({ event, callback }: { event: string, callback: Function }) {
-    this.events.subscribe({ event, callback });
-  }
-
-
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.viewMaster, type: AcDDEViewMaster });

@@ -9,8 +9,11 @@ export const AC_DDE_TAG = {
   tablePropertiesDatagrid:'ac-dde-table-properties-datagrid',
   tableEditor:'ac-dde-table-editor',
   tablesDatagrid:'ac-dde-tables-datagrid',
+  triggerEditor:'ac-dde-trigger-editor',
+  triggerMaster:'ac-dde-trigger-master',
   triggersDatagrid:'ac-dde-triggers-datagrid',
   viewColumnsDatagrid:'ac-dde-view-columns-datagrid',
   viewEditor:'ac-dde-view-editor',
+  viewMaster:'ac-dde-view-master',
   viewsDatagrid:'ac-dde-views-datagrid',
 }

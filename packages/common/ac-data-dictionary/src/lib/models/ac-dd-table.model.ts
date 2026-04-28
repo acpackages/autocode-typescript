@@ -53,7 +53,9 @@ export class AcDDTable {
     if (acDataDictionary.tables.hasOwnProperty(tableName)) {
       result.fromJson({ jsonData: acDataDictionary.tables[tableName] });
     }
-
+    else{
+      console.warn(`Table ${tableName} dows not exist for data dictionary ${dataDictionaryName}`);
+    }
     return result;
   }
 

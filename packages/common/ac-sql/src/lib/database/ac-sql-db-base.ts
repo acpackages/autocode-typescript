@@ -15,16 +15,22 @@ export class AcSqlDbBase {
   logger!: AcLogger;
   sqlConnection: AcSqlConnection | null = null;
 
-  constructor({ dataDictionaryName = 'default' }: { dataDictionaryName?: string } = {}) {
+  constructor({ dataDictionaryName = 'default',dao }: { dataDictionaryName?: string, dao?:AcBaseSqlDao } = {}) {
     this.databaseType = AcSqlDatabase.databaseType;
     this.sqlConnection = AcSqlDatabase.sqlConnection;
-    if(AC_DB_TYPE_DAO_MAP[this.databaseType] != undefined){
+    if(dao){
+      this.dao = dao;
+    }
+    else{
+      if(AC_DB_TYPE_DAO_MAP[this.databaseType] != undefined){
       this.dao = new AC_DB_TYPE_DAO_MAP[this.databaseType]();
       if(this.dao && this,this.sqlConnection){
         this.dao!.setSqlConnection({ sqlConnection: this.sqlConnection! });
       }
 
     }
+    }
+
     this.useDataDictionary({ dataDictionaryName });
     this.logger = new AcLogger({ logType: AcEnumLogType.Console, logMessages: true });
   }
