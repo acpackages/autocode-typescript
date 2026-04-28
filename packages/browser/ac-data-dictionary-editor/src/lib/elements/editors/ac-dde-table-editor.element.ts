@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { acAddClassToElement, AC_DATAGRID_EVENT, AcEnumResizableEvent, AcResizableAttributeName, AcResizablePanels, IAcDatagridActiveRowChangeEvent, IAcDatagridRowEvent, IAcDatagridStateChangeEvent, IAcResizablePanelResizeEvent } from '@autocode-ts/ac-browser';
+import { acAddClassToElement, AC_DATAGRID_EVENT, AcEnumResizableEvent, AcResizableAttributeName, AcResizablePanels, IAcDatagridActiveRowChangeEvent, IAcDatagridRowEvent, IAcDatagridStateChangeEvent, IAcResizablePanelResizeEvent, acRegisterCustomElement } from '@autocode-ts/ac-browser';
 import { IAcDDETable } from '../../interfaces/ac-dde-table.inteface';
 import { AcDDEApi } from '../../core/ac-dde-api';
-import { AcDDETableColumnsDatagrid } from '../datagrid/ac-dde-table-columns-datagrid.element';
-import { AcDDERelationshipsDatagrid } from '../datagrid/ac-dde-relationships-datagrid.element';
-import { AcDDETriggersDatagrid } from '../datagrid/ac-dde-triggers-datagrid.element';
-import { AcDDETablesDatagrid } from '../datagrid/ac-dde-tables-datagrid.element';
+import { AcDDETableColumnsDatagridElement } from '../datagrid/ac-dde-table-columns-datagrid.element';
+import { AcDDERelationshipsDatagridElement } from '../datagrid/ac-dde-relationships-datagrid.element';
+import { AcDDETriggersDatagridElement } from '../datagrid/ac-dde-triggers-datagrid.element';
+import { AcDDETablesDatagridElement } from '../datagrid/ac-dde-tables-datagrid.element';
 import { AcEnumDDEHook } from '../../enums/ac-enum-dde-hooks.enum';
 import { IAcDDETableColumn } from '../../interfaces/ac-dde-table-column.inteface';
 import { AcEnumDDERelationship, AcEnumDDETableColumn, AcEnumDDETrigger } from '../../enums/ac-enum-dde-storage-keys.enum';
@@ -16,32 +16,82 @@ import { AcEnumDDEEvent } from '../../enums/ac-enum-dde-event.enum';
 import { AcDDECssClassName } from '../../consts/ac-dde-css-class-name.const';
 import { IAcDDETableEditorState } from '../../interfaces/ac-dde-table-editor-state.interface';
 import { AC_DATA_MANAGER_EVENT, AcDelayedCallback } from '@autocode-ts/autocode';
+import { AcDDEElementBase } from '../core/ac-dde-element-base.element';
+import { AC_DDE_TAG } from '../../consts/ac-dde-tag.const';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-export class AcDDETableEditor {
+export class AcDDETableEditorElement extends AcDDEElementBase{
   activeTable?: IAcDDETable;
-  editorApi!: AcDDEApi;
 
-  element: HTMLElement = document.createElement('div');
-
-  tableColumnsDatagrid!: AcDDETableColumnsDatagrid;
-  tableRelationshipsDatagrid!: AcDDERelationshipsDatagrid;
-  tablesDatagrid!: AcDDETablesDatagrid;
-  tableTriggersDatagrid!: AcDDETriggersDatagrid;
+  tableColumnsDatagrid!: AcDDETableColumnsDatagridElement;
+  tableRelationshipsDatagrid!: AcDDERelationshipsDatagridElement;
+  tablesDatagrid!: AcDDETablesDatagridElement;
+  tableTriggersDatagrid!: AcDDETriggersDatagridElement;
 
   editorPanels!: AcResizablePanels;
   detailPanels!: AcResizablePanels;
-  delayedCallback:AcDelayedCallback = new AcDelayedCallback();
 
   state: IAcDDETableEditorState = {};
 
   editorInitialized: boolean = false;
 
 
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
+  override init() {
+    super.init();
 
-    this.tablesDatagrid = new AcDDETablesDatagrid({ editorApi: this.editorApi });
+    this.initElement();
+
+    this.editorApi.on({
+      event: AcEnumDDEEvent.StateChange, callback: () => {
+        this.refreshEditorState();
+      }
+    })
+  }
+
+  private initElement() {
+    this.innerHTML = `<ac-resizable-panels class="editor-resizable-panels">
+      <ac-resizable-panel>
+        <div ac-dde-tables-wrapper class="${AcDDECssClassName.acDDETablesContainer}">
+          <${AC_DDE_TAG.tablesDatagrid}></${AC_DDE_TAG.tablesDatagrid}>
+        </div>
+      </ac-resizable-panel>
+      <ac-resizable-panel>
+        <ac-resizable-panels class="detail-resizable-panels" direction="vertical">
+          <ac-resizable-panel ac-dde-tables-columns-wrapper>
+            <${AC_DDE_TAG.tableColumnsDatagrid}></${AC_DDE_TAG.tableColumnsDatagrid}>
+          </ac-resizable-panel>
+          <ac-resizable-panel ac-dde-tables-relationships-wrapper>
+            <${AC_DDE_TAG.relationshipsDatagrid}></${AC_DDE_TAG.relationshipsDatagrid}>
+          </ac-resizable-panel>
+          <ac-resizable-panel ac-dde-tables-triggers-wrapper>
+            <${AC_DDE_TAG.triggersDatagrid}></${AC_DDE_TAG.triggersDatagrid}>
+          </ac-resizable-panel>
+        </ac-resizable-panels>
+      </ac-resizable-panel>
+    </ac-resizable-panels>`;
+    acAddClassToElement({ class_: AcDDECssClassName.acDataDictionaryEditor, element: this });
+    acAddClassToElement({ class_: AcDDECssClassName.acDDEDatagridWrapper, element: this });
+
+    this.editorPanels = this.querySelector('.editor-resizable-panels') as AcResizablePanels;
+
+    this.detailPanels = this.querySelector('.detail-resizable-panels') as AcResizablePanels;
+    this.delayedCallback.add({callback:() => {
+      this.editorPanels.setPanelSizes({
+        panelSizes: [
+          { size: 35, index: 0 },
+          { size: 65, index: 1 }
+        ]
+      });
+      this.detailPanels.setPanelSizes({
+      panelSizes: [
+        { size: 60, index: 0 },
+        { size: 20, index: 1 },
+        { size: 20, index: 1 }
+      ]
+    });
+    }, duration:5});
+
+    this.tablesDatagrid =  this.querySelector(AC_DDE_TAG.tablesDatagrid) as AcDDETablesDatagridElement;
     this.tablesDatagrid.datagridApi.on({
       event: AC_DATAGRID_EVENT.ActiveRowChange, callback: (args: IAcDatagridActiveRowChangeEvent) => {
           this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TableEditorActiveTableChange });
@@ -57,7 +107,7 @@ export class AcDDETableEditor {
       }
     });
 
-    this.tableColumnsDatagrid = new AcDDETableColumnsDatagrid({ editorApi: this.editorApi });
+    this.tableColumnsDatagrid = this.querySelector(AC_DDE_TAG.tableColumnsDatagrid) as  AcDDETableColumnsDatagridElement;
     this.tableColumnsDatagrid.filterFunction = (row: IAcDDETableColumn) => {
       let tableId: any = undefined;
       if (this.tablesDatagrid && this.tablesDatagrid.datagridApi && this.tablesDatagrid.datagridApi.activeDatagridRow) {
@@ -77,7 +127,7 @@ export class AcDDETableEditor {
       }
     });
 
-    this.tableRelationshipsDatagrid = new AcDDERelationshipsDatagrid({ editorApi: this.editorApi });
+    this.tableRelationshipsDatagrid = this.querySelector(AC_DDE_TAG.relationshipsDatagrid) as AcDDERelationshipsDatagridElement;
     this.tableRelationshipsDatagrid.filterFunction = (row: IAcDDERelationship) => {
       let tableId: any = undefined;
       if (this.tablesDatagrid && this.tablesDatagrid.datagridApi && this.tablesDatagrid.datagridApi.activeDatagridRow) {
@@ -97,7 +147,7 @@ export class AcDDETableEditor {
       }
     });
 
-    this.tableTriggersDatagrid = new AcDDETriggersDatagrid({ editorApi: this.editorApi });
+    this.tableTriggersDatagrid = this.querySelector(AC_DDE_TAG.triggersDatagrid) as AcDDETriggersDatagridElement;
     this.tableTriggersDatagrid.datagridApi.on({
       event: AC_DATA_MANAGER_EVENT.RowAdd, callback: (args: IAcDatagridRowEvent) => {
         args.datagridRow.data[AcEnumDDETrigger.TableId] = this.activeTable!.tableId;
@@ -120,63 +170,6 @@ export class AcDDETableEditor {
     this.tableColumnsDatagrid.applyFilter();
     this.tableRelationshipsDatagrid.applyFilter();
     this.tableTriggersDatagrid.applyFilter();
-
-    this.initElement();
-
-    this.editorApi.on({
-      event: AcEnumDDEEvent.StateChange, callback: () => {
-        this.refreshEditorState();
-      }
-    })
-  }
-
-  private initElement() {
-    this.element.innerHTML = `<ac-resizable-panels class="editor-resizable-panels">
-      <ac-resizable-panel>
-        <div ac-dde-tables-wrapper class="${AcDDECssClassName.acDDETablesContainer}"></div>
-      </ac-resizable-panel>
-      <ac-resizable-panel>
-        <ac-resizable-panels class="detail-resizable-panels" direction="vertical">
-          <ac-resizable-panel ac-dde-tables-columns-wrapper></ac-resizable-panel>
-          <ac-resizable-panel ac-dde-tables-relationships-wrapper></ac-resizable-panel>
-          <ac-resizable-panel ac-dde-tables-triggers-wrapper></ac-resizable-panel>
-        </ac-resizable-panels>
-      </ac-resizable-panel>
-    </ac-resizable-panels>`;
-    acAddClassToElement({ class_: AcDDECssClassName.acDataDictionaryEditor, element: this.element });
-    acAddClassToElement({ class_: AcDDECssClassName.acDDEDatagridWrapper, element: this.element });
-
-    this.editorPanels = this.element.querySelector('.editor-resizable-panels') as AcResizablePanels;
-
-    this.detailPanels = this.element.querySelector('.detail-resizable-panels') as AcResizablePanels;
-    this.delayedCallback.add({callback:() => {
-      this.editorPanels.setPanelSizes({
-        panelSizes: [
-          { size: 35, index: 0 },
-          { size: 65, index: 1 }
-        ]
-      });
-      this.detailPanels.setPanelSizes({
-      panelSizes: [
-        { size: 60, index: 0 },
-        { size: 20, index: 1 },
-        { size: 20, index: 1 }
-      ]
-    });
-    }, duration:5});
-
-
-    const tablesWrapper = this.element.querySelector('[ac-dde-tables-wrapper]') as HTMLElement;
-    tablesWrapper.append(this.tablesDatagrid.element);
-
-    const columnsWrapper = this.element.querySelector('[ac-dde-tables-columns-wrapper]') as HTMLElement;
-    columnsWrapper.append(this.tableColumnsDatagrid.element);
-
-    const relationshipsWrapper = this.element.querySelector('[ac-dde-tables-relationships-wrapper]') as HTMLElement;
-    relationshipsWrapper.append(this.tableRelationshipsDatagrid.element);
-
-    const triggersWrapper = this.element.querySelector('[ac-dde-tables-triggers-wrapper]') as HTMLElement;
-    triggersWrapper.append(this.tableTriggersDatagrid.element);
 
     this.refreshEditorState();
     this.delayedCallback.add({callback:() => {
@@ -220,3 +213,5 @@ export class AcDDETableEditor {
     }
   }
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.tableEditor, type: AcDDETableEditorElement });

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { AcDDEApi } from "../../core/ac-dde-api";
-import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDStoredProcedure } from "@autocode-ts/ac-data-dictionary";
-import { AcDDEDatagrid } from "./ac-dde-datagrid.element";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
 import { AcDDEDatagridRowAction } from "../shared/ac-dde-datagrid-row-action.element";
 import { arrayRemoveByKey } from "@autocode-ts/ac-extensions";
 import { IAcDDEDatagridBeforeColumnsSetInitHookArgs } from "../../interfaces/hook-args/ac-dde-datagrid-before-columns-set-hook-args.interface";
@@ -16,27 +16,11 @@ import { AcEnumDDEEntity } from "../../enums/ac-enum-dde-entity.enum";
 import { AcDDECssClassName } from "../../consts/ac-dde-css-class-name.const";
 import { IAcDDEActiveDataDictionaryChangeHookArgs } from "../../interfaces/hook-args/ac-dde-active-data-dictionary-change-hook-args.interface";
 import { AC_DATA_MANAGER_EVENT, IAcContextEvent } from "@autocode-ts/autocode";
+import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDEStoredProceduresDatagrid {
+export class AcDDEStoredProceduresDatagridElement extends AcDDEDatagridElement{
   data: any[] = [];
-  ddeDatagrid!: AcDDEDatagrid;
-  datagridApi!: AcDatagridApi;
-  editorApi!: AcDDEApi;
-  element: HTMLElement = document.createElement('div');
   filterFunction: Function | undefined;
-
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
-    this.ddeDatagrid = new AcDDEDatagrid({ editorApi: editorApi });
-    this.initDatagrid();
-    this.initElement();
-    this.editorApi.hooks.subscribe({
-      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
-        this.setStoredProcedureData();
-      }
-    });
-  }
-
   applyFilter() {
     let data = this.data;
     if (this.filterFunction != undefined) {
@@ -45,8 +29,8 @@ export class AcDDEStoredProceduresDatagrid {
     this.datagridApi.data = data;
   }
 
-  initDatagrid() {
-    this.datagridApi = this.ddeDatagrid.datagridApi;
+  override initDatagrid() {
+    super.initDatagrid();
 
     const columnDefinitions: IAcDatagridColumnDefinition[] = [
       {
@@ -74,7 +58,7 @@ export class AcDDEStoredProceduresDatagrid {
       instance: this
     };
     this.editorApi.hooks.execute({ hook: AcEnumDDEHook.StoredProceduresDatagridBeforeColumnsSet, args: colSetHookArgs });
-    this.ddeDatagrid.columnDefinitions = columnDefinitions;
+    this.datagridApi.columnDefinitions = columnDefinitions;
 
     this.datagridApi.on({
       event: AC_DATA_MANAGER_EVENT.BeforeRowAdd, callback: (args: any) => {
@@ -125,12 +109,14 @@ export class AcDDEStoredProceduresDatagrid {
       }
     });
 
-    this.setStoredProcedureData();
-  }
+    this.editorApi.hooks.subscribe({
+      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
+        this.setStoredProcedureData();
+      }
+    });
 
-  initElement() {
-    this.element.append(this.ddeDatagrid.element);
-    acAddClassToElement({ class_: AcDDECssClassName.acDDEContainer, element: this.element });
+    this.setStoredProcedureData();
+
   }
 
   setStoredProcedureData() {
@@ -138,3 +124,5 @@ export class AcDDEStoredProceduresDatagrid {
     this.applyFilter();
   }
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.storedProceduresDatagrid, type: AcDDEStoredProceduresDatagridElement });

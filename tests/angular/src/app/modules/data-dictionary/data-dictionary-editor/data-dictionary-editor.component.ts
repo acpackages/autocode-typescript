@@ -7,7 +7,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, ViewChild } from '@angular/core';
 import { AcNgScrollableModule } from '@autocode-ts/ac-angular';
-import { AcDataDictionaryEditor, AcDDEApi, AcDDEExtensionManager, AcEnumDDEExtension, AcEnumDDEHook, AcRelationshipsDetectorDDEExtension, AcSqlAnalyzerDDEExtension } from '@autocode-ts/ac-data-dictionary-editor';
+import { AcDataDictionaryEditorElement, AcDDEApi, AcDDEExtensionManager, AcEnumDDEExtension, AcEnumDDEHook, AcRelationshipsDetectorDDEExtension, AcSqlAnalyzerDDEExtension } from '@autocode-ts/ac-data-dictionary-editor';
 import { AcCodeGeneratorDDEExtension } from '@autocode-ts/ac-dde-code-generator'
 import { AcDelayedCallback } from '@autocode-ts/autocode';
 import { dataDictionaryJson as actDataDictionary } from 'tests/data/act-data-dictionary-v1';
@@ -21,13 +21,13 @@ import { dataDictionaryJson as actDataDictionary } from 'tests/data/act-data-dic
   standalone: true
 })
 export class DataDictionaryEditorComponent {
-  @ViewChild('editor') editorRef?: ElementRef<AcDataDictionaryEditor>;
-  dataDictionaryEditor?: AcDataDictionaryEditor;
+  @ViewChild('editor') editorRef?: ElementRef<AcDataDictionaryEditorElement>;
+  dataDictionaryEditor?: AcDataDictionaryEditorElement;
   editorApi?: AcDDEApi;
   delayedCallback:AcDelayedCallback = new AcDelayedCallback();
 
   constructor(private elementRef: ElementRef) {
-    AcDataDictionaryEditor;
+    AcDataDictionaryEditorElement;
     AcDDEExtensionManager.register(AcCodeGeneratorDDEExtension);
   }
 

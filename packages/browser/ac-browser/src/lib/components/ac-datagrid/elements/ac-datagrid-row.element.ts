@@ -2,20 +2,26 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDatagridCellElement } from "./ac-datagrid-cell.element";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
-import { AC_DATAGRID_CLASS_NAME, AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
-import { AC_DATAGRID_TAG, AcDatagridAttributeName, AC_DATAGRID_HOOK, IAcDatagridRow, IAcDatagridRowHookArgs, IAcDatagridCell } from "../_ac-datagrid.export";
+import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_TAG, AcDatagridAttributeName, IAcDatagridRow, IAcDatagridCell, AcDatagridInternalCellElement } from "../_ac-datagrid.export";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { AC_DATA_MANAGER_HOOK, Autocode } from "@autocode-ts/autocode";
+import { Autocode } from "@autocode-ts/autocode";
 
 export class AcDatagridRowElement extends AcElementBase {
   private datagridApi: AcDatagridApi;
   private datagridRow: IAcDatagridRow;
   private datagridCells: AcDatagridCellElement[] = [];
+  private internalCell?: AcDatagridInternalCellElement;
   private hookSubscriptionIds: string[] = [];
   private _eventHandlers: Map<string, any> = new Map();
 
   private clearRow() {
+    if(this.internalCell){
+      this.internalCell.remove();
+      this.internalCell.destroy();
+      (this.internalCell as any) = null;
+    }
     for (let cell of this.datagridCells) {
       cell.remove();
       cell.destroy();
@@ -168,7 +174,6 @@ export class AcDatagridRowElement extends AcElementBase {
     }
   }
 
-
   refresh() {
     for (const cell of this.datagridCells) {
       cell.refresh();
@@ -177,6 +182,9 @@ export class AcDatagridRowElement extends AcElementBase {
 
   render() {
     this.clearRow();
+    this.internalCell = new AcDatagridInternalCellElement();
+    this.internalCell.setRow({ datagridApi: this.datagridApi, datagridRow: this.datagridRow })
+    this.append(this.internalCell);
     for (const column of this.datagridApi.datagridColumns) {
       if (column.visible) {
         const datagridCell = this.ownerDocument.createElement('ac-datagrid-cell') as AcDatagridCellElement;
@@ -186,12 +194,16 @@ export class AcDatagridRowElement extends AcElementBase {
           datagridColumn: column,
           element: datagridCell
         };
-        datagridCell.setCell({ datagridApi: this.datagridApi, datagridCell: cell })
+        datagridCell.setCell({ datagridApi: this.datagridApi, datagridCell: cell });
         this.datagridCells.push(datagridCell);
         this.append(datagridCell);
       }
-
     }
+    this.setPosition();
+  }
+
+  private setPosition(){
+    this.style.top = `${this.datagridRow.index * 30}px`;
   }
 
   setRow({ datagridApi, datagridRow, index }: { datagridApi: AcDatagridApi, datagridRow: IAcDatagridRow, index?: number }) {

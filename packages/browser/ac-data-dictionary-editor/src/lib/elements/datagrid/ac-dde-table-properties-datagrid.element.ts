@@ -1,14 +1,9 @@
+import { acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDEApi } from "../../core/ac-dde-api";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
+import { AC_DDE_TAG } from "../../consts/ac-dde-tag.const";
 
-export class AcDDETablePropertiesDatagrid {
-  editorApi!: AcDDEApi;
-  element: HTMLElement = document.createElement('div');
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
-    this.initElement();
-  }
-
-  initElement() {
-    this.element.innerHTML = 'Table Properties Panel';
-  }
+export class AcDDETablePropertiesDatagridElement extends AcDDEDatagridElement{
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.tablePropertiesDatagrid, type: AcDDETablePropertiesDatagridElement });

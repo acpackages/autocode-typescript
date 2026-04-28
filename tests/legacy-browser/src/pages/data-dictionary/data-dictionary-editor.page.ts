@@ -3,7 +3,7 @@
 import './../../../../../packages/browser/ac-data-dictionary-editor/src/lib/css/ac-data-dictionary-editor.css';
 import './../../../../../packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src/lib/css/ac-datagrid-on-ag-grid.css';
 import './../../../../../node_modules/tom-select/dist/css/tom-select.bootstrap5.css';
-import { AcDataDictionaryEditor, AcDDEApi, AcDDEExtensionManager, AcEnumDDEExtension, AcEnumDDEHook, AcRelationshipsDetectorDDEExtension, AcSqlAnalyzerDDEExtension } from '@autocode-ts/ac-data-dictionary-editor';
+import { AcDataDictionaryEditorElement, AcDDEApi, AcDDEExtensionManager, AcEnumDDEExtension, AcEnumDDEHook, AcRelationshipsDetectorDDEExtension, AcSqlAnalyzerDDEExtension } from '@autocode-ts/ac-data-dictionary-editor';
 import { AcCodeGeneratorDDEExtension, AcDDECodeGeneratorDefaultConfig } from '@autocode-ts/ac-dde-code-generator'
 import { AcBrowserStorageDDEExtension } from '@autocode-ts/ac-dde-browser-storage';
 import { PageHeader } from '../../components/page-header/page-header.component';
@@ -16,7 +16,7 @@ import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/un
 import { dataDictionaryJson as ddeDataDictionary } from './../../../../data/dde-data-dictionary';
 
 export class DDEEditorDatagridPage  extends HTMLElement {
-  dataDictionaryEditor!: AcDataDictionaryEditor;
+  dataDictionaryEditor!: AcDataDictionaryEditorElement;
   editorApi!: AcDDEApi;
   pageHeader: PageHeader = new PageHeader();
   async connectedCallback() {
@@ -36,7 +36,7 @@ export class DDEEditorDatagridPage  extends HTMLElement {
       AcDDECodeGeneratorDefaultConfig.viewNameColumnClassPrefix = "";
       AcDDEExtensionManager.register(AcBrowserStorageDDEExtension);
       AcDDEExtensionManager.register(AcCodeGeneratorDDEExtension);
-      this.dataDictionaryEditor = new AcDataDictionaryEditor();
+      this.dataDictionaryEditor = new AcDataDictionaryEditorElement();
 
       gridDiv.append(this.dataDictionaryEditor);
 

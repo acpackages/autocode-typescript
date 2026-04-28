@@ -2,6 +2,7 @@ import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
+import { AC_DATAGRID_ICON_CLASS } from "../consts/ac-datagrid-icon-class.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 
 
@@ -25,9 +26,20 @@ export class AcDatagridFooterElement extends AcElementBase {
     this.searchContainer = this.ownerDocument.createElement('div');
     this.append(this.paginationContainer);
     this.append(this.searchContainer);
+    
+    const settingsBtn = this.ownerDocument.createElement('i');
+    settingsBtn.setAttribute('class', AC_DATAGRID_ICON_CLASS.settings);
+    settingsBtn.style.cursor = 'pointer';
+    settingsBtn.style.marginLeft = 'auto';
+    settingsBtn.style.padding = '5px 10px';
+    settingsBtn.addEventListener('click', () => {
+      this.datagridApi?.openColumnCustomizer();
+    });
+    this.append(settingsBtn);
+
     this.setPagination();
     this.setSearchInput();
-    this.datagridApi?.hooks.execute({hook:AC_DATAGRID_HOOK.FooterInit});
+    this.datagridApi?.hooks.execute({ hook: AC_DATAGRID_HOOK.FooterInit });
   }
 
   setPagination() {

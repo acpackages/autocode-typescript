@@ -1,8 +1,8 @@
-import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridActiveRowChangeEvent, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridActiveRowChangeEvent, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDEApi } from "../../core/ac-dde-api";
 import { AC_DATA_MANAGER_EVENT, AcHooks, IAcContextEvent } from "@autocode-ts/autocode";
 import { AcDDEDatagridTextInput } from "../cell-editors/ac-dde-datagrid-text-input.element";
-import { AcDDEDatagrid } from "./ac-dde-datagrid.element";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
 import { AcDDEDatagridRowAction } from "../shared/ac-dde-datagrid-row-action.element";
 import { arrayRemoveByKey } from "@autocode-ts/ac-extensions";
 import { IAcDDEDatagridBeforeColumnsSetInitHookArgs } from "../../interfaces/hook-args/ac-dde-datagrid-before-columns-set-hook-args.interface";
@@ -15,34 +15,16 @@ import { AcDDECssClassName } from "../../consts/ac-dde-css-class-name.const";
 import { IAcDDEActiveDataDictionaryChangeHookArgs } from "../../interfaces/hook-args/ac-dde-active-data-dictionary-change-hook-args.interface";
 import { AcDDEDatagridTableConstraintsInput } from "../cell-editors/ac-dde-datagrid-table-constraints-input.element";
 import { AcEnumDDTableProperty } from "@autocode-ts/ac-data-dictionary";
-import { AcDDEDatagridSelectViewInput } from "../../_ac-data-dictionary-editor.export";
+import { AC_DDE_TAG, AcDDEDatagridSelectViewInput } from "../../_ac-data-dictionary-editor.export";
 import { AcDDEViewRenderer } from "../cell-renderers/ac-dde-view-renderer";
 import { AcDDETableConstraintRenderer } from "../cell-renderers/ac-dde-table-constraint-renderer";
 
-export class AcDDETablesDatagrid {
-  ddeDatagrid!: AcDDEDatagrid;
-  datagridApi!: AcDatagridApi;
-  editorApi!: AcDDEApi;
-  element: HTMLElement = document.createElement('div');
-  filterFunction: Function | undefined;
-  hooks: AcHooks = new AcHooks();
+export class AcDDETablesDatagridElement extends AcDDEDatagridElement{
   data: any[] = [];
+  filterFunction: Function | undefined;
 
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
-    this.ddeDatagrid = new AcDDEDatagrid({ editorApi: editorApi });
-    this.initElement();
-    this.initDatagrid();
-    this.editorApi.hooks.subscribe({
-      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
-        this.setTablesData();
-      }
-    });
-    console.log(this);
-  }
-
-  initDatagrid() {
-    this.datagridApi = this.ddeDatagrid.datagridApi;
+  override initDatagrid() {
+    super.initDatagrid();
     const columnDefinitions: IAcDatagridColumnDefinition[] = [
       {
         'field': 'action', 'title': '', cellRendererElement: AcDDEDatagridRowAction, cellRendererElementParams: {
@@ -116,7 +98,7 @@ export class AcDDETablesDatagrid {
       instance: this
     };
     this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TablesDatagridBeforeColumnsSet, args: colSetHookArgs });
-    this.ddeDatagrid.columnDefinitions = columnDefinitions;
+    this.datagridApi.columnDefinitions = columnDefinitions;
 
     this.datagridApi.on({
       event: AC_DATAGRID_EVENT.CellValueChange, callback: (args: IAcDatagridCellEvent) => {
@@ -171,6 +153,13 @@ export class AcDDETablesDatagrid {
       }
     });
 
+
+    this.editorApi.hooks.subscribe({
+      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
+        this.setTablesData();
+      }
+    });
+
     this.setTablesData();
   }
 
@@ -182,14 +171,11 @@ export class AcDDETablesDatagrid {
     this.datagridApi.data = data;
   }
 
-  initElement() {
-    this.element.append(this.ddeDatagrid.element);
-    acAddClassToElement({ class_: AcDDECssClassName.acDDEContainer, element: this.element });
-  }
-
   setTablesData() {
     this.data = Object.values(this.editorApi.dataStorage.getTables({ dataDictionaryId: this.editorApi.activeDataDictionary?.dataDictionaryId }));
     this.applyFilter();
   }
 
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.tablesDatagrid, type: AcDDETablesDatagridElement });

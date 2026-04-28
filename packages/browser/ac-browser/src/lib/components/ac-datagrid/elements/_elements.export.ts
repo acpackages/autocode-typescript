@@ -5,5 +5,8 @@ export * from './ac-datagrid-cell.element';
 export * from './ac-datagrid-footer.element';
 export * from './ac-datagrid-header-cell.element';
 export * from './ac-datagrid-header.element';
+export * from './ac-datagrid-internal-cell.element';
+export * from './ac-datagrid-internal-header-cell.element';
 export * from './ac-datagrid-row.element';
 export * from './ac-datagrid.element';
+export * from "./ac-datagrid-column-customizer.element";

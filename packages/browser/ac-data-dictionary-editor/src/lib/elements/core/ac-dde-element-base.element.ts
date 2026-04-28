@@ -1,27 +1,31 @@
-import { AcElementBase } from "@autocode-ts/ac-browser";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { AcElementBase, acGetParentElementWithTag } from "@autocode-ts/ac-browser";
 import { AcDDEApi } from "../../core/ac-dde-api";
-import { AcDataDictionaryEditor } from "./ac-data-dictionary-editor.element";
+import { AcDataDictionaryEditorElement } from "./ac-data-dictionary-editor.element";
 import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDEBase extends AcElementBase{
-  editorApi?: AcDDEApi;
-  editor?:AcDataDictionaryEditor;
+export class AcDDEElementBase extends AcElementBase{
+  editorApi!: AcDDEApi;
+  protected hookSubscriptionIds: string[] = [];
 
-  private autoSetEditor(){
-    const editor = this.closest(AC_DDE_TAG.dataDictionaryEditor);
-    if(editor){
-      this.editor = editor as AcDataDictionaryEditor;
-      this.editorApi = this.editor.editorApi;
-    }
-    else{
-      this.delayedCallback.add({callback:() => {
-        this.autoSetEditor();
-      }, duration:10});
-    }
-  }
+ private autoBindEditor() {
+     if (this.isConnected) {
+       const editor = acGetParentElementWithTag({ element: this, tag: AC_DDE_TAG.editor });
+       if (editor) {
+         this.editorApi = (editor as AcDataDictionaryEditorElement).editorApi!;
+       }
+     }
+     else {
+       this.delayedCallback.add({
+         callback: () => {
+           this.autoBindEditor();
+         }, duration: 50, key: 'autoBindEditor'
+       });
+     }
+   }
 
   override init(){
     super.init();
-    this.autoSetEditor();
+    this.autoBindEditor();
   }
 }

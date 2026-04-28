@@ -9,7 +9,7 @@ import { IAcDDEMenuGroupAddHookArgs } from "../interfaces/hook-args/ac-dde-menu-
 import { AcEnumDDEHook } from "../enums/ac-enum-dde-hooks.enum";
 import { AcDDEExtensionManager } from "./ac-dde-extension-manager";
 import { IAcDDEExtensionEnabledHookArgs } from "../interfaces/hook-args/ac-dde-extension-enabled-hook-args.interface";
-import { AcDataDictionaryEditor } from "../elements/core/ac-data-dictionary-editor.element";
+import { AcDataDictionaryEditorElement } from "../elements/core/ac-data-dictionary-editor.element";
 import { IAcDDEActiveDataDictionaryChangeHookArgs } from "../interfaces/hook-args/ac-dde-active-data-dictionary-change-hook-args.interface";
 import { IAcDDEState } from "../interfaces/ac-dde-state.interface";
 import { AcDDEState } from "./ac-dde-state";
@@ -50,7 +50,7 @@ export class AcDDEApi {
   }
 
   dataStorage: AcDDEDataStorage;
-  editor: AcDataDictionaryEditor;
+  editor: AcDataDictionaryEditorElement;
   editorState: AcDDEState;
   events: AcEvents = new AcEvents();
   eventHandler: AcDDEEventHandler;
@@ -59,7 +59,7 @@ export class AcDDEApi {
   menus: IAcDDEMenuGroup[] = [];
   sqlParser: AcSqlParser = new AcSqlParser();
 
-  constructor({ editor }: { editor: AcDataDictionaryEditor }) {
+  constructor({ editor }: { editor: AcDataDictionaryEditorElement }) {
     this.editor = editor;
     this.eventHandler = new AcDDEEventHandler({ editorApi: this });
     this.dataStorage = new AcDDEDataStorage({ editorApi: this });

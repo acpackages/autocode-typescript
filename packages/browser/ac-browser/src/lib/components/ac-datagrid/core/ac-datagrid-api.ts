@@ -154,7 +154,7 @@ export class AcDatagridApi {
     this.dataManager.data = value;
     this.dataManager.processRows();
     this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
-    this.events.execute({ event: AC_DATAGRID_EVENT.DataChange });
+    // this.events.execute({ event: AC_DATAGRID_EVENT.DataChange });
   }
 
   get datagridRows(): IAcDatagridRow[] {
@@ -250,6 +250,22 @@ export class AcDatagridApi {
       this.hooks.execute({
         hook: AC_DATAGRID_HOOK.ShowAddButtonChange, args: {
           showAddButton: value,
+          datagridApi: this
+        }
+      });
+    }
+  }
+
+   private _showRowNumbers: boolean = true;
+  get showRowNumbers(): boolean {
+    return this._showRowNumbers;
+  }
+  set showRowNumbers(value: boolean) {
+    if (this._showRowNumbers != value) {
+      this._showRowNumbers = value;
+      this.hooks.execute({
+        hook: AC_DATAGRID_HOOK.ShowRowNumbersChange, args: {
+          showRowNumbers: value,
           datagridApi: this
         }
       });
@@ -435,26 +451,26 @@ export class AcDatagridApi {
 
   autoResizeColumn({ datagridColumn }: { datagridColumn: IAcDatagridColumn }) {
     this.logger.log('Auto-resizing column', { field: datagridColumn.columnDefinition.field });
-    let maxWidth: number = 0;
-    for (const datagridRow of this.datagridRows) {
-      if (datagridRow.element) {
-        for (const datagridCell of datagridRow.element.datagridCells) {
-          if (datagridCell.datagridColumn.columnId == datagridColumn.columnId) {
-            const cellWidth = datagridCell.containerWidth;
-            if (cellWidth > maxWidth) {
-              maxWidth = cellWidth;
-              this.logger.log('Updated maxWidth for cell', { rowId: datagridRow.rowId, width: maxWidth });
-            }
-          }
-        }
-      }
-    }
-    if (maxWidth > 0) {
-      datagridColumn.width = maxWidth + 10;
-      this.logger.log('Set column width', { field: datagridColumn.columnDefinition.field, width: datagridColumn.width });
-    } else {
-      this.logger.log('No valid width found, skipping resize');
-    }
+    // let maxWidth: number = 0;
+    // for (const datagridRow of this.datagridRows) {
+    //   if (datagridRow.element) {
+    //     // for (const datagridCell of datagridRow.element.datagridCells) {
+    //     //   if (datagridCell.datagridColumn.columnId == datagridColumn.columnId) {
+    //     //     const cellWidth = datagridCell.containerWidth;
+    //     //     if (cellWidth > maxWidth) {
+    //     //       maxWidth = cellWidth;
+    //     //       this.logger.log('Updated maxWidth for cell', { rowId: datagridRow.rowId, width: maxWidth });
+    //     //     }
+    //     //   }
+    //     // }
+    //   }
+    // }
+    // if (maxWidth > 0) {
+    //   datagridColumn.width = maxWidth + 10;
+    //   this.logger.log('Set column width', { field: datagridColumn.columnDefinition.field, width: datagridColumn.width });
+    // } else {
+    //   this.logger.log('No valid width found, skipping resize');
+    // }
   }
 
   deleteRow({ data, rowId, key, value, highlightCells = false }: { data?: any, rowId?: string, key?: string, value?: any, highlightCells?: boolean }) {
@@ -864,5 +880,19 @@ export class AcDatagridApi {
       offset += col.width;
     }
     return offset;
+  }
+
+  openColumnCustomizer() {
+    let customizer = this.datagrid.querySelector('ac-datagrid-column-customizer') as any;
+    if (customizer) {
+      customizer.style.display = customizer.style.display === 'none' ? 'flex' : 'none';
+      if (customizer.style.display !== 'none') {
+        customizer.render();
+      }
+    } else {
+      customizer = document.createElement('ac-datagrid-column-customizer') as any;
+      customizer.bindDatagridApi({ datagridApi: this });
+      this.datagrid.append(customizer);
+    }
   }
 }

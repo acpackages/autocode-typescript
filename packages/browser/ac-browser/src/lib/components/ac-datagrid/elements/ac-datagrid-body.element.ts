@@ -88,7 +88,6 @@ export class AcDatagridBody extends AcElementBase {
   }
 
   setDisplayedRows() {
-
     this.clearBody();
     if (this.datagridApi) {
       for (const row of this.datagridApi.displayedDatagridRows) {
@@ -101,7 +100,6 @@ export class AcDatagridBody extends AcElementBase {
         this.append(datagridRow);
       }
     }
-    console.dir(this);
   }
 }
 

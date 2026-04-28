@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acClearElement, acGetParentElementWithTag, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_DATAGRID_TAG, AcDatagridElement, IAcDatagridColumn } from "../_ac-datagrid.export";
+import { AC_DATAGRID_TAG, AcDatagridElement, AcDatagridInternalHeaderCellElement, IAcDatagridColumn } from "../_ac-datagrid.export";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AC_DATAGRID_EVENT } from "../consts/ac-datagrid-event.const";
 import { AC_DATAGRID_HOOK } from "../consts/ac-datagrid-hook.const";
@@ -14,6 +14,7 @@ export class AcDatagridHeaderElement extends AcElementBase {
   datagridHeaderCells: AcDatagridHeaderCellElement[] = [];
   datagridApi?: AcDatagridApi;
   private hookSubscriptionIds: string[] = [];
+  private internalHeaderCell:AcDatagridInternalHeaderCellElement;
 
   private autoBindDatagrid() {
     if (this.isConnected) {
@@ -42,6 +43,11 @@ export class AcDatagridHeaderElement extends AcElementBase {
   }
 
   private clearHeader() {
+    if(this.internalHeaderCell){
+      this.internalHeaderCell.remove();
+      this.internalHeaderCell.destroy();
+      (this.internalHeaderCell as any) = null;
+    }
     for (let cell of this.datagridHeaderCells) {
       cell.remove();
       cell.destroy();
@@ -77,11 +83,14 @@ export class AcDatagridHeaderElement extends AcElementBase {
     };
     this.datagridHeaderCells = [];
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.BeforeHeaderColumnCellsCreate, args: hookArgs });
+
+    this.internalHeaderCell = new AcDatagridInternalHeaderCellElement();
+    this.append(this.internalHeaderCell);
     for (const column of this.datagridApi.datagridColumns) {
 
       if (column.visible) {
         const headerCell = this.ownerDocument.createElement('ac-datagrid-header-cell') as AcDatagridHeaderCellElement;
-        headerCell.setHeaderCell({datagridColumn:column,datagridApi:this.datagridApi});
+        headerCell.setHeaderCell({ datagridColumn: column, datagridApi: this.datagridApi });
         this.append(headerCell);
         this.datagridHeaderCells.push(headerCell);
       }

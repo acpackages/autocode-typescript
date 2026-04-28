@@ -7,7 +7,7 @@ import {
   AcEnumDDEExtension,
   AcRelationshipsDetectorDDEExtension,
   AcSqlAnalyzerDDEExtension,
-  AcDataDictionaryEditor,
+  AcDataDictionaryEditorElement,
   AcDDEApi
 } from '@autocode-ts/ac-data-dictionary-editor';
 import { AcCodeGeneratorDDEExtension,AcDDECodeGeneratorDefaultConfig } from '@autocode-ts/ac-dde-code-generator';
@@ -40,7 +40,7 @@ import './../../../../../packages/browser/ac-browser/src/lib/icons/css/ac-icons.
   `
 })
 export class DataDictionaryEditorPage {
-  @AcViewChild('#editor') editor!: AcDataDictionaryEditor;
+  @AcViewChild('#editor') editor!: AcDataDictionaryEditorElement;
 
   startEditor:boolean = false;
   delayedCallback:AcDelayedCallback = new AcDelayedCallback();

@@ -1,14 +1,10 @@
+import { acRegisterCustomElement } from "@autocode-ts/ac-browser";
+import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 import { AcDDEApi } from "../../core/ac-dde-api";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
 
-export class AcDDETableColumnPropertiesDatagrid {
-  editorApi!: AcDDEApi;
-  element: HTMLElement = document.createElement('div');
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
-    this.initElement();
-  }
+export class AcDDETableColumnPropertiesDatagridElement extends AcDDEDatagridElement {
 
-  initElement() {
-    this.element.innerHTML = 'Table Column Properties panel';
-  }
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.tableColumnPropertiesDatagrid, type: AcDDETableColumnPropertiesDatagridElement });

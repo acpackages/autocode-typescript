@@ -45,6 +45,7 @@ export const AC_DATAGRID_HOOK = {
   RowDelete: 'rowDelete',
   RowUpdate: 'rowUpdate',
   ShowAddButtonChange: 'showAddButtonChange',
+  ShowRowNumbersChange: 'showRowNumbersChange',
   ShowSearchInputChange: 'showSearchInputChange',
   TotalRowsChange: 'totalRowsChange',
   UsePaginationChange: 'usePaginationChange'

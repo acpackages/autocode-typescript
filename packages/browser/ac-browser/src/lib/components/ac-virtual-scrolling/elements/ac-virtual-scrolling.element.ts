@@ -1,16 +1,17 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDelayedCallback, Autocode } from "@autocode-ts/autocode";
-import { IAcScrollableOptions } from "../interfaces/ac-scrollable-options.inteface";
-import { IAcScrollingElement } from "../interfaces/ac-scrolling-element.interface";
-import { AcScrollableAttributeName } from "../consts/ac-scrollable-attribute-name.const";
+import { IAcVirtualScrollingOptions } from "../interfaces/ac-virtual-scrolling-options.inteface";
+import { IAcScrollingElement } from "../../ac-scrollable/interfaces/ac-scrolling-element.interface";
+import { AC_VIRTUAL_SCROLLING_ATTR_NAME } from "../consts/ac-virtual-scrolling-attr-name.const";
 
-export class AcScrollable {
+export class AcVirtualScrollingElement {
   private element: HTMLElement;
   private elementHeight: number;
   private elementHeightFallback: number;
   private elementResizeObserver!: ResizeObserver;
   private mutationObserver!: MutationObserver;
-  private options?: IAcScrollableOptions;
+  private options?: IAcVirtualScrollingOptions;
   private resizeObserver!: ResizeObserver;
   private renderedElements: IAcScrollingElement[] = [];
   private scrollingElements: IAcScrollingElement[] = [];
@@ -22,7 +23,7 @@ export class AcScrollable {
   private heightCache = new Map<any, number>();
   private heights: number[] = [];
 
-  constructor({ element, options = {} }: { element: HTMLElement, options?: IAcScrollableOptions }) {
+  constructor({ element, options = {} }: { element: HTMLElement, options?: IAcVirtualScrollingOptions }) {
     this.element = element;
     this.options = options;
     this.elementHeight = element.clientHeight;
@@ -143,7 +144,7 @@ export class AcScrollable {
           if (mutation.type === "childList") {
             mutation.addedNodes.forEach((node) => {
               if (node instanceof HTMLElement) {
-                if (!node.hasAttribute(AcScrollableAttributeName.acScrollingElementId) && !node.hasAttribute(AcScrollableAttributeName.acScrollingSpacer)) {
+                if (!node.hasAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingElementId) && !node.hasAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacer)) {
                   const height = node.offsetHeight || this.elementHeightFallback;
                   this.registerScrollingElement({ element: node, height });
                   needsRender = true;
@@ -152,7 +153,7 @@ export class AcScrollable {
             });
             mutation.removedNodes.forEach((node) => {
               if (node instanceof HTMLElement) {
-                const id = node.getAttribute(AcScrollableAttributeName.acScrollingElementId);
+                const id = node.getAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingElementId);
                 if (id) {
                   this.scrollingElements = this.scrollingElements.filter(el => el.id !== id);
                   this.resizeObserver.unobserve(node);
@@ -173,7 +174,7 @@ export class AcScrollable {
         let needsRender = false;
         for (const entry of entries) {
           const target = entry.target as HTMLElement;
-          const id = target.getAttribute(AcScrollableAttributeName.acScrollingElementId);
+          const id = target.getAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingElementId);
           if (id) {
             const se = this.scrollingElements.find(el => el.id === id);
             if (se) {
@@ -222,7 +223,7 @@ export class AcScrollable {
   private registerScrollingElement(data: Partial<IAcScrollingElement> & Pick<IAcScrollingElement, 'element' | 'height'>) {
     if (this.scrollingElements.findIndex((item: any) => { return item.element == data.element; }) == -1) {
       const id: string = Autocode.uuid();
-      data.element.setAttribute(AcScrollableAttributeName.acScrollingElementId, id);
+      data.element.setAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingElementId, id);
       if (data.index == undefined) {
         data.index = this.scrollingElements.length;
       }
@@ -243,7 +244,7 @@ export class AcScrollable {
     const children = Array.from(this.element.children) as HTMLElement[];
     this.scrollingElements = [];
     children.forEach((el, index) => {
-      if (!el.hasAttribute(AcScrollableAttributeName.acScrollingSpacer)) {
+      if (!el.hasAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacer)) {
         const height = el.offsetHeight || this.elementHeightFallback;
         this.registerScrollingElement({ element: el, height: height, index: index });
       }
@@ -297,8 +298,8 @@ export class AcScrollable {
 
     const topSpacer = document.createElement("div");
     topSpacer.style.height = heights.slice(0, startIndex).reduce((sum, h) => sum + h, 0) + "px";
-    topSpacer.setAttribute(AcScrollableAttributeName.acScrollingSpacer, '');
-    topSpacer.setAttribute(AcScrollableAttributeName.acScrollingSpacerBefore, '');
+    topSpacer.setAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacer, '');
+    topSpacer.setAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacer, '');
     this.element.appendChild(topSpacer);
 
     this.renderedElements = [];
@@ -317,8 +318,8 @@ export class AcScrollable {
     }
 
     const bottomSpacer = document.createElement("div");
-    bottomSpacer.setAttribute(AcScrollableAttributeName.acScrollingSpacer, '');
-    bottomSpacer.setAttribute(AcScrollableAttributeName.acScrollingSpacerAfter, '');
+    bottomSpacer.setAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacerBefore, '');
+    bottomSpacer.setAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingSpacerAfter, '');
     bottomSpacer.style.height = heights.slice(endIndex + 1).reduce((sum, h) => sum + h, 0) + "px";
     this.element.appendChild(bottomSpacer);
 
@@ -412,7 +413,7 @@ export class AcScrollable {
     const existingIds = new Set(this.scrollingElements.map(el => el.id));
 
     children.forEach((el) => {
-      const id = el.getAttribute(AcScrollableAttributeName.acScrollingElementId);
+      const id = el.getAttribute(AC_VIRTUAL_SCROLLING_ATTR_NAME.acVirtualScrollingElementId);
       if (!id || !existingIds.has(id)) {
         const height = el.offsetHeight || this.elementHeightFallback;
         this.registerScrollingElement({ element: el, height });

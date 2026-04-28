@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcDDEApi } from "../../core/ac-dde-api";
-import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDTableColumn, AcEnumDDColumnProperty } from "@autocode-ts/ac-data-dictionary";
 import { AcDDEDatagridSelectColumnTypeInput } from "../cell-editors/ac-dde-datagrid-select-column-type-input.element";
 import { AcDDEDatagridTextInput } from "../cell-editors/ac-dde-datagrid-text-input.element";
 import { AcDDEDatagridYesNoInput } from "../cell-editors/ac-dde-datagrid-yes-no-input.element";
 import { AcDDEDatagridNumberInput } from "../cell-editors/ac-dde-datagrid-number-input.element";
-import { AcDDEDatagrid } from "./ac-dde-datagrid.element";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
 import { AcDDEDatagridSelectFormatInput } from "../cell-editors/ac-dde-datagrid-select-format-input.elemen";
 import { AcDDEDatagridRowAction } from "../shared/ac-dde-datagrid-row-action.element";
 import { arrayRemoveByKey } from "@autocode-ts/ac-extensions";
@@ -23,29 +23,14 @@ import { AcDDEDatagridSelectTableInput } from "../cell-editors/ac-dde-datagrid-s
 import { AC_DATA_MANAGER_EVENT, IAcContextEvent } from "@autocode-ts/autocode";
 import { AcDDEColumnValueOptionsRenderer } from "../cell-renderers/ac-dde-column-value-options-renderer";
 import { AcDDETableRenderer } from "../cell-renderers/ac-dde-table-renderer";
+import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDETableColumnsDatagrid {
+export class AcDDETableColumnsDatagridElement extends AcDDEDatagridElement{
   data: any[] = [];
-  ddeDatagrid!: AcDDEDatagrid;
-  datagridApi!: AcDatagridApi;
-  editorApi!: AcDDEApi;
-  element: HTMLElement = document.createElement('div');
   filterFunction: Function | undefined;
 
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.editorApi = editorApi;
-    this.ddeDatagrid = new AcDDEDatagrid({ editorApi: editorApi });
-    this.initDatagrid();
-    this.initElement();
-    this.editorApi.hooks.subscribe({
-      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
-        this.setColumnsData();
-      }
-    });
-  }
-
-  initDatagrid() {
-    this.datagridApi = this.ddeDatagrid.datagridApi;
+  override initDatagrid() {
+    super.initDatagrid();
     const columnDefinitions: IAcDatagridColumnDefinition[] = [
       {
         'field': 'action', 'title': '', cellRendererElement: AcDDEDatagridRowAction, cellRendererElementParams: {
@@ -95,7 +80,7 @@ export class AcDDETableColumnsDatagrid {
       instance: this
     };
     this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TableColumnsDatagridBeforeColumnsSet, args: colSetHookArgs });
-    this.ddeDatagrid.columnDefinitions = columnDefinitions;
+    this.datagridApi.columnDefinitions = columnDefinitions;
 
     this.datagridApi.on({
       event: AC_DATA_MANAGER_EVENT.BeforeRowAdd, callback: (args: any) => {
@@ -151,6 +136,13 @@ export class AcDDETableColumnsDatagrid {
       }
     });
 
+
+    this.editorApi.hooks.subscribe({
+      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
+        this.setColumnsData();
+      }
+    });
+
     this.setColumnsData();
   }
 
@@ -162,11 +154,6 @@ export class AcDDETableColumnsDatagrid {
     this.datagridApi.data = data;
   }
 
-  initElement() {
-    this.element.append(this.ddeDatagrid.element);
-    acAddClassToElement({ class_: AcDDECssClassName.acDDEContainer, element: this.element });
-  }
-
   setColumnsData() {
     if (this.editorApi.activeDataDictionary) {
       this.data = Object.values(this.editorApi.dataStorage.getTableColumns({ dataDictionaryId: this.editorApi.activeDataDictionary?.dataDictionaryId }));
@@ -174,5 +161,6 @@ export class AcDDETableColumnsDatagrid {
     }
   }
 
-
 }
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.tableColumnsDatagrid, type: AcDDETableColumnsDatagridElement });

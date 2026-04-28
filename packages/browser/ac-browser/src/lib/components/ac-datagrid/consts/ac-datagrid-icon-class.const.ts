@@ -6,4 +6,5 @@ export const AC_DATAGRID_ICON_CLASS = {
   sort : 'fa fa-sort',
   sortAscending : 'fa fa-arrow-down-a-z',
   sortDescending : 'fa fa-arrow-down-z-a',
+  settings: 'fa fa-cog'
 }

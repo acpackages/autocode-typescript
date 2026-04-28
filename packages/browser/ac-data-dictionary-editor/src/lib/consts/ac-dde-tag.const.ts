@@ -1,4 +1,16 @@
 export const AC_DDE_TAG = {
-  dataDictionaryEditor:'ac-data-dictionary-editor',
-  ddeHeader:'ac-dde-header',
+  editor:'ac-data-dictionary-editor',
+  functionsDatagrid:'ac-dde-functions-datagrid',
+  header:'ac-dde-header',
+  relationshipsDatagrid:'ac-dde-relationships-datagrid',
+  storedProceduresDatagrid:'ac-dde-stored-procedures-datagrid',
+  tableColumnPropertiesDatagrid:'ac-dde-table-column-properties-datagrid',
+  tableColumnsDatagrid:'ac-dde-table-columns-datagrid',
+  tablePropertiesDatagrid:'ac-dde-table-properties-datagrid',
+  tableEditor:'ac-dde-table-editor',
+  tablesDatagrid:'ac-dde-tables-datagrid',
+  triggersDatagrid:'ac-dde-triggers-datagrid',
+  viewColumnsDatagrid:'ac-dde-view-columns-datagrid',
+  viewEditor:'ac-dde-view-editor',
+  viewsDatagrid:'ac-dde-views-datagrid',
 }

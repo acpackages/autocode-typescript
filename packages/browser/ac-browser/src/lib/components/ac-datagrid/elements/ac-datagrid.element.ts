@@ -17,10 +17,6 @@ export class AcDatagridElement extends AcElementBase {
   afterRowsContainer!: HTMLElement;
   datagridHeader?: AcDatagridHeaderElement;
 
-  constructor() {
-    super();
-  }
-
   connectedCallback(): void {
     super.connectedCallback();
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementConnected });
@@ -46,22 +42,22 @@ export class AcDatagridElement extends AcElementBase {
     this.afterRowsContainer = this.ownerDocument.createElement('div');
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagrid, element: this });
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridContainer, element: this.containerElement });
-    this.datagridHeader = this.ownerDocument.createElement('ac-datagrid-header') as AcDatagridHeaderElement;
-    this.datagridHeader.datagridApi = this.datagridApi;
-    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeader, element: this.datagridHeader });
+    // this.datagridHeader = this.ownerDocument.createElement('ac-datagrid-header') as AcDatagridHeaderElement;
+    // this.datagridHeader.datagridApi = this.datagridApi;
+    // acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridHeader, element: this.datagridHeader });
 
-    this.datagridBody = document.createElement('ac-datagrid-body') as AcDatagridBody;
-    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridBody, element: this.datagridBody });
+    // this.datagridBody = document.createElement('ac-datagrid-body') as AcDatagridBody;
+    // acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridBody, element: this.datagridBody });
 
-    this.datagridFooter = document.createElement('ac-datagrid-footer') as AcDatagridFooterElement;
-    this.datagridFooter.datagridApi = this.datagridApi;
-    acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooter, element: this.datagridFooter });
+    // this.datagridFooter = document.createElement('ac-datagrid-footer') as AcDatagridFooterElement;
+    // this.datagridFooter.datagridApi = this.datagridApi;
+    // acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooter, element: this.datagridFooter });
 
     this.containerElement.append(this.datagridHeader);
     this.containerElement.append(this.datagridBody);
     this.containerElement.append(this.afterRowsContainer);
     this.append(this.containerElement);
-    this.append(this.datagridFooter);
+    // this.append(this.datagridFooter);
 
     // Fire init hook
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.DatagridInit });

@@ -10,10 +10,10 @@ import { IAcDDEHookArgs } from "../../interfaces/hook-args/ac-dde-hook-args.inte
 import { IAcDDEMenuGroup } from "../../interfaces/ac-dde-menu-group.interface";
 import { IAcDDEMenuItem } from "../../interfaces/ac-dde-menu-item.interface";
 import { IAcDDEDataDictionary } from "../../interfaces/ac-dde-data-dictionary.inteface";
-import { AcDDEBase } from "./ac-dde-element-base.element";
+import { AcDDEElementBase } from "./ac-dde-element-base.element";
 import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDEHeader extends AcDDEBase {
+export class AcDDEHeader extends AcDDEElementBase {
   activeView: AcEnumDDETab = AcEnumDDETab.TableEditor;
   dropdown: HTMLElement = document.createElement('div');
 
@@ -202,4 +202,4 @@ export class AcDDEHeader extends AcDDEBase {
   }
 }
 
-acRegisterCustomElement({ tag: AC_DDE_TAG.ddeHeader, type: AcDDEHeader });
+acRegisterCustomElement({ tag: AC_DDE_TAG.header, type: AcDDEHeader });

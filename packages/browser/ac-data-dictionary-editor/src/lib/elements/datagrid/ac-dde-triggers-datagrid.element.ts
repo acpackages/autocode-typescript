@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, AcResizablePanels, IAcDatagridActiveRowChangeEvent, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent } from "@autocode-ts/ac-browser";
+import { acAddClassToElement, AcDatagridApi, AC_DATAGRID_EVENT, AcResizablePanels, IAcDatagridActiveRowChangeEvent, IAcDatagridCellEditorElementInitEvent, IAcDatagridCellRendererElementInitEvent, IAcDatagridColumnDefinition, IAcDatagridRowEvent, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDEApi } from "../../core/ac-dde-api";
 import { AcDDTrigger, AcEnumDDRowOperation } from "@autocode-ts/ac-data-dictionary";
 import { AC_DATA_MANAGER_EVENT, AcDelayedCallback, AcHooks, IAcContextEvent } from "@autocode-ts/autocode";
 import { AcDDEDatagridTextInput } from "../cell-editors/ac-dde-datagrid-text-input.element";
-import { AcDDEDatagrid } from "./ac-dde-datagrid.element";
+import { AcDDEDatagridElement } from "./ac-dde-datagrid.element";
 import { AcDDEDatagridRowAction } from "../shared/ac-dde-datagrid-row-action.element";
 import { arrayRemoveByKey } from "@autocode-ts/ac-extensions";
 import { IAcDDEDatagridBeforeColumnsSetInitHookArgs } from "../../interfaces/hook-args/ac-dde-datagrid-before-columns-set-hook-args.interface";
@@ -19,59 +19,51 @@ import { AcDDECssClassName } from "../../consts/ac-dde-css-class-name.const";
 import { IAcDDEActiveDataDictionaryChangeHookArgs } from "../../interfaces/hook-args/ac-dde-active-data-dictionary-change-hook-args.interface";
 import { AcDDETriggerMaster } from "../masters/ac-dde-trigger-master.element";
 import { AcDDETableRenderer } from "../cell-renderers/ac-dde-table-renderer";
+import { AC_DDE_TAG } from "../../_ac-data-dictionary-editor.export";
 
-export class AcDDETriggersDatagrid {
+export class AcDDETriggersDatagridElement extends AcDDEDatagridElement{
   activeTrigger?: IAcDDETrigger;
-  ddeDatagrid!: AcDDEDatagrid;
-  datagridApi!: AcDatagridApi;
-  editorApi!: AcDDEApi;
   element: HTMLElement = document.createElement('div');
   filterFunction: Function | undefined;
-  triggerMaster: AcDDETriggerMaster;
+  // triggerMaster: AcDDETriggerMaster;
   hooks: AcHooks = new AcHooks();
   data: any[] = [];
-  delayedCallback:AcDelayedCallback = new AcDelayedCallback();
 
   editorPanels: AcResizablePanels = new AcResizablePanels();
 
-  constructor({ editorApi }: { editorApi: AcDDEApi }) {
-    this.ddeDatagrid = new AcDDEDatagrid({ editorApi: editorApi });
-    this.ddeDatagrid.datagridApi.on({
-      event: AC_DATAGRID_EVENT.ActiveRowChange, callback: (args: IAcDatagridActiveRowChangeEvent) => {
-        this.delayedCallback.add({callback:() => {
-          this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TableEditorActiveTableChange });
-          this.activeTrigger = this.ddeDatagrid.datagridApi!.activeDatagridRow!.data;
-          this.triggerMaster.trigger = this.activeTrigger!;
-        }, duration:10});
-      }
-    });
-    this.ddeDatagrid.datagridApi.on({
-      event: AC_DATAGRID_EVENT.CellValueChange, callback: (args: any) => {
-        this.triggerMaster.trigger = this.activeTrigger!;
-      }
-    });
+  // constructor({ editorApi }: { editorApi: AcDDEApi }) {
+  //   this.ddeDatagrid = new AcDDEDatagrid({ editorApi: editorApi });
+  //   this.ddeDatagrid.datagridApi.on({
+  //     event: AC_DATAGRID_EVENT.ActiveRowChange, callback: (args: IAcDatagridActiveRowChangeEvent) => {
+  //       this.delayedCallback.add({callback:() => {
+  //         this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TableEditorActiveTableChange });
+  //         this.activeTrigger = this.ddeDatagrid.datagridApi!.activeDatagridRow!.data;
+  //         this.triggerMaster.trigger = this.activeTrigger!;
+  //       }, duration:10});
+  //     }
+  //   });
+  //   this.ddeDatagrid.datagridApi.on({
+  //     event: AC_DATAGRID_EVENT.CellValueChange, callback: (args: any) => {
+  //       this.triggerMaster.trigger = this.activeTrigger!;
+  //     }
+  //   });
 
-    this.triggerMaster = new AcDDETriggerMaster({ editorApi });
-    this.triggerMaster.on({
-      event: "change", callback: (args: any) => {
-        if (this.ddeDatagrid.datagridApi.activeDatagridRow) {
-          this.ddeDatagrid.datagridApi!.updateRow({ rowId: this.ddeDatagrid.datagridApi.activeDatagridRow!.rowId, data: args.trigger });
-        }
-      }
-    });
+  //   this.triggerMaster = new AcDDETriggerMaster({ editorApi });
+  //   this.triggerMaster.on({
+  //     event: "change", callback: (args: any) => {
+  //       if (this.ddeDatagrid.datagridApi.activeDatagridRow) {
+  //         this.ddeDatagrid.datagridApi!.updateRow({ rowId: this.ddeDatagrid.datagridApi.activeDatagridRow!.rowId, data: args.trigger });
+  //       }
+  //     }
+  //   });
 
-    this.editorApi = editorApi;
-    this.initDatagrid();
-    this.initElement();
-    this.editorApi.hooks.subscribe({
-      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
-        this.setTriggersData();
-      }
-    });
-  }
+  //   this.editorApi = editorApi;
+  //   this.initDatagrid();
+  //   this.initElement();
+  // }
 
-  initDatagrid() {
-    this.datagridApi = this.ddeDatagrid.datagridApi;
+  override initDatagrid() {
+    super.initDatagrid();
 
     const columnDefinitions: IAcDatagridColumnDefinition[] = [
       {
@@ -127,7 +119,7 @@ export class AcDDETriggersDatagrid {
       instance: this
     };
     this.editorApi.hooks.execute({ hook: AcEnumDDEHook.TriggersDatagridBeforeColumnsSet, args: colSetHookArgs });
-    this.ddeDatagrid.columnDefinitions = columnDefinitions;
+    this.datagridApi.columnDefinitions = columnDefinitions;
 
     this.datagridApi.on({
       event: AC_DATA_MANAGER_EVENT.BeforeRowAdd, callback: (args: any) => {
@@ -177,6 +169,12 @@ export class AcDDETriggersDatagrid {
       }
     });
 
+    this.editorApi.hooks.subscribe({
+      hook: AcEnumDDEHook.ActiveDataDictionaryChange, callback: (args: IAcDDEActiveDataDictionaryChangeHookArgs) => {
+        this.setTriggersData();
+      }
+    });
+
     this.setTriggersData();
   }
 
@@ -188,31 +186,31 @@ export class AcDDETriggersDatagrid {
     this.datagridApi.data = data;
   }
 
-  initElement() {
-    acAddClassToElement({ class_: AcDDECssClassName.acDDEListMasterContainer, element: this.element });
+  // initElement() {
+  //   acAddClassToElement({ class_: AcDDECssClassName.acDDEListMasterContainer, element: this.element });
 
-    this.element.innerHTML = `<ac-resizable-panels class="editor-resizable-panels">
-      <ac-resizable-panel ac-dde-triggers-wrapper></ac-resizable-panel>
-      <ac-resizable-panel ac-dde-trigger-details-wrapper></ac-resizable-panel>
-    </ac-resizable-panels>`;
-    this.editorPanels = this.element.querySelector('.editor-resizable-panels') as AcResizablePanels;
+  //   this.element.innerHTML = `<ac-resizable-panels class="editor-resizable-panels">
+  //     <ac-resizable-panel ac-dde-triggers-wrapper></ac-resizable-panel>
+  //     <ac-resizable-panel ac-dde-trigger-details-wrapper></ac-resizable-panel>
+  //   </ac-resizable-panels>`;
+  //   this.editorPanels = this.element.querySelector('.editor-resizable-panels') as AcResizablePanels;
 
-    this.delayedCallback.add({callback:() => {
-      this.editorPanels.setPanelSizes({
-        panelSizes: [
-          { size: 60, index: 0 },
-          { size: 40, index: 1 }
-        ]
-      });
-    }, duration:50});
+  //   this.delayedCallback.add({callback:() => {
+  //     this.editorPanels.setPanelSizes({
+  //       panelSizes: [
+  //         { size: 60, index: 0 },
+  //         { size: 40, index: 1 }
+  //       ]
+  //     });
+  //   }, duration:50});
 
-    const datagridWrapper = this.element.querySelector('[ac-dde-triggers-wrapper]') as HTMLElement;
-    datagridWrapper.append(this.ddeDatagrid.element);
+  //   const datagridWrapper = this.element.querySelector('[ac-dde-triggers-wrapper]') as HTMLElement;
+  //   datagridWrapper.append(this.ddeDatagrid.element);
 
-    const detailsWrapper = this.element.querySelector('[ac-dde-trigger-details-wrapper]') as HTMLElement;
-    detailsWrapper.append(this.triggerMaster.element);
+  //   const detailsWrapper = this.element.querySelector('[ac-dde-trigger-details-wrapper]') as HTMLElement;
+  //   detailsWrapper.append(this.triggerMaster.element);
 
-  }
+  // }
 
   setTriggersData() {
     this.data = Object.values(this.editorApi.dataStorage.getTriggers({ dataDictionaryId: this.editorApi.activeDataDictionary?.dataDictionaryId }));
@@ -220,3 +218,6 @@ export class AcDDETriggersDatagrid {
   }
 
 }
+
+
+acRegisterCustomElement({ tag: AC_DDE_TAG.triggersDatagrid, type: AcDDETriggersDatagridElement });

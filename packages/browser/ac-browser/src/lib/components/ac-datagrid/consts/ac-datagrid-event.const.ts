@@ -66,6 +66,7 @@ export const AC_DATAGRID_EVENT = {
   ColumnTouchStart: 'columnTouchStart',
   ColumnPositionChange: 'columnPositionChange',
   ColumnVisibilityChange: 'columnVisibilityChange',
+  DataChange: 'dataChange',
   DatagridInit: 'datagridInit',
   DisplayedRowsChange: 'displayedRowsChange',
   EnsureRowVisible: 'ensureRowVisible',

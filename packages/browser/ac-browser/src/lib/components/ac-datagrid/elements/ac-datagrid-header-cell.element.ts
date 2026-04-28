@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { AcDatagridApi } from "../core/ac-datagrid-api";
-import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
-import { AcEnumSortOrder } from "@autocode-ts/autocode";
+import { AcEnumSortOrder, IAcFilter } from "@autocode-ts/autocode";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 import { IAcDatagridColumn } from "../interfaces/ac-datagrid-column.interface";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { AC_DATAGRID_ICON_CLASS } from "../_ac-datagrid.export";
+import { AC_DATAGRID_ICON_CLASS, AC_DATAGRID_TAG } from "../_ac-datagrid.export";
+import { createPopper, Instance as PopperInstance } from '@popperjs/core';
+import { AcEnumConditionOperator, AcEnumLogicalOperator, AcFilter } from "@autocode-ts/autocode";
 
 
 export class AcDatagridHeaderCellElement extends AcElementBase {
@@ -18,6 +20,10 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
   startX = 0;
   swappingColumpPosition: boolean = false;
   originalUserSelect: any;
+
+  private filterPopper?: PopperInstance;
+  private filterPopup?: HTMLElement;
+  private outsideClickHandler?: (e: MouseEvent) => void;
 
   applyPinning() {
     if (this.datagridColumn && this.datagridColumn.pinnedOn) {
@@ -187,9 +193,170 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     }
     if (this.datagridColumn.columnDefinition.allowFilter != false) {
       const filterElement = this.ownerDocument.createElement('i');
-      filterElement.setAttribute('class', AC_DATAGRID_ICON_CLASS.filter);
+      const hasFilters = this.datagridColumn.filterGroup && this.datagridColumn.filterGroup.filters && this.datagridColumn.filterGroup.filters.length > 0;
+      filterElement.setAttribute('class', hasFilters ? AC_DATAGRID_ICON_CLASS.appliedFilter : AC_DATAGRID_ICON_CLASS.filter);
       this.querySelector(`.${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellRightContainer}`).append(filterElement);
+      filterElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openFilterPopup(filterElement);
+      });
     }
+  }
+
+  private openFilterPopup(anchor: HTMLElement) {
+    if (this.filterPopup) {
+      this.closeFilterPopup();
+      return;
+    }
+
+    this.filterPopup = this.ownerDocument.createElement('div');
+    this.filterPopup.className = 'ac-datagrid-filter-popup ac-datagrid-header-popup';
+    this.filterPopup.innerHTML = `
+      <div class="ac-datagrid-popup-header">
+        <span>Filter: ${this.datagridColumn.title}</span>
+        <button class="ac-datagrid-popup-close">&times;</button>
+      </div>
+      <div class="ac-datagrid-filter-rows-container"></div>
+      <div class="ac-datagrid-filter-actions">
+        <button class="ac-datagrid-header-button ac-datagrid-add-filter-btn">Add Condition</button>
+        <button class="ac-datagrid-header-button ac-datagrid-clear-filters-btn">Clear</button>
+        <button class="ac-datagrid-header-button ac-datagrid-apply-filters-btn" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
+      </div>
+    `;
+
+    this.ownerDocument.body.appendChild(this.filterPopup);
+
+    this.filterPopper = createPopper(anchor, this.filterPopup, {
+      strategy: 'fixed',
+      placement: 'bottom-end',
+      modifiers: [
+        { name: 'offset', options: { offset: [0, 8] } },
+        { name: 'flip', options: { fallbackPlacements: ['top-end'] } }
+      ]
+    });
+
+    this.filterPopup.querySelector('.ac-datagrid-popup-close')?.addEventListener('click', () => this.closeFilterPopup());
+    this.filterPopup.querySelector('.ac-datagrid-add-filter-btn')?.addEventListener('click', () => this.addFilterRow());
+    this.filterPopup.querySelector('.ac-datagrid-clear-filters-btn')?.addEventListener('click', () => {
+      this.datagridColumn.filterGroup = { operator: AcEnumLogicalOperator.And, filters: [] };
+      this.applyFilters();
+      this.closeFilterPopup();
+    });
+    this.filterPopup.querySelector('.ac-datagrid-apply-filters-btn')?.addEventListener('click', () => {
+      this.applyFilters();
+      this.closeFilterPopup();
+    });
+
+    this.outsideClickHandler = (e: MouseEvent) => {
+      if (this.filterPopup && !this.filterPopup.contains(e.target as Node) && !anchor.contains(e.target as Node)) {
+        this.closeFilterPopup();
+      }
+    };
+    this.ownerDocument.addEventListener('click', this.outsideClickHandler);
+    this.addFilterRow();
+    this.refreshFilterRows();
+  }
+
+  private closeFilterPopup() {
+    if (this.filterPopper) {
+      this.filterPopper.destroy();
+      this.filterPopper = undefined;
+    }
+    if (this.filterPopup) {
+      this.filterPopup.remove();
+      this.filterPopup = undefined;
+    }
+    if (this.outsideClickHandler) {
+      document.removeEventListener('click', this.outsideClickHandler);
+      this.outsideClickHandler = undefined;
+    }
+  }
+
+  private refreshFilterRows() {
+    const container = this.filterPopup?.querySelector('.ac-datagrid-filter-rows-container') as HTMLElement;
+    if (!container) return;
+    acClearElement({ element: container });
+
+    const filters = this.datagridColumn.filterGroup?.filters || [];
+    let addedCount = 0;
+
+    filters.forEach(f => {
+      this.addFilterRow(AcFilter.instanceFromJson({jsonData:f}));
+      addedCount++;
+    });
+
+    if (addedCount === 0) {
+      this.addFilterRow();
+    }
+  }
+
+  private addFilterRow(filter?: AcFilter) {
+    const container = this.filterPopup?.querySelector('.ac-datagrid-filter-rows-container') as HTMLElement;
+    if (!container) {
+      console.error('AcDatagridHeaderCell: Filter rows container not found in popup');
+      return;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'ac-datagrid-filter-row';
+
+    const opLabels: Record<string, string> = {
+      [AcEnumConditionOperator.Contains]: "Contains",
+      [AcEnumConditionOperator.NotContains]: "Not Contains",
+      [AcEnumConditionOperator.EqualTo]: "Equals",
+      [AcEnumConditionOperator.NotEqualTo]: "Not Equals",
+      [AcEnumConditionOperator.StartsWith]: "Starts With",
+      [AcEnumConditionOperator.EndsWith]: "Ends With",
+      [AcEnumConditionOperator.GreaterThan]: "Greater Than",
+      [AcEnumConditionOperator.LessThan]: "Less Than",
+      [AcEnumConditionOperator.IsNull]: "Is Null",
+      [AcEnumConditionOperator.IsNotNull]: "Is Not Null"
+    };
+
+    const noValueOps = [AcEnumConditionOperator.IsNull, AcEnumConditionOperator.IsNotNull];
+    const opOptions = Object.keys(opLabels).map(op => `<option value="${op}" ${filter?.operator === op ? 'selected' : ''}>${opLabels[op]}</option>`).join('');
+
+    row.innerHTML = `
+      <select class="filter-op" style="flex:1">${opOptions}</select>
+      <input type="text" class="filter-val" style="flex:1.5; display: ${filter && noValueOps.includes(filter.operator) ? 'none' : 'block'}" value="${filter?.value ?? ''}">
+      <button class="remove-filter-row" style="background:none; border:none; cursor:pointer; color:red; font-size:18px;">&times;</button>
+    `;
+
+    const opSelect = row.querySelector('.filter-op') as HTMLSelectElement;
+    const valInput = row.querySelector('.filter-val') as HTMLInputElement;
+
+    opSelect.addEventListener('change', () => {
+      valInput.style.display = noValueOps.includes(opSelect.value as any) ? 'none' : 'block';
+    });
+
+    row.querySelector('.remove-filter-row')?.addEventListener('click', () => {
+      row.remove();
+    });
+
+    container.appendChild(row);
+  }
+
+  private applyFilters() {
+    const container = this.filterPopup?.querySelector('.ac-datagrid-filter-rows-container') as HTMLElement;
+    if (!container) return;
+
+    const rowEls = container.querySelectorAll('.ac-datagrid-filter-row');
+    const filters: IAcFilter[] = [];
+
+    rowEls.forEach(row => {
+      const op = (row.querySelector('.filter-op') as HTMLSelectElement).value as AcEnumConditionOperator;
+      const val = (row.querySelector('.filter-val') as HTMLInputElement).value;
+      filters.push(AcFilter.instanceFromJson({jsonData:{key: this.datagridColumn.columnDefinition.field, operator: op, value: val }}).toJson());
+    });
+
+    this.datagridColumn.filterGroup = {
+      operator: AcEnumLogicalOperator.And,
+      filters: filters
+    };
+
+    this.datagridApi.setColumnFilter({ datagridColumn: this.datagridColumn, filterGroup: this.datagridColumn.filterGroup });
+    this.render(); // Re-render to update filter icon state
+    this.datagridApi.dataManager.processRows();
   }
 
   // renderFilter() {
@@ -232,4 +399,4 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
   }
 }
 
-acRegisterCustomElement({ tag: 'ac-datagrid-header-cell', type: AcDatagridHeaderCellElement });
+acRegisterCustomElement({ tag: AC_DATAGRID_TAG.datagridHeaderCell, type: AcDatagridHeaderCellElement });

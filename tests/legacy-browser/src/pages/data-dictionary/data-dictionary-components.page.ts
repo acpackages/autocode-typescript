@@ -3,7 +3,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import './../../../../../packages/browser/ac-data-dictionary-editor/src/lib/css/ac-data-dictionary-editor.css';
 import './../../../../../packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src/lib/css/ac-datagrid-on-ag-grid.css';
-import { AcDataDictionaryEditor, AcDDEApi } from '@autocode-ts/ac-data-dictionary-editor';
+import { AcDataDictionaryEditorElement, AcDDEApi } from '@autocode-ts/ac-data-dictionary-editor';
 import { PageHeader } from '../../components/page-header/page-header.component';
 import { dataDictionaryJson as actDataDictionary } from './../../../../data/accountea-pro';
 // import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/unifi-data-dictionary';
@@ -16,7 +16,7 @@ import { ProductCategorySelectInput } from '../../components/inputs/product-cate
 
 export class DataDictionaryComponentsPage extends HTMLElement {
   accountTargetInput!:AcDDInputFieldElement;
-  dataDictionaryEditor!: AcDataDictionaryEditor;
+  dataDictionaryEditor!: AcDataDictionaryEditorElement;
   private form: AcForm | null = null;
 
   datagrid!: AcDatagridElement;
