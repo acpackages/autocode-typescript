@@ -1,7 +1,7 @@
 import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AC_RUNTIME_CONFIG } from "../consts/ac-runtime-config.const";
 import { AcElementManager } from "./ac-element-manager";
-import { acElementRegistry } from "./ac-element-registry";
+import { acElementRegistry, IAcElementDef } from "./ac-element-registry";
 import { AC_RUNTIME_INTERNAL_KEYS } from "../consts/ac-runtime_internal_keys.const";
 
 let isGlobalObserverStarted = false;
@@ -76,6 +76,35 @@ export async function acAutoBootstrap(el: HTMLElement): Promise<any> {
     return instance;
   }
   return null;
+}
+
+export function acCreateRuntimeInstance({selector,type,element}:{selector?:string,type?:any,element?: HTMLElement}):any {
+  let def:IAcElementDef|undefined;
+  if(selector){
+    def = acElementRegistry.getByTagName(selector);
+  }
+  else if(element){
+    def = acElementRegistry.getByElement(element);
+  }
+  else if(type){
+    def = acElementRegistry.getByType(type);
+  }
+  if(def){
+    if(element == undefined){
+      element = document.createElement(def.selector);
+    }
+    const existingId = element.getAttribute('ac-engine-element');
+    if(existingId){
+      return acElementRegistry.getInstance({ uuid: existingId });
+    }
+    else{
+      const instance = new def.constructor();
+      const manager = new AcElementManager({ instance, element: element,elementDef:def });
+      manager.bootstrap();
+      return manager.instance;
+    }
+  }
+  return undefined;
 }
 
 export async function acInitRuntimeElementInstance(instance: any) {

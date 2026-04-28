@@ -1,7 +1,8 @@
-import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
+import { acCreateRuntimeInstance, AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcRepeaterElement, IAcRepeaterRowRendererElementArgs } from "@autocode-ts/ac-browser";
 import { customersData } from "../../../../data/customers-data";
-import { IAppMenuItem } from "src/_app.export";
+import { IAppMenuItem } from "src/shared/interfaces/app-menu-item.interface";
+import { RepeaterListItem } from "./repeater-list-item.element";
 
 @AcElement({
   selector: 'repeater-offline-page',
@@ -34,6 +35,8 @@ export class RepeaterOfflinePage {
     api.usePagination = true;
     api.rowRendererFunction = (args: IAcRepeaterRowRendererElementArgs) => {
       const data = args.row.data;
+      // const instance = acCreateRuntimeInstance({type:RepeaterListItem});
+      // console.log(instance);
       const element = document.createElement('div');
       element.className = 'p-3 border-bottom hover-bg-light transition-all';
       element.style.cursor = 'default';
