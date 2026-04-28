@@ -162,7 +162,7 @@ export class AcElementManager {
 
   private render(): void {
     const template = this.metadata.template || '';
-    for (let child of this.element.childNodes) {
+    for (let child of Array.from(this.element.childNodes) as Element[]) {
       child.remove();
       (child as any) = null;
     }

@@ -16,7 +16,6 @@ import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
 import { IAcTemplateDef } from '../interfaces/ac-template-def.interface';
 import { acEffect, AcEffect } from '../reactivity/ac-effect';
 import { acMakeReactive } from '../reactivity/ac-reactivity';
-import { AC_RUNTIME_INTERNAL_KEYS } from '@autocode-ts/ac-runtime';
 
 export class AcElementRenderer {
   templates = new Map<string, IAcTemplateDef>();

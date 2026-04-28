@@ -58,6 +58,15 @@ class AcElementRegistry {
     return registration;
   }
 
+  getByType(type: any): IAcElementDef | undefined {
+    for(const elType of this.elements.values()){
+      if(type.name == elType.constructor.name){
+        return elType;
+      }
+    }
+    return undefined;
+  }
+
   private normalizeSelector(selector: string): string {
     const trimmed = selector.trim();
     if (trimmed.startsWith('#')) {

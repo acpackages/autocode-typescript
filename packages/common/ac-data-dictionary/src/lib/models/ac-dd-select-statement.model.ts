@@ -208,19 +208,22 @@ export class AcDDSelectStatement {
     return this.sqlStatement;
   }
 
-  setConditionsFromFilters({ filters }: { filters: Record<string, any> }): this {
-    if (filters.hasOwnProperty(AcFilterGroup.KeyFilters)) {
-      const group = AcDDConditionGroup.instanceFromFilterGroup({ filterGroup: AcFilterGroup.instanceFromJson({ jsonData: filters }) });
-      filters = group.toJson();
+  setConditionsFromFilters({ filters }: { filters: any }): this {
+    if (filters) {
+      if (filters[AcFilterGroup.KeyFilters]) {
+        const group = AcDDConditionGroup.instanceFromFilterGroup({ filterGroup: AcFilterGroup.instanceFromJson({ jsonData: filters }) });
+        filters = group.toJson();
+      }
+
+      if (filters[AcDDConditionGroup.KeyConditions]) {
+        const operator = filters[AcDDConditionGroup.KeyOperator] ?? AcEnumLogicalOperator.And;
+        this.addConditionGroup({
+          conditions: filters[AcDDConditionGroup.KeyConditions],
+          operator
+        });
+      }
     }
 
-    if (filters.hasOwnProperty(AcDDConditionGroup.KeyConditions)) {
-      const operator = filters[AcDDConditionGroup.KeyOperator] ?? AcEnumLogicalOperator.And;
-      this.addConditionGroup({
-        conditions: filters[AcDDConditionGroup.KeyConditions],
-        operator
-      });
-    }
     return this;
   }
 
@@ -317,7 +320,7 @@ export class AcDDSelectStatement {
     includeInBetween?: boolean,
     includeStart?: boolean
   }): this {
-    let columnType:string|AcEnumDDColumnType = AcEnumDDColumnType.Unknown;
+    let columnType: string | AcEnumDDColumnType = AcEnumDDColumnType.Unknown;
     if (this.tableName) {
       const col = AcDataDictionary.getTableColumn({
         tableName: this.tableName,
@@ -374,6 +377,6 @@ export class AcDDSelectStatement {
   }
 
   toString(): string {
-    return AcJsonUtils.prettyEncode({object:this.toJson()});
+    return AcJsonUtils.prettyEncode({ object: this.toJson() });
   }
 }
