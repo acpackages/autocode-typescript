@@ -1,5 +1,6 @@
 export * from './ac-change-args.interface';
 export * from './ac-element-metadata.interface';
+export * from './ac-element-view-child-metadata.interface';
 export * from './ac-on-change.interface';
 export * from './ac-on-connected.interface';
 export * from './ac-on-destroy.interface';

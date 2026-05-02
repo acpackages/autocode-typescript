@@ -1,6 +1,3 @@
-import { getAcInputMetadata } from "../decorators/ac-input.decorator";
-import { getAcOutputMetadata } from "../decorators/ac-output.decorator";
-import { getAcViewChildMetadata } from "../decorators/ac-view-child.decorator";
 import { activeSubscriber, IAcEffectSubscriber } from "./ac-effect";
 
 /**
@@ -222,17 +219,6 @@ export function acMakeReactive<T extends object>(target: T): T {
   const proxy = acProxyReactive(target, undefined, undefined, true);
 
   if (isComponent) {
-    // Re-initialize metadata props if missing (e.g. uninitialized @AcInput)
-    const inputs = getAcInputMetadata(constructor);
-    const outputs = getAcOutputMetadata(constructor);
-    const viewChildren = getAcViewChildMetadata(constructor);
-    [inputs, outputs, viewChildren].forEach(meta => {
-      Object.keys(meta).forEach(key => {
-        if (!(key in target)) {
-          (target as any)[key] = undefined;
-        }
-      });
-    });
 
     // Auto-bind all proto methods to the Proxy
     let proto = Object.getPrototypeOf(target);

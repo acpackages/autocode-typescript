@@ -3,6 +3,7 @@ import { AC_RUNTIME_CONFIG } from "../consts/ac-runtime-config.const";
 import { AcElementManager } from "./ac-element-manager";
 import { acElementRegistry, IAcElementDef } from "./ac-element-registry";
 import { AC_RUNTIME_INTERNAL_KEYS } from "../consts/ac-runtime_internal_keys.const";
+import { AcElementRenderer } from "./ac-element-renderer";
 
 let isGlobalObserverStarted = false;
 
@@ -159,6 +160,11 @@ export async function acCheckAndCallConnected(element: HTMLElement) {
 }
 
 export async function acCheckAndCallDisconnected(element: HTMLElement) {
+  // console.dir(element);
+  if((element as any)[AC_RUNTIME_INTERNAL_KEYS.rendererInstance] != undefined){
+    const rendererInstance:AcElementRenderer = (element as any)[AC_RUNTIME_INTERNAL_KEYS.rendererInstance];
+    rendererInstance.cleanupRemovedElement(element);
+  }
   if (element.hasAttribute('ac-engine-element')) {
     const instanceId = element.getAttribute('ac-engine-element');
     if (instanceId) {

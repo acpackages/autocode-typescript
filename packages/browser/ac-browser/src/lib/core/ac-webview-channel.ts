@@ -57,6 +57,14 @@ export class AcWebviewChannel {
     return this.events.subscribe({ event, callback });
   }
 
+  off({ event, callback, subscriptionId, subscriptionIds }: { event?: string; callback?: any, subscriptionId?:string, subscriptionIds?:string[]  }): boolean {
+    return this.events.unsubscribe({ event, callback, subscriptionId, subscriptionIds });
+  }
+
+  offEvent({ event, callback, subscriptionId, subscriptionIds }: { event?: string; callback?: any, subscriptionId?:string, subscriptionIds?:string[]  }): boolean {
+    return this.webviewEvents.unsubscribe({ event, callback, subscriptionId, subscriptionIds });
+  }
+
   onEvent({ event, callback }: { event: string; callback: any }): string {
     return this.webviewEvents.subscribe({ event, callback });
   }

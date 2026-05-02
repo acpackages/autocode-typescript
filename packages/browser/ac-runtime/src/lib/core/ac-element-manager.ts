@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acNullifyInstanceProperties, Autocode } from '@autocode-ts/autocode';
-import { AC_ELEMENT_METADATA_KEY } from '../consts/symbols.const';
+import { AC_ELEMENT_METADATA_KEY, AC_VIEW_CHILD_METADATA_KEY } from '../consts/symbols.const';
 import { acElementRegistry, IAcElementDef } from './ac-element-registry';
-import { getAcViewChildMetadata } from '../decorators/_decorators.export';
 import { IAcElementMetadata } from '../interfaces/ac-element-metadata.interface';
 import { clearElement } from '../utils/functions';
 import { acInitRuntimeElementInstance } from './ac-runtime';
 import { acMakeReactive, proxyMap, targetMap } from '../reactivity/ac-reactivity';
 import { AcElementRenderer } from './ac-element-renderer';
+import { AC_RUNTIME_INTERNAL_KEYS } from '../consts/ac-runtime_internal_keys.const';
+import { IAcElementViewChildMetadata } from '../interfaces/ac-element-view-child-metadata.interface';
 
 export class AcElementManager {
   private element!: HTMLElement;
@@ -19,12 +20,33 @@ export class AcElementManager {
   private parentEngine?: AcElementRenderer;
   private orgInstance: any;
 
+  get inputMetadata():IAcElementViewChildMetadata[]{
+    if(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY] != undefined){
+      return Object.values(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY]);
+    }
+    return [];
+  }
+
+  get outputMetadata():IAcElementViewChildMetadata[]{
+    if(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY] != undefined){
+      return Object.values(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY]);
+    }
+    return [];
+  }
+
+  get viewChildMetadata():IAcElementViewChildMetadata[]{
+    if(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY] != undefined){
+      return Object.values(this.elementDef.constructor[AC_VIEW_CHILD_METADATA_KEY]);
+    }
+    return [];
+  }
+
   constructor({ instance, element, parentEngine,elementDef }: { instance: any, element?: HTMLElement, parentEngine?: AcElementRenderer,elementDef:IAcElementDef  }) {
     this.elementDef = elementDef;
     this.orgInstance = instance;
     this.instance = acMakeReactive(instance);
     this.parentEngine = parentEngine;
-    this.instance['__ac_manager__'] = this;
+    this.instance[AC_RUNTIME_INTERNAL_KEYS.managerInstance] = this;
     this.metadata = (this.orgInstance.constructor as any)[AC_ELEMENT_METADATA_KEY];
     if (!this.metadata) {
       throw new Error(`No metadata found for ${this.orgInstance.constructor.name}. Did you forget @AcElement decorator?`);
@@ -62,7 +84,7 @@ export class AcElementManager {
     if (this.element && !this.element.hasAttribute('ac-engine-element')) {
       const uuid = Autocode.uuid();
       this.element.setAttribute('ac-engine-element', uuid);
-      (this.element as any).acInstance = this; // Attach instance to element
+      (this.element as any).acInstance = this.instance; // Attach instance to element
       const customEvent: CustomEvent = new CustomEvent('acRuntimeElementIdAttached', { detail: { 'instance': this } });
       this.element.dispatchEvent(customEvent);
       this.uuid = uuid;
@@ -97,7 +119,7 @@ export class AcElementManager {
     this.render();
 
     // Resolve ViewChild references BEFORE acOnInit
-    this.resolveViewChild();
+    // this.resolveViewChild();
 
     await acInitRuntimeElementInstance(this.instance);
   }
@@ -129,16 +151,19 @@ export class AcElementManager {
   }
 
   public resolveViewChild() {
-    const viewChildMetadata = getAcViewChildMetadata(this.orgInstance.constructor);
-    if (Object.keys(viewChildMetadata).length > 0) {
+    const viewChildMetadata:IAcElementViewChildMetadata[] = this.viewChildMetadata;
+    if (viewChildMetadata.length > 0) {
       const templates = this.templateEngine.templates;
 
-      for (const [propertyKey, selector] of Object.entries(viewChildMetadata)) {
+      for (const metaData of viewChildMetadata) {
+        const propertyKey = metaData.propertyKey;
+        const selector = metaData.referenceKey;
         if (this.instance[propertyKey] == undefined) {
           const templateName = selector.startsWith('#') ? selector.slice(1).toLowerCase() : selector.toLowerCase();
           let found = false;
           const refElement = this.element.querySelector(`[ac-element-ref=${templateName}]`);
           if (refElement) {
+            console.log(refElement);
             if ((refElement as any).acInstance) {
               this.instance[propertyKey] = (refElement as any).acInstance;
             }
@@ -149,6 +174,7 @@ export class AcElementManager {
           for (const [name, template] of templates.entries()) {
             if (name.toLowerCase() === templateName) {
               this.instance[propertyKey] = template;
+              console.log(template);
               found = true;
               break;
             }

@@ -5,10 +5,6 @@ export function AcViewChild(selector: string) {
         if (!target.constructor[AC_VIEW_CHILD_METADATA_KEY]) {
             target.constructor[AC_VIEW_CHILD_METADATA_KEY] = {};
         }
-        target.constructor[AC_VIEW_CHILD_METADATA_KEY][propertyKey] = selector;
+        target.constructor[AC_VIEW_CHILD_METADATA_KEY][propertyKey] = {propertyKey,referenceKey:selector};
     };
-}
-
-export function getAcViewChildMetadata(constructor: any): Record<string, string> {
-    return constructor[AC_VIEW_CHILD_METADATA_KEY] || {};
 }

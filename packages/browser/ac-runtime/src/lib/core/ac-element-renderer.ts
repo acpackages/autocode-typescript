@@ -7,15 +7,15 @@
 import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 import { AC_RUNTIME_CONFIG } from '../consts/ac-runtime-config.const';
 import { getAcInputMetadata } from '../decorators/ac-input.decorator';
-import { getAcViewChildMetadata } from '../decorators/ac-view-child.decorator';
 import { AcElementManager } from './../core/ac-element-manager';
 import { getAcOutputMetadata } from '../decorators/ac-output.decorator';
 import { acElementRegistry } from '../core/ac-element-registry';
 import { clearElement, createElementFromHtml } from '../utils/functions';
-import { acNullifyInstanceProperties } from '@autocode-ts/autocode';
+import { AcDelayedCallback, acNullifyInstanceProperties } from '@autocode-ts/autocode';
 import { IAcTemplateDef } from '../interfaces/ac-template-def.interface';
 import { acEffect, AcEffect } from '../reactivity/ac-effect';
 import { acMakeReactive } from '../reactivity/ac-reactivity';
+import { AC_RUNTIME_INTERNAL_KEYS } from '../consts/ac-runtime_internal_keys.const';
 
 export class AcElementRenderer {
   templates = new Map<string, IAcTemplateDef>();
@@ -130,21 +130,53 @@ export class AcElementRenderer {
   private applyReferenceToInstance(instance: any, el: HTMLElement, refValue: any) {
     if (!instance || !instance.constructor) return;
 
-    const viewChildMetadata = getAcViewChildMetadata(instance.constructor);
-    if (Object.keys(viewChildMetadata).length === 0) return;
+    const managerInstance: AcElementManager = instance[AC_RUNTIME_INTERNAL_KEYS.managerInstance];
+    if (!managerInstance) return;
+    const viewChildMetadata = managerInstance.viewChildMetadata;
+    if (viewChildMetadata.length === 0) return;
 
     const attrs = Array.from(el.attributes);
     for (const attr of attrs) {
       if (attr.name.startsWith('#')) {
         const refName = attr.name.slice(1).toLowerCase();
 
+
         // Match case-insensitively against @AcViewChild metadata
-        for (const [propertyKey, selector] of Object.entries(viewChildMetadata)) {
-          const targetRef = selector.startsWith('#') ? selector.slice(1).toLowerCase() : selector.toLowerCase();
+        for (const metaData of viewChildMetadata) {
+          const propertyKey = metaData.propertyKey;
+          const referenceKey = metaData.propertyKey;
+          const targetRef = referenceKey.startsWith('#') ? referenceKey.slice(1).toLowerCase() : referenceKey.toLowerCase();
           if (refName === targetRef) {
             instance[propertyKey] = (el as any).acInstance || refValue;
-            // Keep #ref attribute for others but don't re-assign to instance blinded
           }
+        }
+      }
+    }
+  }
+
+  cleanupRemovedElement(element: HTMLElement) {
+    if (element.hasAttribute(AC_RUNTIME_INTERNAL_KEYS.elementRefAttribute)) {
+      const refName: string = element.getAttribute(AC_RUNTIME_INTERNAL_KEYS.elementRefAttribute)!;
+      // console.log("Removing reference ",refName);
+      for (const metaData of this.elementManager!.viewChildMetadata) {
+        // console.log(metaData);
+        if (metaData.referenceKey.toLowerCase() == refName) {
+          // this.de
+          // this.elementManager!.instance[metaData.propertyKey] = undefined;
+          // console.log("Destroying property",metaData.propertyKey);
+          // if ((element as any)[AC_RUNTIME_INTERNAL_KEYS.managerInstance] != undefined) {
+          //   const manager = (element as any)[AC_RUNTIME_INTERNAL_KEYS.managerInstance];
+          //   console.log(this.elementManager?.instance[metaData.propertyKey], manager.instance);
+          //   if (this.elementManager?.instance[metaData.propertyKey] == manager.instance) {
+          //     this.elementManager!.instance[metaData.propertyKey] = undefined;
+          //   }
+          // }
+          // else {
+          //   console.log("Removing element",metaData.propertyKey);
+          //   if (this.elementManager?.instance[metaData.propertyKey] == element) {
+          //     this.elementManager!.instance[metaData.propertyKey] = undefined;
+          //   }
+          // }
         }
       }
     }
@@ -162,18 +194,11 @@ export class AcElementRenderer {
     return fragment;
   }
 
-
   destroy() {
     for (const e of this.effects) {
       e.destroy();
     }
     acNullifyInstanceProperties({ instance: this });
-  }
-
-  private destroyElement(el: HTMLElement) {
-    // // Cleanup all reactive effects managed by this engine instance
-    // this.effects.forEach(effect => effect.destroy());
-    // this.effects.clear();
   }
 
   private detectAndInstantiateCustomElement(el: HTMLElement): boolean {
@@ -209,7 +234,7 @@ export class AcElementRenderer {
     let instance = (el as any).acInstance;
 
     if (!instance) {
-      const elementManager: AcElementManager = new AcElementManager({ instance: new ElementClass(), element: el, parentEngine: this,elementDef:registration });
+      const elementManager: AcElementManager = new AcElementManager({ instance: new ElementClass(), element: el, parentEngine: this, elementDef: registration });
 
       instance = elementManager.instance;
       this.applyAttributesToInstance(instance, el, registration);
@@ -267,13 +292,14 @@ export class AcElementRenderer {
     }
 
     // Apply References (Selective & Template Scope)
-    this.applyReferenceToInstance(this.context, el, instance);
     for (const attr of Array.from(el.attributes)) {
       if (attr.name.startsWith('#')) {
         const refName = attr.name.slice(1).toLowerCase();
         this.references.set(refName, instance);
       }
     }
+
+    this.applyReferenceToInstance(this.context, el, instance);
     return true;
   }
 
@@ -295,9 +321,6 @@ export class AcElementRenderer {
     try {
       const scope = this.getScope(locals);
       const normalizedExpr = this.normalizeExprForScope(exp);
-
-      // Use double 'with' to ensure methods are called with component context as 'this'
-      // while still allowing locals/templates/refs to be resolved from the scope.
       const fn = new Function('scope', 'context', `with (context) { with (scope) { return ${normalizedExpr} } } `);
       const result = fn.call(this.context, scope, this.context);
 
@@ -415,7 +438,7 @@ export class AcElementRenderer {
     (el as any) = null;
 
     // Track rendered entries for incremental updates
-    interface IAcForEntry { item: any; nodes: Node[]; subContext: any; renderer:AcElementRenderer }
+    interface IAcForEntry { item: any; nodes: Node[]; subContext: any; renderer: AcElementRenderer }
     let renderedEntries: IAcForEntry[] = [];
 
     /** Set loop variables on a sub-context using Object.defineProperty to bypass proxy traps */
@@ -614,9 +637,7 @@ export class AcElementRenderer {
     const startPlaceholder = el.ownerDocument.createComment('ac:if:start');
     const endPlaceholder = el.ownerDocument.createComment('ac:if:end');
 
-    // endPlaceholder.insertBefore(el.parentElement);
-    el.parentNode?.insertBefore(endPlaceholder,el);
-    // el.parentNode?.replaceChild(endPlaceholder, el);
+    el.parentNode?.insertBefore(endPlaceholder, el);
     clearElement(el);
     el.remove();
     (el as any) = null;
@@ -626,16 +647,20 @@ export class AcElementRenderer {
       let current = startPlaceholder.nextSibling;
       while (current && current !== endPlaceholder) {
         const next = current.nextSibling;
+
         if (current instanceof HTMLElement) {
           clearElement(current);
           current.remove();
           (current as any) = null;
         }
-        if (current.parentNode) {
-          clearElement(current as any);
-          current.remove();
-          (current as any) = null;
+        if (current) {
+          if (current.parentNode) {
+            clearElement(current as any);
+            current.remove();
+            (current as any) = null;
+          }
         }
+
         current = next;
       }
 
@@ -643,7 +668,6 @@ export class AcElementRenderer {
         for (const branch of branchChain) {
           const conditionOrPromise = branch.expression === null ? true : this.evaluateExpression(branch.expression);
           const condition = conditionOrPromise instanceof Promise ? await conditionOrPromise : conditionOrPromise;
-
           if (condition) {
             const clone = createElementFromHtml(branch.html) as HTMLElement;
             const parent = endPlaceholder.parentNode;
@@ -721,6 +745,7 @@ export class AcElementRenderer {
     // Collect all known scope names (templates + references) from hierarchy
     const knownNames = new Set<string>();
     let engine: AcElementRenderer | undefined = this;
+
     while (engine) {
       engine.templates.forEach((_, name) => knownNames.add(name));
       engine.references.forEach((_, name) => knownNames.add(name));
@@ -735,7 +760,65 @@ export class AcElementRenderer {
     const pattern = escaped.join('|');
     const regex = new RegExp(`\\b(${pattern})\\b`, 'gi');
 
-    return expression.replace(regex, (match) => match.toLowerCase());
+    let result = '';
+    let i = 0;
+    let inString: string | null = null; // ', ", or `
+    let buffer = '';
+
+    while (i < expression.length) {
+      const char = expression[i];
+
+      // Handle string start/end
+      if (inString) {
+        buffer += char;
+
+        // Handle escape
+        if (char === '\\') {
+          buffer += expression[i + 1] || '';
+          i += 2;
+          continue;
+        }
+
+        // End of string
+        if (char === inString) {
+          result += buffer; // append string as-is
+          buffer = '';
+          inString = null;
+        }
+
+        i++;
+        continue;
+      }
+
+      // Enter string
+      if (char === '"' || char === "'" || char === '`') {
+        // process buffer before entering string
+        if (buffer) {
+          result += buffer.replace(regex, (match) => match.toLowerCase());
+          buffer = '';
+        }
+
+        inString = char;
+        buffer += char;
+        i++;
+        continue;
+      }
+
+      buffer += char;
+      i++;
+    }
+
+    // process remaining buffer
+    if (buffer) {
+      if (inString) {
+        // unterminated string → keep as-is
+        result += buffer;
+      } else {
+        result += buffer.replace(regex, (match) => match.toLowerCase());
+      }
+    }
+
+    return result;
   }
 
   private processElement(el: HTMLElement): boolean {
@@ -767,7 +850,8 @@ export class AcElementRenderer {
       if (attr.name.startsWith('#')) {
         const refName = attr.name.slice(1).toLowerCase();
         this.references.set(refName, el);
-        el.setAttribute("ac-element-ref", refName);
+        el.setAttribute(AC_RUNTIME_INTERNAL_KEYS.elementRefAttribute, refName);
+        (el as any)[AC_RUNTIME_INTERNAL_KEYS.rendererInstance] = this;
         if (this.parent) {
           this.parent.references.set(refName, el);
         }
@@ -827,7 +911,7 @@ export class AcElementRenderer {
             if (currentActiveNodes.length > 0) {
               currentActiveNodes.forEach(node => {
                 if (node instanceof HTMLElement) {
-                  this.destroyElement(node);
+                  // this.destroyElement(node);
                 }
                 if (node.parentNode) {
                   node.parentNode.removeChild(node);
