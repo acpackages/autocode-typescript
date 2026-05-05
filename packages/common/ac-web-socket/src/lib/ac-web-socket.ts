@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AnyEventHandler, EventHandler, MessageInterceptor } from './interfaces';
 import { AcWsClient } from './ac-ws-client';
 
@@ -220,10 +221,10 @@ export class AcWebSocket {
     callback?: ({ response }: { response?: any }) => void;
   }): Promise<any> {
     const ackId = ++this._ackCounter;
-    
+
     const promise = new Promise((resolve) => {
       this._pendingAcks[ackId] = resolve;
-      
+
       // 30 second timeout
       setTimeout(() => {
         if (this._pendingAcks[ackId]) {
@@ -263,7 +264,7 @@ export class AcWebSocket {
       }
 
       // 2. Event-specific outgoing interceptors
-      const event = message.e;
+      const event = (message as any).e;
       if (event) {
         const eventInterceptors = this._eventOutgoingInterceptors[event];
         if (eventInterceptors) {
