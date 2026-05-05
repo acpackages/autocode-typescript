@@ -30,6 +30,8 @@
     "build:ac-sql": "nx run ac-sql:build",
     "build:ac-web": "nx run ac-web:build",
     "build:ac-web-on-express": "nx run ac-web-on-express:build",
+    "build:ac-web-on-ws": "nx run ac-web-on-ws:build",
+    "build:ac-web-socket": "nx run ac-web-socket:build",
     "build:ac-ws-client": "nx run ac-ws-client:build",
     "build:autocode": "nx run autocode:build",
     "dev:angular": "npx nx serve test-angular",

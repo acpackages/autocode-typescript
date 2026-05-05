@@ -24,7 +24,7 @@ export default defineConfig(() => ({
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/index.ts',
+      entry: 'src/ac-web-socket.ts',
       name: 'acWebSocket',
       fileName: (format) => {
         if (format === 'es') return 'ac-web-socket.js';
