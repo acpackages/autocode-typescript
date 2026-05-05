@@ -1,0 +1,30 @@
+{
+  "name": "@autocode-ts/ac-web-socket",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./ac-web-socket.js",
+  "module": "./ac-web-socket.js",
+  "browser": "./ac-web-socket.umd.cjs",
+  "types": "./ac-web-socket.d.ts",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./ac-web-socket.d.ts",
+      "import": "./ac-web-socket.js",
+      "require": "./ac-web-socket.cjs"
+    }
+  },
+  "files": [
+    "ac-web-socket.js",
+    "ac-web-socket.cjs",
+    "ac-web-socket.d.ts"
+  ]
+}

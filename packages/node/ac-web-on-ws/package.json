@@ -1,0 +1,29 @@
+{
+  "name": "@autocode-ts/ac-web-on-ws",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./ac-web-on-ws.js",
+  "module": "./ac-web-on-ws.js",
+  "types": "./ac-web-on-ws.d.ts",
+  "dependencies": {
+    "@autocode-ts/ac-web": "0.0.1",
+    "@autocode-ts/ac-web-socket": "0.0.1",
+    "@autocode-ts/ac-extensions": "0.0.1",
+    "@autocode-ts/autocode": "0.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./ac-web-on-ws.d.ts",
+      "import": "./ac-web-on-ws.js",
+      "require": "./ac-web-on-ws.cjs"
+    }
+  },
+  "files": [
+    "ac-web-on-ws.js",
+    "ac-web-on-ws.cjs",
+    "ac-web-on-ws.d.ts"
+  ]
+}

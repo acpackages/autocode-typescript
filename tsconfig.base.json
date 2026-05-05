@@ -144,6 +144,12 @@
       "@autocode-ts/ac-web-on-express": [
         "packages/node/ac-web-on-express/src/ac-web-on-express.ts"
       ],
+      "@autocode-ts/ac-web-on-ws": [
+        "packages/node/ac-web-on-ws/src/ac-web-on-ws.ts"
+      ],
+      "@autocode-ts/ac-web-socket": [
+        "packages/common/ac-web-socket/src/ac-web-socket.ts"
+      ],
       "@autocode-ts/ac-ws-client": [
         "packages/common/ac-ws-client/src/ac-ws-client.ts"
       ],
