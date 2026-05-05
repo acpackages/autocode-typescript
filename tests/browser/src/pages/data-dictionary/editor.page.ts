@@ -22,6 +22,8 @@ import { dataDictionaryJson as accounteaWeb } from './../../../../data/accountea
 import { dataDictionaryJson as communityDataDictionary } from './../../../../data/sst-community';
 import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/unifi-data-dictionary';
 import { dataDictionaryJson as ddeDataDictionary } from './../../../../data/dde-data-dictionary';
+import { dataDictionaryJson as autocodeSchema } from './../../../../data/autocode-schema';
+import { dataDictionaryJson as autocodeSync } from './../../../../data/autocode-sync';
 import { dataDictionaryJson as sagDataDictionary } from './../../../../data/scoresandgames';
 import { IAppMenuItem } from "src/_app.export";
 
@@ -72,10 +74,12 @@ export class DataDictionaryEditorPage {
     console.log(accounteaPro);
     // Load initial dictionary
     // accountea
-    api.setDataDictionaryJson({ dataDictionaryJson: accountea });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accountea });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProInternal });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
+    // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSchema });
+    api.setDataDictionaryJson({ dataDictionaryJson: autocodeSync });
     // api.setDataDictionaryJson({ dataDictionaryJson: sagDataDictionary });
 
     }
