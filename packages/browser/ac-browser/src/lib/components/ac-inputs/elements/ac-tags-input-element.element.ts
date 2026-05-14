@@ -33,6 +33,13 @@ export class AcTagsInputElement extends AcInputBase {
     this.setAttribute('delimiter', value);
   }
 
+  get items(): any[] {
+    return this.value.split(this.separator).map(v => {
+      const match = this._tagOptions.find(opt => opt[this.valueKey] === v.trim());
+      return match || v.trim();
+    }).filter(v => v);
+  }
+
   get separator(): string {
     return this.getAttribute('separator') || ',';
   }
@@ -54,26 +61,6 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   protected override _value: string = '';
-  override get value(): string {
-    return this._value || '';
-  }
-  override set value(val: string) {
-    let valueString: string = typeof val === 'string' ? val : '';
-    if (stringIsJson(val)) {
-      try{
-        valueString = JSON.parse(val).join(this.separator);
-      }
-      catch(ex){
-        //
-      }
-    }
-    if(Array.isArray(val)){
-      valueString = val.join(this.separator);
-    }
-    super.value = valueString;
-    this._filteredOptions = this._tagOptions.filter(opt => !this.value.split(this.separator).map(v => v.trim()).includes(opt[this.valueKey]));
-    this.renderTags();
-  }
 
   private _filteredOptions: any[] = [];
   private dropdownContainer!: HTMLDivElement;
@@ -193,10 +180,12 @@ export class AcTagsInputElement extends AcInputBase {
     });
 
     this.textInputElement.addEventListener('blur', () => {
-      this.delayedCallback.add({callback:() => {
-        if (this.textInputElement.value.trim()) this.addTag(this.textInputElement.value.trim());
-        this.closeDropdown();
-      }, duration:150});
+      this.delayedCallback.add({
+        callback: () => {
+          if (this.textInputElement.value.trim()) this.addTag(this.textInputElement.value.trim());
+          this.closeDropdown();
+        }, duration: 150
+      });
     });
 
     window.addEventListener('scroll', () => { if (this.isDropdownOpen) this.positionDropdown(); }, true);
@@ -236,7 +225,7 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   private renderTags() {
-    acClearElement({element:this.tagsContainer});
+    acClearElement({ element: this.tagsContainer });
     const values = this.value.split(this.separator).map(v => v.trim()).filter(v => v);
     values.forEach(value => {
       const tagEl = this.ownerDocument.createElement('span');
@@ -274,7 +263,7 @@ export class AcTagsInputElement extends AcInputBase {
       if (stringIsJson(newValue)) {
         this.tagOptions = JSON.parse(newValue);
       } else {
-        this.tagOptions = newValue.split(this.delimiter).map((v:any) => v.trim());
+        this.tagOptions = newValue.split(this.delimiter).map((v: any) => v.trim());
       }
     } else if (name === 'delimiter') {
       this.delimiter = newValue;
@@ -313,28 +302,30 @@ export class AcTagsInputElement extends AcInputBase {
   }
 
   private positionDropdown() {
-    this.delayedCallback.add({callback:() => {
-      const rect = this.inputElement.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - rect.bottom;
-      const dropdownHeight = Math.min(this._filteredOptions.length * this.optionHeight, this.maxDropdownHeight);
-      const showAbove = spaceBelow < dropdownHeight && rect.top > spaceBelow;
-      this.dropdownContainer.style.width = rect.width + 'px';
-      this.dropdownContainer.style.left = rect.left + 'px';
-      this.dropdownContainer.style.top = showAbove ? `${rect.top - dropdownHeight}px` : `${rect.bottom}px`;
-      this.dropdownContainer.style.overflowY = 'auto';
-    },duration:10});
+    this.delayedCallback.add({
+      callback: () => {
+        const rect = this.inputElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const spaceBelow = viewportHeight - rect.bottom;
+        const dropdownHeight = Math.min(this._filteredOptions.length * this.optionHeight, this.maxDropdownHeight);
+        const showAbove = spaceBelow < dropdownHeight && rect.top > spaceBelow;
+        this.dropdownContainer.style.width = rect.width + 'px';
+        this.dropdownContainer.style.left = rect.left + 'px';
+        this.dropdownContainer.style.top = showAbove ? `${rect.top - dropdownHeight}px` : `${rect.bottom}px`;
+        this.dropdownContainer.style.overflowY = 'auto';
+      }, duration: 10
+    });
   }
 
   private renderVirtualList() {
-    acClearElement({element:this.listEl});
+    acClearElement({ element: this.listEl });
     if (this._filteredOptions.length) {
       this._filteredOptions.forEach((opt, i) => this.listEl.appendChild(this.buildOptionElement(opt, i)));
     } else {
       this.listEl.innerHTML = `<div style="text-align:center;padding:4px;">No matching options!</div>`;
     }
     this.scrollable.registerExistingElements();
-    this.delayedCallback.add({callback:() => this.applyHighlightStyles()});
+    this.delayedCallback.add({ callback: () => this.applyHighlightStyles() });
     this.positionDropdown();
   }
 
@@ -361,11 +352,37 @@ export class AcTagsInputElement extends AcInputBase {
     this.textInputElement.focus();
   }
 
-  get items(): any[] {
-    return this.value.split(this.separator).map(v => {
-      const match = this._tagOptions.find(opt => opt[this.valueKey] === v.trim());
-      return match || v.trim();
-    }).filter(v => v);
+
+
+  override setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+
+        let valueString: string = typeof value === 'string' ? value : '';
+        if (stringIsJson(value)) {
+          try {
+            valueString = JSON.parse(value).join(this.separator);
+          }
+          catch (ex) {
+            //
+          }
+        }
+        if (Array.isArray(value)) {
+          valueString = value.join(this.separator);
+        }
+        this.setValue(valueString);
+        this._filteredOptions = this._tagOptions.filter(opt => !this.value.split(this.separator).map(v => v.trim()).includes(opt[this.valueKey]));
+        this.renderTags();
+
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 }
 

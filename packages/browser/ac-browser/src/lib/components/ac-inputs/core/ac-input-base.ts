@@ -3,7 +3,7 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcHooks, AcContext, AcContextRegistry, AcEnumContextEvent } from "@autocode-ts/autocode";
+import { AcHooks } from "@autocode-ts/autocode";
 import { AcEnumInputEvent } from "../enums/ac-enum-input-event.enum";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acClearElement, acListenElementEvents } from "../../../utils/ac-element-functions";
@@ -13,29 +13,10 @@ export class AcInputBase extends AcElementBase {
   static get observedAttributes() {
     return ['ac-context', 'ac-context-key', 'class', 'value', 'placeholder', 'disabled', 'readonly', 'name', 'style', 'required'];
   }
+  value:any;
 
   get inputReflectedAttributes() {
     return ['class', 'value', 'placeholder', 'disabled', 'readonly', 'required'];
-  }
-
-  _acContext?: any;
-  get acContext(): any {
-    return this._acContext;
-  }
-  set acContext(value: AcContext) {
-    this._acContext = value;
-    if (value) {
-      this.setAttribute('ac-context', value.__acContextName__);
-    }
-    this.setValueFromAcContext();
-  }
-
-  get acContextKey(): string | null {
-    return this.getAttribute('ac-context-key');
-  }
-  set acContextKey(value: string) {
-    this.setAttribute('ac-context-key', value);
-    this.setValueFromAcContext();
   }
 
   get disabled(): boolean {
@@ -103,7 +84,7 @@ export class AcInputBase extends AcElementBase {
   get validity() { return this.inputElement.validity; }
 
   get isValidRequired(): boolean {
-    let value = this.value ?? '';
+    let value = this._value ?? '';
     if (typeof value == 'string') {
       value = value.trim();
     }
@@ -143,12 +124,13 @@ export class AcInputBase extends AcElementBase {
   get validationMessage() { return this.elementInternals.validationMessage; }
 
   protected _value: any;
-  get value(): any {
-    return this._value;
-  }
-  set value(value: any) {
-    this.setValue(value);
-  }
+  // get value(): any {
+  //   return this._value;
+  // }
+  // set value(value: any) {
+  //   console.log(this,value);
+  //   this.setValue(value);
+  // }
 
   elementInternals: ElementInternals;
   override autoDestroyOnDisconnect: boolean = false;
@@ -159,6 +141,7 @@ export class AcInputBase extends AcElementBase {
 
   constructor() {
     super();
+    this.setValueListener();
     this.elementInternals = this.attachInternals();
     this.inputElement.formAssociated = false;
   }
@@ -166,16 +149,8 @@ export class AcInputBase extends AcElementBase {
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     if (oldValue === newValue) return;
     switch (name) {
-      case 'ac-context':
-        if (AcContextRegistry.exists({ name: newValue })) {
-          this.acContext = AcContextRegistry.get({ name: newValue })!;
-        }
-        break;
-      case 'ac-context-key':
-        this.acContextKey = newValue;
-        break;
       case 'value':
-        this.value = newValue;
+        this.setValue(newValue);
         break;
       case 'placeholder':
         this.placeholder = newValue;
@@ -260,18 +235,18 @@ export class AcInputBase extends AcElementBase {
 
   handleChange(e: Event) {
     this.setValue(this.inputElement.value);
-    if(this.dispatchEvent){
+    if (this.dispatchEvent) {
       this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     }
-    this.events.execute({ event: AcEnumInputEvent.Change, args: this.value });
+    this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
   }
 
   handleInput(e: Event) {
     this.setValue(this.inputElement.value);
-    if(this.dispatchEvent){
+    if (this.dispatchEvent) {
       this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     }
-    this.events.execute({ event: AcEnumInputEvent.Input, args: this.value });
+    this.events.execute({ event: AcEnumInputEvent.Input, args: this._value });
   }
 
   override init(): void {
@@ -297,19 +272,21 @@ export class AcInputBase extends AcElementBase {
     this.refreshReflectedAttributes();
     this.inputElement.addEventListener('input', this.handleInput);
     this.inputElement.addEventListener('change', this.handleChange);
-    acClearElement({element:this});
+    acClearElement({ element: this });
     this.appendChild(this.inputElement);
-    acListenElementEvents({element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
-      if(this.dispatchEvent){
-        this.dispatchEvent(event);
-      }
-      },mouse:true,keyboard:true,pointer:true,focus:true,form:true,touch:true,viewport:true
+    acListenElementEvents({
+      element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
+        if (this.dispatchEvent) {
+          this.dispatchEvent(event);
+        }
+      }, mouse: true, keyboard: true, pointer: true, focus: true, form: true, touch: true, viewport: true
     });
   }
 
   reportValidity() { return this.elementInternals.reportValidity(); }
 
   setValue(value: any) {
+    console.log(this, value);
     const oldValue: any = this._value;
     if (oldValue != value) {
       this._value = value;
@@ -318,34 +295,12 @@ export class AcInputBase extends AcElementBase {
       if (this.reflectValueAttribute) {
         this.setAttribute('value', value);
       }
-      if (this.isConnected) {
-        this.setValueToAcContext();
-      }
-      this.elementInternals.setFormValue(this.value);
-      if(this.dispatchEvent){
+      this.elementInternals.setFormValue(this._value);
+      if (this.dispatchEvent) {
         this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
       }
-      this.events.execute({ event: AcEnumInputEvent.Change, args: this.value });
+      this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
       this.validate();
-    }
-  }
-
-  protected setValueFromAcContext() {
-    if (this.acContextKey && this.acContext) {
-      this.value = this.acContext[this.acContextKey];
-      this.acContext.on({
-        event: AcEnumContextEvent.Change, callback: (args: any) => {
-          if (args.property == this.acContextKey) {
-            this.setValue(args.value);
-          }
-        }
-      });
-    }
-  }
-
-  protected setValueToAcContext() {
-    if (this.acContextKey && this.acContext) {
-      this.acContext[this.acContextKey] = this.value;
     }
   }
 
@@ -357,7 +312,7 @@ export class AcInputBase extends AcElementBase {
       this
     );
     if (!validityState.valid) {
-      if(this.dispatchEvent){
+      if (this.dispatchEvent) {
         this.dispatchEvent(new CustomEvent('invalid', {
           detail: { message: this.validationMessage, validity: this.validity },
           bubbles: true,
@@ -397,4 +352,18 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
+  protected setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+        this.setValue(value);
+      },
+
+      enumerable: true,
+      configurable: true
+    });
+  }
 }

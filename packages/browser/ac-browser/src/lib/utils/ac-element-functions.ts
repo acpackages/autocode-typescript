@@ -89,7 +89,7 @@ export function acCreateElementFromHtml({html}:{html: string}): HTMLElement | nu
 }
 
 export function acClearElement({element}:{element:HTMLElement}):void{
-  for(let el of element.childNodes){
+  for(let el of Array.from(element.childNodes)){
     acClearElement({element:el as HTMLElement});
     el.remove();
     (el as any) = null;

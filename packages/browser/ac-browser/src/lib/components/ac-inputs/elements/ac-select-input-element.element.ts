@@ -69,15 +69,6 @@ export class AcSelectInputElement extends AcInputBase {
     this.setValueLabel();
   }
 
-  override get value() { return super.value; }
-  override set value(val: any) {
-    if (this._value != val) {
-      this.previousValue = val;
-      super.value = val;
-      this.setValueLabel();
-    }
-  }
-
   get selectedOptions(): any[] {
     const result: any[] = [];
     for (const option of this.options) {
@@ -460,6 +451,23 @@ export class AcSelectInputElement extends AcInputBase {
         // }];
       }
     }
+  }
+
+  protected setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+        this.previousValue = value;
+        this.setValue(value);
+        this.setValueLabel();
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 
   toggleDropdown() {

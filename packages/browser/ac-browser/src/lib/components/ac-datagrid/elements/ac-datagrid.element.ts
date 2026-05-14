@@ -14,7 +14,7 @@ export class AcDatagridElement extends AcElementBase {
   datagridApi: AcDatagridApi = new AcDatagridApi({ datagrid: this });
   datagridBody?: AcDatagridBody;
   datagridFooter?: AcDatagridFooterElement;
-  afterRowsContainer!: HTMLElement;
+  afterRowsContainer: HTMLElement = this.ownerDocument.createElement('div');
   datagridHeader?: AcDatagridHeaderElement;
 
   connectedCallback(): void {
@@ -39,7 +39,7 @@ export class AcDatagridElement extends AcElementBase {
     this.setAttribute('ac-initialized', 'true');
     acClearElement({ element: this });
     this.containerElement = this.ownerDocument.createElement('div');
-    this.afterRowsContainer = this.ownerDocument.createElement('div');
+    // this.afterRowsContainer = this.ownerDocument.createElement('div');
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagrid, element: this });
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridContainer, element: this.containerElement });
     // this.datagridHeader = this.ownerDocument.createElement('ac-datagrid-header') as AcDatagridHeaderElement;

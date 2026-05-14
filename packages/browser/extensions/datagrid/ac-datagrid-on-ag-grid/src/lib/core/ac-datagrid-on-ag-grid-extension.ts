@@ -20,7 +20,6 @@ import { acGetColDefFromAcDataGridColumn } from '../helpers/col-def-helper';
 import { AcDatagridOnAgGridCellRenderer } from '../elements/ac-datagrid-on-ag-grid-cell-renderer.element';
 import { AcDatagridOnAgGridCellEditor } from '../elements/ac-datagrid-on-ag-grid-cell-editor.element';
 import { IAcDatagriOnAgGridDataChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-data-set-hook-args.interface';
-import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
 
 export function initAgGrid() {
   ModuleRegistry.registerModules([
@@ -107,6 +106,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   searchInputContainer?: HTMLElement;
   addButtonContainer?: HTMLElement;
   columnsCustomizerButtonContainer?: HTMLElement;
+  downloadButtonContainer?: HTMLElement;
   isColumnsCustomizerOpen: boolean = false;
   isFirstDataRendered: boolean = false;
   leftFooterContainer?: HTMLElement;
@@ -717,9 +717,17 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     this.rightFooterContainer.classList.add("ac-datagrid-footer-right-container");
     datagrid.afterRowsContainer.classList.add("ac-datagrid-after-rows-container");
 
+    this.downloadButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
+    acClearElement({ element: this.downloadButtonContainer });
+    this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn btn-ac-datagrid-download"><i class="fa fa-download"></i></button>`;
+    (this.downloadButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
+      this.isColumnsCustomizerOpen = !this.isColumnsCustomizerOpen;
+      this.gridApi?.exportDataAsExcel();
+    });
+
     this.columnsCustomizerButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
     acClearElement({ element: this.columnsCustomizerButtonContainer });
-    this.columnsCustomizerButtonContainer.innerHTML = `<button type="button" class="btn-ac-datagrid-columns-customizer"><ac-svg-icon>${ACI_SVG_SOLID.gear}</ac-svg-icon></button>`;
+    this.columnsCustomizerButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn btn-ac-datagrid-columns-customizer"><i class="fa fa-gear"></i></button>`;
     (this.columnsCustomizerButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
       this.isColumnsCustomizerOpen = !this.isColumnsCustomizerOpen;
       if (this.isColumnsCustomizerOpen) {
@@ -792,6 +800,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         acClearElement({ element: pagingPanel });
         this.leftFooterContainer!.append(this.addButtonContainer!);
         this.leftFooterContainer!.append(this.searchInputContainer!);
+        this.rightFooterContainer!.append(this.downloadButtonContainer!);
         this.rightFooterContainer!.append(this.columnsCustomizerButtonContainer!);
         pagingPanel.append(this.leftFooterContainer!);
         pagingPanel.append(this.rightFooterContainer!);

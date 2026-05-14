@@ -1,3 +1,4 @@
+import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AcRepeaterApi } from "./ac-repeater-api";
 
 export abstract class AcRepeaterExtension{
@@ -6,6 +7,10 @@ export abstract class AcRepeaterExtension{
 
   init(){
     // Init implementation in child
+  }
+
+  destroy(){
+    acNullifyInstanceProperties({instance:this});
   }
 
   getState():any{

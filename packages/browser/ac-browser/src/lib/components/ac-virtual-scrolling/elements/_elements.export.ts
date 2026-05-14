@@ -1,1 +1,1 @@
-export * from './ac-scrollable.element';
+export * from './ac-virtual-scrolling.element';

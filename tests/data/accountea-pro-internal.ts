@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea Pro Internal",
-  "version": 2,
+  "version": 3,
   "tables": {
     "accountea_details": {
       "tableName": "accountea_details",
@@ -377,6 +377,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Last Sync Value"
+            }
+          }
+        },
+        "sync_configuration": {
+          "columnName": "sync_configuration",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sync Configuration"
             }
           }
         }

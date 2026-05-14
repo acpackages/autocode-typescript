@@ -29,17 +29,6 @@ export class AcArrayValuesInputElement extends AcInputBase {
   private items: IAcArrayValueItem[] = [];
 
   protected override _value: any[] = [];
-  override get value(): any[] {
-    return this._value;
-  }
-  override set value(value: any[]) {
-    if (value == undefined || value == null) {
-      value = [];
-    }
-    if (value != this._value) {
-      this.setValue(value);
-    }
-  }
 
   constructor() {
     super();
@@ -189,6 +178,26 @@ export class AcArrayValuesInputElement extends AcInputBase {
       this._value = value;
     }
     this.refreshItems();
+  }
+
+  override setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+        if (value == undefined || value == null) {
+      value = [];
+    }
+    if (value != this._value) {
+      this.setValue(value);
+    }
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 
 }

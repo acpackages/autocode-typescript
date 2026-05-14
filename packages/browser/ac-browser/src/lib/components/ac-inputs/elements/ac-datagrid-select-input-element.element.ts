@@ -79,14 +79,6 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     }
   }
 
-  override get value() { return super.value; }
-  override set value(val: any) {
-    if (this._value != val) {
-      super.value = val;
-      this.setSelectedRowsFromValue();
-    }
-  }
-
   private _searchQuery: string = '';
   get searchQuery(): string { return this._searchQuery; }
   set searchQuery(val: string) {
@@ -561,6 +553,22 @@ export class AcDatagridSelectInputElement extends AcInputBase {
       this.setSelectedRows({ rows: [] });
       this.value = null;
     }
+  }
+
+  override setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+      this.setValue(value);
+      this.setSelectedRowsFromValue();
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 
   toggleDropdown() {

@@ -4,7 +4,6 @@ import { AcDDInputElement } from "./ac-dd-input-element.element";
 import { AcDDInputFieldBaseElement } from "./ac-dd-input-field-base-element.element";
 import { AcDDInputManager } from "../core/ac-dd-input-manager";
 import { AcDDTableColumn } from "@autocode-ts/ac-data-dictionary";
-import { AcContext } from "@autocode-ts/autocode";
 
 export class AcDDInputFieldElement extends AcInputBase {
   static override get observedAttributes() {
@@ -31,22 +30,6 @@ export class AcDDInputFieldElement extends AcInputBase {
   }
   set label(value: string) {
     this.setAttribute('label', value);
-    this.setDDInput();
-  }
-
-  override get acContext(): AcContext {
-    return super.acContext;
-  }
-  override set acContext(value: AcContext) {
-    super.acContext = value;
-    this.setDDInput();
-  }
-
-  override get acContextKey(): string {
-    return super.acContextKey ?? "";
-  }
-  override set acContextKey(value: string) {
-    super.acContextKey = value;
     this.setDDInput();
   }
 
@@ -164,14 +147,6 @@ export class AcDDInputFieldElement extends AcInputBase {
     this.ddInput.required = value;
   }
 
-  override get value(): any {
-    return this.ddInput.value;
-  }
-  override set value(value: any) {
-    this.ddInput.value = value;
-    super.value = value;
-  }
-
   override get validityStateFlags(): { valid: boolean; flags: Partial<ValidityState>; message: string; } {
     return this.ddInput.validityStateFlags;
   }
@@ -236,8 +211,7 @@ export class AcDDInputFieldElement extends AcInputBase {
       this.ddInput.tableName = this.tableName;
       this.ddInput.columnName = this.columnName;
       this.ddInput.inputName = this.inputName;
-      this.ddInput.acContext = this.acContext;
-      this.ddInput.acContextKey = this.acContextKey;
+
       if (this.ddInput && this.ddInput.ddTableColumn) {
         this.ddTableColumn = this.ddInput.ddTableColumn!;
         this.ddInputField.ddInputLabel = this.ddTableColumn.getColumnTitle();
@@ -298,6 +272,23 @@ export class AcDDInputFieldElement extends AcInputBase {
     if (this.ddInput) {
       this.ddInput.inputStyle = this.inputStyle;
     }
+  }
+
+  override setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this.ddInput.value;
+      },
+
+      set(value) {
+        this.ddInput.value = value;
+        this.inputElement.value = value;
+        this.setValue(value);
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 }
 

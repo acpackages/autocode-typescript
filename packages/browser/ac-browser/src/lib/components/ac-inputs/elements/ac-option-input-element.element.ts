@@ -5,8 +5,6 @@ import { AcEnumInputType } from "../enums/ac-enum-input-type.enum";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AcInputCssClassName } from "../consts/ac-input-css-class-name.const";
 import { AcInputElement } from "./ac-input-element.element";
-import { arrayRemove } from "@autocode-ts/ac-extensions";
-import { Autocode,AcEnumContextEvent, IAcContextEvent } from "@autocode-ts/autocode";
 import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
 
 export class AcOptionInputElement extends AcInputElement {
@@ -29,7 +27,6 @@ export class AcOptionInputElement extends AcInputElement {
         this.removeAttribute('checked');
         this.inputElement.removeAttribute('checked');
       }
-      this.setValueToAcContext();
     }
   }
 
@@ -133,26 +130,6 @@ export class AcOptionInputElement extends AcInputElement {
       this.checked = this.inputElement.checked;
     });
     super.init();
-    this.refreshChecked();
-  }
-
-  refreshChecked() {
-    if (this.acContext && this.acContextKey) {
-      const contextValue: any = this.acContext[this.acContextKey];
-      let valueCheckedFound: boolean = false;
-      if (this.isArray) {
-        valueCheckedFound = contextValue.includes(this.value);
-      }
-      else {
-        valueCheckedFound = contextValue == this.value;
-      }
-      if (valueCheckedFound) {
-        this.checked = true;
-      }
-      else {
-        this.checked = false;
-      }
-    }
   }
 
   setIsChecked(): void {
@@ -172,69 +149,6 @@ export class AcOptionInputElement extends AcInputElement {
       else {
         object.checked = false;
       }
-    }
-  }
-
-  protected override setValueFromAcContext() {
-    if (this.acContextKey && this.acContext) {
-      this.refreshChecked();
-      this.acContext.on({event:AcEnumContextEvent.Change, callback:(args: IAcContextEvent) => {
-        if (args.property == this.acContextKey) {
-          this.refreshChecked();
-        }
-      }});
-    }
-  }
-
-  override setValueToAcContext() {
-    const object = this;
-    if (this.acContext && this.acContextKey) {
-      if (object.isArray) {
-        let valueArray = this.acContext[this.acContextKey];
-        let valueModified: boolean = false;
-        if (typeof valueArray != "object") {
-          valueArray = [];
-          valueModified = true;
-        }
-        if (this.checked) {
-          if (this.valueUnchecked && valueArray.includes(object.valueUnchecked)) {
-            arrayRemove(valueArray, object.valueUnchecked);
-            valueModified = true;
-          }
-          if (this.value && !valueArray.includes(object.value)) {
-            valueArray.push(object.value);
-            valueModified = true;
-          }
-        }
-        else {
-          if (this.value && valueArray.includes(object.value)) {
-            arrayRemove(valueArray, object.value);
-            valueModified = true;
-          }
-          if (this.valueUnchecked && Autocode.validValue(object.valueUnchecked)) {
-            if (this.valueUnchecked && !valueArray.includes(object.valueUnchecked)) {
-              valueArray.push(object.valueUnchecked);
-              valueModified = true;
-            }
-          }
-        }
-        if (valueModified) {
-          this.acContext[this.acContextKey] = valueArray;
-        }
-      }
-      else {
-        if (this.checked) {
-          if (this.value && this.acContext[this.acContextKey] != this.value) {
-            this.acContext[this.acContextKey] = this.value;
-          }
-        }
-        else {
-          if (this.valueUnchecked && this.acContext[this.acContextKey] != this.valueUnchecked) {
-            this.acContext[this.acContextKey] = this.valueUnchecked;
-          }
-        }
-      }
-
     }
   }
 }
