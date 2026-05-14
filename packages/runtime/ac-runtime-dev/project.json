@@ -8,7 +8,7 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsx packages/runtime/ac-runtime-dev/src/cli.ts"
+        "command": "npx tsx packages/runtime/ac-runtime-dev/src/cli.ts"
       }
     }
   }

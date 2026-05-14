@@ -1,7 +1,8 @@
 
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
 import { AcElement } from '@autocode-ts/ac-runtime';
-import { App, SIDEBAR_NAV } from '../_app.export';
+import { App } from '../shared/core/app';
+import { SIDEBAR_NAV } from '../shared/consts/sidebar-menu.const';
 @AcElement({
   selector: 'app-sidebar',
   template: `

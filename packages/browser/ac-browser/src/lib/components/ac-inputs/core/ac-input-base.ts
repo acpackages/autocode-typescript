@@ -203,8 +203,6 @@ export class AcInputBase extends AcElementBase {
 
   override destroy() {
     this.hooks.clearSubscriptions();
-    this.inputElement.removeEventListener('input', this.handleInput);
-    this.inputElement.removeEventListener('change', this.handleChange);
     super.destroy();
   }
 

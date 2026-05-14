@@ -25,7 +25,6 @@
     "build:ac-quill-editor-input": "nx run ac-quill-editor-input:build",
     "build:ac-report-engine": "nx run ac-report-engine:build",
     "build:ac-runtime": "nx run ac-runtime:build",
-    "build:ac-runtime-ts": "nx run ac-runtime-ts:build",
     "build:ac-sql-node": "nx run ac-sql-node:build",
     "build:ac-sql": "nx run ac-sql:build",
     "build:ac-web": "nx run ac-web:build",

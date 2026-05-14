@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcTsRuntime } from "@autocode-ts/ac-runtime-ts";
 import { AcBuilderElementsManager } from "../core/ac-builder-elements-manager";
 import { AcBuilderElement } from "../core/ac-builder-element";
 import ts from "typescript";
@@ -54,17 +53,23 @@ export class AcBuilderRuntimeComponent {
         this.logger.log(`Generated auto class name: ${className}`);
       }
 
-      this.logger.log(`Registering class '${className}' using AcTsRuntime...`);
-      const result = await AcTsRuntime.createClass({
-        name: className,
-        script: this.component.script,
-        scope: this.scriptScope
-      });
-      this.logger.log(`Class registered successfully. Result:`, result);
-
-      this.logger.log(`Creating instance for class '${className}'...`);
-      this.componentInstance = AcTsRuntime.createInstance({ name: className });
-      this.logger.log(`✅ Created instance for '${className}':`, this.componentInstance);
+      this.logger.log(`Evaluating script for class '${className}'...`);
+      try {
+        // Use a simple Function constructor to execute the script and get the exported class
+        // This assumes the script is a self-executing function or a module that we can evaluate
+        const evalResult = new Function('scope', `
+          const { AcBuilderComponent, HTMLElement } = scope;
+          return (function() {
+            ${this.component.script}
+            return ${className};
+          })();
+        `)(this.scriptScope);
+        
+        this.componentInstance = new evalResult();
+        this.logger.log(`✅ Created instance for '${className}':`, this.componentInstance);
+      } catch (err) {
+        this.logger.error(`❌ Failed to evaluate script for '${className}':`, err);
+      }
     } else {
       this.logger.log("⚠️ No component script found. Skipping instance creation.");
     }

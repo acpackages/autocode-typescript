@@ -1,24 +1,25 @@
 import { AcEvents } from "@autocode-ts/autocode";
+import { AcRouter } from "@autocode-ts/ac-runtime-router";
 
 export class App {
   private static events: AcEvents = new AcEvents();
+  private static routerInitialized = false;
+
+  private static initRouter() {
+    if (this.routerInitialized) return;
+    AcRouter.getInstance().subscribe((url) => {
+      this.notify({ event: 'routeChange', args: { route: url } });
+    });
+    this.routerInitialized = true;
+  }
 
   static getActiveRoute(): string {
-    let route = window.location.href;
-    if (route.indexOf("#") > 0) {
-      route = route.substring(route.indexOf("#") + 1);
-    }
-    else {
-      route = "/";
-    }
-    if (route.indexOf("?") > 0) {
-      route = route.substring(0, route.indexOf("?"));
-    }
-    return route;
+    return window.location.pathname;
   }
 
   static navigateByUrl(url: string) {
-    document.location.href = "#" + url;
+    this.initRouter();
+    AcRouter.getInstance().navigate(url);
   }
 
   static notify({ event, args }: { event: string, args?: any }) {
@@ -26,12 +27,7 @@ export class App {
   }
 
   static on({ event, callback }: { event: string, callback: any }): string {
+    this.initRouter();
     return App.events.subscribe({ event: event, callback: callback });
   }
-
 }
-
-window.addEventListener('hashchange', () => {
-  const route = App.getActiveRoute();
-  App.notify({ event: 'routeChange', args: { route } });
-});

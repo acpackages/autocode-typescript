@@ -1,9 +1,0 @@
-{
-  "name": "ac-runtime-ts",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/browser/ac-runtime-ts/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project ac-runtime-ts --web",
-  "targets": {}
-}

@@ -1,3 +1,4 @@
+import * as ts from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';
 import express from 'express';
@@ -10,7 +11,7 @@ export class DevServer {
   private app = express();
   private wss?: WebSocketServer;
   private cacheDir: string;
-  private compiledCache = new Map<string, string>();
+  private compiledCache = new Map<string, string>(); // Stores the JS for the browser
   private errors = new Map<string, any>();
 
   constructor(private options: { port: number; watchDir: string }) {
@@ -27,20 +28,17 @@ export class DevServer {
     this.wss = new WebSocketServer({ port: port + 1 });
     console.log(`WebSocket Server for Live Reload running at ws://localhost:${port + 1}`);
 
-    // Watch TS, HTML, and CSS files
     chokidar.watch(watchDir, { 
-        ignored: [/node_modules/, /\.d\.ts$/, /\.ac-runtime-cache/, /compiled\.js$/],
+        ignored: [/node_modules/, /\.d\.ts$/, /\.ac-runtime-cache/, /compiled\.(js|ts)$/],
         persistent: true 
     }).on('all', (event, filePath) => {
       const ext = path.extname(filePath);
       if (ext === '.ts') {
         this.compileFile(filePath);
       } else if (ext === '.html' || ext === '.css') {
-          // If HTML/CSS changes, we need to find the TS file that uses it and recompile it.
-          // For now, we'll just recompile all TS files in the same directory.
           const dir = path.dirname(filePath);
           fs.readdirSync(dir).forEach(file => {
-              if (file.endsWith('.ts')) {
+              if (file.endsWith('.ts') && !file.endsWith('.compiled.ts')) {
                   this.compileFile(path.join(dir, file));
               }
           });
@@ -97,15 +95,28 @@ export class DevServer {
     try {
       console.log(`Compiling ${path.basename(filePath)}...`);
       const content = fs.readFileSync(filePath, 'utf8');
-      
-      // Pass the filePath so the compiler can resolve templateUrl and styleUrls
       const results = this.compiler.compile(content, filePath);
       
       this.errors.delete(filePath);
       results.forEach(res => {
-          const outName = `${res.selector}.compiled.js`;
-          this.compiledCache.set(outName, res.code);
-          fs.writeFileSync(path.join(this.cacheDir, outName), res.code);
+          const tsName = `${res.selector}.compiled.ts`;
+          const jsName = `${res.selector}.compiled.js`;
+
+          // 1. Save the TypeScript output for the user
+          fs.writeFileSync(path.join(this.cacheDir, tsName), res.code);
+
+          // 2. Transpile to JS for the browser
+          const jsOutput = ts.transpileModule(res.code, {
+              compilerOptions: { 
+                  target: ts.ScriptTarget.ES2022, 
+                  module: ts.ModuleKind.ESNext,
+                  removeComments: true,
+                  alwaysStrict: true
+              }
+          });
+
+          this.compiledCache.set(jsName, jsOutput.outputText);
+          fs.writeFileSync(path.join(this.cacheDir, jsName), jsOutput.outputText);
       });
 
       this.broadcast({ type: 'reload' });
@@ -126,12 +137,13 @@ export class DevServer {
 
   private injectDevTools(html: string) {
       const wsPort = this.options.port + 1;
-      const scriptNames = new Set(this.compiledCache.keys());
+      const scriptNames = new Set<string>();
       if (fs.existsSync(this.cacheDir)) {
           fs.readdirSync(this.cacheDir).forEach(file => {
               if (file.endsWith('.compiled.js')) scriptNames.add(file);
           });
       }
+      this.compiledCache.forEach((_, key) => scriptNames.add(key));
 
       const scripts = Array.from(scriptNames)
           .map(name => `<script src="/${name}"></script>`)

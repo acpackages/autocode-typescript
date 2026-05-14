@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import { acRuntimePlugin } from '../../packages/runtime/ac-runtime-dev/src/vite-plugin';
 
 export default defineConfig({
+  plugins: [acRuntimePlugin()],
   root: __dirname,
   server: {
     port: 3000,
@@ -9,7 +11,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@autocode-ts/ac-browser': path.resolve(__dirname, '../../packages/browser/ac-browser/src/ac-browser.ts'),
-      '@autocode-ts/ac-runtime': path.resolve(__dirname, '../../packages/browser/ac-runtime/src/ac-runtime.ts'),
+      '@autocode-ts/ac-runtime': path.resolve(__dirname, '../../packages/runtime/ac-runtime/src/ac-runtime.ts'),
       '@autocode-ts/autocode': path.resolve(__dirname, '../../packages/common/autocode/src/autocode.ts'),
       '@autocode-ts/ac-datagrid-on-ag-grid': path.resolve(__dirname, '../../packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src/ac-datagrid-on-ag-grid.ts'),
       '@autocode-ts/ac-sqlite-dao-browser': path.resolve(__dirname, '../../packages/browser/ac-sqlite-dao-browser/src/index.ts'),
@@ -23,7 +25,6 @@ export default defineConfig({
       '@autocode-ts/ac-dde-code-generator': path.resolve(__dirname, '../../packages/browser/extensions/data-dictionary-editor/ac-dde-code-generator/src/index.ts'),
       '@autocode-ts/ac-dde-browser-storage': path.resolve(__dirname, '../../packages/browser/extensions/data-dictionary-editor/ac-dde-browser-storage/src/index.ts'),
 
-      // '@autocode-ts/ac-runtime-ts': path.resolve(__dirname, '../../packages/browser/ac-runtime-ts/src/index.ts'),
       '@autocode-ts/ac-builder': path.resolve(__dirname, '../../packages/browser/ac-builder/src/index.ts'),
       '@autocode-ts/ac-bootstrap-builder-elements': path.resolve(__dirname, '../../packages/browser/extensions/builder/ac-bootstrap-builder-elements/src/index.ts'),
       '@autocode-ts/ac-dd-builder-elements': path.resolve(__dirname, '../../packages/browser/extensions/builder/ac-dd-builder-elements/src/index.ts'),
@@ -32,6 +33,9 @@ export default defineConfig({
       '@autocode-ts/ac-extensions': path.resolve(__dirname, '../../packages/common/ac-extensions/src/ac-extensions.ts'),
       '@autocode-ts/ac-pipes': path.resolve(__dirname, '../../packages/common/ac-pipes/src/ac-pipes.ts'),
       '@autocode-ts/ac-data-bridge': path.resolve(__dirname, '../../packages/common/ac-data-bridge/src/ac-data-bridge.ts'),
+      '@autocode-ts/ac-runtime-router': path.resolve(__dirname, '../../packages/runtime/ac-runtime-router/src/index.ts'),
+      '@autocode-ts/ac-runtime-dev': path.resolve(__dirname, '../../packages/runtime/ac-runtime-dev/src/index.ts'),
+      '@autocode-ts/ac-runtime-compiler': path.resolve(__dirname, '../../packages/runtime/ac-runtime-compiler/src/index.ts'),
     },
   },
   optimizeDeps: {

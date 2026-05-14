@@ -1,53 +1,30 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import './_app.export';
 import './assets/scss/styles.scss';
 import './assets/scss/autocode.scss';
-import { acBootstrapElements, acRouter } from "@autocode-ts/ac-runtime";
 import '../../../packages/browser/ac-browser/src/lib/components/ac-datagrid/css/ac-datagrid.css';
 import '../../../packages/browser/ac-browser/src/lib/components/ac-pagination/css/ac-pagination.css';
-import {
-  AccordionPage,
-  AggridLocalPage,
-  AggridOnDemandPage,
-  AggridTreePage,
-  CollapsePage,
-  DashboardPage,
-  DaoSqlitePage,
-  DataDictionaryComponentsPage,
-  DataDictionaryEditorPage,
-  DatagridLocalPage,
-  DraggableAdvancedPage,
-  DraggableBasicPage,
-  DrawerPage,
-  DropdownPage,
-  FilePreviewPage,
-  InputsPage,
-  MessagePage,
-  ModalPage,
-  PopoverPage,
-  RepeaterOfflinePage,
-  RepeaterOnDemandPage,
-  ReportsBasicPage,
-  ResizablePage,
-  ScrollTrackPage,
-  ScrollablePage,
-  SlidesPage,
-  SortablePage,
-  TabsPage,
-  TabsWindowPage,
-  TemplateEnginePage,
-  UtilsPage,
-  WebSocketPage,
-  APP_ROUTES
-} from "./_app.export";
 
+// Automatically import and register all components and pages from cache
+// Automatically import and register all components and pages from cache
+const pages = import.meta.glob('../.ac-runtime-cache/*_pages_*.compiled.ts', { eager: true });
+const layouts = import.meta.glob('../.ac-runtime-cache/*_layout_*.compiled.ts', { eager: true });
+const elements = import.meta.glob('../.ac-runtime-cache/*_elements_*.compiled.ts', { eager: true });
+const shared = import.meta.glob('../.ac-runtime-cache/*_shared_*.compiled.ts', { eager: true });
+const allCompiled = import.meta.glob('../.ac-runtime-cache/*.compiled.ts', { eager: true });
+
+console.log('🚀 [Main] Compiled components loaded:', {
+    total: Object.keys(allCompiled).length
+});
+
+import { provideRouter } from "@autocode-ts/ac-runtime-router";
+import { APP_ROUTES } from "./shared/consts/app-routes.consts";
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
-import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, AgGridOnAcDatagrid, initAgGrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
+import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, initAgGrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { AcDatagridExtensionManager, acInit } from '@autocode-ts/ac-browser';
+import { AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { AcDataDictionary } from '@autocode-ts/ac-data-dictionary';
 import { dataDictionaryJson as actDataDictionary } from '../../data/accountea-pro';
-import { AcDDInputElement,AcDDInputFieldElement } from '@autocode-ts/ac-data-dictionary-components';
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
@@ -57,78 +34,67 @@ ModuleRegistry.registerModules([
 ]);
 
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['singleClickEdit'] = true;
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['animateRows'] = false;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['enableRangeSelection'] = false;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['enableCharts'] = false;
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['enableFillHandle'] = false;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['rowDragManaged'] = false;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['suppressClipboardPaste'] = true;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['suppressCopyRowsToClipboard'] = true;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['domLayout'] = 'normal';
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['suppressRowVirtualisation'] = true;
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['cacheBlockSize'] = 100;
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['maxBlocksInCache'] = 10;
-// AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['rowBuffer'] = 5;
 AC_DATAGRID_AGGRID_DEFAULT_OPTIONS['paginationPageSize'] = 50;
 
 acInit();
 initAgGrid();
 AcDataDictionary.registerDataDictionary({ jsonData: actDataDictionary });
-    AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
+AcDatagridExtensionManager.register(AgGridOnAcDatagrid);
 
 console.log("🚀 [Main] Starting application initialization...");
-AcDDInputElement;
-AcDDInputFieldElement;
+
 window.addEventListener('DOMContentLoaded', async () => {
   console.log("📂 [Main] DOMContentLoaded event fired.");
 
-  // We append the main layout to the app div
+  // Initialize Router
+  provideRouter([
+    { path: '/', component: 'dashboard-page' },
+    { path: APP_ROUTES.dashboard, component: 'dashboard-page' },
+    { path: APP_ROUTES.agGrid.local, component: 'aggrid-local-page' },
+    { path: APP_ROUTES.agGrid.onDemand, component: 'aggrid-on-demand-page' },
+    { path: APP_ROUTES.agGrid.tree, component: 'ag-grid-tree-page' },
+    { path: APP_ROUTES.collapse.accordion, component: 'accordion-page' },
+    { path: APP_ROUTES.collapse.collapse, component: 'collapse-page' },
+    { path: APP_ROUTES.dao.sqlite, component: 'dao-sqlite-page' },
+    { path: APP_ROUTES.dataDictionary.components, component: 'data-dictionary-components-page' },
+    { path: APP_ROUTES.dataDictionary.editor, component: 'data-dictionary-editor-page' },
+    { path: APP_ROUTES.datagrid.local, component: 'datagrid-local-page' },
+    { path: APP_ROUTES.draggable.advanced, component: 'draggable-advanced-page' },
+    { path: APP_ROUTES.draggable.basic, component: 'draggable-basic-page' },
+    { path: APP_ROUTES.draggable.sortable, component: 'sortable-page' },
+    { path: APP_ROUTES.drawer, component: 'drawer-page' },
+    { path: APP_ROUTES.dropdown, component: 'dropdown-page' },
+    { path: APP_ROUTES.filePreview, component: 'file-preview-page' },
+    { path: APP_ROUTES.inputs.basic, component: 'inputs-page' },
+    { path: APP_ROUTES.message, component: 'message-page' },
+    { path: APP_ROUTES.modal.simple, component: 'modal-page' },
+    { path: APP_ROUTES.popover.popover, component: 'popover-page' },
+    { path: APP_ROUTES.repeater.local, component: 'repeater-offline-page' },
+    { path: APP_ROUTES.repeater.onDemand, component: 'repeater-on-demand-page' },
+    { path: APP_ROUTES.reports.basic, component: 'reports-basic-page' },
+    { path: APP_ROUTES.resizable.basic, component: 'resizable-page' },
+    { path: APP_ROUTES.scrollTrack, component: 'scroll-track-page' },
+    { path: APP_ROUTES.scrollable.virtual, component: 'scrollable-page' },
+    { path: APP_ROUTES.slides, component: 'slides-page' },
+    { path: APP_ROUTES.tabs.basic, component: 'tabs-page' },
+    { path: APP_ROUTES.tabs.window, component: 'tabs-window-page' },
+    { path: APP_ROUTES.templateEngine, component: 'template-engine-page' },
+    { path: APP_ROUTES.utils.http, component: 'utils-page' },
+    { path: APP_ROUTES.utils.webSocket, component: 'web-socket-page' },
+    { path: '*', component: 'dashboard-page' }
+  ]);
 
-
-  // Bootstrap all AcElements
-  console.log("🛠️ [Main] Bootstrapping ac-runtime elements...");
-  try {
-    await acBootstrapElements();
-    acRouter.registerRoutes([
-      { path: '/', redirectTo: APP_ROUTES.dashboard },
-      { path: APP_ROUTES.dashboard, element: DashboardPage },
-      { path: APP_ROUTES.agGrid.local, element: AggridLocalPage },
-      { path: APP_ROUTES.agGrid.onDemand, element: AggridOnDemandPage },
-      { path: APP_ROUTES.agGrid.tree, element: AggridTreePage },
-      // { path: APP_ROUTES.builder.basic, element: BuilderBasicPage },
-      { path: APP_ROUTES.collapse.accordion, element: AccordionPage },
-      { path: APP_ROUTES.collapse.collapse, element: CollapsePage },
-      { path: APP_ROUTES.dao.sqlite, element: DaoSqlitePage },
-      { path: APP_ROUTES.dataDictionary.components, element: DataDictionaryComponentsPage },
-      { path: APP_ROUTES.dataDictionary.editor, element: DataDictionaryEditorPage },
-      { path: APP_ROUTES.datagrid.local, element: DatagridLocalPage },
-      { path: APP_ROUTES.draggable.advanced, element: DraggableAdvancedPage },
-      { path: APP_ROUTES.draggable.basic, element: DraggableBasicPage },
-      { path: APP_ROUTES.draggable.sortable, element: SortablePage },
-      { path: APP_ROUTES.drawer, element: DrawerPage },
-      { path: APP_ROUTES.dropdown, element: DropdownPage },
-      { path: APP_ROUTES.filePreview, element: FilePreviewPage },
-      { path: APP_ROUTES.inputs.basic, element: InputsPage },
-      { path: APP_ROUTES.message, element: MessagePage },
-      { path: APP_ROUTES.modal.simple, element: ModalPage },
-      { path: APP_ROUTES.popover.popover, element: PopoverPage },
-      { path: APP_ROUTES.repeater.local, element: RepeaterOfflinePage },
-      { path: APP_ROUTES.repeater.onDemand, element: RepeaterOnDemandPage },
-      { path: APP_ROUTES.reports.basic, element: ReportsBasicPage },
-      { path: APP_ROUTES.resizable.basic, element: ResizablePage },
-      { path: APP_ROUTES.scrollTrack, element: ScrollTrackPage },
-      { path: APP_ROUTES.scrollable.virtual, element: ScrollablePage },
-      { path: APP_ROUTES.slides, element: SlidesPage },
-      { path: APP_ROUTES.tabs.basic, element: TabsPage },
-      { path: APP_ROUTES.tabs.window, element: TabsWindowPage },
-      { path: APP_ROUTES.templateEngine, element: TemplateEnginePage },
-      { path: APP_ROUTES.utils.http, element: UtilsPage },
-      { path: APP_ROUTES.utils.webSocket, element: WebSocketPage },
-
-      { path: '**', redirectTo: APP_ROUTES.dashboard }
-    ]);
-    console.log("✅ [Main] Bootstrap completed successfully.");
-  } catch (err) {
-    console.error("🔥 [Main] Bootstrap failed:", err);
+  // Set up the main layout
+  const appRoot = document.getElementById('app');
+  if (appRoot) {
+    appRoot.innerHTML = '<app-layout></app-layout>';
   }
+
+  console.log("✅ [Main] Bootstrap completed successfully.");
 });

@@ -9,17 +9,16 @@ export interface Binding {
   template?: string;
   childBindings?: Binding[];
   itemVar?: string;
+  rootIds: string[];
 }
 
 export class TemplateCompiler {
   private nextId = 0;
-  private code: string[] = [];
   private bindings: Binding[] = [];
   private idMap = new Map<string, string>();
 
   compile(template: string) {
     this.nextId = 0;
-    this.code = [];
     this.bindings = [];
     this.idMap = new Map<string, string>();
 
@@ -28,134 +27,137 @@ export class TemplateCompiler {
     parser.write(template);
     parser.end();
 
-    const rootIds: string[] = [];
-    handler.dom.forEach(node => {
-      const id = this.processNode(node, null);
-      if (id) rootIds.push(id);
-    });
+    const processedHtml = this.processNodes(handler.dom);
 
     return {
-      code: this.code.join('\n'),
+      html: processedHtml,
       bindings: this.bindings,
-      rootIds,
       idMap: Object.fromEntries(this.idMap)
     };
   }
 
-  private processNode(node: Node, parentId: string | null): string | null {
-    let id: string | null = null;
-    if (node instanceof Text) {
-      id = this.processTextNode(node);
-    } else if (isTag(node)) {
-      id = this.processElementNode(node, parentId);
-    }
+  private processNodes(nodes: Node[]): string {
+    let html = '';
+    nodes.forEach(node => {
+      html += this.processNode(node);
+    });
+    return html;
+  }
 
-    if (id && parentId && id !== 'FRAGMENT_GROUP') {
-      this.code.push(`${parentId}.appendChild(${id});`);
+  private processNode(node: Node): string {
+    if (node instanceof Text) {
+      return this.processTextNode(node);
+    } else if (isTag(node)) {
+      return this.processElementNode(node);
     }
-    return id;
+    return '';
   }
 
   private processTextNode(node: Text): string {
     const text = node.data;
-    const id = `el${this.nextId++}`;
-
     if (!text.includes('{{')) {
-      this.code.push(`const ${id} = document.createTextNode(${JSON.stringify(text)});`);
-      return id;
+      return text;
     }
 
-    this.code.push(`const ${id} = document.createTextNode('');`);
+    const id = `ac-t-${this.nextId++}`;
     const expression = '`' + text.replace(/\{\{(.+?)\}\}/g, '${$1}') + '`';
     
+    // We need a wrapper for text bindings if they are mixed with other text or roots
+    // But for now, let's just use a span with the ID
     this.bindings.push({
       type: 'text',
       expression,
-      targetId: id
+      targetId: id,
+      rootIds: []
     });
 
-    return id;
+    return `<span ac-id="${id}"></span>`;
   }
 
-  private processElementNode(el: Element, parentId: string | null): string | null {
+  private processElementNode(el: Element): string {
+    const isContainer = el.tagName === 'ac-container';
+    
     // Handle ac:for
     const acFor = el.attribs['ac:for'];
     if (acFor) {
         delete el.attribs['ac:for'];
-        const [itemVar, listExpr] = acFor.split(' of ').map(s => s.trim());
-        const placeholderId = `el${this.nextId++}`;
-        this.code.push(`const ${placeholderId} = document.createComment('ac:for');`);
+        let [itemPart, listExpr] = acFor.split(' of ').map(s => s.trim());
+        const itemVar = itemPart.replace(/^(let|const|var)\s+/, '');
+        const placeholderId = `ac-for-${this.nextId++}`;
         
         const subCompiler = new TemplateCompiler();
-        const subResult = subCompiler.compile(this.elementToHtml(el));
+        const subResult = subCompiler.compile(isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el));
         
         this.bindings.push({
             type: 'for',
             expression: listExpr,
             itemVar: itemVar,
             targetId: placeholderId,
-            template: subResult.code,
-            childBindings: subResult.bindings
+            template: subResult.html,
+            childBindings: subResult.bindings,
+            rootIds: [] // Not used in this new strategy as we use innerHTML
         });
-        return placeholderId;
+        return `<!--${placeholderId}-->`;
     }
 
     // Handle ac:if
     const acIf = el.attribs['ac:if'];
     if (acIf) {
         delete el.attribs['ac:if'];
-        const placeholderId = `el${this.nextId++}`;
-        this.code.push(`const ${placeholderId} = document.createComment('ac:if');`);
+        const placeholderId = `ac-if-${this.nextId++}`;
         const subCompiler = new TemplateCompiler();
-        const subResult = subCompiler.compile(this.elementToHtml(el));
+        const subResult = subCompiler.compile(isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el));
         this.bindings.push({
             type: 'if',
             expression: acIf,
             targetId: placeholderId,
-            template: subResult.code,
-            childBindings: subResult.bindings
+            template: subResult.html,
+            childBindings: subResult.bindings,
+            rootIds: []
         });
-        return placeholderId;
+        return `<!--${placeholderId}-->`;
     }
 
-    const isContainer = el.tagName === 'ac-container';
-    
     if (isContainer) {
-        el.children.forEach(child => {
-            this.processNode(child, parentId);
-        });
-        return 'FRAGMENT_GROUP'; 
+        return this.processNodes(el.children);
     }
 
-    const id = `el${this.nextId++}`;
-    this.code.push(`const ${id} = document.createElement('${el.tagName}');`);
-    if (el.attribs['id']) {
-        this.idMap.set(el.attribs['id'], id);
-    }
+    const id = `ac-${this.nextId++}`;
+    let hasBinding = false;
 
     Object.entries(el.attribs).forEach(([name, value]) => {
       if (name.startsWith('[') && name.endsWith(']')) {
         const prop = name.slice(1, -1);
-        this.bindings.push({ type: 'property', expression: value, target: prop, targetId: id });
+        this.bindings.push({ type: 'property', expression: value, target: prop, targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
       } else if (name.startsWith('(') && name.endsWith(')')) {
         const event = name.slice(1, -1);
-        this.bindings.push({ type: 'event', expression: value, target: event, targetId: id });
+        this.bindings.push({ type: 'event', expression: value, target: event, targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
       } else if (name.startsWith('ac:bind:')) {
-        this.bindings.push({ type: 'property', expression: value, target: name.slice(8), targetId: id });
-      } else {
-        this.code.push(`${id}.setAttribute('${name}', ${JSON.stringify(value)});`);
+        this.bindings.push({ type: 'property', expression: value, target: name.slice(8), targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
+      } else if (name.startsWith('#')) {
+          this.idMap.set(name.slice(1), id);
+          hasBinding = true;
+          delete el.attribs[name];
       }
     });
 
-    el.children.forEach(child => {
-      this.processNode(child, id);
-    });
+    if (hasBinding) {
+        el.attribs['ac-id'] = id;
+    }
 
-    return id;
+    const childrenHtml = this.processNodes(el.children);
+    const attrs = Object.entries(el.attribs).map(([n, v]) => `${n}="${v}"`).join(' ');
+    
+    return `<${el.tagName}${attrs ? ' ' + attrs : ''}>${childrenHtml}</${el.tagName}>`;
   }
 
   private elementToHtml(el: Element): string {
-      const attrs = Object.entries(el.attribs).map(([n, v]) => `${n}="${v}"`).join(' ');
-      return `<${el.tagName} ${attrs}>${htmlparser2.DomUtils.getInnerHTML(el)}</${el.tagName}>`;
+      return htmlparser2.DomUtils.getOuterHTML(el);
   }
 }

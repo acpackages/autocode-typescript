@@ -1,0 +1,11 @@
+{
+  "name": "@autocode-ts/ac-runtime-router",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "@ac-runtime/core": "workspace:*"
+  }
+}

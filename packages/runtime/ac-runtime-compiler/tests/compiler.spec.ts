@@ -21,8 +21,8 @@ describe('ComponentCompiler', () => {
     expect(results[0].selector).toBe('test-el');
     expect(results[0].className).toBe('TestEl');
     expect(results[0].code).toContain('class TestElCompiled extends HTMLElement');
-    expect(results[0].code).toContain('createSignal(\'World\')');
-    expect(results[0].code).toContain('Hello ${name}');
+    expect(results[0].code).toContain('createSignal<any>(\'World\')');
+    expect(results[0].code).toContain('String(`Hello ${this.name}` ?? \'\')');
   });
 
   it('should handle @AcInput and @AcOutput', () => {
@@ -39,9 +39,9 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    expect(results[0].code).toContain('createSignal(\'Default\')');
+    expect(results[0].code).toContain('createSignal<any>(\'Default\')');
     expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
-    expect(results[0].code).toContain("this.change = { emit: (data) => this.dispatchEvent(new CustomEvent('change', { detail: data })) }");
+    expect(results[0].code).toContain("(this as any).change = { emit: (data: any) => this.dispatchEvent(new CustomEvent('change', { detail: data })) }");
   });
 
   it('should handle ac:if structural directive', () => {
@@ -57,7 +57,7 @@ describe('ComponentCompiler', () => {
 
     const results = compiler.compile(source);
     expect(results[0].code).toContain("document.createComment('ac:if')");
-    expect(results[0].code).toContain("const condition = (function() { with(this) { return show } }).call(this)");
+    expect(results[0].code).toContain("const condition = this.show;");
   });
 
   it('should only create signals for properties used in template or marked as @AcInput', () => {
@@ -77,7 +77,7 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain("Object.defineProperty(this, 'used'");
     expect(results[0].code).toContain("Object.defineProperty(this, 'forced'");
     expect(results[0].code).not.toContain("Object.defineProperty(this, 'unused'");
-    expect(results[0].code).toContain("this.unused = 'I am static'");
+    expect(results[0].code).toContain("(this as any).unused = 'I am static'");
   });
 
   it('should transform mutating array calls to trigger signals', () => {
@@ -112,7 +112,7 @@ describe('ComponentCompiler', () => {
 
     const results = compiler.compile(source);
     // Should find el0 (the div) and assign it to this.element
-    expect(results[0].code).toContain('this.element = el0;');
+    expect(results[0].code).toContain('(this as any).element = el0;');
   });
 
   it('should handle ac-container by not rendering the tag but rendering children', () => {
@@ -145,7 +145,7 @@ describe('ComponentCompiler', () => {
 
     const results = compiler.compile(source);
     expect(results[0].code).toContain("document.createComment('ac:for')");
-    expect(results[0].code).toContain("const list = (function() { with(this) { return items } }).call(this)");
-    expect(results[0].code).toContain("const subRender = (function(item) {");
+    expect(results[0].code).toContain("const list = (this.items as any[]) || [];");
+    expect(results[0].code).toContain("const subRender = (function(this: any, item: any) {");
   });
 });
