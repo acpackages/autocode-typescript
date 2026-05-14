@@ -228,7 +228,7 @@ export function acLinkElementScroll({ source, destination, both = true }: { sour
   }
 }
 
-export function acListenElementEvents(options: {
+export function acAddElementEventsListener(options: {
   element: HTMLElement;
   callback: ({ name, event }: { name: string, event: Event }) => void;
   mouse?: boolean;
@@ -297,6 +297,76 @@ export function acListenElementEvents(options: {
     }
   };
 }
+
+// export function acRemoveElementEventsListener(options: {
+//   element: HTMLElement;
+//   callback: ({ name, event }: { name: string, event: Event }) => void;
+//   mouse?: boolean;
+//   pointer?: boolean;
+//   touch?: boolean;
+//   keyboard?: boolean;
+//   focus?: boolean;
+//   form?: boolean;
+//   clipboard?: boolean;
+//   drag?: boolean;
+//   media?: boolean;
+//   animation?: boolean;
+//   viewport?: boolean;
+//   window?: boolean;
+//   network?: boolean;
+//   fullscreen?: boolean;
+//   history?: boolean;
+//   websocket?: boolean;
+//   serviceWorker?: boolean;
+//   worker?: boolean;
+//   mutationDeprecated?: boolean;
+//   exclude?:string[]
+// }) {
+//   const { element, callback, ...flags } = options;
+
+//   const categories = Object.keys(AC_DOM_EVENT_TYPES) as (keyof typeof AC_DOM_EVENT_TYPES)[];
+
+//   // check if user enabled any category
+//   const anySelected = categories.some(c => flags[c] === true);
+
+//   // build final list of events
+//   let events: string[] = [];
+
+//   for (const category of categories) {
+//     if (anySelected) {
+//       if (flags[category]) {
+//         events.push(...AC_DOM_EVENT_TYPES[category]);
+//       }
+//     } else {
+//       // none selected => include all categories
+//       events.push(...AC_DOM_EVENT_TYPES[category]);
+//     }
+//   }
+
+//   if(options.exclude){
+//     for(const event of options.exclude){
+//       if(events.includes(event)){
+//         events = arrayRemove(events,event);
+//       }
+//     }
+//   }
+
+//   // attach listeners
+//   const handlers: { [event: string]: (ev: Event) => void } = {};
+
+//   for (const eventName of events) {
+//     const handler = (ev: Event) => callback({name:eventName,event: ev});
+//     handlers[eventName] = handler;
+//     element.addEventListener(eventName, handler,{passive:true});
+//   }
+
+//   // return unsubscribe function
+//   return () => {
+//     for (const eventName of events) {
+//       element.removeEventListener(eventName, handlers[eventName]);
+//     }
+//   };
+// }
 
 export function acMorphElement({ source, destination, sourceColor, destinationColor, duration = 300 }: { source: HTMLElement, destination: HTMLElement, sourceColor?: string; destinationColor?: string; duration?: number }): void {
   // Get bounding client rectangles

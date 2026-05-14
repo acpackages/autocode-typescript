@@ -151,7 +151,7 @@ export class AcDDInputFieldElement extends AcInputBase {
     return this.ddInput.validityStateFlags;
   }
 
-  containerElement = document.createElement('div');
+  containerElement = this.ownerDocument.createElement('div');
   ddInput: AcDDInputElement = new AcDDInputElement();
   ddInputField: AcDDInputFieldBaseElement;
   ddTableColumn!: AcDDTableColumn;
@@ -172,6 +172,21 @@ export class AcDDInputFieldElement extends AcInputBase {
         this.dispatchEvent(event);
       }
     });
+  }
+
+  override connectedCallback(): void {
+    if(!this.isInitialized){
+      this.isInitialized = true;
+      this.init();
+      const event:CustomEvent = new CustomEvent('init');
+      this.dispatchEvent(event)
+    }
+  }
+
+  override disconnectedCallback(): void {
+     if(this.autoDestroyOnDisconnect){
+      this.destroy();
+    }
   }
 
   override attributeChangedCallback(name: string, oldValue: any, newValue: any) {
@@ -200,7 +215,7 @@ export class AcDDInputFieldElement extends AcInputBase {
 
   override init(): void {
     super.init();
-    acClearElement({element:this});
+    // acClearElement({element:this});
     this.append(this.ddInputField);
     this.ddInputField.ddInput = this.ddInput;
     this.setDDInput();

@@ -6,7 +6,7 @@
 import { AcHooks } from "@autocode-ts/autocode";
 import { AcEnumInputEvent } from "../enums/ac-enum-input-event.enum";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acClearElement, acListenElementEvents } from "../../../utils/ac-element-functions";
+import { acClearElement, acAddElementEventsListener } from "../../../utils/ac-element-functions";
 
 export class AcInputBase extends AcElementBase {
   static formAssociated = true;
@@ -135,6 +135,7 @@ export class AcInputBase extends AcElementBase {
   elementInternals: ElementInternals;
   override autoDestroyOnDisconnect: boolean = false;
   hooks: AcHooks = new AcHooks();
+  private eventListenerRemover:any;
   inputElement: HTMLElement | any = this.ownerDocument.createElement('input');
   isInputElementValidHtmlInput: boolean = true;
   reflectValueAttribute: boolean = true;
@@ -180,7 +181,30 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.inputElement.addEventListener('input', this.handleInput);
+    this.inputElement.addEventListener('change', this.handleChange);
+    this.innerHTML = '';
+    this.appendChild(this.inputElement);
+    this.eventListenerRemover = acAddElementEventsListener({
+      element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
+        if (this.dispatchEvent) {
+          this.dispatchEvent(event);
+        }
+      }, mouse: true, keyboard: true, pointer: true, focus: true, form: true, touch: true, viewport: true
+    });
+  }
+
   checkValidity() { return this.elementInternals.checkValidity(); }
+
+  disconnectedCallback(): void {
+    this.innerHTML = '';
+    this.inputElement.removeEventListener('input', this.handleInput);
+    this.inputElement.removeEventListener('change', this.handleChange);
+    this.eventListenerRemover();
+    super.disconnectedCallback();
+  }
 
   override destroy() {
     this.hooks.clearSubscriptions();
@@ -270,23 +294,33 @@ export class AcInputBase extends AcElementBase {
     this.handleChange = this.handleChange.bind(this);
 
     this.refreshReflectedAttributes();
-    this.inputElement.addEventListener('input', this.handleInput);
-    this.inputElement.addEventListener('change', this.handleChange);
-    acClearElement({ element: this });
-    this.appendChild(this.inputElement);
-    acListenElementEvents({
-      element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
-        if (this.dispatchEvent) {
-          this.dispatchEvent(event);
-        }
-      }, mouse: true, keyboard: true, pointer: true, focus: true, form: true, touch: true, viewport: true
-    });
+
+  }
+
+  refreshReflectedAttributes({ attribute }: { attribute?: string } = {}) {
+    const setAttributeFromThis = (attributeName: string) => {
+      if (this.hasAttribute(attributeName)) {
+        this.inputElement.setAttribute(attributeName, this.getAttribute(attributeName)!);
+      }
+      else {
+        this.inputElement.removeAttribute(attributeName);
+      }
+    };
+    if (attribute) {
+      for (const attributeName of this.inputReflectedAttributes) {
+        setAttributeFromThis(attribute);
+      }
+    }
+    else {
+      for (const attributeName of this.inputReflectedAttributes) {
+        setAttributeFromThis(attributeName);
+      }
+    }
   }
 
   reportValidity() { return this.elementInternals.reportValidity(); }
 
   setValue(value: any) {
-    console.log(this, value);
     const oldValue: any = this._value;
     if (oldValue != value) {
       this._value = value;
@@ -302,6 +336,21 @@ export class AcInputBase extends AcElementBase {
       this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
       this.validate();
     }
+  }
+
+  protected setValueListener() {
+    Object.defineProperty(this, 'value', {
+      get() {
+        return this._value;
+      },
+
+      set(value) {
+        this.setValue(value);
+      },
+
+      enumerable: true,
+      configurable: true
+    });
   }
 
   validate() {
@@ -331,39 +380,5 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  refreshReflectedAttributes({ attribute }: { attribute?: string } = {}) {
-    const setAttributeFromThis = (attributeName: string) => {
-      if (this.hasAttribute(attributeName)) {
-        this.inputElement.setAttribute(attributeName, this.getAttribute(attributeName)!);
-      }
-      else {
-        this.inputElement.removeAttribute(attributeName);
-      }
-    };
-    if (attribute) {
-      for (const attributeName of this.inputReflectedAttributes) {
-        setAttributeFromThis(attribute);
-      }
-    }
-    else {
-      for (const attributeName of this.inputReflectedAttributes) {
-        setAttributeFromThis(attributeName);
-      }
-    }
-  }
 
-  protected setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
-
-      set(value) {
-        this.setValue(value);
-      },
-
-      enumerable: true,
-      configurable: true
-    });
-  }
 }
