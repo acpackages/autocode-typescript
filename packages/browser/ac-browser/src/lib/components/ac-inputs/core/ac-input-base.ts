@@ -13,7 +13,7 @@ export class AcInputBase extends AcElementBase {
   static get observedAttributes() {
     return ['ac-context', 'ac-context-key', 'class', 'value', 'placeholder', 'disabled', 'readonly', 'name', 'style', 'required'];
   }
-  value:any;
+  value: any;
 
   get inputReflectedAttributes() {
     return ['class', 'value', 'placeholder', 'disabled', 'readonly', 'required'];
@@ -135,16 +135,16 @@ export class AcInputBase extends AcElementBase {
   elementInternals: ElementInternals;
   override autoDestroyOnDisconnect: boolean = false;
   hooks: AcHooks = new AcHooks();
-  private eventListenerRemover:any;
+  private eventListenerRemover: any;
   inputElement: HTMLElement | any = this.ownerDocument.createElement('input');
   isInputElementValidHtmlInput: boolean = true;
   reflectValueAttribute: boolean = true;
 
   constructor() {
     super();
-    this.setValueListener();
     this.elementInternals = this.attachInternals();
     this.inputElement.formAssociated = false;
+    this.setValueListener();
   }
 
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
@@ -354,19 +354,23 @@ export class AcInputBase extends AcElementBase {
   }
 
   validate() {
-    const validityState = this.validityStateFlags;
-    this.elementInternals.setValidity(
-      validityState.valid ? {} : validityState.flags,
-      validityState.message,
-      this
-    );
-    if (!validityState.valid) {
-      if (this.dispatchEvent) {
-        this.dispatchEvent(new CustomEvent('invalid', {
-          detail: { message: this.validationMessage, validity: this.validity },
-          bubbles: true,
-          composed: true
-        }));
+    if (this.elementInternals) {
+      const validityState = this.validityStateFlags;
+      if (validityState) {
+        this.elementInternals.setValidity(
+          validityState.valid ? {} : validityState.flags,
+          validityState.message,
+          this
+        );
+        if (!validityState.valid) {
+          if (this.dispatchEvent) {
+            this.dispatchEvent(new CustomEvent('invalid', {
+              detail: { message: this.validationMessage, validity: this.validity },
+              bubbles: true,
+              composed: true
+            }));
+          }
+        }
       }
     }
   }

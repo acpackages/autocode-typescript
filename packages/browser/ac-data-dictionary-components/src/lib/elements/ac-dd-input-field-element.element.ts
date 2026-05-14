@@ -215,7 +215,7 @@ export class AcDDInputFieldElement extends AcInputBase {
 
   override init(): void {
     super.init();
-    // acClearElement({element:this});
+    acClearElement({element:this});
     this.append(this.ddInputField);
     this.ddInputField.ddInput = this.ddInput;
     this.setDDInput();

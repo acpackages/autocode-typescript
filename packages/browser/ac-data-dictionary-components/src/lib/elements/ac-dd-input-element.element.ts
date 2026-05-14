@@ -189,8 +189,6 @@ export class AcDDInputElement extends AcInputBase {
 
   private setInputElement() {
     if ((this.tableName && this.columnName) || this.inputName) {
-
-      console.log("Setting dd input",this);
       let inputDefinition: IAcDDInputDefinition | undefined;
       if (this.tableName && this.columnName) {
         const column = AcDataDictionary.getTableColumn({ tableName: this.tableName, columnName: this.columnName });
@@ -202,9 +200,8 @@ export class AcDDInputElement extends AcInputBase {
       if (this.inputName) {
         inputDefinition = AcDDInputManager.getInputDefinition({ name: this.inputName });
       }
-      console.log("Setting dd input from definition",inputDefinition);
       if (inputDefinition) {
-        // acClearElement({element:this});
+        acClearElement({element:this});
         this.inputElement = new inputDefinition.inputElement();
         if(this.ddTableColumn){
           const defaultValue:any = this.ddTableColumn.getDefaultValue();
@@ -222,11 +219,7 @@ export class AcDDInputElement extends AcInputBase {
             this.setAttribute('required', `true`);
           }
         }
-        console.log("Appoending input element");
-        console.dir(this.inputElement);
         this.appendChild(this.inputElement);
-        console.dir(this);
-
         this.inputElement.addEventListener('input', () => {
           this.value = this.inputElement.value;
         });
