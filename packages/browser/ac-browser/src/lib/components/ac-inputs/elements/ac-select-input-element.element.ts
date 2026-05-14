@@ -268,31 +268,8 @@ export class AcSelectInputElement extends AcInputBase {
     this.isDropdownOpen = false;
   }
 
-  destroy(): void {
-    this.closeDropdown();
-    super.destroy();
-  }
-
-  private ensureHighlightInView() {
-    if (this.highlightingIndex < 0) {
-      return;
-    }
-    this.scrollToIndex(this.highlightingIndex);
-    this.applyHighlightStyles();
-  }
-
-  override focus(): void {
-    this.textInputElement.focus();
-  }
-
-  private handleScroll() {
-    if (this.dataManager.type !== 'ondemand') return;
-    const { scrollTop, scrollHeight, clientHeight } = this.listEl;
-    if (scrollTop + clientHeight >= scrollHeight - (this.optionHeight * 3)) this.loadMore();
-  }
-
-  override init() {
-    super.init();
+  connectedCallback(): void {
+    super.connectedCallback();
     acClearElement({element:this});
     if (this.hasAttribute('class')) {
       this.textInputElement.setAttribute('class', this.getAttribute('class')!);
@@ -329,6 +306,33 @@ export class AcSelectInputElement extends AcInputBase {
     //   options: { bufferCount: 3, elementHeight: this.optionHeight }
     // });
     this.attachEvents();
+  }
+
+  destroy(): void {
+    this.closeDropdown();
+    super.destroy();
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+  }
+
+  private ensureHighlightInView() {
+    if (this.highlightingIndex < 0) {
+      return;
+    }
+    this.scrollToIndex(this.highlightingIndex);
+    this.applyHighlightStyles();
+  }
+
+  override focus(): void {
+    this.textInputElement.focus();
+  }
+
+  private handleScroll() {
+    if (this.dataManager.type !== 'ondemand') return;
+    const { scrollTop, scrollHeight, clientHeight } = this.listEl;
+    if (scrollTop + clientHeight >= scrollHeight - (this.optionHeight * 3)) this.loadMore();
   }
 
   private async loadMore() {

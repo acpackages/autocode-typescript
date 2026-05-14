@@ -257,6 +257,31 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.isFocused = false;
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.addNewContainer.innerHTML = `<div><button type="button">Add New Row</button></div>`;
+    this.addNewButton = this.addNewContainer.querySelector('button');
+    this.addNewButton.style.padding = "4px 8px";
+    this.addNewButton.style.cursor = "pointer";
+    this.addNewButton.style.color = "#0078d7";
+    this.addNewButton.style.fontStyle = "italic";
+    this.addNewButton.textContent = `Add "${this.searchQuery}"`;
+    this.datagrid.datagridApi.dataManager.refreshRowsTimeoutDuration = 300;
+    this.datagrid.afterRowsContainer.append(this.addNewContainer);
+    if (!this.hasAttribute('label-key')) {
+      this.labelKey = 'label';
+    }
+    if (!this.hasAttribute('value-key')) {
+      this.valueKey = 'value';
+    }
+    this.innerHTML = '';
+    this.append(this.textInputElement);
+    this.textInputElement.type = "text";
+    this.textInputElement.autocomplete = "off";
+    this.attachEvents();
+    this.addRow = this.getAttribute('add-row') != 'false';
+  }
+
   closeDropdown() {
     this.dropdownContainer.remove();
     this.isDropdownOpen = false;
@@ -312,27 +337,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     super.init();
     console.log("Initializing datagrid element")
     this.datagrid.autoDestroyOnDisconnect = false;
-    this.addNewContainer.innerHTML = `<div><button type="button">Add New Row</button></div>`;
-    this.addNewButton = this.addNewContainer.querySelector('button');
-    this.addNewButton.style.padding = "4px 8px";
-    this.addNewButton.style.cursor = "pointer";
-    this.addNewButton.style.color = "#0078d7";
-    this.addNewButton.style.fontStyle = "italic";
-    this.addNewButton.textContent = `Add "${this.searchQuery}"`;
-    this.datagrid.datagridApi.dataManager.refreshRowsTimeoutDuration = 300;
-    this.datagrid.afterRowsContainer.append(this.addNewContainer);
-    if (!this.hasAttribute('label-key')) {
-      this.labelKey = 'label';
-    }
-    if (!this.hasAttribute('value-key')) {
-      this.valueKey = 'value';
-    }
-    this.innerHTML = '';
-    this.append(this.textInputElement);
-    this.textInputElement.type = "text";
-    this.textInputElement.autocomplete = "off";
-    this.attachEvents();
-    this.addRow = this.getAttribute('add-row') != 'false';
+
   }
 
   private notifyState() {
@@ -495,7 +500,7 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     }
 
     // 🔹 On-demand fetch (awaited)
-    if (this.onDemandFunction && this.value !=null && this.value != undefined) {
+    if (this.onDemandFunction && this.value != null && this.value != undefined) {
       const filterGroup = new AcFilterGroup();
       filterGroup.addFilter({
         key: this.valueKey,
@@ -562,8 +567,8 @@ export class AcDatagridSelectInputElement extends AcInputBase {
       },
 
       set(value) {
-      this.setValue(value);
-      this.setSelectedRowsFromValue();
+        this.setValue(value);
+        this.setSelectedRowsFromValue();
       },
 
       enumerable: true,

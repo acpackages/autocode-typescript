@@ -124,13 +124,6 @@ export class AcInputBase extends AcElementBase {
   get validationMessage() { return this.elementInternals.validationMessage; }
 
   protected _value: any;
-  // get value(): any {
-  //   return this._value;
-  // }
-  // set value(value: any) {
-  //   console.log(this,value);
-  //   this.setValue(value);
-  // }
 
   elementInternals: ElementInternals;
   override autoDestroyOnDisconnect: boolean = false;
@@ -202,7 +195,9 @@ export class AcInputBase extends AcElementBase {
     this.innerHTML = '';
     this.inputElement.removeEventListener('input', this.handleInput);
     this.inputElement.removeEventListener('change', this.handleChange);
-    this.eventListenerRemover();
+    if(this.eventListenerRemover ){
+      this.eventListenerRemover();
+    }
     super.disconnectedCallback();
   }
 
@@ -323,9 +318,14 @@ export class AcInputBase extends AcElementBase {
   setValue(value: any) {
     const oldValue: any = this._value;
     if (oldValue != value) {
-      this._value = value;
+this._value = value;
       const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
-      inputElement.value = value;
+      if(value == undefined){
+        inputElement.value = null;
+      }
+      else{
+        inputElement.value = value;
+      }
       if (this.reflectValueAttribute) {
         this.setAttribute('value', value);
       }
@@ -347,7 +347,6 @@ export class AcInputBase extends AcElementBase {
       set(value) {
         this.setValue(value);
       },
-
       enumerable: true,
       configurable: true
     });
