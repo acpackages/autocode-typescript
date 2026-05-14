@@ -1,0 +1,12 @@
+{
+  "name": "@autocode-ts/ac-runtime-compiler",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "typescript": "^5.0.0",
+    "htmlparser2": "^9.0.0",
+    "domutils": "^3.0.0"
+  }
+}

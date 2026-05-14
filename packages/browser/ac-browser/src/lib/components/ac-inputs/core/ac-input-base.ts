@@ -318,7 +318,7 @@ export class AcInputBase extends AcElementBase {
   setValue(value: any) {
     const oldValue: any = this._value;
     if (oldValue != value) {
-this._value = value;
+      this._value = value;
       const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
       if(value == undefined){
         inputElement.value = null;

@@ -112,7 +112,13 @@
         "packages/browser/ac-report-engine/src/ac-report-engine.ts"
       ],
       "@autocode-ts/ac-runtime": [
-        "packages/browser/ac-runtime/src/ac-runtime.ts"
+        "packages/runtime/ac-runtime/src/ac-runtime.ts"
+      ],
+      "@autocode-ts/ac-runtime-compiler": [
+        "packages/runtime/ac-runtime-compiler/src/index.ts"
+      ],
+      "@autocode-ts/ac-runtime-dev": [
+        "packages/runtime/ac-runtime-dev/src/index.ts"
       ],
       "@autocode-ts/ac-runtime-ts": [
         "packages/browser/ac-runtime-ts/src/index.ts"

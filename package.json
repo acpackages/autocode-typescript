@@ -39,6 +39,7 @@
     "dev:browser:old": "npx nx serve test-browser-legacy",
     "dev:node": "npx nx serve test-node",
     "dev:runtime": "npx nx serve test-runtime",
+    "dev:compiler": "nx run test-browser:dev-server",
     "gen:declaration:json": "node scripts/generate-declaration-json.js"
   },
   "private": true,
@@ -151,7 +152,8 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.0",
     "vue-tsc": "^2.2.8",
-    "web-worker": "^1.5.0"
+    "web-worker": "^1.5.0",
+    "ws": "^8.16.0"
   },
   "dependencies": {
     "@angular/cdk": "^20.0.4",

@@ -1,0 +1,14 @@
+{
+  "name": "@autocode-ts/ac-runtime-dev",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "@autocode-ts/ac-runtime-compiler": "0.0.1",
+    "express": "^4.21.2",
+    "chokidar": "^3.6.0",
+    "ws": "^8.16.0",
+    "typescript": "^5.0.0"
+  }
+}
