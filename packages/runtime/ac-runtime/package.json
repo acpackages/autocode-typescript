@@ -1,11 +1,18 @@
 {
   "name": "@autocode-ts/ac-runtime",
   "version": "0.0.1",
+  "description": "Metadata-only runtime for Autocode TS components containing decorators and interfaces.",
   "private": true,
   "type": "module",
   "main": "./ac-runtime.js",
   "module": "./ac-runtime.js",
   "types": "./ac-runtime.d.ts",
+  "keywords": [
+    "autocode",
+    "metadata",
+    "decorators",
+    "web-components"
+  ],
   "dependencies": {
   },
   "exports": {

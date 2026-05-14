@@ -6,7 +6,7 @@ import { TemplateCompiler } from './template-compiler.js';
 export class ComponentCompiler {
   private templateCompiler = new TemplateCompiler();
 
-  compile(sourceCode: string, filePath?: string) {
+  compile(sourceCode: string, filePath?: string, resolveImport?: (originalPath: string, importerPath: string) => string) {
     const sourceFile = ts.createSourceFile(filePath || 'component.ts', sourceCode, ts.ScriptTarget.Latest, true);
     const printer = ts.createPrinter();
     const components: any[] = [];
@@ -46,11 +46,24 @@ export class ComponentCompiler {
 
       // If it's not a component we are compiling, keep it as is
       let statement = node;
-      if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier) && filePath) {
+      const isImport = ts.isImportDeclaration(node);
+      const isExport = ts.isExportDeclaration(node);
+      
+      if ((isImport || isExport) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier) && filePath) {
           const originalPath = node.moduleSpecifier.text;
-          if (originalPath.startsWith('.')) {
+          let newPath = originalPath;
+          if (resolveImport) {
+              newPath = resolveImport(originalPath, filePath);
+          } else if (originalPath.startsWith('.')) {
               const absolutePath = path.resolve(path.dirname(filePath), originalPath);
-              statement = ts.factory.updateImportDeclaration(node, node.modifiers, node.importClause, ts.factory.createStringLiteral(absolutePath.replace(/\\/g, '/')), node.assertClause);
+              newPath = absolutePath.replace(/\\/g, '/');
+          }
+          if (newPath !== originalPath) {
+              if (isImport) {
+                  statement = ts.factory.updateImportDeclaration(node as ts.ImportDeclaration, (node as ts.ImportDeclaration).modifiers, (node as ts.ImportDeclaration).importClause, ts.factory.createStringLiteral(newPath), (node as ts.ImportDeclaration).assertClause);
+              } else {
+                  statement = ts.factory.updateExportDeclaration(node as ts.ExportDeclaration, (node as ts.ExportDeclaration).modifiers, (node as ts.ExportDeclaration).isTypeOnly, (node as ts.ExportDeclaration).exportClause, ts.factory.createStringLiteral(newPath), (node as ts.ExportDeclaration).assertClause);
+              }
           }
       }
       otherStatements.push(printer.printNode(ts.EmitHint.Unspecified, statement, sourceFile));
@@ -64,6 +77,10 @@ export class ComponentCompiler {
             code: `${otherCode}\n\n${compiled.code}`
         };
     });
+
+    if (compiledComponents.length === 0) {
+        return [{ selector: null, code: otherCode }];
+    }
 
     return compiledComponents;
   }
@@ -261,7 +278,7 @@ export class ComponentCompiler {
     const generateBindings = (bindings: any[], localVars: Set<string>, rootContainer: string): string[] => {
       return bindings.map(b => {
         const prefExpr = this.prefixIdentifiers(b.expression, localVars, topLevelVars);
-        const targetNode = b.type === 'text' || b.type === 'property' || b.type === 'event' 
+        const targetNode = b.type === 'text' || b.type === 'property' || b.type === 'event' || b.type === 'class' || b.type === 'model' || b.type === 'style' || b.type === 'attribute'
             ? `${rootContainer}.querySelector('[ac-id="${b.targetId}"]')`
             : null;
 
@@ -270,13 +287,25 @@ export class ComponentCompiler {
           const target = b.target.includes('.') ? `['${b.target.split('.').join("']['")}']` : `['${b.target}']`;
           return `createEffect(() => { const el = ${targetNode}; if (el) (el as any)${target} = ${prefExpr}; });`;
         }
+        if (b.type === 'attribute') return `createEffect(() => { const el = ${targetNode}; if (el) { const v = ${prefExpr}; if (v != null && v !== false) { el.setAttribute('${b.target}', String(v)); } else { el.removeAttribute('${b.target}'); } } });`;
         if (b.type === 'event') return `${targetNode}?.addEventListener('${b.target}', ($event: any) => { ${prefExpr} });`;
+        if (b.type === 'class') return `createEffect(() => { const el = ${targetNode}; if (el) { if (${prefExpr}) { el.classList.add('${b.target}'); } else { el.classList.remove('${b.target}'); } } });`;
+        if (b.type === 'style') return `createEffect(() => { const el = ${targetNode}; if (el) (el as HTMLElement).style['${b.target}'] = ${prefExpr} ?? ''; });`;
+        if (b.type === 'model') {
+          const [prop, event] = (b.target || 'value:input').split(':');
+          return `(function(this: any) {
+            const el = ${targetNode} as any;
+            if (!el) return;
+            createEffect(() => { el.${prop} = ${prefExpr}; });
+            el.addEventListener('${event}', ($event: any) => { ${prefExpr} = el.${prop}; });
+          }).call(this);`;
+        }
         
         if (b.type === 'if') {
             const nextLocals = new Set(localVars);
             return `(function(this: any) { 
                 let currentNodes: any[] = []; 
-                const placeholder = Array.from(${rootContainer}.childNodes).find(n => n.nodeType === 8 && n.textContent === '${b.targetId}');
+                const placeholder = findComment(${rootContainer}, '${b.targetId}');
                 createEffect(() => { 
                     const condition = ${prefExpr}; 
                     if (condition) { 
@@ -299,7 +328,7 @@ export class ComponentCompiler {
             nextLocals.add(b.itemVar);
             return `(function(this: any) { 
                 let currentMap = new Map<any, any[]>(); 
-                const placeholder = Array.from(${rootContainer}.childNodes).find(n => n.nodeType === 8 && n.textContent === '${b.targetId}');
+                const placeholder = findComment(${rootContainer}, '${b.targetId}');
                 createEffect(() => { 
                     const list = (${prefExpr} as any[]) || []; 
                     const newMap = new Map<any, any[]>(); 
@@ -331,7 +360,10 @@ export class ComponentCompiler {
 
     const viewChildAssignments = viewChildren.map(vc => {
         const internalId = templateResult.idMap[vc.selector];
-        return internalId ? `(this as any).${vc.propName} = this.querySelector('[ac-id="${internalId}"]');` : `console.warn('@AcViewChild: Could not find element with id "${vc.selector}"');`;
+        if (internalId) {
+            return `Object.defineProperty(this, '${vc.propName}', { get: () => this.querySelector('[ac-id="${internalId}"]'), configurable: true });`;
+        }
+        return `console.warn('@AcViewChild: Could not find template ref #${vc.selector}');`;
     }).join('\n');
 
     const stylesCode = styles.length > 0 ? `
@@ -350,6 +382,13 @@ export class ComponentCompiler {
     return [() => { if (activeEffect) subscribers.add(activeEffect); return value; }, (newValue: T) => { if (value === newValue) return; value = newValue; subscribers.forEach(sub => sub()); }];
   }
   function createEffect(fn: () => void) { const effect = () => { activeEffect = effect; fn(); activeEffect = null; }; effect(); }
+  function findComment(root: any, text: string): Comment | null {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_COMMENT);
+    while (walker.nextNode()) {
+      if ((walker.currentNode as Comment).textContent === text) return walker.currentNode as Comment;
+    }
+    return null;
+  }
 
   class ${className}Compiled extends HTMLElement {
     constructor() {
@@ -371,8 +410,8 @@ export class ComponentCompiler {
     connectedCallback() { this.render(); if ((this as any).acOnInit) (this as any).acOnInit(); }
     render() {
       const self = this;
-      ${stylesCode}
       this.innerHTML = ${JSON.stringify(templateResult.html)};
+      ${stylesCode}
       ${viewChildAssignments}
       ${generateBindings(templateResult.bindings, new Set(), 'this').join('\n')}
     }

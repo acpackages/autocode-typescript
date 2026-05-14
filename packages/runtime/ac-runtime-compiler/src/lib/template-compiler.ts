@@ -2,7 +2,7 @@ import * as htmlparser2 from 'htmlparser2';
 import { DomHandler, Element, Node, Text, isTag } from 'domhandler';
 
 export interface Binding {
-  type: 'text' | 'property' | 'event' | 'if' | 'for';
+  type: 'text' | 'property' | 'event' | 'if' | 'for' | 'class' | 'model' | 'style' | 'attribute';
   expression: string;
   target?: string;
   targetId: string;
@@ -136,8 +136,28 @@ export class TemplateCompiler {
         this.bindings.push({ type: 'event', expression: value, target: event, targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
+      } else if (name.startsWith('ac:class:')) {
+        const className = name.slice(9);
+        this.bindings.push({ type: 'class', expression: value, target: className, targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
+      } else if (name.startsWith('ac:style:')) {
+        const styleProp = name.slice(9);
+        this.bindings.push({ type: 'style', expression: value, target: styleProp, targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
+      } else if (name === 'ac:model') {
+        // Determine the correct property and event based on element type
+        const isCheckbox = el.attribs['type'] === 'checkbox';
+        const isRadio = el.attribs['type'] === 'radio';
+        const isSelect = el.tagName === 'select';
+        const prop = (isCheckbox || isRadio) ? 'checked' : 'value';
+        const event = (isCheckbox || isRadio || isSelect) ? 'change' : 'input';
+        this.bindings.push({ type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
       } else if (name.startsWith('ac:bind:')) {
-        this.bindings.push({ type: 'property', expression: value, target: name.slice(8), targetId: id, rootIds: [] });
+        this.bindings.push({ type: 'attribute', expression: value, target: name.slice(8), targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
       } else if (name.startsWith('#')) {

@@ -1,92 +1,244 @@
-import { Plugin } from 'vite';
-import { ComponentCompiler } from '../../ac-runtime-compiler/src/index';
+import { Plugin, ResolvedConfig } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ComponentCompiler } from '../../ac-runtime-compiler/src/index';
 
 export function acRuntimePlugin(): Plugin {
+    let config: ResolvedConfig;
     const compiler = new ComponentCompiler();
-    let projectRoot: string = process.cwd();
-    
-    const doTransform = async (code: string, id: string) => {
-        if (id.endsWith('.ts') && !id.endsWith('.compiled.ts') && !id.includes('node_modules')) {
-            if (code.includes('@AcElement')) {
-                console.log(`[AC Compiler] Compiling ${path.basename(id)}...`);
-                try {
-                    const results = compiler.compile(code, id);
-                    
-                    if (results.length > 0) {
-                        const compiledCode = results[0].code;
-                        
-                        // Save to central cache directory in project root
-                        const cacheDir = path.join(projectRoot, '.ac-runtime-cache');
-                        if (!fs.existsSync(cacheDir)) {
-                            fs.mkdirSync(cacheDir, { recursive: true });
-                        }
-                        
-                        // Create a flat file name based on the relative path to avoid collisions
-                        const relativePath = path.relative(projectRoot, id);
-                        const fileName = relativePath.replace(/[\\/]/g, '_').replace('.ts', '.compiled.ts');
-                        const cachePath = path.join(cacheDir, fileName);
-                        
-                        fs.writeFileSync(cachePath, compiledCode);
+    let projectRoot = '';
+    let appConfig: any = null;
+    const compiledFiles = new Set<string>();
 
-                        return {
-                            code: compiledCode,
-                            map: null
-                        };
-                    }
-                } catch (err: any) {
-                    console.error(`[AC Compiler] Error compiling ${id}:`, err.message);
+    /**
+     * Normalizes path slashes to forward slashes.
+     */
+    const normalizePath = (p: string) => p.replace(/\\/g, '/');
+
+    /**
+     * Gets the path in the cache directory for a given absolute source path.
+     */
+    const getCachePath = (absolutePath: string): string => {
+        const normalizedAbs = normalizePath(absolutePath);
+        const normalizedProject = normalizePath(projectRoot);
+
+        if (normalizedAbs.startsWith(normalizedProject)) {
+            return path.join(projectRoot, 'ac-runtime-cache', path.relative(projectRoot, absolutePath));
+        } else {
+            const relToTests = path.relative(path.resolve(projectRoot, '..'), absolutePath);
+            return path.join(projectRoot, 'ac-runtime-cache', 'up', relToTests);
+        }
+    };
+
+    /**
+     * Resolves the import path for the compiled code.
+     */
+    const resolveImport = (originalPath: string, importerPath: string) => {
+        let absolutePath = '';
+
+        if (originalPath.startsWith('.')) {
+            absolutePath = path.resolve(path.dirname(importerPath), originalPath);
+        } else if (originalPath.startsWith('src/')) {
+            absolutePath = path.resolve(projectRoot, originalPath);
+        }
+
+        if (absolutePath) {
+            let resolvedPath = absolutePath;
+            if (!fs.existsSync(resolvedPath)) {
+                if (fs.existsSync(resolvedPath + '.ts')) {
+                    resolvedPath += '.ts';
+                } else if (fs.existsSync(path.join(resolvedPath, 'index.ts'))) {
+                    resolvedPath = path.join(resolvedPath, 'index.ts');
                 }
+            }
+
+            const normalizedResolved = normalizePath(resolvedPath);
+            
+            // Allow tests/, exclude packages/
+            if (normalizedResolved.endsWith('.ts') && !normalizedResolved.includes('/packages/')) {
+                const targetCachePath = getCachePath(resolvedPath);
+                
+                // Use ROOT-RELATIVE path for maximum reliability in Vite
+                const relativeToProjectRoot = path.relative(projectRoot, targetCachePath).replace(/\\/g, '/');
+                return '/' + relativeToProjectRoot;
+            }
+        }
+
+        return originalPath;
+    };
+
+    const doTransform = async (code: string, id: string, isForCache = false) => {
+        const normalizedId = normalizePath(id);
+        const normalizedCacheDir = normalizePath(path.join(projectRoot, 'ac-runtime-cache'));
+
+        // If it's already in the cache, skip transformation to avoid loops
+        if (normalizedId.includes(normalizedCacheDir)) return null;
+
+        if (id.endsWith('.ts') && !id.includes('node_modules')) {
+            try {
+                const cachePath = getCachePath(id);
+                
+                if (!isForCache && fs.existsSync(cachePath)) {
+                    return fs.readFileSync(cachePath, 'utf8');
+                }
+
+                const results = compiler.compile(code, id, (originalPath, importerPath) => resolveImport(originalPath, importerPath));
+                
+                if (results.length > 0) {
+                    let compiledCode = results[0].code;
+                    
+                    compiledCode = compiledCode.replace(/import\s+['"].*?\.(css|scss)['"];?\n?/g, '');
+                    compiledCode = compiledCode.replace(/import\s+.*?\s+from\s+['"].*?\.(css|scss)['"];?\n?/g, '');
+
+                    if (isForCache) {
+                        const dir = path.dirname(cachePath);
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir, { recursive: true });
+                        }
+                        fs.writeFileSync(cachePath, compiledCode);
+                    }
+                    return compiledCode;
+                }
+            } catch (err) {
+                console.error(`[AC Compiler] Error compiling ${id}:`, err);
             }
         }
         return null;
     };
 
-    return {
-        name: 'ac-runtime-compiler',
-        enforce: 'pre',
-        
-        configResolved(config) {
-            projectRoot = config.root;
-            
-            // Pre-compile all components on startup
-            const srcDir = path.join(projectRoot, 'src');
-            if (fs.existsSync(srcDir)) {
-                console.log(`[AC Compiler] Pre-compiling components in ${srcDir}...`);
-                const scan = (dir: string) => {
-                    fs.readdirSync(dir).forEach(file => {
-                        const fullPath = path.join(dir, file);
-                        if (fs.statSync(fullPath).isDirectory()) {
-                            scan(fullPath);
-                        } else if (file.endsWith('.ts') && !file.endsWith('.compiled.ts')) {
-                            const code = fs.readFileSync(fullPath, 'utf8');
-                            if (code.includes('@AcElement')) {
-                                doTransform(code, fullPath);
-                            }
-                        }
-                    });
-                };
-                scan(srcDir);
-            }
-        },
+    const compileRecursive = async (id: string) => {
+        const normalizedId = normalizePath(id);
+        if (compiledFiles.has(normalizedId)) return;
+        compiledFiles.add(normalizedId);
 
-        configureServer(server) {
-            server.watcher.add(path.join(projectRoot, 'src/**/*.ts'));
-            server.watcher.on('change', async (file) => {
-                if (file.endsWith('.ts') && !file.endsWith('.compiled.ts')) {
-                    const code = fs.readFileSync(file, 'utf8');
-                    if (code.includes('@AcElement')) {
-                        console.log(`[AC Compiler] File changed, re-compiling: ${path.basename(file)}`);
-                        await doTransform(code, file);
-                        server.ws.send({ type: 'full-reload' });
+        if (!fs.existsSync(id)) return;
+        const code = fs.readFileSync(id, 'utf8');
+        const currentDir = path.dirname(id);
+        
+        // 1. Find standard imports and exports
+        const importMatches = Array.from(code.matchAll(/(?:import|export|from).*?['"](.+?)['"]/g));
+        for (const match of importMatches) {
+            const originalPath = match[1];
+            let absolutePath = '';
+
+            if (originalPath.startsWith('.')) {
+                absolutePath = path.resolve(currentDir, originalPath);
+            } else if (originalPath.startsWith('src/')) {
+                absolutePath = path.resolve(projectRoot, originalPath);
+            }
+
+            if (absolutePath) {
+                if (!fs.existsSync(absolutePath)) {
+                    if (fs.existsSync(absolutePath + '.ts')) {
+                        absolutePath += '.ts';
+                    } else if (fs.existsSync(path.join(absolutePath, 'index.ts'))) {
+                        absolutePath = path.join(absolutePath, 'index.ts');
                     }
                 }
-            });
-        },
 
+                const normalizedAbs = normalizePath(absolutePath);
+                if (fs.existsSync(absolutePath) && normalizedAbs.endsWith('.ts') && !normalizedAbs.includes('/packages/')) {
+                    await compileRecursive(absolutePath);
+                }
+            }
+        }
+
+        // 2. Find import.meta.glob patterns
+        const globMatches = Array.from(code.matchAll(/import\.meta\.glob\(['"](.+?)['"]/g));
+        for (const match of globMatches) {
+            const pattern = match[1];
+            if (pattern.startsWith('.')) {
+                const globRegex = new RegExp('^' + pattern
+                    .replace(/\./g, '\\.')
+                    .replace(/\*\*/g, '(.+)')
+                    .replace(/\*/g, '([^/]+)') + '$');
+                
+                const baseDir = path.dirname(id);
+                
+                const findFiles = async (dir: string) => {
+                    const entries = fs.readdirSync(dir, { withFileTypes: true });
+                    for (const entry of entries) {
+                        const fullPath = path.join(dir, entry.name);
+                        const relPath = './' + path.relative(baseDir, fullPath).replace(/\\/g, '/');
+                        
+                        if (entry.isDirectory()) {
+                            await findFiles(fullPath);
+                        } else if (globRegex.test(relPath)) {
+                            const normalizedFull = normalizePath(fullPath);
+                            if (normalizedFull.endsWith('.ts') && !normalizedFull.includes('/packages/')) {
+                                await compileRecursive(fullPath);
+                            }
+                        }
+                    }
+                };
+                
+                try {
+                    await findFiles(baseDir);
+                } catch (err) {
+                }
+            }
+        }
+
+        await doTransform(code, id, true);
+    };
+
+    return {
+        name: 'ac-runtime-plugin',
+        configResolved(resolvedConfig) {
+            config = resolvedConfig;
+            projectRoot = config.root;
+        },
+        transformIndexHtml(html: string) {
+            if (appConfig?.type === 'application' && appConfig.main) {
+                const entryFile = path.resolve(projectRoot, appConfig.main);
+                const cachePath = getCachePath(entryFile);
+                const relativeToRoot = path.relative(projectRoot, cachePath).replace(/\\/g, '/');
+                return html.replace('/src/main.ts', '/' + relativeToRoot);
+            }
+            return html;
+        },
+        async buildStart() {
+            if (!projectRoot) projectRoot = process.cwd();
+            
+            const pkgPath = path.join(projectRoot, 'package.json');
+            if (fs.existsSync(pkgPath)) {
+                const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+                if (pkg.name === '@autocode-ts/tests-browser') {
+                    appConfig = {
+                        name: pkg.name,
+                        version: pkg.version,
+                        type: 'application',
+                        main: 'src/main.ts'
+                    };
+                }
+            }
+
+            if (appConfig?.type === 'application' && appConfig.main) {
+                const entryFile = path.resolve(projectRoot, appConfig.main);
+                const cacheDir = path.join(projectRoot, 'ac-runtime-cache');
+                if (fs.existsSync(cacheDir)) {
+                    fs.rmSync(cacheDir, { recursive: true, force: true });
+                }
+                fs.mkdirSync(cacheDir, { recursive: true });
+
+                console.log(`🚀 [AC Compiler] Starting recursive compilation from: ${appConfig.main}`);
+                compiledFiles.clear();
+                await compileRecursive(entryFile);
+                console.log(`✅ [AC Compiler] Compilation complete. Processed ${compiledFiles.size} files (Browser Test App Only).`);
+            }
+        },
         async transform(code, id) {
-            return doTransform(code, id);
+            return await doTransform(code, id, false);
+        },
+        configureServer(server) {
+            server.watcher.on('change', async (file) => {
+                if (file.endsWith('.ts') && !file.includes('ac-runtime-cache') && !file.includes('node_modules')) {
+                    console.log(`[AC Compiler] File changed, re-compiling: ${path.basename(file)}`);
+                    const code = fs.readFileSync(file, 'utf8');
+                    await doTransform(code, file, true);
+                    server.ws.send({ type: 'full-reload' });
+                }
+            });
         }
     };
 }

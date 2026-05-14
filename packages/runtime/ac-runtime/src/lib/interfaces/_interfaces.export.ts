@@ -7,6 +7,3 @@ export * from './ac-on-destroy.interface';
 export * from './ac-on-disconnected.interface';
 export * from './ac-on-init.interface';
 export * from './ac-on-property-change.interface';
-export * from './ac-route-snapshot.interface';
-export * from './ac-route.interface';
-export * from './ac-template-def.interface';
