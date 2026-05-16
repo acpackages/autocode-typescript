@@ -59,10 +59,12 @@ export class AcEventEmitter<T = void> {
    * unsub(); // Removes the listener
    * ```
    */
-  subscribe(fn: (value: T) => void): () => void {
+  subscribe(fn: (value: T) => void): { unsubscribe: () => void } {
     this.listeners.add(fn);
-    return () => {
-      this.listeners.delete(fn);
+    return {
+      unsubscribe: () => {
+        this.listeners.delete(fn);
+      }
     };
   }
 }

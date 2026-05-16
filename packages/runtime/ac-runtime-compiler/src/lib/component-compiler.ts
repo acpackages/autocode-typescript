@@ -64,6 +64,8 @@ const GLOBAL_IDENTIFIERS = new Set([
   'finally', 'in', 'of', 'class', 'function', 'async', 'await',
   'yield', 'super', 'import', 'export', 'default', 'from', 'as',
   'with', 'debugger',
+  // Pipe helper injected by the AC Runtime compiler into every IIFE
+  '__acPipe',
 ]);
 
 // ─── Typed Interfaces ────────────────────────────────────────────────────────
@@ -246,6 +248,8 @@ export class ComponentCompiler {
     }
 
     const importsCode = importStatements.join('\n');
+    // Always inject the acPipeRegistry import so __acPipe() calls resolve at runtime.
+    const pipeImport = `import { acPipeRegistry } from '@autocode-ts/ac-pipes';`;
     const compiledComponents = components.map(c => {
       const componentPos = c.node.getStart();
       const preComponentStatements: string[] = [];
@@ -260,7 +264,7 @@ export class ComponentCompiler {
       const compiled = this.compileComponent(c.node, c.metadata, sourceCode, topLevelVars, filePath);
       return {
         ...compiled,
-        code: `${importsCode}\n\n${preComponentStatements.join('\n')}\n\n${compiled.code}\n\n${postComponentStatements.join('\n')}`,
+        code: `${pipeImport}\n${importsCode}\n\n${preComponentStatements.join('\n')}\n\n${compiled.code}\n\n${postComponentStatements.join('\n')}`,
       };
     });
 
@@ -335,7 +339,8 @@ export class ComponentCompiler {
           metadata[prop.name.text] = prop.initializer.getText().slice(1, -1);
         } else if (ts.isArrayLiteralExpression(prop.initializer)) {
           metadata[prop.name.text] = prop.initializer.elements
-            .filter(ts.isStringLiteral)
+            .filter((el): el is ts.StringLiteral | ts.NoSubstitutionTemplateLiteral =>
+              ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el))
             .map(el => el.text);
         }
       }
@@ -608,7 +613,14 @@ export class ComponentCompiler {
     const allProps = [...reactiveProps, ...nonReactiveProps].sort((a, b) => a.sourceIndex - b.sourceIndex);
     const propertyInits = allProps.map(p => `(this as any).${p.name} = ${p.init};`).join('\n');
     const outputInits = outputs.map(o =>
-      `(this as any).${o} = { emit: (data: any) => this.element.dispatchEvent(new CustomEvent('${o}', { detail: data, bubbles: true })) };`,
+      `(this as any).${o} = { 
+        emit: (data: any) => this.element.dispatchEvent(new CustomEvent('${o}', { detail: data, bubbles: true })),
+        subscribe: (fn: (data: any) => void) => {
+          const handler = (e: any) => fn(e.detail);
+          this.element.addEventListener('${o}', handler);
+          return { unsubscribe: () => this.element.removeEventListener('${o}', handler) };
+        }
+      };`,
     ).join('\n');
 
     const generateBindings = (bindings: Binding[], localVars: Set<string>, rootContainer: string): string[] => {
@@ -629,11 +641,11 @@ export class ComponentCompiler {
             const target = b.target!.includes('.')
               ? `['${b.target!.split('.').join("']['")}']`
               : `['${b.target}']`;
-            return `createEffect(() => { const el = ${targetNode}; if (el) (el as any)${target} = ${prefExpr}; });`;
+            return `createEffect(() => { const el = ${targetNode}; if (el) { const __t = (el as any).acRuntimeInstance || el; (__t as any)${target} = ${prefExpr}; } });`;
           }
 
           case 'attribute':
-            return `createEffect(() => { const el = ${targetNode}; if (el) { const v = ${prefExpr}; if (v != null && v !== false) { el.setAttribute('${b.target}', String(v)); } else { el.removeAttribute('${b.target}'); } } });`;
+            return `createEffect(() => { const el = ${targetNode}; if (el) { const v = ${prefExpr}; if (v != null && v !== false) { el.setAttribute('${b.target}', String(v)); const __t = (el as any).acRuntimeInstance; if (__t) { const camelKey = '${b.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase()); __t[camelKey] = v; } } else { el.removeAttribute('${b.target}'); } } });`;
 
           case 'event':
             return `${targetNode}?.addEventListener('${b.target}', ($event: any) => { ${prefExpr} });`;
@@ -666,9 +678,11 @@ export class ComponentCompiler {
                             const container = document.createElement('div');
                             container.innerHTML = ${JSON.stringify(b.template)};
                             currentNodes = Array.from(container.childNodes);
-                            let lastInserted: any = placeholder;
-                            currentNodes.forEach((node: any) => { lastInserted.parentNode?.insertBefore(node, lastInserted.nextSibling); lastInserted = node; }); 
-                            const __parentNode = placeholder.parentNode;
+                            if (placeholder && placeholder.parentNode) {
+                              let lastInserted: any = placeholder;
+                              currentNodes.forEach((node: any) => { lastInserted.parentNode?.insertBefore(node, lastInserted.nextSibling); lastInserted = node; }); 
+                            }
+                            const __parentNode = placeholder?.parentNode || ${rootContainer};
                             ${generateBindings(b.childBindings || [], nextLocals, '__parentNode').join('\n')}
                         } 
                     } else { 
@@ -682,6 +696,7 @@ export class ComponentCompiler {
           case 'for': {
             const nextLocals = new Set(localVars);
             nextLocals.add(b.itemVar!);
+            nextLocals.add('index');
             return `(function(this: any) { 
                 let currentMap = new Map<any, any[]>(); 
                 const placeholder = findComment(${rootContainer}, '${b.targetId}');
@@ -702,13 +717,32 @@ export class ComponentCompiler {
                     }); 
                     currentMap.forEach(nodes => nodes.forEach(n => n.remove())); 
                     currentMap = newMap; 
-                    let lastNode: any = placeholder; 
-                    list.forEach(item => { 
-                        const nodes = newMap.get(item)!; 
-                        nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; }); 
-                    }); 
+                    if (placeholder && placeholder.parentNode) {
+                        let lastNode: any = placeholder; 
+                        list.forEach(item => { 
+                            const nodes = newMap.get(item)!; 
+                            nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; }); 
+                        }); 
+                    }
                 }); 
             }).call(this);`;
+          }
+
+          case 'template-outlet': {
+            const prefixed = this.prefixIdentifiers(b.expression, localVars, topLevelVars);
+            const contextExpr = b.contextExpression ? this.prefixIdentifiers(b.contextExpression, localVars, topLevelVars) : 'null';
+            return `createEffect(() => {
+              const __outlet = ${rootContainer}.querySelector('[ac-ref="${b.targetId}"]');
+              const __tmpl: any = ${prefixed};
+              const __ctx: any = ${contextExpr};
+              if (__outlet && __tmpl && __tmpl.innerHTML !== undefined) {
+                if ((__outlet as any).__lastTmplSrc !== __tmpl.innerHTML) {
+                  (__outlet as any).__lastTmplSrc = __tmpl.innerHTML;
+                  __outlet.innerHTML = __tmpl.innerHTML;
+                  if (__ctx) (__outlet as any).__acContext = __ctx;
+                }
+              }
+            });`;
           }
 
           default:
@@ -717,15 +751,27 @@ export class ComponentCompiler {
       });
     };
 
+    const definedProps = new Set<string>();
     const viewChildAssignments = viewChildren.map(vc => {
+      definedProps.add(vc.propName);
       // htmlparser2 lowercases attributes, so do case-insensitive lookup
       const selectorLower = vc.selector.toLowerCase();
       const internalId = templateResult.idMap[selectorLower] || templateResult.idMap[vc.selector];
       if (internalId) {
-        return `Object.defineProperty(this, '${vc.propName}', { get: () => this.element.querySelector('[ac-ref="${internalId}"]'), configurable: true });`;
+        return `Object.defineProperty(this, '${vc.propName}', { get: () => { const el = this.element.querySelector('[ac-ref="${internalId}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`;
       }
       return `console.warn('@AcViewChild: Could not find template ref #${vc.selector}');`;
-    }).join('\n');
+    });
+
+    // Automatically add getters for all other #refs in the template
+    for (const [refName, id] of Object.entries(templateResult.idMap)) {
+      if (!definedProps.has(refName)) {
+        viewChildAssignments.push(`Object.defineProperty(this, '${refName}', { get: () => { const el = this.element.querySelector('[ac-ref="${id}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`);
+        definedProps.add(refName);
+      }
+    }
+
+    const viewChildAssignmentsCode = viewChildAssignments.join('\n');
 
     const hasStyles = styles.length > 0;
     let scopedStyles = '';
@@ -742,13 +788,28 @@ export class ComponentCompiler {
 export const ${className} = (function() {
   let activeEffect: (() => void) | null = null;
   const effectStack: (() => void)[] = [];
-  function createSignal<T>(value: T): [() => T, (newValue: T) => void] {
+  const __allEffects: Set<{ fn: () => void; deps: Set<Set<() => void>> }> = new Set();
+
+  /** Resolve and apply an ac-pipe transform: value | pipeName:arg1:arg2 */
+  function __acPipe(value: any, pipeName: string, ...args: any[]): any {
+    try {
+      return (acPipeRegistry as any).getPipe({ name: pipeName }).transform(value, ...args);
+    } catch {
+      console.warn('[AC Runtime] Unknown pipe:', pipeName);
+      return value;
+    }
+  }
+
+  function createSignal<T>(value: T): [() => T, (newValue: T) => void, () => void] {
     const subscribers = new Set<() => void>();
     return [
       () => { if (activeEffect) subscribers.add(activeEffect); return value; },
-      (newValue: T) => { if (value === newValue) return; value = newValue; for (const sub of subscribers) sub(); }
+      (newValue: T) => { if (value === newValue) return; value = newValue; const subs = Array.from(subscribers); for (let i = 0; i < subs.length; i++) subs[i](); },
+      () => { subscribers.clear(); } // cleanup function
     ];
   }
+  const __signalCleanups: (() => void)[] = [];
+
   function createEffect(fn: () => void) {
     const effect = () => {
       const prev = activeEffect;
@@ -758,6 +819,12 @@ export const ${className} = (function() {
     };
     effect();
   }
+
+  function __destroyAllEffects() {
+    __signalCleanups.length = 0;
+    __allEffects.clear();
+  }
+
   function findComment(root: any, text: string): Comment | null {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_COMMENT);
     while (walker.nextNode()) {
@@ -779,20 +846,33 @@ export const ${className} = (function() {
       ${outputInits}
       
       // Map reactive properties to internal signals for bindings
-      ${reactiveProps.map(p => `
-      const [${p.name}Sig, set${p.name}Sig] = createSignal((this as any).${p.name});
+      ${reactiveProps.map(p => {
+        const isInput = inputs.includes(p.name);
+        const signalSetterBody = isInput
+          ? `(v: any) => { const old = ${p.name}Sig(); set${p.name}Sig(v); if ((this as any).acOnChange && old !== v) (this as any).acOnChange({ key: '${p.name}', oldValue: old, newValue: v, firstChange: false }); }`
+          : `(v: any) => set${p.name}Sig(v)`;
+        return `
+      const [${p.name}Sig, set${p.name}Sig, cleanup${p.name}Sig] = createSignal((this as any).${p.name});
+      __signalCleanups.push(cleanup${p.name}Sig);
       Object.defineProperty(this, '${p.name}', {
         get: () => ${p.name}Sig(),
-        set: (v) => set${p.name}Sig(v),
+        set: ${signalSetterBody},
         configurable: true
-      });`).join('')}
+      });`;
+      }).join('')}
     }
 
     render() {
       const self = this;
       this.element.innerHTML = ${JSON.stringify(templateResult.html)};
-      ${viewChildAssignments}
+      ${viewChildAssignmentsCode}
       ${generateBindings(templateResult.bindings, new Set(), 'this.element').join('\n')}
+    }
+
+    __destroy() {
+      // Clean up all signal subscribers
+      for (let i = 0; i < __signalCleanups.length; i++) __signalCleanups[i]();
+      __destroyAllEffects();
     }
 
     ${membersCode.join('\n\n')}
@@ -807,10 +887,11 @@ export const ${className} = (function() {
       this.acRuntimeInstance.element = this;
     }
 
-    static get observedAttributes() { return ${JSON.stringify(inputs)}; }
-    attributeChangedCallback(name: string, old: string, val: string) { if (old !== val) (this.acRuntimeInstance as any)[name] = val; }
+    static get observedAttributes() { return ${JSON.stringify(inputs.map(i => i.replace(/([A-Z])/g, '-$1').toLowerCase()))}; }
+    attributeChangedCallback(name: string, old: string, val: string) { if (old !== val) { const camelKey = name.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase()); (this.acRuntimeInstance as any)[camelKey] = val; } }
     connectedCallback() {
       this.style.display = 'contents';
+      const __lightNodes = Array.from(this.childNodes);
       ${hasStyles ? `
       __styleRefCount++;
       if (!__styleElement) {
@@ -820,6 +901,10 @@ export const ${className} = (function() {
         document.head.appendChild(__styleElement);
       }` : ''}
       this.acRuntimeInstance.render();
+      const __slot = this.querySelector('slot');
+      if (__slot) {
+        __slot.replaceWith(...__lightNodes);
+      }
       if ((this.acRuntimeInstance as any).acOnInit) (this.acRuntimeInstance as any).acOnInit();
     }
     disconnectedCallback() {
@@ -831,6 +916,7 @@ export const ${className} = (function() {
         __styleRefCount = 0;
       }` : ''}
       if ((this.acRuntimeInstance as any).acOnDestroy) (this.acRuntimeInstance as any).acOnDestroy();
+      (this.acRuntimeInstance as any).__destroy();
     }
   }
 

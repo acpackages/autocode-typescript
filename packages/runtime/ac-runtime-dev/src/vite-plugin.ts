@@ -79,8 +79,16 @@ export function acRuntimePlugin(): Plugin {
         if (normalizedAbs.startsWith(normalizedRoot)) {
             return path.join(projectRoot, '.ac-runtime-cache', path.relative(projectRoot, absolutePath));
         }
-        const relToTests = path.relative(path.resolve(projectRoot, '..'), absolutePath);
-        return path.join(projectRoot, '.ac-runtime-cache', 'up', relToTests);
+        
+        // Handle files outside project root (e.g. workspace packages)
+        // Map them to .ac-runtime-cache/packages/... for consistency
+        if (normalizedAbs.includes('/packages/')) {
+            const parts = normalizedAbs.split('/packages/');
+            return path.join(projectRoot, '.ac-runtime-cache', 'packages', parts[parts.length - 1]);
+        }
+        
+        const safePath = normalizedAbs.replace(/[:\/]/g, '_');
+        return path.join(projectRoot, '.ac-runtime-cache', 'ext', safePath);
     };
 
     /**
@@ -114,8 +122,11 @@ export function acRuntimePlugin(): Plugin {
         const resolvedPath = resolveTypescriptFile(absolutePath);
         const normalizedResolved = normalizePath(resolvedPath);
 
-        // Include project-local files, exclude external workspace packages
-        if (normalizedResolved.endsWith('.ts') && normalizedResolved.startsWith(normalizedRoot) && fs.existsSync(resolvedPath)) {
+        // Include project-local files and external workspace packages
+        const isInternal = normalizedResolved.startsWith(normalizedRoot);
+        const isPackage = normalizedResolved.includes('/packages/');
+
+        if (normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
             const targetCachePath = getCachePath(resolvedPath);
 
             // Only rewrite if the cache file was actually created (compilation succeeded)
@@ -147,7 +158,26 @@ export function acRuntimePlugin(): Plugin {
 
             const results = compiler.compile(code, id, resolveImport);
 
-            if (results.length === 0) return null;
+            if (results.length === 0) {
+            // Non-component file (constants, types, barrel re-exports, etc.).
+            // Still write to cache with rewritten relative imports so that
+            // component files that import from this file can find it in the cache.
+            if (isForCache) {
+                const rewritten = code
+                    .replace(/\bfrom\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
+                        const resolved = resolveImport(importPath, id);
+                        return `from ${q}${resolved}${q}`;
+                    })
+                    .replace(/\bimport\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
+                        const resolved = resolveImport(importPath, id);
+                        return `import ${q}${resolved}${q}`;
+                    });
+                const dir = path.dirname(cachePath);
+                fs.mkdirSync(dir, { recursive: true });
+                fs.writeFileSync(cachePath, rewritten);
+            }
+            return null;
+        }
 
             let compiledCode = results[0].code;
 
@@ -209,7 +239,9 @@ export function acRuntimePlugin(): Plugin {
             if (absolutePath) {
                 absolutePath = resolveTypescriptFile(absolutePath);
                 const normalizedAbs = normalizePath(absolutePath);
-                if (fs.existsSync(absolutePath) && normalizedAbs.endsWith('.ts') && normalizedAbs.startsWith(normalizedRoot)) {
+                const isInternal = normalizedAbs.startsWith(normalizedRoot);
+                const isPackage = normalizedAbs.includes('/packages/');
+                if (fs.existsSync(absolutePath) && normalizedAbs.endsWith('.ts') && (isInternal || isPackage)) {
                     await compileRecursive(absolutePath);
                 }
             }
@@ -244,7 +276,9 @@ export function acRuntimePlugin(): Plugin {
                         await findFiles(fullPath);
                     } else if (globRegex.test(relPath)) {
                         const normalizedFull = normalizePath(fullPath);
-                        if (normalizedFull.endsWith('.ts') && normalizedFull.startsWith(normalizedRoot)) {
+                        const isInternal = normalizedFull.startsWith(normalizedRoot);
+                        const isPackage = normalizedFull.includes('/packages/');
+                        if (normalizedFull.endsWith('.ts') && (isInternal || isPackage)) {
                             await compileRecursive(fullPath);
                         }
                     }
@@ -268,8 +302,9 @@ export function acRuntimePlugin(): Plugin {
             if (appConfig?.main) {
                 const entryFile = path.resolve(projectRoot, appConfig.main);
                 const cachePath = getCachePath(entryFile);
-                const relativeToRoot = path.relative(projectRoot, cachePath).replace(/\\/g, '/');
-                return html.replace('/src/main.ts', '/' + relativeToRoot);
+                const relativeToRoot = '/' + path.relative(projectRoot, cachePath).replace(/\\/g, '/');
+                // Replace any variant of src/main.ts with the cached version
+                return html.replace(/src=(['"])(\.?\/)?src\/main\.ts\1/g, `src=$1${relativeToRoot}$1`);
             }
             return html;
         },

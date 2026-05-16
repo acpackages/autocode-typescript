@@ -47,7 +47,7 @@ export interface Binding {
    * - `'if'` — Conditional DOM insertion/removal
    * - `'for'` — Repeated DOM rendering for each list item
    */
-  type: 'text' | 'property' | 'event' | 'if' | 'for' | 'class' | 'model' | 'style' | 'attribute';
+  type: 'text' | 'property' | 'event' | 'if' | 'for' | 'class' | 'model' | 'style' | 'attribute' | 'template-outlet';
 
   /** The raw expression string from the template (e.g., `'count > 5'`). */
   expression: string;
@@ -66,6 +66,9 @@ export interface Binding {
 
   /** For `ac:for`: the loop iteration variable name (e.g., `'item'`). */
   itemVar?: string;
+
+  /** For `ac:template:outlet`: optional context expression (e.g. `{ item: x }`). */
+  contextExpression?: string;
 
   /** Root element IDs (reserved for future multi-root support). */
   rootIds: string[];
@@ -96,6 +99,60 @@ const VOID_ELEMENTS = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
   'link', 'meta', 'param', 'source', 'track', 'wbr',
 ]);
+
+/**
+ * Split a template expression string on top-level pipe `|` characters,
+ * skipping `||` (logical OR), strings, and nested brackets.
+ */
+function splitTopLevelPipes(expr: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  let depth = 0;
+  let inString = false;
+  let quoteChar = '';
+  for (let i = 0; i < expr.length; i++) {
+    const c = expr[i];
+    if (inString) {
+      current += c;
+      if (c === quoteChar && expr[i - 1] !== '\\') inString = false;
+      continue;
+    }
+    if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; current += c; continue; }
+    if ('([{'.includes(c)) depth++;
+    if (')]}'.includes(c)) depth--;
+    if (c === '|' && depth === 0) {
+      const nextIsOr = expr[i + 1] === '|';
+      const prevIsOr = i > 0 && expr[i - 1] === '|';
+      if (nextIsOr || prevIsOr) { current += c; continue; }
+      parts.push(current.trim());
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+/**
+ * Transform a template interpolation inner expression into an `__acPipe()` call chain.
+ * `amount | currency` → `__acPipe(amount, 'currency')`
+ * `amount | currency:'INR'` → `__acPipe(amount, 'currency', 'INR')`
+ * `amount | currency | number:2` → `__acPipe(__acPipe(amount, 'currency'), 'number', 2)`
+ */
+function transformPipeExpression(inner: string): string {
+  const parts = splitTopLevelPipes(inner.trim());
+  if (parts.length <= 1) return inner.trim();
+  let result = parts[0].trim();
+  for (let i = 1; i < parts.length; i++) {
+    const pipePart = parts[i].trim();
+    const colonIdx = pipePart.indexOf(':');
+    const pipeName = (colonIdx === -1 ? pipePart : pipePart.slice(0, colonIdx)).trim();
+    const argsStr = colonIdx === -1 ? '' : pipePart.slice(colonIdx + 1).trim();
+    result = `__acPipe(${result}, '${pipeName}'${argsStr ? ', ' + argsStr : ''})`;
+  }
+  return result;
+}
 
 /**
  * Parses AC Runtime HTML templates and extracts reactive binding descriptors.
@@ -132,8 +189,9 @@ export class TemplateCompiler {
     const idMap = new Map<string, string>();
 
     // Parse HTML into a DOM tree
+    // lowerCaseAttributeNames: false preserves camelCase binding names like [usePagination]
     const handler = new DomHandler();
-    const parser = new htmlparser2.Parser(handler);
+    const parser = new htmlparser2.Parser(handler, { lowerCaseAttributeNames: false });
     parser.write(template);
     parser.end();
 
@@ -183,7 +241,8 @@ export class TemplateCompiler {
 
     const id = `ac-${this.generateHexId()}`;
     // Convert "Hello {{name}}!" → "`Hello ${name}!`"
-    const expression = '`' + text.replace(/\{\{(.+?)\}\}/g, '${$1}') + '`';
+    // Convert "Hello {{val | currency}}!" → "`Hello ${__acPipe(val, 'currency')}!`"
+    const expression = '`' + text.replace(/\{\{(.+?)\}\}/g, (_, inner) => '${' + transformPipeExpression(inner) + '}') + '`';
 
     bindings.push({
       type: 'text',
@@ -264,6 +323,46 @@ export class TemplateCompiler {
       return `<!--${placeholderId}-->`;
     }
 
+    // Handle ac-template: a named template slot rendered as a hidden container.
+    // <ac-template #refName>...</ac-template> compiles to a hidden div whose
+    // children can be injected into an ac:template:outlet on a child component.
+    if (el.tagName === 'ac-template') {
+      const id = `ac-${this.generateHexId()}`;
+      for (const attrName of Object.keys(el.attribs)) {
+        if (attrName.startsWith('#')) {
+          const refName = attrName.slice(1);
+          idMap.set(refName, id);
+          idMap.set(refName.toLowerCase(), id);
+        }
+      }
+      const childrenHtml = this.processNodes(el.children, bindings, idMap);
+      return `<div data-ac-template ac-ref="${id}" style="display:none">${childrenHtml}</div>`;
+    }
+
+    // Handle ac:template:outlet before the isContainer check so it works on
+    // both <ac-container ac:template:outlet="..."> and regular elements.
+    // Always renders a real <div> as the outlet anchor since virtual containers
+    // (ac-container) produce no DOM node for querySelector to target.
+    const acTemplateOutlet = el.attribs['ac:template:outlet'];
+    if (acTemplateOutlet) {
+      const id = `ac-${this.generateHexId()}`;
+      let expression = acTemplateOutlet;
+      let contextExpression: string | undefined;
+
+      // Handle Angular-style syntax: "templateRef; context: { $implicit: item }"
+      if (acTemplateOutlet.includes(';')) {
+        const parts = acTemplateOutlet.split(';');
+        expression = parts[0].trim();
+        const contextPart = parts[1].trim();
+        if (contextPart.startsWith('context:')) {
+          contextExpression = contextPart.replace('context:', '').trim();
+        }
+      }
+
+      bindings.push({ type: 'template-outlet', expression, contextExpression, targetId: id, rootIds: [] });
+      return `<div ac-ref="${id}"></div>`;
+    }
+
     if (isContainer) {
       return this.processNodes(el.children, bindings, idMap);
     }
@@ -308,6 +407,11 @@ export class TemplateCompiler {
         delete el.attribs[name];
       } else if (name.startsWith('ac:bind:')) {
         bindings.push({ type: 'attribute', expression: value, target: name.slice(8), targetId: id, rootIds: [] });
+        hasBinding = true;
+        delete el.attribs[name];
+      } else if (name === 'ac:template:outlet') {
+        // Inject the referenced template element's content into this outlet container
+        bindings.push({ type: 'template-outlet', expression: value, targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
       } else if (name.startsWith('#')) {
