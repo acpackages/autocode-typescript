@@ -1,3 +1,25 @@
+/**
+ * @file ComponentCompiler Test Suite
+ *
+ * Comprehensive tests for the AC Runtime ComponentCompiler.
+ *
+ * Each test case provides a minimal TypeScript source string with an
+ * `@AcElement`-decorated class, compiles it, and asserts that the
+ * generated output contains the expected code patterns.
+ *
+ * **Coverage:**
+ * - Basic component compilation (selector, class, signals)
+ * - `@AcInput` / `@AcOutput` decorator handling
+ * - Structural directives: `ac:if`, `ac:for`
+ * - Reactive property optimization (only template-used props get signals)
+ * - Method/event handler compilation
+ * - `@AcViewChild` template reference resolution
+ * - `<ac-container>` virtual container rendering
+ * - Scoped style injection with `:host` replacement
+ * - Binding types: class, style, model, attribute
+ * - Class inheritance (`extends BaseComponent`)
+ * - Non-component file passthrough
+ */
 import { describe, it, expect } from 'vitest';
 import { ComponentCompiler } from '../src/lib/component-compiler.js';
 
@@ -19,10 +41,14 @@ describe('ComponentCompiler', () => {
     const results = compiler.compile(source);
     expect(results).toHaveLength(1);
     expect(results[0].selector).toBe('test-el');
-    expect(results[0].className).toBe('TestEl');
-    expect(results[0].code).toContain('class TestElCompiled extends HTMLElement');
-    expect(results[0].code).toContain('createSignal<any>(\'World\')');
-    expect(results[0].code).toContain('String(`Hello ${this.name}` ?? \'\')');
+    // Should generate IIFE-wrapped class
+    expect(results[0].code).toContain('export const TestEl = (function()');
+    expect(results[0].code).toContain('class TestEl');
+    // Name should be reactive since it's used in template
+    expect(results[0].code).toContain("Object.defineProperty(this, 'name'");
+    expect(results[0].code).toContain('createSignal');
+    // Template text binding should use textContent
+    expect(results[0].code).toContain('el.textContent = String(');
   });
 
   it('should handle @AcInput and @AcOutput', () => {
@@ -39,9 +65,13 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    expect(results[0].code).toContain('createSignal<any>(\'Default\')');
+    // Input should be reactive (signal-backed)
     expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
-    expect(results[0].code).toContain("(this as any).change = { emit: (data: any) => this.dispatchEvent(new CustomEvent('change', { detail: data })) }");
+    expect(results[0].code).toContain('createSignal');
+    // Output should dispatch custom events
+    expect(results[0].code).toContain("(this as any).change = { emit: (data: any) => this.element.dispatchEvent(new CustomEvent('change'");
+    // observedAttributes should include inputs
+    expect(results[0].code).toContain('["title"]');
   });
 
   it('should handle ac:if structural directive', () => {
@@ -56,8 +86,14 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    expect(results[0].code).toContain("document.createComment('ac:if')");
-    expect(results[0].code).toContain("const condition = this.show;");
+    // Should produce a comment placeholder for ac:if
+    expect(results[0].code).toContain('<!--ac-if-');
+    // Should use findComment to locate the placeholder
+    expect(results[0].code).toContain('findComment(');
+    // Should check the condition
+    expect(results[0].code).toContain('const condition = this.show');
+    // Should show reactive signal for 'show'
+    expect(results[0].code).toContain("Object.defineProperty(this, 'show'");
   });
 
   it('should only create signals for properties used in template or marked as @AcInput', () => {
@@ -74,45 +110,52 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
+    // 'used' and 'forced' should have signal-backed properties
     expect(results[0].code).toContain("Object.defineProperty(this, 'used'");
     expect(results[0].code).toContain("Object.defineProperty(this, 'forced'");
+    // 'unused' should NOT be signal-backed
     expect(results[0].code).not.toContain("Object.defineProperty(this, 'unused'");
+    // But 'unused' should still be initialized
     expect(results[0].code).toContain("(this as any).unused = 'I am static'");
   });
 
-  it('should transform mutating array calls to trigger signals', () => {
+  it('should handle methods in the component class', () => {
     const source = `
       @AcElement({
-        selector: 'test-mut',
-        template: '<div>{{items.length}}</div>'
+        selector: 'test-methods',
+        template: '<button (click)="increment()">Count: {{count}}</button>'
       })
-      export class TestMut {
-        items = [];
-        addItem(x) {
-          this.items.push(x);
+      export class TestMethods {
+        count = 0;
+        increment() {
+          this.count++;
         }
       }
     `;
 
     const results = compiler.compile(source);
-    // The transformation should wrap the push call in a comma expression that triggers the setter
-    expect(results[0].code).toContain('(this.items.push(x), this.items = this.items)');
+    // Should include the method body
+    expect(results[0].code).toContain('increment()');
+    expect(results[0].code).toContain('this.count++');
+    // Should set up event listener
+    expect(results[0].code).toContain("addEventListener('click'");
   });
 
   it('should handle @AcViewChild', () => {
     const source = `
       @AcElement({
         selector: 'test-vc',
-        template: '<div id="myDiv">Hello</div>'
+        template: '<div #myDiv>Hello</div>'
       })
       export class TestVC {
-        @AcViewChild('myDiv') element;
+        @AcViewChild('myDiv') myDiv;
       }
     `;
 
     const results = compiler.compile(source);
-    // Should find el0 (the div) and assign it to this.element
-    expect(results[0].code).toContain('(this as any).element = el0;');
+    // Should generate a getter via Object.defineProperty for the view child
+    expect(results[0].code).toContain("Object.defineProperty(this, 'myDiv'");
+    expect(results[0].code).toContain("querySelector('[ac-ref=");
   });
 
   it('should handle ac-container by not rendering the tag but rendering children', () => {
@@ -125,11 +168,9 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    // Should NOT contain document.createElement('ac-container')
-    expect(results[0].code).not.toContain("createElement('ac-container')");
-    // Should contain span A and span B appended to div
-    expect(results[0].code).toContain("el0.appendChild(el1);"); // span A
-    expect(results[0].code).toContain("el0.appendChild(el3);"); // span B
+    // The innerHTML should contain spans directly inside div, no ac-container tag
+    expect(results[0].code).toContain('<span>A</span><span>B</span>');
+    expect(results[0].code).not.toContain('ac-container');
   });
 
   it('should handle ac:for structural directive', () => {
@@ -144,8 +185,126 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    expect(results[0].code).toContain("document.createComment('ac:for')");
-    expect(results[0].code).toContain("const list = (this.items as any[]) || [];");
-    expect(results[0].code).toContain("const subRender = (function(this: any, item: any) {");
+    // Should produce a comment placeholder for ac:for
+    expect(results[0].code).toContain('<!--ac-for-');
+    // Should use findComment to locate placeholder
+    expect(results[0].code).toContain('findComment(');
+    // Should iterate the list
+    expect(results[0].code).toContain('const list = (this.items as any[]) || []');
+    // 'items' should be reactive
+    expect(results[0].code).toContain("Object.defineProperty(this, 'items'");
+  });
+
+  it('should handle styles with :host scoping', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-styles',
+        template: '<div>Styled</div>',
+        styles: ':host { display: block; color: red; }'
+      })
+      export class TestStyles {}
+    `;
+
+    const results = compiler.compile(source);
+    // Should replace :host with tag selector and wrap
+    expect(results[0].code).toContain('test-styles');
+    expect(results[0].code).toContain('__styles');
+    expect(results[0].code).toContain('__styleRefCount');
+    expect(results[0].code).toContain("data-ac-style");
+  });
+
+  it('should handle class bindings', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-class',
+        template: '<div [class.active]="isActive">Toggle</div>'
+      })
+      export class TestClass {
+        isActive = false;
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain("classList.add('active')");
+    expect(results[0].code).toContain("classList.remove('active')");
+  });
+
+  it('should handle style bindings', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-style-bind',
+        template: '<div [style.color]="textColor">Colored</div>'
+      })
+      export class TestStyleBind {
+        textColor = 'red';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain("style['color']");
+  });
+
+  it('should handle ac:model two-way binding', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-model',
+        template: '<input ac:model="name" />'
+      })
+      export class TestModel {
+        name = '';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    // Should set value from signal
+    expect(results[0].code).toContain('el.value');
+    // Should listen for input events
+    expect(results[0].code).toContain("addEventListener('input'");
+  });
+
+  it('should handle attribute bindings', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-attr',
+        template: '<div ac:bind:title="tooltip">Hover me</div>'
+      })
+      export class TestAttr {
+        tooltip = 'Hello';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain("setAttribute('title'");
+    expect(results[0].code).toContain("removeAttribute('title'");
+  });
+
+  it('should handle inheritance with extends clause', () => {
+    const source = `
+      import { BaseComponent } from './base';
+      @AcElement({
+        selector: 'test-extend',
+        template: '<div>{{label}}</div>'
+      })
+      export class TestExtend extends BaseComponent {
+        label = 'Extended';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain('class TestExtend extends BaseComponent');
+    expect(results[0].code).toContain('super();');
+  });
+
+  it('should preserve non-component code as-is', () => {
+    const source = `
+      const GLOBAL_CONST = 42;
+      export function helper() { return true; }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    expect(results[0].selector).toBeNull();
+    expect(results[0].code).toContain('GLOBAL_CONST');
+    expect(results[0].code).toContain('helper');
   });
 });

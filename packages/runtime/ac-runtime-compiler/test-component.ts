@@ -1,3 +1,16 @@
+/**
+ * @file Manual Test Component
+ *
+ * A sample component used for manual integration testing of the compiler.
+ * Run through the CLI or the dev server to verify end-to-end compilation:
+ *
+ * ```bash
+ * npx ts-node src/cli.ts test-component.ts
+ * ```
+ *
+ * Exercises: `@AcInput`, text interpolation, event bindings, style bindings,
+ * ternary expressions, and `ac:if` conditional rendering.
+ */
 import { AcElement, AcInput, AcOutput } from './decorators';
 
 @AcElement({
