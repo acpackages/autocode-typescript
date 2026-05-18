@@ -32,6 +32,51 @@ TypeScript Source (.ts)
   └─ Output: imports + IIFE + trailing code
 ```
 
+## Module Structure
+
+The compiler is organized into focused, single-responsibility modules:
+
+```
+src/
+├── index.ts                        ← Public API exports
+├── cli.ts                          ← CLI entry point
+└── lib/
+    ├── types.ts                    ← All shared interfaces
+    ├── constants.ts                ← GLOBAL_IDENTIFIERS, VOID_ELEMENTS
+    ├── pipes.ts                    ← Pipe expression parsing (|)
+    ├── expression-prefixer.ts      ← this. prefix rewriting via TS AST
+    ├── ast-helpers.ts              ← TypeScript AST utilities
+    ├── code-generator.ts           ← IIFE Web Component assembly
+    ├── template-compiler.ts        ← HTML template parsing → bindings
+    ├── component-compiler.ts       ← Main orchestrator
+    └── bindings/
+        ├── index.ts                ← Binding dispatcher
+        ├── text-binding.ts         ← {{expression}} interpolation
+        ├── property-binding.ts     ← [prop]="expr" binding
+        ├── event-binding.ts        ← (event)="handler" binding
+        ├── class-binding.ts        ← [class.name]="expr" toggle
+        ├── style-binding.ts        ← [style.prop]="expr" binding
+        ├── model-binding.ts        ← ac:model two-way binding
+        ├── attribute-binding.ts    ← ac:bind:attr="expr" binding
+        ├── if-binding.ts           ← ac:if conditional rendering
+        ├── for-binding.ts          ← ac:for list rendering
+        └── template-outlet-binding.ts ← Template injection
+```
+
+### Module Descriptions
+
+| Module | Purpose |
+|--------|---------|
+| `types.ts` | Central type definitions (`Binding`, `CompileResult`, `ReactiveProperty`, etc.) |
+| `constants.ts` | Global identifiers that skip `this.` prefixing; HTML void elements |
+| `pipes.ts` | Parses `{{ value \| currency:'INR' }}` into `__acPipe()` calls |
+| `expression-prefixer.ts` | Uses TypeScript AST transforms to rewrite `count` → `this.count` |
+| `ast-helpers.ts` | Extracts `@AcElement` metadata, collects identifiers, finds template-used props |
+| `code-generator.ts` | Assembles the complete IIFE (signals, inner class, HTMLElement wrapper) |
+| `template-compiler.ts` | Parses HTML templates into clean HTML + binding descriptors |
+| `component-compiler.ts` | Main orchestrator — delegates to all other modules |
+| `bindings/*` | One file per binding type — each generates the runtime `createEffect()` code |
+
 ## API
 
 ### `ComponentCompiler`
@@ -64,6 +109,21 @@ console.log(result.html);      // '<div>Hello <span ac-ref="ac-a1b2c3d4"></span>
 console.log(result.bindings);  // [{ type: 'text', expression: '`Hello ${name}`', ... }]
 console.log(result.idMap);     // { refName: 'ac-...' }
 ```
+
+## Template Syntax
+
+| Syntax | Type | Example |
+|--------|------|---------|
+| `{{expr}}` | Text interpolation | `<span>{{count}}</span>` |
+| `[prop]="expr"` | Property binding | `<div [items]="myArray">` |
+| `(event)="handler"` | Event binding | `<button (click)="onClick()">` |
+| `[class.name]="expr"` | Class toggle | `<div [class.active]="isActive">` |
+| `[style.prop]="expr"` | Style binding | `<div [style.color]="textColor">` |
+| `ac:model="expr"` | Two-way binding | `<input ac:model="name">` |
+| `ac:bind:attr="expr"` | Attribute binding | `<div ac:bind:title="tooltip">` |
+| `ac:if="expr"` | Conditional render | `<div ac:if="isVisible">` |
+| `ac:for="x of xs"` | List render | `<li ac:for="item of items">` |
+| `#refName` | Template reference | `<div #myDiv>` |
 
 ## Generated Code Structure
 

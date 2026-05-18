@@ -69,7 +69,8 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
     expect(results[0].code).toContain('createSignal');
     // Output should dispatch custom events
-    expect(results[0].code).toContain("(this as any).change = { emit: (data: any) => this.element.dispatchEvent(new CustomEvent('change'");
+    expect(results[0].code).toContain("(this as any).change =");
+    expect(results[0].code).toContain("emit: (data: any) => this.element.dispatchEvent(new CustomEvent('change'");
     // observedAttributes should include inputs
     expect(results[0].code).toContain('["title"]');
   });

@@ -4,173 +4,48 @@
  * Parses AC Runtime HTML templates and extracts reactive bindings.
  *
  * **Compilation pipeline:**
- * 1. Parse the HTML template string into a DOM tree using `htmlparser2`.
+ * 1. Parse the HTML template string into a DOM tree using `htmlparser2`
  * 2. Walk every node in the tree, identifying AC-specific syntax:
- *    - `{{expr}}` — Text interpolation → `type: 'text'`
- *    - `[prop]="expr"` — Property binding → `type: 'property'`
- *    - `(event)="expr"` — Event listener → `type: 'event'`
- *    - `[class.name]="expr"` / `ac:class:name` — Class toggle → `type: 'class'`
- *    - `[style.prop]="expr"` / `ac:style:prop` — Style binding → `type: 'style'`
- *    - `ac:model="expr"` — Two-way binding → `type: 'model'`
- *    - `ac:bind:attr="expr"` — Attribute binding → `type: 'attribute'`
- *    - `ac:if="expr"` — Conditional rendering → `type: 'if'`
- *    - `ac:for="item of list"` — List rendering → `type: 'for'`
- *    - `#refName` — Template ref for `@AcViewChild` → stored in `idMap`
- * 3. Replace dynamic attributes with stable `ac-ref` IDs.
- * 4. Return the sanitized HTML string + an array of {@link Binding} descriptors
- *    that the {@link ComponentCompiler} will transform into `createEffect()` calls.
+ *    - `{{expr}}`          → Text interpolation  → type: 'text'
+ *    - `[prop]="expr"`     → Property binding     → type: 'property'
+ *    - `(event)="expr"`    → Event listener       → type: 'event'
+ *    - `[class.name]`      → Class toggle         → type: 'class'
+ *    - `[style.prop]`      → Style binding        → type: 'style'
+ *    - `ac:model="expr"`   → Two-way binding      → type: 'model'
+ *    - `ac:bind:attr`      → Attribute binding    → type: 'attribute'
+ *    - `ac:if="expr"`      → Conditional render   → type: 'if'
+ *    - `ac:for="x of xs"`  → List render          → type: 'for'
+ *    - `#refName`          → Template ref         → stored in idMap
+ * 3. Replace dynamic attributes with stable `ac-ref` IDs
+ * 4. Return cleaned HTML + binding descriptors
  *
  * Structural directives (`ac:if`, `ac:for`) spawn sub-compilers to
- * recursively process their inner templates, producing nested
- * `childBindings` arrays.
+ * recursively process their inner templates.
  */
 import * as htmlparser2 from 'htmlparser2';
 import { DomHandler, Element, Node, Text, isTag } from 'domhandler';
 import { randomBytes } from 'node:crypto';
+import type { Binding, TemplateCompileResult } from './types.js';
+import { VOID_ELEMENTS } from './constants.js';
+import { transformPipeExpression } from './pipes.js';
 
-/**
- * Describes a single reactive binding extracted from the template.
- *
- * Each binding tells the {@link ComponentCompiler} what kind of runtime
- * effect to generate and which DOM element (`targetId`) to operate on.
- */
-export interface Binding {
-  /**
-   * The kind of binding. Determines what generated code is emitted:
-   * - `'text'` — `el.textContent = String(expr)`
-   * - `'property'` — `el[prop] = expr`
-   * - `'event'` — `el.addEventListener(event, handler)`
-   * - `'class'` — `el.classList.add/remove(name)`
-   * - `'style'` — `el.style[prop] = expr`
-   * - `'model'` — Two-way: sets value + listens for input
-   * - `'attribute'` — `el.setAttribute/removeAttribute(name, expr)`
-   * - `'if'` — Conditional DOM insertion/removal
-   * - `'for'` — Repeated DOM rendering for each list item
-   */
-  type: 'text' | 'property' | 'event' | 'if' | 'for' | 'class' | 'model' | 'style' | 'attribute' | 'template-outlet';
-
-  /** The raw expression string from the template (e.g., `'count > 5'`). */
-  expression: string;
-
-  /** The target name — event name, CSS property, class name, etc. */
-  target?: string;
-
-  /** The unique `ac-ref` ID assigned to the target DOM element. */
-  targetId: string;
-
-  /** For structural directives: the inner HTML template string. */
-  template?: string;
-
-  /** For structural directives: recursively extracted child bindings. */
-  childBindings?: Binding[];
-
-  /** For `ac:for`: the loop iteration variable name (e.g., `'item'`). */
-  itemVar?: string;
-
-  /** For `ac:template:outlet`: optional context expression (e.g. `{ item: x }`). */
-  contextExpression?: string;
-
-  /** Root element IDs (reserved for future multi-root support). */
-  rootIds: string[];
-}
-
-/**
- * The output of {@link TemplateCompiler.compile}.
- *
- * Contains everything the {@link ComponentCompiler} needs to generate
- * the component's `render()` method and reactive effects.
- */
-export interface TemplateCompileResult {
-  /** The processed HTML string with all dynamic attributes removed and `ac-ref` IDs injected. */
-  html: string;
-
-  /** Flat array of bindings extracted from the template (including nested structural ones). */
-  bindings: Binding[];
-
-  /**
-   * Maps template ref names (`#refName`) to their generated `ac-ref` IDs.
-   * Used by the component compiler to wire up `@AcViewChild` properties.
-   */
-  idMap: Record<string, string>;
-}
-
-/** Void elements that must not have closing tags */
-const VOID_ELEMENTS = new Set([
-  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
-  'link', 'meta', 'param', 'source', 'track', 'wbr',
-]);
-
-/**
- * Split a template expression string on top-level pipe `|` characters,
- * skipping `||` (logical OR), strings, and nested brackets.
- */
-function splitTopLevelPipes(expr: string): string[] {
-  const parts: string[] = [];
-  let current = '';
-  let depth = 0;
-  let inString = false;
-  let quoteChar = '';
-  for (let i = 0; i < expr.length; i++) {
-    const c = expr[i];
-    if (inString) {
-      current += c;
-      if (c === quoteChar && expr[i - 1] !== '\\') inString = false;
-      continue;
-    }
-    if (c === "'" || c === '"' || c === '`') { inString = true; quoteChar = c; current += c; continue; }
-    if ('([{'.includes(c)) depth++;
-    if (')]}'.includes(c)) depth--;
-    if (c === '|' && depth === 0) {
-      const nextIsOr = expr[i + 1] === '|';
-      const prevIsOr = i > 0 && expr[i - 1] === '|';
-      if (nextIsOr || prevIsOr) { current += c; continue; }
-      parts.push(current.trim());
-      current = '';
-    } else {
-      current += c;
-    }
-  }
-  if (current.trim()) parts.push(current.trim());
-  return parts;
-}
-
-/**
- * Transform a template interpolation inner expression into an `__acPipe()` call chain.
- * `amount | currency` → `__acPipe(amount, 'currency')`
- * `amount | currency:'INR'` → `__acPipe(amount, 'currency', 'INR')`
- * `amount | currency | number:2` → `__acPipe(__acPipe(amount, 'currency'), 'number', 2)`
- */
-function transformPipeExpression(inner: string): string {
-  const parts = splitTopLevelPipes(inner.trim());
-  if (parts.length <= 1) return inner.trim();
-  let result = parts[0].trim();
-  for (let i = 1; i < parts.length; i++) {
-    const pipePart = parts[i].trim();
-    const colonIdx = pipePart.indexOf(':');
-    const pipeName = (colonIdx === -1 ? pipePart : pipePart.slice(0, colonIdx)).trim();
-    const argsStr = colonIdx === -1 ? '' : pipePart.slice(colonIdx + 1).trim();
-    result = `__acPipe(${result}, '${pipeName}'${argsStr ? ', ' + argsStr : ''})`;
-  }
-  return result;
-}
+// Re-export types so existing consumers don't break
+export type { Binding, TemplateCompileResult };
 
 /**
  * Parses AC Runtime HTML templates and extracts reactive binding descriptors.
  *
  * This compiler is **stateless per invocation** — all mutable state is kept
  * local to the `compile()` call, making it safe to reuse a single instance
- * across multiple compilations (including concurrent ones).
- *
- * Structural directives (`ac:if`, `ac:for`) create new `TemplateCompiler`
- * instances internally to recursively process their inner templates.
+ * across multiple compilations.
  */
 export class TemplateCompiler {
-  /** Monotonic counter for ID uniqueness (not currently used — hex IDs used instead). */
+  /** Counter for ID uniqueness (not currently used — hex IDs used instead). */
   private idCounter = 0;
 
   /**
-   * Generate a unique 8-character hex identifier for `ac-ref` attributes.
-   * Uses `node:crypto.randomBytes` for Node.js compatibility.
+   * Generate a unique 8-character hex ID for `ac-ref` attributes.
+   * Uses `crypto.randomBytes` for guaranteed uniqueness.
    */
   private generateHexId(): string {
     return randomBytes(4).toString('hex');
@@ -179,9 +54,8 @@ export class TemplateCompiler {
   /**
    * Parse an HTML template string and extract all reactive bindings.
    *
-   * @param template - Raw HTML string with AC template syntax.
-   * @returns A {@link TemplateCompileResult} containing the cleaned HTML,
-   *          binding descriptors, and template ref → ID mappings.
+   * @param template - Raw HTML string with AC template syntax
+   * @returns Cleaned HTML, binding descriptors, and ref→ID mappings
    */
   compile(template: string): TemplateCompileResult {
     // Local state per compilation — makes the compiler reentrant
@@ -189,13 +63,13 @@ export class TemplateCompiler {
     const idMap = new Map<string, string>();
 
     // Parse HTML into a DOM tree
-    // lowerCaseAttributeNames: false preserves camelCase binding names like [usePagination]
+    // lowerCaseAttributeNames: false preserves camelCase like [usePagination]
     const handler = new DomHandler();
     const parser = new htmlparser2.Parser(handler, { lowerCaseAttributeNames: false });
     parser.write(template);
     parser.end();
 
-    // Recursively walk the DOM tree, extracting bindings and rewriting HTML
+    // Walk the tree, extracting bindings and producing clean HTML
     const processedHtml = this.processNodes(handler.dom, bindings, idMap);
 
     return {
@@ -226,23 +100,26 @@ export class TemplateCompiler {
   }
 
   /**
-   * Process a text node. If it contains `{{...}}` interpolation markers,
-   * convert them to a template literal expression, create a text binding,
-   * and replace the raw text with a `<span ac-ref="...">` placeholder
-   * that the runtime will target via `el.textContent = String(expr)`.
+   * Process a text node containing `{{...}}` interpolation markers.
+   *
+   * Converts `Hello {{name}}!` into a `<span ac-ref="..."></span>` placeholder
+   * and creates a text binding that the runtime will use to update the content.
    *
    * Plain text nodes (no `{{`) are returned unchanged.
    */
   private processTextNode(node: Text, bindings: Binding[]): string {
     const text = node.data;
-    if (!text.includes('{{')) {
-      return text;
-    }
+    // No interpolation markers → return as-is
+    if (!text.includes('{{')) return text;
 
     const id = `ac-${this.generateHexId()}`;
+
     // Convert "Hello {{name}}!" → "`Hello ${name}!`"
-    // Convert "Hello {{val | currency}}!" → "`Hello ${__acPipe(val, 'currency')}!`"
-    const expression = '`' + text.replace(/\{\{(.+?)\}\}/g, (_, inner) => '${' + transformPipeExpression(inner) + '}') + '`';
+    // Also transform pipe expressions: "{{val | currency}}" → "`${__acPipe(val, 'currency')}`"
+    const expression = '`' + text.replace(
+      /\{\{(.+?)\}\}/g,
+      (_, inner) => '${' + transformPipeExpression(inner) + '}',
+    ) + '`';
 
     bindings.push({
       type: 'text',
@@ -251,127 +128,266 @@ export class TemplateCompiler {
       rootIds: [],
     });
 
+    // Return a span placeholder that the runtime will find and update
     return `<span ac-ref="${id}"></span>`;
   }
 
   /**
-   * Process an element node. Handles:
-   * - `ac:for` — Loop directive → extracts iteration var, compiles sub-template
-   * - `ac:if` — Conditional directive → compiles sub-template
-   * - `<ac-container>` — Virtual container → renders children only (no wrapper tag)
-   * - Attribute bindings: `[prop]`, `(event)`, `ac:class:`, `ac:style:`, `ac:model`, `ac:bind:`, `#ref`
+   * Process an element node. This is the main workhorse that handles:
    *
-   * For elements with bindings, injects an `ac-ref` attribute for runtime querySelector targeting.
+   * **Structural directives** (processed first, replace entire element):
+   * - `ac:for` → Loop rendering
+   * - `ac:if`  → Conditional rendering
+   *
+   * **Special elements:**
+   * - `<ac-template>` → Named template slot
+   * - `<ac-container>` → Virtual container (renders children only, no wrapper tag)
+   * - `ac:template:outlet` → Template content injection
+   *
+   * **Attribute bindings** (processed on regular elements):
+   * - `[prop]` → Property binding
+   * - `(event)` → Event binding
+   * - `ac:class:name` → Class toggle
+   * - `ac:style:prop` → Style binding
+   * - `ac:model` → Two-way binding
+   * - `ac:bind:attr` → Attribute binding
+   * - `#ref` → Template reference
    */
   private processElementNode(el: Element, bindings: Binding[], idMap: Map<string, string>): string {
     const isContainer = el.tagName === 'ac-container';
 
-    // Handle ac:for
+    // ═══════════════════════════════════════════════════════════════════
+    // STRUCTURAL DIRECTIVE: ac:for
+    // ═══════════════════════════════════════════════════════════════════
     const acFor = el.attribs['ac:for'];
     if (acFor) {
-      delete el.attribs['ac:for'];
-      const [itemPart, listExprRaw] = acFor.split(' of ').map(s => s.trim());
-      const itemVar = itemPart.replace(/^(let|const|var)\s+/, '');
-
-      // Strip trailing "; let index=index" or similar index declarations
-      const listExpr = listExprRaw.split(';')[0].trim();
-
-      const placeholderId = `ac-for-${this.generateHexId()}`;
-
-      const subCompiler = new TemplateCompiler();
-      const subResult = subCompiler.compile(
-        isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el),
-      );
-      // Propagate idMap from sub-compiler so @AcViewChild can find refs inside for blocks
-      for (const [key, val] of Object.entries(subResult.idMap)) {
-        idMap.set(key, val);
-      }
-
-      bindings.push({
-        type: 'for',
-        expression: listExpr,
-        itemVar,
-        targetId: placeholderId,
-        template: subResult.html,
-        childBindings: subResult.bindings,
-        rootIds: [],
-      });
-      return `<!--${placeholderId}-->`;
+      return this.processForDirective(el, acFor, bindings, idMap, isContainer);
     }
 
-    // Handle ac:if
+    // ═══════════════════════════════════════════════════════════════════
+    // STRUCTURAL DIRECTIVE: ac:if
+    // ═══════════════════════════════════════════════════════════════════
     const acIf = el.attribs['ac:if'];
     if (acIf) {
-      delete el.attribs['ac:if'];
-      const placeholderId = `ac-if-${this.generateHexId()}`;
-      const subCompiler = new TemplateCompiler();
-      const subResult = subCompiler.compile(
-        isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el),
-      );
-      // Propagate idMap from sub-compiler so @AcViewChild can find refs inside if blocks
-      for (const [key, val] of Object.entries(subResult.idMap)) {
-        idMap.set(key, val);
-      }
-      bindings.push({
-        type: 'if',
-        expression: acIf,
-        targetId: placeholderId,
-        template: subResult.html,
-        childBindings: subResult.bindings,
-        rootIds: [],
-      });
-      return `<!--${placeholderId}-->`;
+      return this.processIfDirective(el, acIf, bindings, idMap, isContainer);
     }
 
-    // Handle ac-template: a named template slot rendered as a hidden container.
-    // <ac-template #refName>...</ac-template> compiles to a hidden div whose
-    // children can be injected into an ac:template:outlet on a child component.
+    // ═══════════════════════════════════════════════════════════════════
+    // SPECIAL ELEMENT: <ac-template>
+    // ═══════════════════════════════════════════════════════════════════
     if (el.tagName === 'ac-template') {
-      const id = `ac-${this.generateHexId()}`;
-      for (const attrName of Object.keys(el.attribs)) {
-        if (attrName.startsWith('#')) {
-          const refName = attrName.slice(1);
-          idMap.set(refName, id);
-          idMap.set(refName.toLowerCase(), id);
-        }
-      }
-      const childrenHtml = this.processNodes(el.children, bindings, idMap);
-      return `<div data-ac-template ac-ref="${id}" style="display:none">${childrenHtml}</div>`;
+      return this.processTemplateElement(el, bindings, idMap);
     }
 
-    // Handle ac:template:outlet before the isContainer check so it works on
-    // both <ac-container ac:template:outlet="..."> and regular elements.
-    // Always renders a real <div> as the outlet anchor since virtual containers
-    // (ac-container) produce no DOM node for querySelector to target.
+    // ═══════════════════════════════════════════════════════════════════
+    // SPECIAL DIRECTIVE: ac:template:outlet (before container check)
+    // ═══════════════════════════════════════════════════════════════════
     const acTemplateOutlet = el.attribs['ac:template:outlet'];
     if (acTemplateOutlet) {
-      const id = `ac-${this.generateHexId()}`;
-      let expression = acTemplateOutlet;
-      let contextExpression: string | undefined;
-
-      // Handle Angular-style syntax: "templateRef; context: { $implicit: item }"
-      if (acTemplateOutlet.includes(';')) {
-        const parts = acTemplateOutlet.split(';');
-        expression = parts[0].trim();
-        const contextPart = parts[1].trim();
-        if (contextPart.startsWith('context:')) {
-          contextExpression = contextPart.replace('context:', '').trim();
-        }
-      }
-
-      bindings.push({ type: 'template-outlet', expression, contextExpression, targetId: id, rootIds: [] });
-      return `<div ac-ref="${id}"></div>`;
+      return this.processTemplateOutlet(el, acTemplateOutlet, bindings);
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // VIRTUAL CONTAINER: <ac-container> (renders children only)
+    // ═══════════════════════════════════════════════════════════════════
     if (isContainer) {
       return this.processNodes(el.children, bindings, idMap);
     }
 
+    // ═══════════════════════════════════════════════════════════════════
+    // REGULAR ELEMENT: Process attribute bindings
+    // ═══════════════════════════════════════════════════════════════════
+    return this.processRegularElement(el, bindings, idMap);
+  }
+
+  // ─── Structural Directive Handlers ─────────────────────────────────────────
+
+  /**
+   * Process `ac:for="item of items"` directive.
+   *
+   * Parses the for expression, creates a sub-compiler for the inner template,
+   * and returns a comment placeholder for runtime insertion.
+   */
+  private processForDirective(
+    el: Element,
+    acFor: string,
+    bindings: Binding[],
+    idMap: Map<string, string>,
+    isContainer: boolean,
+  ): string {
+    delete el.attribs['ac:for'];
+
+    // Parse "item of items" or "let item of items; let i = index"
+    const [itemPart, rest] = acFor.split(' of ').map(s => s.trim());
+    const itemVar = itemPart.replace(/^(let|const|var)\s+/, '');
+
+    let listExpr = rest;
+    let indexVar: string | undefined;
+
+    // Handle optional index: "items; let i = index"
+    if (rest.includes(';')) {
+      const parts = rest.split(';').map(s => s.trim());
+      listExpr = parts[0];
+      for (let i = 1; i < parts.length; i++) {
+        const part = parts[i];
+        if (part.includes('=')) {
+          const [v, alias] = part.split('=').map(s => s.trim());
+          if (alias === 'index') {
+            indexVar = v.replace(/^(let|const|var)\s+/, '');
+          }
+        }
+      }
+    }
+
+    const placeholderId = `ac-for-${this.generateHexId()}`;
+
+    // Recursively compile the inner template
+    const subCompiler = new TemplateCompiler();
+    const subResult = subCompiler.compile(
+      isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el),
+    );
+
+    // Propagate idMap so @AcViewChild can find refs inside for blocks
+    for (const [key, val] of Object.entries(subResult.idMap)) {
+      idMap.set(key, val);
+    }
+
+    bindings.push({
+      type: 'for',
+      expression: listExpr,
+      itemVar,
+      indexVar,
+      targetId: placeholderId,
+      template: subResult.html,
+      childBindings: subResult.bindings,
+      rootIds: [],
+    });
+
+    // Return a comment node as the insertion point
+    return `<!--${placeholderId}-->`;
+  }
+
+  /**
+   * Process `ac:if="condition"` directive.
+   *
+   * Creates a sub-compiler for the inner template and returns a
+   * comment placeholder for runtime conditional insertion.
+   */
+  private processIfDirective(
+    el: Element,
+    acIf: string,
+    bindings: Binding[],
+    idMap: Map<string, string>,
+    isContainer: boolean,
+  ): string {
+    delete el.attribs['ac:if'];
+
+    const placeholderId = `ac-if-${this.generateHexId()}`;
+
+    // Recursively compile the inner template
+    const subCompiler = new TemplateCompiler();
+    const subResult = subCompiler.compile(
+      isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el),
+    );
+
+    // Propagate idMap so @AcViewChild can find refs inside if blocks
+    for (const [key, val] of Object.entries(subResult.idMap)) {
+      idMap.set(key, val);
+    }
+
+    bindings.push({
+      type: 'if',
+      expression: acIf,
+      targetId: placeholderId,
+      template: subResult.html,
+      childBindings: subResult.bindings,
+      rootIds: [],
+    });
+
+    return `<!--${placeholderId}-->`;
+  }
+
+  // ─── Special Element Handlers ──────────────────────────────────────────────
+
+  /**
+   * Process `<ac-template #refName>...</ac-template>`.
+   *
+   * Compiles to a hidden div that can be referenced by ac:template:outlet.
+   */
+  private processTemplateElement(
+    el: Element,
+    bindings: Binding[],
+    idMap: Map<string, string>,
+  ): string {
+    const id = `ac-${this.generateHexId()}`;
+
+    // Register all #ref attributes on this template element
+    for (const attrName of Object.keys(el.attribs)) {
+      if (attrName.startsWith('#')) {
+        const refName = attrName.slice(1);
+        idMap.set(refName, id);
+        idMap.set(refName.toLowerCase(), id);
+      }
+    }
+
+    const childrenHtml = this.processNodes(el.children, bindings, idMap);
+    return `<div data-ac-template ac-ref="${id}" style="display:none">${childrenHtml}</div>`;
+  }
+
+  /**
+   * Process `ac:template:outlet="templateRef"` directive.
+   *
+   * Renders a div that will be filled with the referenced template's content.
+   */
+  private processTemplateOutlet(
+    el: Element,
+    acTemplateOutlet: string,
+    bindings: Binding[],
+  ): string {
+    const id = `ac-${this.generateHexId()}`;
+    let expression = acTemplateOutlet;
+    let contextExpression: string | undefined;
+
+    // Handle syntax: "templateRef; context: { $implicit: item }"
+    if (acTemplateOutlet.includes(';')) {
+      const parts = acTemplateOutlet.split(';');
+      expression = parts[0].trim();
+      const contextPart = parts[1].trim();
+      if (contextPart.startsWith('context:')) {
+        contextExpression = contextPart.replace('context:', '').trim();
+      }
+    }
+
+    bindings.push({
+      type: 'template-outlet',
+      expression,
+      contextExpression,
+      targetId: id,
+      rootIds: [],
+    });
+
+    return `<div ac-ref="${id}"></div>`;
+  }
+
+  // ─── Regular Element Processing ────────────────────────────────────────────
+
+  /**
+   * Process a regular HTML element, extracting any binding attributes.
+   *
+   * Scans all attributes for AC binding syntax, creates binding descriptors,
+   * removes the binding attributes, and injects an `ac-ref` ID if needed.
+   */
+  private processRegularElement(
+    el: Element,
+    bindings: Binding[],
+    idMap: Map<string, string>,
+  ): string {
     const id = `ac-${this.generateHexId()}`;
     let hasBinding = false;
 
     const attribEntries = Object.entries(el.attribs);
     for (const [name, value] of attribEntries) {
+      // ── Property binding: [prop]="expr" ──
       if (name.startsWith('[') && name.endsWith(']')) {
         const prop = name.slice(1, -1);
         if (prop.startsWith('class.')) {
@@ -383,20 +399,27 @@ export class TemplateCompiler {
         }
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name.startsWith('(') && name.endsWith(')')) {
+      }
+      // ── Event binding: (event)="expr" ──
+      else if (name.startsWith('(') && name.endsWith(')')) {
         bindings.push({ type: 'event', expression: value, target: name.slice(1, -1), targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name.startsWith('ac:class:')) {
+      }
+      // ── Class toggle: ac:class:name="expr" ──
+      else if (name.startsWith('ac:class:')) {
         bindings.push({ type: 'class', expression: value, target: name.slice(9), targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name.startsWith('ac:style:')) {
+      }
+      // ── Style binding: ac:style:prop="expr" ──
+      else if (name.startsWith('ac:style:')) {
         bindings.push({ type: 'style', expression: value, target: name.slice(9), targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name === 'ac:model') {
-        // Determine the correct property and event based on element type
+      }
+      // ── Two-way binding: ac:model="expr" ──
+      else if (name === 'ac:model') {
         const isCheckbox = el.attribs['type'] === 'checkbox';
         const isRadio = el.attribs['type'] === 'radio';
         const isSelect = el.tagName === 'select';
@@ -405,31 +428,40 @@ export class TemplateCompiler {
         bindings.push({ type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name.startsWith('ac:bind:')) {
+      }
+      // ── Attribute binding: ac:bind:attr="expr" ──
+      else if (name.startsWith('ac:bind:')) {
         bindings.push({ type: 'attribute', expression: value, target: name.slice(8), targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name === 'ac:template:outlet') {
-        // Inject the referenced template element's content into this outlet container
+      }
+      // ── Template outlet: ac:template:outlet="expr" ──
+      else if (name === 'ac:template:outlet') {
         bindings.push({ type: 'template-outlet', expression: value, targetId: id, rootIds: [] });
         hasBinding = true;
         delete el.attribs[name];
-      } else if (name.startsWith('#')) {
+      }
+      // ── Template reference: #refName ──
+      else if (name.startsWith('#')) {
         idMap.set(name.slice(1), id);
         hasBinding = true;
         delete el.attribs[name];
       }
     }
 
+    // Inject ac-ref attribute if this element has any bindings
     if (hasBinding) {
       el.attribs['ac-ref'] = id;
     }
 
+    // Process child nodes
     const childrenHtml = this.processNodes(el.children, bindings, idMap);
+
+    // Serialize the element back to HTML
     const attrs = Object.entries(el.attribs).map(([n, v]) => `${n}="${v}"`).join(' ');
     const openTag = `<${el.tagName}${attrs ? ' ' + attrs : ''}>`;
 
-    // Void elements must not have closing tags
+    // Void elements (br, img, input, etc.) must not have closing tags
     if (VOID_ELEMENTS.has(el.tagName)) {
       return openTag;
     }
@@ -437,7 +469,7 @@ export class TemplateCompiler {
     return `${openTag}${childrenHtml}</${el.tagName}>`;
   }
 
-  /** Serialize an element node back to an HTML string (including its tag and attributes). */
+  /** Serialize an element node back to an HTML string. */
   private elementToHtml(el: Element): string {
     return htmlparser2.DomUtils.getOuterHTML(el);
   }
