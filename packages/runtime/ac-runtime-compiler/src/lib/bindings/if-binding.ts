@@ -13,6 +13,7 @@
  *    insert them after the comment, then wire up child bindings
  * 3. When condition becomes falsy: remove all inserted nodes
  */
+import { Properties } from 'grapesjs';
 import type { Binding, GenerateBindingsFn } from '../types.js';
 
 /**
@@ -41,27 +42,57 @@ export function generateIfBinding(
     '__parentNode',
   ).join('\n');
 
-  return `(function(this: any) { 
-      let currentNodes: any[] = []; 
+  return `(function(this: any) {
+      let currentNodes: any[] = [];
       const placeholder = findComment(${rootContainer}, '${binding.targetId}');
-      createEffect(() => { 
-          const condition = ${prefExpr}; 
-          if (condition) { 
-              if (currentNodes.length === 0) { 
+      createEffect(() => {
+          const condition = ${prefExpr};
+          if (condition) {
+              if (currentNodes.length === 0) {
                   const container = document.createElement('div');
                   container.innerHTML = ${JSON.stringify(binding.template)};
                   currentNodes = Array.from(container.childNodes);
                   if (placeholder && placeholder.parentNode) {
                     let lastInserted: any = placeholder;
-                    currentNodes.forEach((node: any) => { lastInserted.parentNode?.insertBefore(node, lastInserted.nextSibling); lastInserted = node; }); 
+                    currentNodes.forEach((node: any) => { lastInserted.parentNode?.insertBefore(node, lastInserted.nextSibling); lastInserted = node; });
                   }
                   const __parentNode = placeholder?.parentNode || ${rootContainer};
                   ${childBindingsCode}
-              } 
-          } else { 
-              currentNodes.forEach((node: any) => node.remove()); 
-              currentNodes = []; 
-          } 
-      }); 
+              }
+          } else {
+              currentNodes.forEach((node: any) => node.remove());
+              currentNodes = [];
+          }
+      });
   }).call(this);`;
 }
+
+export function acGenerateIfBinding({
+  binding,
+  localVars,
+  rootContainer,
+  recursiveGenerate
+}:{
+  binding: Binding,
+  rootContainer: string,
+  recursiveGenerate: GenerateBindingsFn,
+  localVars: Set<string>
+}): string {
+  const funVarName = "callIf_"+binding.targetId.replaceAll("-","");
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
+      if(newValue){
+        this.appendElementsBetweenComments('${binding.targetId}-start','${binding.targetId}-end',this.createElementsFromHtml(binding.template));
+      }
+    }
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
+}
+

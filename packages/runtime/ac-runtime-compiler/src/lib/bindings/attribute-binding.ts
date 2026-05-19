@@ -77,3 +77,36 @@ export function generateAttributeBinding(
     });
   })();`;
 }
+
+export function acGenerateAttributeBinding({binding,querySelector}:{
+  binding: Binding,
+  querySelector: string
+}
+): string {
+  const funVarName = "callAttr_"+binding.targetId.replaceAll("-","");
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      const el = ${querySelector};
+      const __t = (el as any).acRuntimeInstance;
+      if (__t) {
+        const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
+        __t[camelKey] = newValue;
+      }
+      else{
+        if(newValue != undefined && newValue!=null){
+          el.setAttribute('${binding.target}',newValue);
+        }
+        else{
+          el.removeAttribute('${binding.target}');
+        }
+      }
+    }
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
+}

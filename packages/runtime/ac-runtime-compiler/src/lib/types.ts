@@ -56,6 +56,9 @@ export interface Binding {
   /** The raw expression string from the template (e.g., `'count > 5'`). */
   expression: string;
 
+  /** Array of property names that can update this binding. */
+  properties?: string[];
+
   /**
    * The target name — its meaning depends on the binding type:
    * - `'event'`:     The event name (e.g., `'click'`)
@@ -120,6 +123,20 @@ export interface TemplateCompileResult {
    * wire up `@AcViewChild('myDiv')` properties.
    */
   idMap: Record<string, string>;
+
+  /**
+   * Maps reactive property names to the elements reactive to them,
+   * along with the type of reactivity (e.g. 'value', 'class', 'model', 'bind', 'if', 'for', 'style', etc.).
+   */
+  reactiveProperties: Record<string, ReactivePropertyDef[]>;
+}
+
+export interface ReactivePropertyDef {
+  targetId: string;
+  type: string;
+  expression: string;
+  property?:string;
+  targetElementHtmle?: string;
 }
 
 // ─── Component Compiler Types ────────────────────────────────────────────────

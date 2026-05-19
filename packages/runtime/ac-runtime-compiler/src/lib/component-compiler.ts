@@ -34,7 +34,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TemplateCompiler } from './template-compiler.js';
 import { prefixIdentifiers } from './expression-prefixer.js';
-import { generateWebComponent } from './code-generator.js';
+import { acGenerateCustomElement } from './code-generator.js';
 import {
   isDecorator,
   getComponentMetadata,
@@ -68,6 +68,8 @@ export type { CompileResult };
  * once and reused across compilations.
  */
 export class ComponentCompiler {
+  constructor() {}
+
   /** Shared template compiler instance (stateless per invocation). */
   private readonly templateCompiler = new TemplateCompiler();
 
@@ -136,7 +138,7 @@ export class ComponentCompiler {
 
     // ── Step 3: Compile each component ──
     const importsCode = importStatements.join('\n');
-    const pipeImport = `import { acPipeRegistry } from '@autocode-ts/ac-pipes';`;
+    const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
 
     const compiledComponents = components.map(c => {
       // Split non-import statements into pre-component and post-component
@@ -152,10 +154,11 @@ export class ComponentCompiler {
         c.node, c.metadata, sourceCode, topLevelVars, filePath,
       );
 
-      // Assemble: pipe import + imports + pre-code + IIFE + post-code
+      const standardCode = `${pipeImport}\n${importsCode}\n\n${preStatements.join('\n')}\n\n${compiled.code}\n\n${postStatements.join('\n')}`;
+
       return {
-        ...compiled,
-        code: `${pipeImport}\n${importsCode}\n\n${preStatements.join('\n')}\n\n${compiled.code}\n\n${postStatements.join('\n')}`,
+        selector: compiled.selector,
+        code: standardCode,
       };
     });
 
@@ -229,13 +232,25 @@ export class ComponentCompiler {
     const { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, membersCode } =
       this.classifyMembers(node, usedInTemplate);
 
-    // ── Generate IIFE code ──
-    const code = generateWebComponent(
-      className, selector, templateResult, styles,
-      reactiveProps, nonReactiveProps, inputs, outputs,
-      viewChildren, membersCode, topLevelVars, baseClassName,
-      prefixIdentifiers,
-    );
+    // ── Generate the custom element code ──
+    const classSourceCode = node.getSourceFile() ? node.getText(node.getSourceFile()) : node.getText();
+    const code = acGenerateCustomElement({
+      className,
+      selector,
+      templateResult,
+      templateHtml: template,
+      styles,
+      reactiveProps,
+      nonReactiveProps,
+      inputs,
+      outputs,
+      viewChildren,
+      membersCode,
+      topLevelVars,
+      baseClassName,
+      prefixFn: prefixIdentifiers,
+      classSourceCode
+    });
 
     return { selector, code };
   }

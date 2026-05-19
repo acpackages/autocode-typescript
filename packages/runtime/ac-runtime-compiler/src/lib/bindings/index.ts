@@ -14,15 +14,15 @@
  * 4. Return an array of generated code strings
  */
 import type { Binding, PrefixFn } from '../types.js';
-import { generateTextBinding } from './text-binding.js';
-import { generatePropertyBinding } from './property-binding.js';
-import { generateEventBinding } from './event-binding.js';
-import { generateClassBinding } from './class-binding.js';
-import { generateStyleBinding } from './style-binding.js';
-import { generateModelBinding } from './model-binding.js';
-import { generateAttributeBinding } from './attribute-binding.js';
-import { generateIfBinding } from './if-binding.js';
-import { generateForBinding } from './for-binding.js';
+import { acGenerateTextBinding, generateTextBinding } from './text-binding.js';
+import { acGeneratePropertyBinding, generatePropertyBinding } from './property-binding.js';
+import { acGenerateEventBinding, generateEventBinding } from './event-binding.js';
+import { acGenerateClassBinding, generateClassBinding } from './class-binding.js';
+import { acGenerateStyleBinding, generateStyleBinding } from './style-binding.js';
+import { acGenerateModelBinding, generateModelBinding } from './model-binding.js';
+import { acGenerateAttributeBinding, generateAttributeBinding } from './attribute-binding.js';
+import { acGenerateIfBinding, generateIfBinding } from './if-binding.js';
+import { acGenerateForBinding, generateForBinding } from './for-binding.js';
 import { generateTemplateOutletBinding } from './template-outlet-binding.js';
 
 /**
@@ -107,6 +107,65 @@ export function generateBindings(
 
       case 'template-outlet':
         return generateTemplateOutletBinding(b, rootContainer, prefixFn, localVars, topLevelVars);
+
+      default:
+        return '';
+    }
+  });
+}
+
+export function acGenerateBindingCallbacks({bindings,localVars,rootContainer,topLevelVars}:{
+  bindings: Binding[],
+  localVars?: Set<string>,
+  rootContainer?: string,
+  topLevelVars?: Set<string>}
+): string[] {
+  return bindings.map(binding => {
+
+    // ── Step 2: Build the querySelector expression (for queryable types) ──
+    // e.g., `this.element.querySelector('[ac-ref="ac-3f8a1b2c"]')`
+    if(!rootContainer){
+      rootContainer = 'this';
+    }
+    const querySelector = QUERYABLE_TYPES.has(binding.type)? `${rootContainer}.querySelector('[ac-ref="${binding.targetId}"]')`: null;
+
+    // ── Step 3: Create a recursive binding generator for structural directives ──
+    // ac:if and ac:for need to generate code for their nested child bindings,
+    // so they receive this function as a callback
+    const recursiveGenerate = (childBindings: Binding[], childLocals: Set<string>, childContainer: string) =>
+      acGenerateBindingCallbacks({bindings:childBindings,localVars:childLocals, rootContainer:childContainer, topLevelVars});
+
+    // ── Step 4: Dispatch to the appropriate binding generator ──
+    switch (binding.type) {
+      case 'text':
+        return acGenerateTextBinding({binding,querySelector});
+
+      case 'property':
+        return acGeneratePropertyBinding({binding,querySelector});
+
+      case 'event':
+        return acGenerateEventBinding({binding,querySelector});
+
+      case 'class':
+        return acGenerateClassBinding({binding,querySelector});
+
+      case 'style':
+        return acGenerateStyleBinding({binding,querySelector});
+
+      case 'model':
+        return acGenerateModelBinding({binding,querySelector,localVars});
+
+      case 'attribute':
+        return acGenerateAttributeBinding({binding,querySelector});
+
+      case 'if':
+        return acGenerateIfBinding({binding,localVars,rootContainer,recursiveGenerate});
+
+      // case 'for':
+        // return acGenerateForBinding({binding,localVars,rootContainer,recursiveGenerate});
+
+      // case 'template-outlet':
+        // return acGenerateTemplateOutletBinding({binding,localVars,rootContainer,recursiveGenerate,topLevelVars});
 
       default:
         return '';

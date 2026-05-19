@@ -192,11 +192,30 @@ export function acRuntimePlugin(): Plugin {
                 },
             );
 
+            let altCompiledCode = results[0].altCode || '';
+            if (altCompiledCode) {
+                altCompiledCode = altCompiledCode.replace(
+                    /import\s+['"](\.[^'"]*?\.(css|scss))['"]/g,
+                    (_match, importPath: string) => {
+                        const absoluteCssPath = path.resolve(sourceDir, importPath);
+                        const rootRelative = '/' + path.relative(projectRoot, absoluteCssPath).replace(/\\/g, '/');
+                        return `import '${rootRelative}'`;
+                    },
+                );
+            }
+
             // Always write to cache (for import path rewriting)
             if (isForCache) {
                 const dir = path.dirname(cachePath);
                 fs.mkdirSync(dir, { recursive: true });
                 fs.writeFileSync(cachePath, compiledCode);
+
+                if (altCompiledCode) {
+                    const ext = path.extname(cachePath);
+                    const base = cachePath.substring(0, cachePath.length - ext.length);
+                    const altCachePath = `${base}-alt${ext}`;
+                    fs.writeFileSync(altCachePath, altCompiledCode);
+                }
             }
 
             // Only return compiled code for component files (has selector)

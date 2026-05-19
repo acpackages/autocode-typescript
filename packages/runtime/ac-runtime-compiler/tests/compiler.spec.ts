@@ -22,6 +22,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { ComponentCompiler } from '../src/lib/component-compiler.js';
+import { TemplateCompiler } from '../src/lib/template-compiler.js';
 
 describe('ComponentCompiler', () => {
   const compiler = new ComponentCompiler();
@@ -309,3 +310,162 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain('helper');
   });
 });
+
+describe('TemplateCompiler - reactiveProperties map', () => {
+  const tc = new TemplateCompiler();
+
+  it('should generate map for text, property, class, model, if, and for reactivity types', () => {
+    const template = `
+      <div [class.active]="isActive" [style.color]="textColor" ac:bind:title="tooltip">
+        Hello {{name}}!
+        <input ac:model="username" />
+        <div ac:if="show">
+          <ul>
+            <li ac:for="item of items">{{item.name}}</li>
+          </ul>
+        </div>
+      </div>
+    `;
+
+    const result = tc.compile(template);
+    expect(result.reactiveProperties).toBeDefined();
+
+    // isActive
+    expect(result.reactiveProperties['isActive']).toBeDefined();
+    expect(result.reactiveProperties['isActive'][0].type).toBe('class');
+
+    // textColor
+    expect(result.reactiveProperties['textColor']).toBeDefined();
+    expect(result.reactiveProperties['textColor'][0].type).toBe('style');
+
+    // tooltip
+    expect(result.reactiveProperties['tooltip']).toBeDefined();
+    expect(result.reactiveProperties['tooltip'][0].type).toBe('bind');
+
+    // name
+    expect(result.reactiveProperties['name']).toBeDefined();
+    expect(result.reactiveProperties['name'][0].type).toBe('value');
+
+    // username
+    expect(result.reactiveProperties['username']).toBeDefined();
+    expect(result.reactiveProperties['username'][0].type).toBe('model');
+
+    // show
+    expect(result.reactiveProperties['show']).toBeDefined();
+    expect(result.reactiveProperties['show'][0].type).toBe('if');
+
+    // items
+    expect(result.reactiveProperties['items']).toBeDefined();
+    expect(result.reactiveProperties['items'][0].type).toBe('for');
+
+    // local loop variable 'item' should not be in the reactive properties map
+    expect(result.reactiveProperties['item']).toBeUndefined();
+  });
+
+  it('should exclude global variables and local function variables', () => {
+    const template = `
+      <div>
+        {{Math.round(count)}}
+        {{items.map(item => item.name).join(', ')}}
+      </div>
+    `;
+
+    const result = tc.compile(template);
+    expect(result.reactiveProperties).toBeDefined();
+
+    // Math is global, should not be reactive
+    expect(result.reactiveProperties['Math']).toBeUndefined();
+
+    // count is a property, should be reactive
+    expect(result.reactiveProperties['count']).toBeDefined();
+    expect(result.reactiveProperties['count'][0].type).toBe('value');
+
+    // items is a property, should be reactive
+    expect(result.reactiveProperties['items']).toBeDefined();
+    expect(result.reactiveProperties['items'][0].type).toBe('value');
+
+    // item is a local parameter in arrow function, should not be reactive
+    expect(result.reactiveProperties['item']).toBeUndefined();
+  });
+
+  it('should generate targetElementHtmle with correct finalized HTML on each reactive property entry', () => {
+    const template = `
+      <div [class.active]="isActive">
+        Hello {{name}}!
+        <div ac:if="show">Conditional</div>
+      </div>
+    `;
+
+    const result = tc.compile(template);
+    expect(result.reactiveProperties).toBeDefined();
+
+    // isActive -> targetElementHtmle should be the div tag, containing the child elements and ac-ref
+    const activeEntry = result.reactiveProperties['isActive'][0];
+    expect(activeEntry.targetElementHtmle).toBeDefined();
+    expect(activeEntry.targetElementHtmle).toContain('<div');
+    expect(activeEntry.targetElementHtmle).toContain('ac-ref=');
+    expect(activeEntry.targetElementHtmle).toContain('<span');
+
+    // name -> targetElementHtmle should be the span placeholder
+    const nameEntry = result.reactiveProperties['name'][0];
+    expect(nameEntry.targetElementHtmle).toBeDefined();
+    expect(nameEntry.targetElementHtmle).toContain('<span');
+    expect(nameEntry.targetElementHtmle).toContain('ac-ref=');
+
+    // show -> targetElementHtmle should be the ac-if comment node
+    const showEntry = result.reactiveProperties['show'][0];
+    expect(showEntry.targetElementHtmle).toBeDefined();
+    expect(showEntry.targetElementHtmle).toContain('<!--ac-if-');
+  });
+
+  it('should include properties in bindings matching extracted identifiers', () => {
+    const template = `
+      <div [class.active]="isActive">
+        Hello {{name}}!
+        <div ac:if="show">Conditional</div>
+      </div>
+    `;
+    const result = tc.compile(template);
+    expect(result.bindings).toBeDefined();
+    
+    const classBinding = result.bindings.find(b => b.type === 'class');
+    expect(classBinding).toBeDefined();
+    expect(classBinding?.properties).toEqual(['isActive']);
+
+    const textBinding = result.bindings.find(b => b.type === 'text');
+    expect(textBinding).toBeDefined();
+    expect(textBinding?.properties).toEqual(['name']);
+
+    const ifBinding = result.bindings.find(b => b.type === 'if');
+    expect(ifBinding).toBeDefined();
+    expect(ifBinding?.properties).toEqual(['show']);
+  });
+
+  it('should extract properties correctly when prefixed with this', () => {
+    const template = `
+      <div [class.active]="this.isActive">
+        Hello {{this.name}}!
+        <div ac:if="this.show">Conditional</div>
+      </div>
+    `;
+    const result = tc.compile(template);
+    expect(result.bindings).toBeDefined();
+    
+    const classBinding = result.bindings.find(b => b.type === 'class');
+    expect(classBinding).toBeDefined();
+    expect(classBinding?.properties).toEqual(['isActive']);
+
+    const textBinding = result.bindings.find(b => b.type === 'text');
+    expect(textBinding).toBeDefined();
+    expect(textBinding?.properties).toEqual(['name']);
+
+    const ifBinding = result.bindings.find(b => b.type === 'if');
+    expect(ifBinding).toBeDefined();
+    expect(ifBinding?.properties).toEqual(['show']);
+
+    expect(result.reactiveProperties['isActive']).toBeDefined();
+    expect(result.reactiveProperties['name']).toBeDefined();
+    expect(result.reactiveProperties['show']).toBeDefined();
+  });
+});
+

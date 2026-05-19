@@ -203,6 +203,21 @@ export class DevServer {
 
         this.compiledCache.set(jsName, jsOutput.outputText);
         fs.writeFileSync(path.join(this.cacheDir, jsName), jsOutput.outputText);
+
+        // 3. Save the Alternate TypeScript & Transpiled JS output in the cache as well
+        if (res.altCode) {
+          const tsAltName = `${res.selector}-alt.compiled.ts`;
+          const jsAltName = `${res.selector}-alt.compiled.js`;
+
+          fs.writeFileSync(path.join(this.cacheDir, tsAltName), res.altCode);
+
+          const jsAltOutput = ts.transpileModule(res.altCode, {
+            compilerOptions: TS_COMPILER_OPTIONS,
+          });
+
+          this.compiledCache.set(jsAltName, jsAltOutput.outputText);
+          fs.writeFileSync(path.join(this.cacheDir, jsAltName), jsAltOutput.outputText);
+        }
       }
 
       this.broadcast({ type: 'reload' });

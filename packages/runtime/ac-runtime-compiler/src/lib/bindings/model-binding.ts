@@ -42,3 +42,28 @@ export function generateModelBinding(
             el.addEventListener('${event}', ($event: any) => { ${prefExpr} = el.${prop}${triggerUpdate} });
           })();`;
 }
+
+export function acGenerateModelBinding({binding,querySelector,localVars}:{
+  binding: Binding,
+  querySelector: string,
+  localVars: Set<string>
+}
+): string {
+  const funVarName = "callModel_"+binding.targetId.replaceAll("-","");
+
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      const el = ${querySelector};
+      if (el) {
+        (el as any).value = newValue;
+      }
+    }
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
+}

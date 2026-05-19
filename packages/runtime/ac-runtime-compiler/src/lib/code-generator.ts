@@ -30,7 +30,56 @@ import type {
   Binding,
   PrefixFn,
 } from './types.js';
-import { generateBindings } from './bindings/index.js';
+import { acGenerateBindingCallbacks, generateBindings } from './bindings/index.js';
+import { acGenerateIfBinding } from './bindings/if-binding.js';
+import { acGenerateForBinding } from './bindings/for-binding.js';
+
+// ─── Helper: ViewChild Assignments ───────────────────────────────────────────
+
+/**
+ * Generate Object.defineProperty getters for @AcViewChild and #ref bindings.
+ *
+ * @param viewChildren    - Explicit @AcViewChild declarations
+ * @param templateResult  - Contains idMap of all #ref → ac-ref mappings
+ * @returns Combined code string for all viewChild assignments
+ */
+function generateViewChildAssignments(
+  viewChildren: ViewChildEntry[],
+  templateResult: TemplateCompileResult,
+): string {
+  const definedProps = new Set<string>();
+  const assignments: string[] = [];
+
+  // ── Explicit @AcViewChild declarations ──
+  for (const vc of viewChildren) {
+    definedProps.add(vc.propName);
+    // htmlparser2 lowercases attributes, so do case-insensitive lookup
+    const selectorLower = vc.selector.toLowerCase();
+    const internalId = templateResult.idMap[selectorLower] || templateResult.idMap[vc.selector];
+    if (internalId) {
+      assignments.push(
+        `Object.defineProperty(this, '${vc.propName}', { get: () => { const el = this.element.querySelector('[ac-ref="${internalId}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
+      );
+    } else {
+      assignments.push(
+        `console.warn('@AcViewChild: Could not find template ref #${vc.selector}');`,
+      );
+    }
+  }
+
+  // ── Auto-generated getters for all #refs in the template ──
+  for (const [refName, id] of Object.entries(templateResult.idMap)) {
+    if (!definedProps.has(refName)) {
+      assignments.push(
+        `Object.defineProperty(this, '${refName}', { get: () => { const el = this.element.querySelector('[ac-ref="${id}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
+      );
+      definedProps.add(refName);
+    }
+  }
+
+  return assignments.join('\n');
+}
+
 
 /**
  * Generate the complete IIFE-wrapped Web Component code.
@@ -50,21 +99,24 @@ import { generateBindings } from './bindings/index.js';
  * @param prefixFn        - The expression prefixer function
  * @returns Complete IIFE code string (valid TypeScript)
  */
-export function generateWebComponent(
-  className: string,
-  selector: string,
-  templateResult: TemplateCompileResult,
-  styles: string[],
-  reactiveProps: ReactiveProperty[],
-  nonReactiveProps: ReactiveProperty[],
-  inputs: string[],
-  outputs: string[],
-  viewChildren: ViewChildEntry[],
-  membersCode: string[],
-  topLevelVars: Set<string>,
-  baseClassName: string | null,
-  prefixFn: PrefixFn,
-): string {
+export function acGenerateCustomElementLegacy(options: AcGenerateCustomElementOptions): string {
+  const {
+    className,
+    selector,
+    templateResult,
+    templateHtml,
+    styles,
+    reactiveProps,
+    nonReactiveProps,
+    inputs,
+    outputs,
+    viewChildren,
+    membersCode,
+    topLevelVars,
+    baseClassName,
+    prefixFn,
+    classSourceCode
+  } = options;
   // ── 1. Property Initializers ──
   // Merge and sort all properties by original source order
   const allProps = [...reactiveProps, ...nonReactiveProps]
@@ -78,7 +130,7 @@ export function generateWebComponent(
   // ── 2. Output Initializers ──
   // Generate EventEmitter-like objects for @AcOutput() properties
   const outputInits = outputs.map(o =>
-    `(this as any).${o} = { 
+    `(this as any).${o} = {
       emit: (data: any) => this.element.dispatchEvent(new CustomEvent('${o}', { detail: data, bubbles: true })),
       subscribe: (fn: (data: any) => void) => {
         const handler = (e: any) => fn(e.detail);
@@ -122,9 +174,9 @@ export function generateWebComponent(
       __signalCleanups.push(cleanup${p.name}Sig);
       Object.defineProperty(this, '${p.name}', {
         get: () => ${p.name}Sig(),
-        set: (v: any) => { 
-          const old = ${p.name}Sig(); 
-          set${p.name}Sig(v); 
+        set: (v: any) => {
+          const old = ${p.name}Sig();
+          set${p.name}Sig(v);
           if (old !== v) {
             const changes = { key: '${p.name}', oldValue: old, newValue: v, firstChange: false };
             if ((this as any).acOnChange) (this as any).acOnChange(changes);
@@ -222,7 +274,7 @@ export const ${className} = (function() {
       ${baseClassName ? 'super();' : ''}
       ${propertyInits}
       ${outputInits}
-      
+
       // Map reactive properties to internal signals for bindings
       ${signalSetup}
     }
@@ -254,7 +306,7 @@ export const ${className} = (function() {
 
     static get observedAttributes() { return ${JSON.stringify(inputs.map(i => i.replace(/([A-Z])/g, '-$1').toLowerCase()))}; }
     attributeChangedCallback(name: string, old: string, val: string) { if (old !== val) { const camelKey = name.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase()); (this.acRuntimeInstance as any)[camelKey] = val; } }
-    
+
     ${inputAccessors}
 
     connectedCallback() {
@@ -280,16 +332,66 @@ export const ${className} = (function() {
 })();`;
 }
 
-// ─── Helper: ViewChild Assignments ───────────────────────────────────────────
 
-/**
- * Generate Object.defineProperty getters for @AcViewChild and #ref bindings.
- *
- * @param viewChildren    - Explicit @AcViewChild declarations
- * @param templateResult  - Contains idMap of all #ref → ac-ref mappings
- * @returns Combined code string for all viewChild assignments
- */
-function generateViewChildAssignments(
+// New Implementation
+
+function stripAcElementDecorator(source: string): string {
+  const decoratorName = '@AcElement';
+  const index = source.indexOf(decoratorName);
+  if (index === -1) return source;
+
+  // Find the opening parenthesis
+  let openParenIndex = source.indexOf('(', index + decoratorName.length);
+  if (openParenIndex === -1) return source;
+
+  // Parse from openParenIndex to match the closing parenthesis
+  let parenCount = 1;
+  let inString: string | null = null;
+  let isEscaped = false;
+  let i = openParenIndex + 1;
+
+  while (i < source.length && parenCount > 0) {
+    const char = source[i];
+
+    if (isEscaped) {
+      isEscaped = false;
+      i++;
+      continue;
+    }
+
+    if (char === '\\') {
+      isEscaped = true;
+      i++;
+      continue;
+    }
+
+    if (inString) {
+      if (char === inString) {
+        inString = null; // String closed
+      }
+      i++;
+      continue;
+    }
+
+    // We are not in a string
+    if (char === '"' || char === "'" || char === '`') {
+      inString = char;
+    } else if (char === '(') {
+      parenCount++;
+    } else if (char === ')') {
+      parenCount--;
+    }
+    i++;
+  }
+
+  const before = source.slice(0, index);
+  let after = source.slice(i);
+  after = after.replace(/^\s*/, '');
+
+  return before + after;
+}
+
+export function acGenerateViewChildAssignments(
   viewChildren: ViewChildEntry[],
   templateResult: TemplateCompileResult,
 ): string {
@@ -304,7 +406,7 @@ function generateViewChildAssignments(
     const internalId = templateResult.idMap[selectorLower] || templateResult.idMap[vc.selector];
     if (internalId) {
       assignments.push(
-        `Object.defineProperty(this, '${vc.propName}', { get: () => { const el = this.element.querySelector('[ac-ref="${internalId}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
+        `Object.defineProperty(this.acRuntimeInstance, '${vc.propName}', { get: () => { const el = this.querySelector('[ac-ref="${internalId}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
       );
     } else {
       assignments.push(
@@ -317,7 +419,7 @@ function generateViewChildAssignments(
   for (const [refName, id] of Object.entries(templateResult.idMap)) {
     if (!definedProps.has(refName)) {
       assignments.push(
-        `Object.defineProperty(this, '${refName}', { get: () => { const el = this.element.querySelector('[ac-ref="${id}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
+        `Object.defineProperty(this.acRuntimeInstance, '${refName}', { get: () => { const el = this.querySelector('[ac-ref="${id}"]'); return el ? ((el as any).acRuntimeInstance || el) : null; }, configurable: true });`,
       );
       definedProps.add(refName);
     }
@@ -325,3 +427,448 @@ function generateViewChildAssignments(
 
   return assignments.join('\n');
 }
+
+export interface AcGenerateCustomElementOptions {
+  className: string;
+  selector: string;
+  templateResult: TemplateCompileResult;
+  templateHtml: string;
+  styles: string[];
+  reactiveProps: ReactiveProperty[];
+  nonReactiveProps: ReactiveProperty[];
+  inputs: string[];
+  outputs: string[];
+  viewChildren: ViewChildEntry[];
+  membersCode: string[];
+  topLevelVars: Set<string>;
+  baseClassName: string | null;
+  prefixFn: PrefixFn;
+  classSourceCode: string;
+}
+
+export function acGenerateCustomElement(options: AcGenerateCustomElementOptions): string {
+  const {
+    className,
+    selector,
+    templateResult,
+    templateHtml,
+    styles,
+    reactiveProps,
+    nonReactiveProps,
+    inputs,
+    outputs,
+    viewChildren,
+    membersCode,
+    topLevelVars,
+    baseClassName,
+    prefixFn,
+    classSourceCode
+  } = options;
+  const htmlElementClassName = `\$\$\$${className}`;
+  const bindingProperties:string[] = [];
+  const propertyChangeListeners:string[] = [];
+  const propertyRegisterListener:string[] = [];
+  for(const binding of templateResult.bindings){
+    for(const property of binding.properties){
+      if(!bindingProperties.includes(property)){
+        bindingProperties.push(property);
+        propertyChangeListeners.push(`'${property}':{}`);
+        propertyRegisterListener.push(`this.registerPropertyListener('${property}');`);
+      }
+    }
+  }
+
+  const cleanClassSourceCode = stripAcElementDecorator(classSourceCode || '').replace(/\bexport\s+(?:default\s+)?class\s+/, 'class ');
+  let code = `
+  /** Generated by AC Runtime Compiler */
+
+  const bindings = ${JSON.stringify(templateResult.bindings)};
+  `;
+  if(styles.length > 0){
+    code+=` const styleElement = document.createElement('style');
+    styleElement.setAttribute('ac-style-for','${selector}');
+    styleElement.innerHTML = \`${selector}{\n${styles.join('\n').replaceAll(':host','&')}\n}\`;
+    document.querySelector('head').append(styleElement);
+    `;
+  }
+
+  code+=`export const ${className} = (function() {
+
+  // Original class declaration copied as is (stripped of AcElement decorator and export keyword)
+  ${cleanClassSourceCode}
+
+  class ${htmlElementClassName} extends HTMLElement {
+    acRuntimeInstance: ${className};
+    private acReactiveProperties: Record<string,{ targetId: string; type: string, expression:string }[]> = ${JSON.stringify(templateResult.reactiveProperties)};
+    private isInitialized:boolean = false;
+    private changeListeners:Record<string,{callback:any,binding:{ expression:string },currentValue:any}> = {};
+    private propertyListeners:any = {${propertyChangeListeners.join(",")}};
+
+    constructor() {
+      super();
+      this.acRuntimeInstance = new ${className}();
+      `;
+
+      if(viewChildren.length > 0){
+        code += acGenerateViewChildAssignments(viewChildren,templateResult);
+      }
+      code += `
+
+      ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
+      ${propertyRegisterListener.join("\n")}
+      (this.acRuntimeInstance as any).element = this;
+    }
+
+    private appendElementsBetweenComments(
+      startCommentName: string,
+      endCommentName: string,
+      nodes: Node[]
+    ): void {
+      const startComment = this.findComment(
+        startCommentName
+      );
+
+      const endComment = this.findComment(
+        endCommentName
+      );
+
+      if (!startComment || !endComment) {
+        return;
+      }
+
+      const parent = startComment.parentNode;
+
+      if (!parent) {
+        return;
+      }
+
+      for (const node of nodes) {
+        parent.insertBefore(node, endComment);
+      }
+    }
+
+    connectedCallback() {
+      if(!this.isInitialized){
+        this.style.display = 'contents';
+        this.render();
+        if ((this.acRuntimeInstance as any).acOnInit) {
+          (this.acRuntimeInstance as any).acOnInit();
+        }
+      }
+    }
+
+    createElementsFromHtml(
+      html: string
+    ): HTMLElement[] {
+      const template = document.createElement('template');
+
+      template.innerHTML = html.trim();
+
+      return Array.from(
+        template.content.children
+      ).filter(
+        (el): el is HTMLElement =>
+          el instanceof HTMLElement
+      );
+    }
+
+
+    disconnectedCallback() {
+      if ((this.acRuntimeInstance as any).acOnDestroy) {
+        (this.acRuntimeInstance as any).acOnDestroy();
+      }
+      if ((this.acRuntimeInstance as any).__destroy) {
+        (this.acRuntimeInstance as any).__destroy();
+      }
+    }
+
+    private evaluateExpression({expression,locals,isExpressionEval = false}:{expression: string, locals?: Record<string, any>, isExpressionEval?: boolean}): any {
+      if (expression.includes('|') && !isExpressionEval) {
+        const context = this.acRuntimeInstance;
+        return evaluateAcPipeExpression({
+          expression, context, evaluateFunction: ({ expression, context, }: { expression: string; context: any; }) => {
+            return this.evaluateExpression({expression, locals, isExpressionEval:true});
+          }
+        });
+      }
+      try {
+        const scope = this.getScope(locals);
+        const normalizedExpr = this.normalizeExprForScope(expression);
+        const fn = new Function('scope', 'context', \`with (context) { with (scope) { return \${normalizedExpr} } } \`);
+        const result = fn.call(this.acRuntimeInstance, scope, this.acRuntimeInstance);
+        return result;
+      } catch (e) {
+        console.error(\`Error evaluating expression: \${expression} \`, e);
+        return undefined;
+      }
+    }
+
+    private findComment(
+      commentText: string,
+    ): Comment | null {
+      const walker = document.createTreeWalker(
+        this,
+        NodeFilter.SHOW_COMMENT
+      );
+
+      let current = walker.nextNode();
+
+      while (current) {
+        if (
+          current.nodeType === Node.COMMENT_NODE &&
+          current.nodeValue?.trim() === commentText
+        ) {
+          return current as Comment;
+        }
+
+        current = walker.nextNode();
+      }
+
+      return null;
+    }
+
+    private getElementsBetweenComments(
+      startComment: Comment,
+      endComment: Comment
+    ): Node[] {
+      const nodes: Node[] = [];
+
+      let current = startComment.nextSibling;
+
+      while (current && current !== endComment) {
+        nodes.push(current);
+        current = current.nextSibling;
+      }
+
+      return nodes;
+    }
+
+    private getScope(locals?: Record<string, any>): any {
+      // const scope = Object.create(null);
+      // if (locals) {
+      //   Object.assign(scope, locals);
+      // }
+
+      // // Collect engine hierarchy from root to this
+      // const engines: AcElementRenderer[] =  [];
+
+      // let curr: AcElementRenderer | undefined = this;
+      // while (curr) {
+      //   engines.unshift(curr);
+      //   curr = curr.parent;
+      // }
+
+      // // Merge templates and references into scope (local shadows parent)
+      // for (const engine of engines) {
+      //   engine.templates.forEach((tpl, name) => {
+      //     scope[name] = tpl;
+      //   });
+      //   engine.references.forEach((ref, name) => {
+      //     scope[name] = ref;
+      //   });
+      // }
+
+      return this.acRuntimeInstance;
+    }
+
+    private async handlePropertyChange({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any}) {
+      // console.log(\`Property change : \${key}\`,oldValue,newValue,this.acRuntimeInstance);
+      // console.log(this.acReactiveProperties[key]);
+      if(this.propertyListeners[key]){
+        for(const targetId of Object.keys(this.propertyListeners[key])){
+        const callbackKey = this.propertyListeners[key][targetId];
+          const callbackDef = this.changeListeners[callbackKey];
+          if(callbackDef){
+            const exprNewValue = await this.evaluateExpression({expression:callbackDef.binding.expression});
+            if(callbackDef.currentValue != newValue){
+              const exprOldValue = callbackDef.currentValue;
+              callbackDef.currentValue = exprNewValue;
+              callbackDef.callback({oldValue:exprOldValue,newValue:exprNewValue});
+            }
+          }
+          // if(binding.type == 'if'){
+          //   if(this.ifHandlers[binding.targetId]){
+          //     this.ifHandlers[binding.targetId]();
+          //   }
+          // }
+          // else{
+          //   const expressionResult = await this.evaluateExpression({expression:binding.expression});
+          //   const reflectingNodes = this.querySelectorAll(\`[ac-ref="\${binding.targetId}"]\`);
+          //   if(binding.type == 'value'){
+          //     for(const el of Array.from(reflectingNodes) as HTMLElement[]){
+          //       el.textContent = String(expressionResult ?? '');
+          //     }
+          //   }
+          //   else if(binding.type == 'bind' || binding.type == 'property'){
+          //     if(binding.property){
+          //       for(const el of Array.from(reflectingNodes) as HTMLElement[]){
+          //         el.setAttribute(binding.property,String(expressionResult ?? ''));
+          //       }
+          //     }
+          //   }
+          //   else if(binding.type == 'class'){
+          //     if(binding.property){
+          //       if(expressionresult){
+          //         for(const el of Array.from(reflectingNodes) as HTMLElement[]){
+          //           el.classList.add(binding.property);
+          //         }
+          //       }
+          //       else{
+          //         for(const el of Array.from(reflectingNodes) as HTMLElement[]){
+          //           el.classList.remove(binding.property);
+          //         }
+          //       }
+          //     }
+          //   }
+          //   else{
+          //     console.log(binding);
+          //   }
+          // }
+        }
+      }
+    }
+
+    private normalizeExprForScope(expression: string): string {
+      // Collect all known scope names (templates + references) from hierarchy
+      const knownNames = new Set<string>();
+      // let engine: AcElementRenderer | undefined = this;
+
+      // while (engine) {
+      //   engine.templates.forEach((_, name) => knownNames.add(name));
+      //   engine.references.forEach((_, name) => knownNames.add(name));
+      //   engine = engine.parent;
+      // }
+
+      if (knownNames.size === 0) return expression;
+
+      // Sort by length descending so longer names match first
+      const sorted = Array.from(knownNames).sort((a, b) => b.length - a.length);
+      const escaped = sorted.map(n => n.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&'));
+      const pattern = escaped.join('|');
+      const regex = new RegExp(\`\\b(\${pattern})\\b\`, 'gi');
+
+      let result = '';
+      let i = 0;
+      let inString: string | null = null; // ', ", or \`
+      let buffer = '';
+
+      while (i < expression.length) {
+        const char = expression[i];
+
+        // Handle string start/end
+        if (inString) {
+          buffer += char;
+
+          // Handle escape
+          if (char === '\\\\') {
+            buffer += expression[i + 1] || '';
+            i += 2;
+            continue;
+          }
+
+          // End of string
+          if (char === inString) {
+            result += buffer; // append string as-is
+            buffer = '';
+            inString = null;
+          }
+
+          i++;
+          continue;
+        }
+
+        // Enter string
+        if (char === '"' || char === "'" || char === '\`') {
+          // process buffer before entering string
+          if (buffer) {
+            result += buffer.replace(regex, (match) => match.toLowerCase());
+            buffer = '';
+          }
+
+          inString = char;
+          buffer += char;
+          i++;
+          continue;
+        }
+
+        buffer += char;
+        i++;
+      }
+
+      // process remaining buffer
+      if (buffer) {
+        if (inString) {
+          // unterminated string → keep as-is
+          result += buffer;
+        } else {
+          result += buffer.replace(regex, (match) => match.toLowerCase());
+        }
+      }
+
+      return result;
+    }
+
+    private registerPropertyListener(key: string) {
+      let value = (this.acRuntimeInstance as any)[key];
+      Object.defineProperty(this.acRuntimeInstance, key, {
+        get: () => {
+          return value;
+        },
+        set: (newValue) => {
+          if (Object.is(value, newValue)) {
+            return;
+          }
+          const oldValue = value;
+          value = newValue;
+          this.handlePropertyChange({key,oldValue,newValue});
+          const changes = {
+            key,
+            oldValue,
+            newValue,
+            firstChange: false
+          };
+          if ((this.acRuntimeInstance as any).acOnChange) {
+            (this.acRuntimeInstance as any).acOnChange(changes);
+          }
+          if ((this.acRuntimeInstance as any).acOnPropertyChange) {
+            (this.acRuntimeInstance as any).acOnPropertyChange(changes);
+          }
+        },
+        configurable: true,
+        enumerable: true
+      });
+    }
+
+    private removeElementsBetweenCommentsByName(
+      startCommentName: string,
+      endCommentName: string
+    ): void {
+      const startComment = this.findComment(startCommentName);
+      const endComment = this.findComment(endCommentName);
+
+      if (!startComment || !endComment) {
+        return;
+      }
+
+      let current = startComment.nextSibling;
+
+      while (current && current !== endComment) {
+        const next = current.nextSibling;
+
+        current.remove();
+
+        current = next;
+      }
+    }
+
+    private render(){
+      this.innerHTML = \`${templateResult.html}\`;
+    }
+  }
+
+  if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
+  return ${className};
+})();`;
+return code;
+}
+

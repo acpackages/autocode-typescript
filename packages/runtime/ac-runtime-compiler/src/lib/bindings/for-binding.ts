@@ -48,33 +48,95 @@ export function generateForBinding(
     'container',
   ).join('\n');
 
-  return `(function(this: any) { 
-      let currentMap = new Map<any, any[]>(); 
+  return `(function(this: any) {
+      let currentMap = new Map<any, any[]>();
       const placeholder = findComment(${rootContainer}, '${binding.targetId}');
-      createEffect(() => { 
-          const list = (${prefExpr} as any[]) || []; 
-          const newMap = new Map<any, any[]>(); 
-          list.forEach((${itemVar}, ${indexVar}) => { 
-              if (currentMap.has(${itemVar})) { 
-                  newMap.set(${itemVar}, currentMap.get(${itemVar})!); 
-                  currentMap.delete(${itemVar}); 
-              } else { 
+      createEffect(() => {
+          const list = (${prefExpr} as any[]) || [];
+          const newMap = new Map<any, any[]>();
+          list.forEach((${itemVar}, ${indexVar}) => {
+              if (currentMap.has(${itemVar})) {
+                  newMap.set(${itemVar}, currentMap.get(${itemVar})!);
+                  currentMap.delete(${itemVar});
+              } else {
                   const container = document.createElement('div');
                   container.innerHTML = ${JSON.stringify(binding.template)};
                   const nodes = Array.from(container.childNodes);
                   ${childBindingsCode}
-                  newMap.set(${itemVar}, nodes); 
-              } 
-          }); 
-          currentMap.forEach(nodes => nodes.forEach(n => n.remove())); 
-          currentMap = newMap; 
+                  newMap.set(${itemVar}, nodes);
+              }
+          });
+          currentMap.forEach(nodes => nodes.forEach(n => n.remove()));
+          currentMap = newMap;
           if (placeholder && placeholder.parentNode) {
-              let lastNode: any = placeholder; 
-              list.forEach(item => { 
-                  const nodes = newMap.get(item)!; 
-                  nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; }); 
-              }); 
+              let lastNode: any = placeholder;
+              list.forEach(item => {
+                  const nodes = newMap.get(item)!;
+                  nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; });
+              });
           }
-      }); 
+      });
   }).call(this);`;
+}
+
+export function acGenerateForBinding(
+  {
+  binding,
+  localVars,
+  rootContainer,
+  recursiveGenerate
+}:{
+  binding: Binding,
+  rootContainer: string,
+  recursiveGenerate: GenerateBindingsFn,
+  localVars: Set<string>
+}
+): string {
+  const nextLocals = new Set(localVars);
+  const itemVar = binding.itemVar!;
+  const indexVar = binding.indexVar || '__index';
+  nextLocals.add(itemVar);   // e.g., 'item'
+  nextLocals.add(indexVar);  // e.g., 'i' or '__index'
+  const childBindingsCode = recursiveGenerate(
+    binding.childBindings || [],
+    nextLocals,
+    'container',
+  ).join('\n');
+
+  const funVarName = "callFor_"+binding.targetId.replaceAll("-","");
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+    const binding:any = ${JSON.stringify(binding)};
+    this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
+    const placeholder = this.findComment('${binding.targetId}-end');
+    const list = newValue ?? [];
+    const newMap = new Map<any, any[]>();
+    list.forEach((${itemVar}, ${indexVar}) => {
+      if (currentMap.has(${itemVar})) {
+        newMap.set(${itemVar}, currentMap.get(${itemVar})!);
+        currentMap.delete(${itemVar});
+      } else {
+        const container = document.createElement('div');
+        container.innerHTML = ${JSON.stringify(binding.template)};
+        const nodes = Array.from(container.childNodes);
+        ${childBindingsCode}
+        newMap.set(${itemVar}, nodes);
+        }
+          });
+      if (placeholder && placeholder.parentNode) {
+              let lastNode: any = placeholder;
+              list.forEach(item => {
+                  const nodes = newMap.get(item)!;
+                  nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; });
+              });
+          }
+    }
+
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
 }

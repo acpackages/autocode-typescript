@@ -68,3 +68,29 @@ export function generatePropertyBinding(
     });
   })();`;
 }
+
+export function acGeneratePropertyBinding({binding,querySelector}:{
+  binding: Binding,
+  querySelector: string
+}
+): string {
+  const funVarName = "callProperty_"+binding.targetId.replaceAll("-","");
+  const target = binding.target.includes('.')
+    ? `['${binding.target.split('.').join("']['")}']`
+    : `['${binding.target}']`;
+
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      const el = ${querySelector};
+      const __t = (el as any).acRuntimeInstance || el;
+      (__t as any)${target} = newValue;
+    }
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
+}

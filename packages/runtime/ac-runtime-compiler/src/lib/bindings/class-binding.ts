@@ -56,3 +56,31 @@ export function generateClassBinding(
     });
   })();`;
 }
+
+
+export function acGenerateClassBinding({binding,querySelector}:{
+  binding: Binding,
+  querySelector: string
+}
+): string {
+  const funVarName = "callClass_"+binding.targetId.replaceAll("-","");
+  let code = `this.changeListeners['${funVarName}'] = {
+    binding:{expression:\`${binding.expression}\`},
+    currentValue:undefined,
+    callback : async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      const el = ${querySelector};
+      if (el) {
+        if (newValue) {
+          el.classList.add('${binding.target}');
+        } else {
+          el.classList.remove('${binding.target}');
+        }
+      }
+    }
+  };\n`;
+  for(const property of binding.properties){
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  }
+  return code;
+}
