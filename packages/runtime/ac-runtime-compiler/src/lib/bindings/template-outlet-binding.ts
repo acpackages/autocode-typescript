@@ -73,9 +73,8 @@ export function acGenerateTemplateOutletBinding(
     'container',
   ).join('\n');
 
-  const funVarName = "callFor_"+binding.targetId.replaceAll("-","");
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'template'},
     currentValue:undefined,
     callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -106,7 +105,7 @@ export function acGenerateTemplateOutletBinding(
     }
   };\n`;
   for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }

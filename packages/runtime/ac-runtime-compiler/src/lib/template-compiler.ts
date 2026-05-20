@@ -303,36 +303,48 @@ export class TemplateCompiler {
     // No interpolation markers → return as-is
     if (!text.includes('{{')) return text;
 
-    const id = `${this.generateHexId()}`;
+    const escapeHtml = (str: string): string => {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
 
-    // Convert "Hello {{name}}!" → "`Hello ${name}!`"
-    // Also transform pipe expressions: "{{val | currency}}" → "`${__acPipe(val, 'currency')}`"
-    const expression = '' + text.replace(
-      /\{\{(.+?)\}\}/g,
-      (_, inner) => '' + inner + '',
-    ) + '';
+    const parts = text.split(/(\{\{.+?\}\})/g);
+    let finalHtml = '';
 
-    const properties = Array.from(extractExpressionIdentifiers(expression, localVars));
-    const finalHtml = `<span ac-ref="${id}"></span>`;
+    for (const part of parts) {
+      if (part.startsWith('{{') && part.endsWith('}}')) {
+        const inner = part.slice(2, -2).trim();
+        const id = `${this.generateHexId()}`;
+        const properties = Array.from(extractExpressionIdentifiers(inner, localVars));
 
-    bindings.push({
-      type: 'text',
-      expression,
-      targetId: id,
-      properties,
-      rootIds: [],
-    });
+        bindings.push({
+          type: 'text',
+          expression: inner,
+          targetId: id,
+          properties,
+          rootIds: [],
+        });
 
-    this.addReactiveProperties({
-      expression,
-      targetId: id,
-      type: 'value',
-      reactiveProperties,
-      localVars,
-      targetElementHtmle: finalHtml,
-    });
+        const spanHtml = `<span ac-ref="${id}"></span>`;
+        this.addReactiveProperties({
+          expression: inner,
+          targetId: id,
+          type: 'value',
+          reactiveProperties,
+          localVars,
+          targetElementHtmle: spanHtml,
+        });
 
-    // Return a span placeholder that the runtime will find and update
+        finalHtml += spanHtml;
+      } else {
+        finalHtml += escapeHtml(part);
+      }
+    }
+
     return finalHtml;
   }
 

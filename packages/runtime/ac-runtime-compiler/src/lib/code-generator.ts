@@ -501,7 +501,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     acRuntimeInstance: ${className};
     private acReactiveProperties: Record<string,{ targetId: string; type: string, expression:string }[]> = ${JSON.stringify(templateResult.reactiveProperties)};
     private isInitialized:boolean = false;
-    private changeListeners:Record<string,{callback:any,binding:{ expression:string },currentValue:any}> = {};
+    private changeListeners:Record<string,{callback:any,binding:{ expression:string, type:string },currentValue:any}> = {};
     private propertyListeners:any = {${propertyChangeListeners.join(",")}};
 
     constructor() {
@@ -549,6 +549,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
     connectedCallback() {
       if(!this.isInitialized){
+      this.isInitialized = true;
         this.style.display = 'contents';
         this.render();
         if ((this.acRuntimeInstance as any).acOnInit) {
@@ -600,6 +601,18 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       } catch (e) {
         console.error(\`Error evaluating expression: \${expression} \`, e);
         return undefined;
+      }
+    }
+
+    private async executeChangeListener({key}:{key:string}){
+      const callbackDef = this.changeListeners[key];
+      if(callbackDef){
+        const newValue = await this.evaluateExpression({expression:callbackDef.binding.expression});
+        if(callbackDef.currentValue != newValue){
+          const oldValue = callbackDef.currentValue;
+          callbackDef.currentValue = newValue;
+          callbackDef.callback({oldValue,newValue});
+        }
       }
     }
 
@@ -672,58 +685,14 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     }
 
     private async handlePropertyChange({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any}) {
-      // console.log(\`Property change : \${key}\`,oldValue,newValue,this.acRuntimeInstance);
+      if(key == 'showSidebar'){
+        console.log(\`Property change : \${key}\`,oldValue,newValue,this.acRuntimeInstance);
+      }
       // console.log(this.acReactiveProperties[key]);
       if(this.propertyListeners[key]){
         for(const targetId of Object.keys(this.propertyListeners[key])){
-        const callbackKey = this.propertyListeners[key][targetId];
-          const callbackDef = this.changeListeners[callbackKey];
-          if(callbackDef){
-            const exprNewValue = await this.evaluateExpression({expression:callbackDef.binding.expression});
-            if(callbackDef.currentValue != newValue){
-              const exprOldValue = callbackDef.currentValue;
-              callbackDef.currentValue = exprNewValue;
-              callbackDef.callback({oldValue:exprOldValue,newValue:exprNewValue});
-            }
-          }
-          // if(binding.type == 'if'){
-          //   if(this.ifHandlers[binding.targetId]){
-          //     this.ifHandlers[binding.targetId]();
-          //   }
-          // }
-          // else{
-          //   const expressionResult = await this.evaluateExpression({expression:binding.expression});
-          //   const reflectingNodes = this.querySelectorAll(\`[ac-ref="\${binding.targetId}"]\`);
-          //   if(binding.type == 'value'){
-          //     for(const el of Array.from(reflectingNodes) as HTMLElement[]){
-          //       el.textContent = String(expressionResult ?? '');
-          //     }
-          //   }
-          //   else if(binding.type == 'bind' || binding.type == 'property'){
-          //     if(binding.property){
-          //       for(const el of Array.from(reflectingNodes) as HTMLElement[]){
-          //         el.setAttribute(binding.property,String(expressionResult ?? ''));
-          //       }
-          //     }
-          //   }
-          //   else if(binding.type == 'class'){
-          //     if(binding.property){
-          //       if(expressionresult){
-          //         for(const el of Array.from(reflectingNodes) as HTMLElement[]){
-          //           el.classList.add(binding.property);
-          //         }
-          //       }
-          //       else{
-          //         for(const el of Array.from(reflectingNodes) as HTMLElement[]){
-          //           el.classList.remove(binding.property);
-          //         }
-          //       }
-          //     }
-          //   }
-          //   else{
-          //     console.log(binding);
-          //   }
-          // }
+          const callKey = this.propertyListeners[key][targetId];
+          await this.executeChangeListener({key:callKey});
         }
       }
     }
@@ -861,8 +830,11 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
     }
 
-    private render(){
+    private async render(){
       this.innerHTML = \`${templateResult.html}\`;
+      for(const key of Object.keys(this.changeListeners)){
+        await this.executeChangeListener({key:key});
+      }
     }
   }
 

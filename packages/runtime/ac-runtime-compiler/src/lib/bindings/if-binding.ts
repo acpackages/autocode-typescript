@@ -72,15 +72,14 @@ export function acGenerateIfBinding({
   localVars,
   rootContainer,
   recursiveGenerate
-}:{
+}: {
   binding: Binding,
   rootContainer: string,
   recursiveGenerate: GenerateBindingsFn,
   localVars: Set<string>
 }): string {
-  const funVarName = "callIf_"+binding.targetId.replaceAll("-","");
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'if'},
     currentValue:undefined,
     callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -90,9 +89,8 @@ export function acGenerateIfBinding({
       }
     }
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }
-

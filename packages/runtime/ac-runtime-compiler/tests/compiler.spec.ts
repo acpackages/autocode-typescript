@@ -427,7 +427,7 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     `;
     const result = tc.compile(template);
     expect(result.bindings).toBeDefined();
-    
+
     const classBinding = result.bindings.find(b => b.type === 'class');
     expect(classBinding).toBeDefined();
     expect(classBinding?.properties).toEqual(['isActive']);
@@ -450,7 +450,7 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     `;
     const result = tc.compile(template);
     expect(result.bindings).toBeDefined();
-    
+
     const classBinding = result.bindings.find(b => b.type === 'class');
     expect(classBinding).toBeDefined();
     expect(classBinding?.properties).toEqual(['isActive']);
@@ -466,6 +466,19 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     expect(result.reactiveProperties['isActive']).toBeDefined();
     expect(result.reactiveProperties['name']).toBeDefined();
     expect(result.reactiveProperties['show']).toBeDefined();
+  });
+
+  it('should compile text nodes with static text correctly', () => {
+    const template = `<div>Hello {{name}}! Welcome back.</div>`;
+    const result = tc.compile(template);
+    expect(result.bindings).toBeDefined();
+    
+    const textBinding = result.bindings.find(b => b.type === 'text');
+    expect(textBinding).toBeDefined();
+    expect(textBinding?.expression).toBe("name");
+    expect(textBinding?.properties).toEqual(['name']);
+    expect(result.html).toContain('Hello <span ac-ref="');
+    expect(result.html).toContain('></span>! Welcome back.');
   });
 });
 

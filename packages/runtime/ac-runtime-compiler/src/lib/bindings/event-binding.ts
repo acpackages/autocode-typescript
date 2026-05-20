@@ -48,23 +48,21 @@ export function generateEventBinding(
 }
 
 
-export function acGenerateEventBinding({binding,querySelector}:{
+export function acGenerateEventBinding({ binding, querySelector }: {
   binding: Binding,
   querySelector: string
 }
 ): string {
-  const funVarName = "callEvent_"+binding.targetId.replaceAll("-","");
-
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'event'},
     currentValue:undefined,
     callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
       ${querySelector}?.addEventListener('${binding.target}', ($event: any) => { newValue });
     }
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }

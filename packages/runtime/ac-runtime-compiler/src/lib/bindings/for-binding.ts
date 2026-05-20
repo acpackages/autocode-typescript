@@ -81,16 +81,16 @@ export function generateForBinding(
 
 export function acGenerateForBinding(
   {
-  binding,
-  localVars,
-  rootContainer,
-  recursiveGenerate
-}:{
-  binding: Binding,
-  rootContainer: string,
-  recursiveGenerate: GenerateBindingsFn,
-  localVars: Set<string>
-}
+    binding,
+    localVars,
+    rootContainer,
+    recursiveGenerate
+  }: {
+    binding: Binding,
+    rootContainer: string,
+    recursiveGenerate: GenerateBindingsFn,
+    localVars: Set<string>
+  }
 ): string {
   const nextLocals = new Set(localVars);
   const itemVar = binding.itemVar!;
@@ -103,40 +103,38 @@ export function acGenerateForBinding(
     'container',
   ).join('\n');
 
-  const funVarName = "callFor_"+binding.targetId.replaceAll("-","");
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'for'},
     currentValue:undefined,
     callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
-    const binding:any = ${JSON.stringify(binding)};
-    this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
-    const placeholder = this.findComment('${binding.targetId}-end');
-    const list = newValue ?? [];
-    const newMap = new Map<any, any[]>();
-    list.forEach((${itemVar}, ${indexVar}) => {
-      if (currentMap.has(${itemVar})) {
-        newMap.set(${itemVar}, currentMap.get(${itemVar})!);
-        currentMap.delete(${itemVar});
-      } else {
-        const container = document.createElement('div');
-        container.innerHTML = ${JSON.stringify(binding.template)};
-        const nodes = Array.from(container.childNodes);
-        ${childBindingsCode}
-        newMap.set(${itemVar}, nodes);
+      const binding:any = ${JSON.stringify(binding)};
+      this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
+      const placeholder = this.findComment('${binding.targetId}-end');
+      const list = newValue ?? [];
+      const newMap = new Map<any, any[]>();
+      list.forEach((${itemVar}, ${indexVar}) => {
+        if (currentMap.has(${itemVar})) {
+          newMap.set(${itemVar}, currentMap.get(${itemVar})!);
+          currentMap.delete(${itemVar});
+        } else {
+          const container = document.createElement('div');
+          container.innerHTML = ${JSON.stringify(binding.template)};
+          const nodes = Array.from(container.childNodes);
+          ${childBindingsCode}
+          newMap.set(${itemVar}, nodes);
         }
-          });
+      });
       if (placeholder && placeholder.parentNode) {
-              let lastNode: any = placeholder;
-              list.forEach(item => {
-                  const nodes = newMap.get(item)!;
-                  nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; });
-              });
-          }
+        let lastNode: any = placeholder;
+        list.forEach(item => {
+          const nodes = newMap.get(item)!;
+          nodes.forEach(n => { lastNode.parentNode?.insertBefore(n, lastNode.nextSibling); lastNode = n; });
+        });
+      }
     }
-
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }

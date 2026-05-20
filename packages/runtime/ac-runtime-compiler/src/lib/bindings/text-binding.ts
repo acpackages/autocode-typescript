@@ -50,13 +50,12 @@ export function generateTextBinding(
   // ↑ `?? ''` falls back to empty string if the expression is null/undefined
 }
 
-export function acGenerateTextBinding({binding,querySelector}:{
+export function acGenerateTextBinding({ binding, querySelector }: {
   binding: Binding,
   querySelector: string
 }): string {
-  const funVarName = "callText_"+binding.targetId.replaceAll("-","");
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'text'},
     currentValue:undefined,
     callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -64,8 +63,8 @@ export function acGenerateTextBinding({binding,querySelector}:{
       if (el) el.textContent = String(newValue ?? '');
     }
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }

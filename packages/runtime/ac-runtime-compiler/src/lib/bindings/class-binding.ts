@@ -58,14 +58,13 @@ export function generateClassBinding(
 }
 
 
-export function acGenerateClassBinding({binding,querySelector}:{
+export function acGenerateClassBinding({ binding, querySelector }: {
   binding: Binding,
   querySelector: string
 }
 ): string {
-  const funVarName = "callClass_"+binding.targetId.replaceAll("-","");
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'class'},
     currentValue:undefined,
     callback : async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -79,8 +78,8 @@ export function acGenerateClassBinding({binding,querySelector}:{
       }
     }
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }

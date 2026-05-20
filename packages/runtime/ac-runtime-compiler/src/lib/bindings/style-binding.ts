@@ -48,15 +48,13 @@ export function generateStyleBinding(
 }
 
 
-export function acGenerateStyleBinding({binding,querySelector}:{
+export function acGenerateStyleBinding({ binding, querySelector }: {
   binding: Binding,
   querySelector: string
 }
 ): string {
-  const funVarName = "callStyle_"+binding.targetId.replaceAll("-","");
-
-  let code = `this.changeListeners['${funVarName}'] = {
-    binding:{expression:\`${binding.expression}\`},
+  let code = `this.changeListeners['${binding.targetId}'] = {
+    binding:{expression:\`${binding.expression}\`,type:'style'},
     currentValue:undefined,
     callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -66,8 +64,8 @@ export function acGenerateStyleBinding({binding,querySelector}:{
       }
     }
   };\n`;
-  for(const property of binding.properties){
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${funVarName}';\n`;
+  for (const property of binding.properties) {
+    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }
   return code;
 }
