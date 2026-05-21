@@ -55,10 +55,8 @@ export function acGenerateStyleBinding({ binding, querySelector }: {
 ): string {
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'style'},
-    currentValue:undefined,
-    callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
-      const binding:any = ${JSON.stringify(binding)};
-      const el = ${querySelector};
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
       if (el) {
         (el as HTMLElement).style['${binding.target}'] = newValue ?? '';
       }

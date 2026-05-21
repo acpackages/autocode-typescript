@@ -468,15 +468,22 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   const bindingProperties:string[] = [];
   const propertyChangeListeners:string[] = [];
   const propertyRegisterListener:string[] = [];
-  for(const binding of templateResult.bindings){
-    for(const property of binding.properties){
-      if(!bindingProperties.includes(property)){
-        bindingProperties.push(property);
-        propertyChangeListeners.push(`'${property}':{}`);
-        propertyRegisterListener.push(`this.registerPropertyListener('${property}');`);
+  const setPropertyListeners = (bindings:Binding[])=>{
+    for(const binding of bindings){
+      for(const property of binding.properties){
+        if(!bindingProperties.includes(property)){
+          bindingProperties.push(property);
+          propertyChangeListeners.push(`'${property}':{}`);
+          propertyRegisterListener.push(`this.registerPropertyListener('${property}');`);
+        }
+      }
+      if(binding.childBindings && binding.childBindings.length > 0){
+        setPropertyListeners(binding.childBindings);
       }
     }
   }
+  setPropertyListeners(templateResult.bindings);
+
 
   const cleanClassSourceCode = stripAcElementDecorator(classSourceCode || '').replace(/\bexport\s+(?:default\s+)?class\s+/, 'class ');
   let code = `
@@ -497,16 +504,13 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   // Original class declaration copied as is (stripped of AcElement decorator and export keyword)
   ${cleanClassSourceCode}
 
-  class ${htmlElementClassName} extends HTMLElement {
-    acRuntimeInstance: ${className};
-    private acReactiveProperties: Record<string,{ targetId: string; type: string, expression:string }[]> = ${JSON.stringify(templateResult.reactiveProperties)};
-    private isInitialized:boolean = false;
-    private changeListeners:Record<string,{callback:any,binding:{ expression:string, type:string },currentValue:any}> = {};
-    private propertyListeners:any = {${propertyChangeListeners.join(",")}};
+  class ${htmlElementClassName} extends AcRuntimeElement {
 
     constructor() {
       super();
+      this.elementHtml = \`${templateResult.html}\`;
       this.acRuntimeInstance = new ${className}();
+      this.propertyListeners = {${propertyChangeListeners.join(",")}};
       `;
 
       if(viewChildren.length > 0){
@@ -517,324 +521,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
       ${propertyRegisterListener.join("\n")}
       (this.acRuntimeInstance as any).element = this;
-    }
-
-    private appendElementsBetweenComments(
-      startCommentName: string,
-      endCommentName: string,
-      nodes: Node[]
-    ): void {
-      const startComment = this.findComment(
-        startCommentName
-      );
-
-      const endComment = this.findComment(
-        endCommentName
-      );
-
-      if (!startComment || !endComment) {
-        return;
-      }
-
-      const parent = startComment.parentNode;
-
-      if (!parent) {
-        return;
-      }
-
-      for (const node of nodes) {
-        parent.insertBefore(node, endComment);
-      }
-    }
-
-    connectedCallback() {
-      if(!this.isInitialized){
-      this.isInitialized = true;
-        this.style.display = 'contents';
-        this.render();
-        if ((this.acRuntimeInstance as any).acOnInit) {
-          (this.acRuntimeInstance as any).acOnInit();
-        }
-      }
-    }
-
-    createElementsFromHtml(
-      html: string
-    ): HTMLElement[] {
-      const template = document.createElement('template');
-
-      template.innerHTML = html.trim();
-
-      return Array.from(
-        template.content.children
-      ).filter(
-        (el): el is HTMLElement =>
-          el instanceof HTMLElement
-      );
-    }
-
-
-    disconnectedCallback() {
-      if ((this.acRuntimeInstance as any).acOnDestroy) {
-        (this.acRuntimeInstance as any).acOnDestroy();
-      }
-      if ((this.acRuntimeInstance as any).__destroy) {
-        (this.acRuntimeInstance as any).__destroy();
-      }
-    }
-
-    private evaluateExpression({expression,locals,isExpressionEval = false}:{expression: string, locals?: Record<string, any>, isExpressionEval?: boolean}): any {
-      if (expression.includes('|') && !isExpressionEval) {
-        const context = this.acRuntimeInstance;
-        return evaluateAcPipeExpression({
-          expression, context, evaluateFunction: ({ expression, context, }: { expression: string; context: any; }) => {
-            return this.evaluateExpression({expression, locals, isExpressionEval:true});
-          }
-        });
-      }
-      try {
-        const scope = this.getScope(locals);
-        const normalizedExpr = this.normalizeExprForScope(expression);
-        const fn = new Function('scope', 'context', \`with (context) { with (scope) { return \${normalizedExpr} } } \`);
-        const result = fn.call(this.acRuntimeInstance, scope, this.acRuntimeInstance);
-        return result;
-      } catch (e) {
-        console.error(\`Error evaluating expression: \${expression} \`, e);
-        return undefined;
-      }
-    }
-
-    private async executeChangeListener({key}:{key:string}){
-      const callbackDef = this.changeListeners[key];
-      if(callbackDef){
-        const newValue = await this.evaluateExpression({expression:callbackDef.binding.expression});
-        if(callbackDef.currentValue != newValue){
-          const oldValue = callbackDef.currentValue;
-          callbackDef.currentValue = newValue;
-          callbackDef.callback({oldValue,newValue});
-        }
-      }
-    }
-
-    private findComment(
-      commentText: string,
-    ): Comment | null {
-      const walker = document.createTreeWalker(
-        this,
-        NodeFilter.SHOW_COMMENT
-      );
-
-      let current = walker.nextNode();
-
-      while (current) {
-        if (
-          current.nodeType === Node.COMMENT_NODE &&
-          current.nodeValue?.trim() === commentText
-        ) {
-          return current as Comment;
-        }
-
-        current = walker.nextNode();
-      }
-
-      return null;
-    }
-
-    private getElementsBetweenComments(
-      startComment: Comment,
-      endComment: Comment
-    ): Node[] {
-      const nodes: Node[] = [];
-
-      let current = startComment.nextSibling;
-
-      while (current && current !== endComment) {
-        nodes.push(current);
-        current = current.nextSibling;
-      }
-
-      return nodes;
-    }
-
-    private getScope(locals?: Record<string, any>): any {
-      // const scope = Object.create(null);
-      // if (locals) {
-      //   Object.assign(scope, locals);
-      // }
-
-      // // Collect engine hierarchy from root to this
-      // const engines: AcElementRenderer[] =  [];
-
-      // let curr: AcElementRenderer | undefined = this;
-      // while (curr) {
-      //   engines.unshift(curr);
-      //   curr = curr.parent;
-      // }
-
-      // // Merge templates and references into scope (local shadows parent)
-      // for (const engine of engines) {
-      //   engine.templates.forEach((tpl, name) => {
-      //     scope[name] = tpl;
-      //   });
-      //   engine.references.forEach((ref, name) => {
-      //     scope[name] = ref;
-      //   });
-      // }
-
-      return this.acRuntimeInstance;
-    }
-
-    private async handlePropertyChange({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any}) {
-      if(key == 'showSidebar'){
-        console.log(\`Property change : \${key}\`,oldValue,newValue,this.acRuntimeInstance);
-      }
-      // console.log(this.acReactiveProperties[key]);
-      if(this.propertyListeners[key]){
-        for(const targetId of Object.keys(this.propertyListeners[key])){
-          const callKey = this.propertyListeners[key][targetId];
-          await this.executeChangeListener({key:callKey});
-        }
-      }
-    }
-
-    private normalizeExprForScope(expression: string): string {
-      // Collect all known scope names (templates + references) from hierarchy
-      const knownNames = new Set<string>();
-      // let engine: AcElementRenderer | undefined = this;
-
-      // while (engine) {
-      //   engine.templates.forEach((_, name) => knownNames.add(name));
-      //   engine.references.forEach((_, name) => knownNames.add(name));
-      //   engine = engine.parent;
-      // }
-
-      if (knownNames.size === 0) return expression;
-
-      // Sort by length descending so longer names match first
-      const sorted = Array.from(knownNames).sort((a, b) => b.length - a.length);
-      const escaped = sorted.map(n => n.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&'));
-      const pattern = escaped.join('|');
-      const regex = new RegExp(\`\\b(\${pattern})\\b\`, 'gi');
-
-      let result = '';
-      let i = 0;
-      let inString: string | null = null; // ', ", or \`
-      let buffer = '';
-
-      while (i < expression.length) {
-        const char = expression[i];
-
-        // Handle string start/end
-        if (inString) {
-          buffer += char;
-
-          // Handle escape
-          if (char === '\\\\') {
-            buffer += expression[i + 1] || '';
-            i += 2;
-            continue;
-          }
-
-          // End of string
-          if (char === inString) {
-            result += buffer; // append string as-is
-            buffer = '';
-            inString = null;
-          }
-
-          i++;
-          continue;
-        }
-
-        // Enter string
-        if (char === '"' || char === "'" || char === '\`') {
-          // process buffer before entering string
-          if (buffer) {
-            result += buffer.replace(regex, (match) => match.toLowerCase());
-            buffer = '';
-          }
-
-          inString = char;
-          buffer += char;
-          i++;
-          continue;
-        }
-
-        buffer += char;
-        i++;
-      }
-
-      // process remaining buffer
-      if (buffer) {
-        if (inString) {
-          // unterminated string → keep as-is
-          result += buffer;
-        } else {
-          result += buffer.replace(regex, (match) => match.toLowerCase());
-        }
-      }
-
-      return result;
-    }
-
-    private registerPropertyListener(key: string) {
-      let value = (this.acRuntimeInstance as any)[key];
-      Object.defineProperty(this.acRuntimeInstance, key, {
-        get: () => {
-          return value;
-        },
-        set: (newValue) => {
-          if (Object.is(value, newValue)) {
-            return;
-          }
-          const oldValue = value;
-          value = newValue;
-          this.handlePropertyChange({key,oldValue,newValue});
-          const changes = {
-            key,
-            oldValue,
-            newValue,
-            firstChange: false
-          };
-          if ((this.acRuntimeInstance as any).acOnChange) {
-            (this.acRuntimeInstance as any).acOnChange(changes);
-          }
-          if ((this.acRuntimeInstance as any).acOnPropertyChange) {
-            (this.acRuntimeInstance as any).acOnPropertyChange(changes);
-          }
-        },
-        configurable: true,
-        enumerable: true
-      });
-    }
-
-    private removeElementsBetweenCommentsByName(
-      startCommentName: string,
-      endCommentName: string
-    ): void {
-      const startComment = this.findComment(startCommentName);
-      const endComment = this.findComment(endCommentName);
-
-      if (!startComment || !endComment) {
-        return;
-      }
-
-      let current = startComment.nextSibling;
-
-      while (current && current !== endComment) {
-        const next = current.nextSibling;
-
-        current.remove();
-
-        current = next;
-      }
-    }
-
-    private async render(){
-      this.innerHTML = \`${templateResult.html}\`;
-      for(const key of Object.keys(this.changeListeners)){
-        await this.executeChangeListener({key:key});
-      }
+      this.init();
     }
   }
 

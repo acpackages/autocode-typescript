@@ -56,13 +56,14 @@ export function acGenerateTextBinding({ binding, querySelector }: {
 }): string {
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'text'},
-    currentValue:undefined,
-    callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
-      const binding:any = ${JSON.stringify(binding)};
-      const el = ${querySelector};
-      if (el) el.textContent = String(newValue ?? '');
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
+      if(el){
+        if (el) el.textContent = String(newValue ?? '');
+      }
     }
   };\n`;
+
   for (const property of binding.properties) {
     code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
   }

@@ -85,21 +85,21 @@ export function acGenerateAttributeBinding({ binding, querySelector }: {
 ): string {
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'attribute'},
-    currentValue:undefined,
-    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
-      const binding:any = ${JSON.stringify(binding)};
-      const el = ${querySelector};
-      const __t = (el as any).acRuntimeInstance;
-      if (__t) {
-        const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
-        __t[camelKey] = newValue;
-      }
-      else{
-        if(newValue != undefined && newValue!=null){
-          el.setAttribute('${binding.target}',newValue);
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
+      if(el){
+        const __t = (el as any).acRuntimeInstance;
+        if (__t) {
+          const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
+          __t[camelKey] = newValue;
         }
         else{
-          el.removeAttribute('${binding.target}');
+          if(newValue != undefined && newValue!=null){
+            el.setAttribute('${binding.target}',newValue);
+          }
+          else{
+            el.removeAttribute('${binding.target}');
+          }
         }
       }
     }

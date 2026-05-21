@@ -55,8 +55,7 @@ export function acGenerateEventBinding({ binding, querySelector }: {
 ): string {
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'event'},
-    currentValue:undefined,
-    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
       ${querySelector}?.addEventListener('${binding.target}', ($event: any) => { newValue });
     }

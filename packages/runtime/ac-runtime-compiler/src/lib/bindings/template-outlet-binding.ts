@@ -75,8 +75,7 @@ export function acGenerateTemplateOutletBinding(
 
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'template'},
-    currentValue:undefined,
-    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
       this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
       const placeholder = this.findComment(${rootContainer}, '${binding.targetId}-end');

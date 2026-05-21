@@ -80,12 +80,14 @@ export function acGenerateIfBinding({
 }): string {
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'if'},
-    currentValue:undefined,
-    callback: async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
-      this.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
+      renderer.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
       if(newValue){
-        this.appendElementsBetweenComments('${binding.targetId}-start','${binding.targetId}-end',this.createElementsFromHtml(binding.template));
+        const newElements = renderer.createElementsFromHtml(binding.template);
+        renderer.appendElementsBetweenComments('${binding.targetId}-start','${binding.targetId}-end',newElements);
+        const childRefs = renderer.getRefTargetIdsFromNodes(newElements);
+        renderer.executeChangeListener({keys:childRefs.all, force:true});
       }
     }
   };\n`;

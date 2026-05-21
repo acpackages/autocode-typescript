@@ -80,12 +80,12 @@ export function acGeneratePropertyBinding({ binding, querySelector }: {
 
   let code = `this.changeListeners['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'property'},
-    currentValue:undefined,
-    callback:async ({oldValue,newValue}:{oldValue:any,newValue:any})=>{
-      const binding:any = ${JSON.stringify(binding)};
-      const el = ${querySelector};
-      const __t = (el as any).acRuntimeInstance || el;
-      (__t as any)${target} = newValue;
+    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
+      if(el){
+        const __t = (el as any).acRuntimeInstance || el;
+        (__t as any)${target} = newValue;
+      }
     }
   };\n`;
   for (const property of binding.properties) {

@@ -120,10 +120,8 @@ export function acGenerateBindingCallbacks({bindings,localVars,rootContainer,top
   rootContainer?: string,
   topLevelVars?: Set<string>}
 ): string[] {
-  return bindings.map(binding => {
-
-    // ── Step 2: Build the querySelector expression (for queryable types) ──
-    // e.g., `this.element.querySelector('[ac-ref="ac-3f8a1b2c"]')`
+  let bindingsCode:string[] = [];
+  for(const binding of bindings){
     if(!rootContainer){
       rootContainer = 'this';
     }
@@ -132,43 +130,44 @@ export function acGenerateBindingCallbacks({bindings,localVars,rootContainer,top
     // ── Step 3: Create a recursive binding generator for structural directives ──
     // ac:if and ac:for need to generate code for their nested child bindings,
     // so they receive this function as a callback
-    const recursiveGenerate = (childBindings: Binding[], childLocals: Set<string>, childContainer: string) =>
-      acGenerateBindingCallbacks({bindings:childBindings,localVars:childLocals, rootContainer:childContainer, topLevelVars});
+    const recursiveGenerate = (childBindings: Binding[], childLocals: Set<string>, childContainer: string) => acGenerateBindingCallbacks({bindings:childBindings,localVars:childLocals, rootContainer:childContainer, topLevelVars});
 
     // ── Step 4: Dispatch to the appropriate binding generator ──
     switch (binding.type) {
       case 'text':
-        return acGenerateTextBinding({binding,querySelector});
-
+        bindingsCode.push(acGenerateTextBinding({binding,querySelector}));
+        break;
       case 'property':
-        return acGeneratePropertyBinding({binding,querySelector});
-
-      case 'event':
-        return acGenerateEventBinding({binding,querySelector});
-
+        bindingsCode.push(acGeneratePropertyBinding({binding,querySelector}));
+        break;
+      // case 'event':
+        // bindingsCode.push(acGenerateEventBinding({binding,querySelector}));
+        // break;
       case 'class':
-        return acGenerateClassBinding({binding,querySelector});
-
+        bindingsCode.push(acGenerateClassBinding({binding,querySelector}));
+        break;
       case 'style':
-        return acGenerateStyleBinding({binding,querySelector});
-
+        bindingsCode.push(acGenerateStyleBinding({binding,querySelector}));
+        break;
       case 'model':
-        return acGenerateModelBinding({binding,querySelector,localVars});
-
+        bindingsCode.push(acGenerateModelBinding({binding,querySelector,localVars}));
+        break;
       case 'attribute':
-        return acGenerateAttributeBinding({binding,querySelector});
-
+        bindingsCode.push(acGenerateAttributeBinding({binding,querySelector}));
+        break;
       case 'if':
-        return acGenerateIfBinding({binding,localVars,rootContainer,recursiveGenerate});
-
-      // case 'for':
-        // return acGenerateForBinding({binding,localVars,rootContainer,recursiveGenerate});
+        bindingsCode.push(acGenerateIfBinding({binding,localVars,rootContainer,recursiveGenerate}));
+        break;
+      case 'for':
+        bindingsCode.push(acGenerateForBinding({binding,localVars,rootContainer,recursiveGenerate}));
+        break;
 
       // case 'template-outlet':
         // return acGenerateTemplateOutletBinding({binding,localVars,rootContainer,recursiveGenerate,topLevelVars});
-
-      default:
-        return '';
     }
-  });
+    if(binding.childBindings && binding.childBindings.length > 0){
+      bindingsCode = [...bindingsCode,...acGenerateBindingCallbacks({bindings:binding.childBindings})];
+    }
+  }
+  return bindingsCode;
 }

@@ -497,7 +497,7 @@ export class TemplateCompiler {
     }
 
     const properties = Array.from(extractExpressionIdentifiers(listExpr, localVars));
-    const finalHtml = `<!--${placeholderId}-->`;
+    const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     bindings.push({
       type: 'for',
