@@ -78,21 +78,24 @@ export function acGenerateIfBinding({
   recursiveGenerate: GenerateBindingsFn,
   localVars: Set<string>
 }): string {
-  let code = `this.changeListeners['${binding.targetId}'] = {
+  let code = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'if'},
     callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
+      if(binding.expression == 'showSidebar'){
+        console.log("[AC:IF] Executing binding",binding,newValue,oldValue);
+      }
       renderer.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
       if(newValue){
         const newElements = renderer.createElementsFromHtml(binding.template);
         renderer.appendElementsBetweenComments('${binding.targetId}-start','${binding.targetId}-end',newElements);
         const childRefs = renderer.getRefTargetIdsFromNodes(newElements);
-        renderer.executeChangeListener({keys:childRefs.all, force:true});
+        renderer.executeChangeListener({targetIds:childRefs.all, force:true});
       }
     }
-  };\n`;
+  }});\n`;
   for (const property of binding.properties) {
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
+    code += `this.registerPropertyListenerKey({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',property:'${property}'});\n`;
   }
   return code;
 }

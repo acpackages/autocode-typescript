@@ -322,6 +322,7 @@ export class TemplateCompiler {
         const properties = Array.from(extractExpressionIdentifiers(inner, localVars));
 
         bindings.push({
+          bindingId:this.generateHexId(),
           type: 'text',
           expression: inner,
           targetId: id,
@@ -501,6 +502,7 @@ export class TemplateCompiler {
 
     bindings.push({
       type: 'for',
+      bindingId:this.generateHexId(),
       expression: listExpr,
       itemVar,
       indexVar,
@@ -575,6 +577,7 @@ export class TemplateCompiler {
 
     bindings.push({
       type: 'if',
+      bindingId:this.generateHexId(),
       expression: acIf,
       targetId: placeholderId,
       template: subResult.html,
@@ -663,6 +666,7 @@ export class TemplateCompiler {
 
     bindings.push({
       type: 'template-outlet',
+      bindingId:this.generateHexId(),
       expression,
       contextExpression,
       targetId: id,
@@ -718,13 +722,13 @@ export class TemplateCompiler {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
         if (prop.startsWith('class.')) {
-          bindings.push({ type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'class' });
         } else if (prop.startsWith('style.')) {
-          bindings.push({ type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId:this.generateHexId(),type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'style' });
         } else {
-          bindings.push({ type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId:this.generateHexId(),type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'bind' });
         }
         hasBinding = true;
@@ -734,7 +738,7 @@ export class TemplateCompiler {
       else if (name.startsWith('(') && name.endsWith(')')) {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'event' });
         hasBinding = true;
         delete el.attribs[name];
@@ -743,7 +747,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:class:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'class' });
         hasBinding = true;
         delete el.attribs[name];
@@ -752,7 +756,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:style:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'style' });
         hasBinding = true;
         delete el.attribs[name];
@@ -765,7 +769,7 @@ export class TemplateCompiler {
         const prop = (isCheckbox || isRadio) ? 'checked' : 'value';
         const event = (isCheckbox || isRadio || isSelect) ? 'change' : 'input';
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'model' });
         hasBinding = true;
         delete el.attribs[name];
@@ -774,7 +778,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:bind:')) {
         const prop = name.slice(8);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];
@@ -782,7 +786,7 @@ export class TemplateCompiler {
       // ── Template outlet: ac:template:outlet="expr" ──
       else if (name === 'ac:template:outlet') {
         const properties = Array.from(extractExpressionIdentifiers(value, localVars));
-        bindings.push({ type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId:this.generateHexId(),type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];

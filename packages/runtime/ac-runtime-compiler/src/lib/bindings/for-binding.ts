@@ -95,15 +95,13 @@ export function acGenerateForBinding(
   const itemVar = binding.itemVar;
   const indexVar = binding.indexVar || '__index';
 
-  let code = `this.changeListeners['${binding.targetId}'] = {
+  let code = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'for'},
     callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
-
-      console.log('[ac-for] Executing for '+binding.targetId);
       renderer.removeElementsBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
       const list = newValue ?? [];
-      const newMap = new Map<any, any[]>();
+
       list.forEach((${itemVar}, ${indexVar}) => {
         const loopItemId = this.generateHexId();
         const startCommentHtml = \`${binding.targetId}-\${loopItemId}-start\`;
@@ -112,9 +110,9 @@ export function acGenerateForBinding(
         renderer.createChildRenderer({html:binding.template,startComment:startCommentHtml,endComment:endCommentHtml,context:{${itemVar}, ${indexVar}}});
       });
     }
-  };\n`;
+  }});\n`;
   for (const property of binding.properties) {
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
+    code += `this.registerPropertyListenerKey({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',property:'${property}'});\n`;
   }
   return code;
 }

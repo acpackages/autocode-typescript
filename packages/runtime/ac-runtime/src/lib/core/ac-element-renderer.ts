@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /**
  * @module ac-element-base
  *
@@ -35,19 +36,19 @@ import { AcRuntimeElement } from './ac-runtime-element';
  * property change tracking, and DOM utility methods.
  */
 export class AcElementRenderer {
-  html!:string;
-  context:any;
-  parentRenderer?:AcElementRenderer;
-  rootElement!:AcRuntimeElement;
-  private currentBindingValues:any = {};
-  private nodes:Node[] = [];
-  private startComment?:string;
-  private endComment?:string;
-  isRoot?:boolean = false;
+  html!: string;
+  context: any;
+  parentRenderer?: AcElementRenderer;
+  rootElement!: AcRuntimeElement;
+  private currentBindingValues: any = {};
+  private nodes: Node[] = [];
+  private startComment?: string;
+  private endComment?: string;
+  isRoot?: boolean = false;
 
   // protected changeListeners: Record<string,{callback: any;binding: { expression: string; type: string };currentValue: any;}> = {};
 
-  constructor({html,rootElement,context,parentRenderer,startComment,endComment,isRoot = false}:{html:string,rootElement:AcRuntimeElement,context:any,parentRenderer?:AcElementRenderer,startComment?:string;endComment?:string,isRoot?:boolean}){
+  constructor({ html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
     this.rootElement = rootElement;
     this.context = context;
     this.parentRenderer = parentRenderer;
@@ -71,7 +72,6 @@ export class AcElementRenderer {
     if (!startComment || !endComment) {
       return;
     }
-    console.log(endComment);
     const parent = startComment.parentNode;
 
     if (!parent) {
@@ -83,11 +83,9 @@ export class AcElementRenderer {
     }
   }
 
-  createChildRenderer({html,startComment,endComment,context}:{html:string,startComment?:string,endComment?:string,context:any}){
-    console.log(html,startComment,endComment,context);
-    const childRenderer = new AcElementRenderer({rootElement:this.rootElement,context:context,html,startComment,endComment});
+  createChildRenderer({ html, startComment, endComment, context }: { html: string, startComment?: string, endComment?: string, context: any }) {
+    const childRenderer = new AcElementRenderer({ rootElement: this.rootElement, context: context, html, startComment, endComment });
     childRenderer.render();
-    console.log(childRenderer);
   }
 
   /**
@@ -145,7 +143,11 @@ export class AcElementRenderer {
         'context',
         `with (context) { with (scope) { return ${normalizedExpr} } }`
       );
-     const result = fn.call(this.context, scope, this.context);
+      const result = fn.call(this.context, scope, this.context);
+      if (expression == 'showSidebar') {
+        console.log("[AcRuntimeRenderer] Evaluating Expression", expression, this.context['isHostSet'], this.context['showSetHost']);
+      }
+      // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
       return result;
     } catch (e) {
       console.error(`Error evaluating expression: ${expression} `, e);
@@ -154,33 +156,73 @@ export class AcElementRenderer {
   }
 
   async executeChangeListener({
-    key,
-    keys,
+    targetId,
+    targetIds,
+    bindingId,
+    bindingIds,
     force = false,
   }: {
-    key?: string;
-    keys?: string[];
+    targetId?: string;
+    targetIds?: string[];
+    bindingId?: string;
+    bindingIds?: string[];
     force?: boolean;
   }): Promise<void> {
-    const executeListener = async (callKey: string) => {
-      const callbackDef = this.rootElement.changeListeners[callKey];
-      if (callbackDef) {
-        const newValue = await this.evaluateExpression({
-          expression: callbackDef.binding.expression,
-        });
-        const oldValue = this.currentBindingValues[callKey];
-        if (oldValue != newValue || force) {
-          this.currentBindingValues[callKey] = newValue;
-          callbackDef.callback({ oldValue, newValue, renderer:this });
+    const executeListener = async (targetKey: string) => {
+      try {
+        const targetCallbacks = this.rootElement.changeListeners[targetKey];
+        if (targetCallbacks) {
+          for (const bindingKey of Object.keys(targetCallbacks)) {
+            let continueExecution: boolean = true;
+            if (bindingId != undefined || bindingIds != undefined) {
+              continueExecution = false;
+              if (bindingId) {
+                continueExecution = bindingKey == bindingId;
+              }
+              else if (bindingIds) {
+                continueExecution = bindingIds.includes(bindingKey);
+              }
+            }
+            if (continueExecution) {
+              // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
+              // console.dir("[AcRuntimeRenderer] ",this.rootElement);
+              const callbackDef = targetCallbacks[bindingKey];
+              const newValue = await this.evaluateExpression({
+                expression: callbackDef.binding.expression,
+              });
+              const oldValue = this.currentBindingValues[bindingKey];
+
+              // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
+              // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
+              if (oldValue != newValue || force) {
+                if (callbackDef.binding.expression == 'showSidebar') {
+                  console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
+                }
+                this.currentBindingValues[bindingKey] = newValue;
+                callbackDef.callback({ oldValue, newValue, renderer: this });
+              }
+            }
+            else {
+              // console.log("[AcRuntimeRenderer] Skipping execution because binding key(s) does not match", targetId, targetIds, bindingId, bindingIds, this);
+            }
+          }
+        }
+        else {
+          // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
         }
       }
-    };
-    if (keys) {
-      for (const k of keys) {
-        executeListener(k);
+      catch (ex) {
+        console.error(ex);
+        console.log(targetId, targetIds, bindingId, bindingIds, force, this);
+        console.trace();
       }
-    } else if (key) {
-      executeListener(key);
+    };
+    if (targetIds) {
+      for (const k of targetIds) {
+        await executeListener(k);
+      }
+    } else if (targetId) {
+      await executeListener(targetId);
     }
   }
 
@@ -194,24 +236,22 @@ export class AcElementRenderer {
     );
 
     let current = walker.nextNode();
-    let childFound:boolean = this.startComment == undefined;
+    let childFound: boolean = this.startComment == undefined;
 
     while (current) {
-      if(!childFound){
-        console.log("Skip while start comment found");
+      if (!childFound) {
         if (
           current.nodeType === Node.COMMENT_NODE &&
           current.nodeValue?.trim() === this.startComment
-        ){
+        ) {
           childFound = true;
         }
       }
-      if(childFound){
+      if (childFound) {
         if (
-        current.nodeType === Node.COMMENT_NODE &&
+          current.nodeType === Node.COMMENT_NODE &&
           current.nodeValue?.trim() === commentText
         ) {
-          console.log(current);
           return current as Comment;
         }
       }
@@ -324,21 +364,21 @@ export class AcElementRenderer {
     return scope;
   }
 
-  async render(){
+  async render() {
     this.nodes = this.createElementsFromHtml(this.html);
     const res = this.getRefTargetIdsFromNodes(this.nodes);
-    if(this.startComment && this.endComment){
-      this.removeElementsBetweenCommentsByName(this.startComment,this.endComment);
-      this.appendElementsBetweenComments(this.startComment,this.endComment,this.nodes);
+    if (this.startComment && this.endComment) {
+      this.removeElementsBetweenCommentsByName(this.startComment, this.endComment);
+      this.appendElementsBetweenComments(this.startComment, this.endComment, this.nodes);
     }
-    else{
+    else {
       this.rootElement.innerHTML = ``;
-      for(const node of this.nodes){
+      for (const node of this.nodes) {
         this.rootElement.appendChild(node);
       }
     }
-    for(const key of res.all){
-      await this.executeChangeListener({key:key});
+    for (const key of res.all) {
+      await this.executeChangeListener({ targetId: key });
     }
   }
 
@@ -420,28 +460,28 @@ export class AcElementRenderer {
   }
 
   queryElement(query: string): Element | null {
-  if (this.startComment && this.endComment) {
-    for (const node of this.nodes) {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const element = node as Element;
+    if (this.startComment && this.endComment) {
+      for (const node of this.nodes) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
 
-        if (element.matches(query)) {
-          return element;
-        }
+          if (element.matches(query)) {
+            return element;
+          }
 
-        const child = element.querySelector(query);
+          const child = element.querySelector(query);
 
-        if (child) {
-          return child;
+          if (child) {
+            return child;
+          }
         }
       }
+
+      return null;
     }
 
-    return null;
+    return this.rootElement.querySelector(query);
   }
-
-  return this.rootElement.querySelector(query);
-}
 
   /**
    * Remove all DOM nodes between two named comment markers.

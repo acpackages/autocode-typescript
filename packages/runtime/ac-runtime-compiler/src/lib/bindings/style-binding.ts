@@ -53,7 +53,7 @@ export function acGenerateStyleBinding({ binding, querySelector }: {
   querySelector: string
 }
 ): string {
-  let code = `this.changeListeners['${binding.targetId}'] = {
+  let code = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'style'},
     callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
@@ -61,9 +61,9 @@ export function acGenerateStyleBinding({ binding, querySelector }: {
         (el as HTMLElement).style['${binding.target}'] = newValue ?? '';
       }
     }
-  };\n`;
+  }});\n`;
   for (const property of binding.properties) {
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
+    code += `this.registerPropertyListenerKey({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',property:'${property}'});\n`;
   }
   return code;
 }

@@ -94,6 +94,8 @@ export interface Binding {
 
   /** Root element IDs (reserved for future multi-root support). */
   rootIds: string[];
+
+  bindingId: string;
 }
 
 /**

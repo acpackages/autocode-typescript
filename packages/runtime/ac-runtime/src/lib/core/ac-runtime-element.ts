@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /**
  * @module ac-element-base
@@ -38,8 +39,10 @@ import { AcElementRenderer } from './ac-element-renderer';
 export class AcRuntimeElement extends HTMLElement {
   /** The inner component class instance created by the generated subclass. */
   acRuntimeInstance: any;
-  elementHtml!:string;
-  protected renderer!:AcElementRenderer;
+  elementComponent:any;
+
+  elementHtml!: string;
+  protected renderer!: AcElementRenderer;
 
   /** Prevents double initialization when connectedCallback fires multiple times. */
   private isInitialized: boolean = false;
@@ -50,13 +53,8 @@ export class AcRuntimeElement extends HTMLElement {
    * for dirty-checking.
    */
 
-  changeListeners: Record<
-    string,
-    {
-      callback: any;
-      binding: { expression: string; type: string };
-    }
-  > = {};
+  changeListeners: Record<string,Record<string,{callback: any;binding: { expression: string; type: string };}>> = {};
+  eventCallbacks: Record<string,{callback: any;binding: { expression: string; type: string };}> = {};
 
   /**
    * Maps property names to the binding target IDs that depend on them.
@@ -91,17 +89,17 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   protected generateHexId(): string {
-  const bytes = new Uint8Array(4);
+    const bytes = new Uint8Array(4);
 
-  crypto.getRandomValues(bytes);
+    crypto.getRandomValues(bytes);
 
-  return Array.from(bytes, b =>
-    b.toString(16).padStart(2, '0')
-  ).join('');
-}
+    return Array.from(bytes, b =>
+      b.toString(16).padStart(2, '0')
+    ).join('');
+  }
 
-  init(){
-    this.renderer = new AcElementRenderer({isRoot:true,rootElement:this,html:this.elementHtml,context:this.acRuntimeInstance});
+  init() {
+    this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: this.acRuntimeInstance });
   }
 
   // ─── Template Rendering (overridden by generated subclass) ──────────────────
@@ -138,9 +136,15 @@ export class AcRuntimeElement extends HTMLElement {
     newValue: any;
   }): Promise<void> {
     if (this.propertyListeners[key]) {
+      if(key == 'showSidebar'){
+        console.log("[AcRuntimeElement] Handling property change ",key,oldValue,newValue);
+      }
       for (const targetId of Object.keys(this.propertyListeners[key])) {
-        const callKey = this.propertyListeners[key][targetId];
-        await this.renderer.executeChangeListener({ key: callKey });
+        if(key == 'showSidebar'){
+          console.log("[AcRuntimeElement] Executing target : ",targetId,key,Object.keys(this.propertyListeners[key]));
+          console.dir(this);
+        }
+        await this.renderer.executeChangeListener({ targetId: targetId,bindingIds:this.propertyListeners[key][targetId] });
       }
     }
   }
@@ -150,35 +154,110 @@ export class AcRuntimeElement extends HTMLElement {
    * `Object.defineProperty`. When the property is set, it triggers
    * `handlePropertyChange` and lifecycle hooks (`acOnChange`, `acOnPropertyChange`).
    */
-  protected registerPropertyListener(key: string): void {
-    let value = (this.acRuntimeInstance as any)[key];
-    Object.defineProperty(this.acRuntimeInstance, key, {
-      get: () => {
+  makeReactive(instance:any) {
+    const object = this;
+   const proxyMap = new WeakMap<object, any>();
+
+
+   function isPlainObject(obj: any): boolean {
+    if (obj === null || typeof obj !== 'object') return false;
+    return Object.getPrototypeOf(obj) === Object.prototype;
+  }
+
+  function wrap<U extends object>(target: U, path: string[] = []): U {
+    if (target && !isPlainObject(target) && !Array.isArray(target) && target != instance) {
+      return target;
+    }
+    if (proxyMap.has(target)) return proxyMap.get(target);
+
+    const handler: ProxyHandler<U> = {
+      get(obj: U, prop: string | symbol, receiver: any) {
+        // Transparently unwrap if the raw object is requested
+        if (prop === '__rawTarget__') return obj;
+
+        const value = Reflect.get(obj, prop, receiver);
+
+        if (typeof value === 'function') {
+          const key = String(prop);
+
+          // UNIVERSAL NATIVE DETECTOR:
+          // Check if the method belongs to a native runtime object (HTMLElement, Window, Event, Map, etc.)
+          // by verifying if the method's owner constructor is native code.
+          const isNativeMethod =
+            obj.constructor &&
+            obj.constructor.toString().includes('[native code]') &&
+            !(key in obj); // Ensure it's not overridden by custom code
+
+          const isDOMMethod = obj instanceof HTMLElement && key in HTMLElement.prototype;
+
+          if (isNativeMethod || isDOMMethod) {
+            // Native platform code demands the actual object context to prevent 'Illegal invocation'
+            return value.bind(obj);
+          }
+
+          // Custom business logic methods get bound to the proxy wrapper
+          // to ensure internal `this.xxx = yyy` statements hit the SET trap.
+          return value.bind(receiver);
+        }
+
+        if (typeof value === 'object' && value !== null) {
+          return wrap(value, [...path, String(prop)]);
+        }
+
         return value;
       },
-      set: (newValue) => {
-        if (Object.is(value, newValue)) {
-          return;
+
+      set(obj: U, prop: string | symbol, value: any, receiver: any) {
+        const key = String(prop);
+        const oldValue = (obj as any)[key];
+
+        if (oldValue === value && key !== 'length') {
+          return Reflect.set(obj, prop, value, receiver);
         }
-        const oldValue = value;
-        value = newValue;
-        this.handlePropertyChange({ key, oldValue, newValue });
-        const changes = {
-          key,
-          oldValue,
-          newValue,
-          firstChange: false,
-        };
-        if ((this.acRuntimeInstance as any).acOnChange) {
-          (this.acRuntimeInstance as any).acOnChange(changes);
+
+        const isArrayLength = Array.isArray(obj) && key === 'length';
+
+        // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying
+        const cleanValue = value && value.__rawTarget__ ? value.__rawTarget__ : value;
+        const success = Reflect.set(obj, prop, cleanValue, receiver);
+
+        if (success && !isArrayLength) {
+          object.handlePropertyChange({
+            key,
+            // path: [...path, key].join('.'),
+            oldValue,
+            newValue: cleanValue
+          });
         }
-        if ((this.acRuntimeInstance as any).acOnPropertyChange) {
-          (this.acRuntimeInstance as any).acOnPropertyChange(changes);
-        }
-      },
-      configurable: true,
-      enumerable: true,
-    });
+
+        return success;
+      }
+    };
+
+    const proxy = new Proxy(target, handler);
+    proxyMap.set(target, proxy);
+    return proxy;
+  }
+
+  return wrap(instance);
+}
+  protected registerChangeListenerDefinition({targetId,bindingId,definition}:{targetId: string,bindingId: string,definition: any}): void {
+    if(this.changeListeners[targetId] == undefined){
+      this.changeListeners[targetId] = {};
+    }
+    this.changeListeners[targetId][bindingId] = definition;
+  }
+
+  protected registerPropertyListenerKey({targetId,bindingId,property}:{targetId: string,bindingId: string,property: string}): void {
+    if(this.propertyListeners[property] == undefined){
+      this.propertyListeners[property] = {};
+    }
+    if(this.propertyListeners[property][targetId] == undefined){
+      this.propertyListeners[property][targetId] = [];
+    }
+    if(!this.propertyListeners[property][targetId].includes(bindingId)){
+      this.propertyListeners[property][targetId].push(bindingId);
+    }
   }
 
 }

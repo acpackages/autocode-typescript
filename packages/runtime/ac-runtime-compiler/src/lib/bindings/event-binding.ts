@@ -47,21 +47,23 @@ export function generateEventBinding(
   return `${targetNodeExpr}?.addEventListener('${binding.target}', ($event: any) => { ${prefExpr} });`;
 }
 
-
 export function acGenerateEventBinding({ binding, querySelector }: {
   binding: Binding,
   querySelector: string
 }
 ): string {
-  let code = `this.changeListeners['${binding.targetId}'] = {
+  const code = `this.eventCallbacks['${binding.targetId}'] = {
     binding:{expression:\`${binding.expression}\`,type:'event'},
-    callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
+    callback:async ({renderer}:{renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
-      ${querySelector}?.addEventListener('${binding.target}', ($event: any) => { newValue });
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
+      if(el && !el.hasAttribute('ac-event-${binding.targetId}')){
+        el.addEventListener('${binding.target}', ($event: any) => {
+          renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{'$event':$event}})
+        });
+        el.setAttribute('ac-event-${binding.targetId}','true');
+      }
     }
-  };\n`;
-  for (const property of binding.properties) {
-    code += `this.propertyListeners['${property}']['${binding.targetId}'] = '${binding.targetId}';\n`;
-  }
+  });\n`;
   return code;
 }
