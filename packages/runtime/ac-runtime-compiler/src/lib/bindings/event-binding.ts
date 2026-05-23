@@ -52,7 +52,7 @@ export function acGenerateEventBinding({ binding, querySelector }: {
   querySelector: string
 }
 ): string {
-  const code = `this.eventCallbacks['${binding.targetId}'] = {
+  const code = `this.registerEventDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'event'},
     callback:async ({renderer}:{renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
@@ -64,6 +64,6 @@ export function acGenerateEventBinding({ binding, querySelector }: {
         el.setAttribute('ac-event-${binding.targetId}','true');
       }
     }
-  });\n`;
+  }});\n`;
   return code;
 }

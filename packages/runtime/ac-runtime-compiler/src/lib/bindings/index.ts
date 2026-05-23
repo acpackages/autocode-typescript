@@ -141,7 +141,7 @@ export function acGenerateBindingCallbacks({bindings,localVars,rootContainer,top
         bindingsCode.push(acGeneratePropertyBinding({binding,querySelector}));
         break;
       case 'event':
-        // bindingsCode.push(acGenerateEventBinding({binding,querySelector}));
+        bindingsCode.push(acGenerateEventBinding({binding,querySelector}));
         break;
       case 'class':
         bindingsCode.push(acGenerateClassBinding({binding,querySelector}));

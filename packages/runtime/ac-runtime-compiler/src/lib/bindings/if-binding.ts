@@ -91,6 +91,7 @@ export function acGenerateIfBinding({
         renderer.appendElementsBetweenComments('${binding.targetId}-start','${binding.targetId}-end',newElements);
         const childRefs = renderer.getRefTargetIdsFromNodes(newElements);
         renderer.executeChangeListener({targetIds:childRefs.all, force:true});
+        renderer.executeEventCallbackRegister({targetIds:childRefs.all});
       }
     }
   }});\n`;

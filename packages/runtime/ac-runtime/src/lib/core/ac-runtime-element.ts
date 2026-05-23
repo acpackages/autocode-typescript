@@ -54,7 +54,7 @@ export class AcRuntimeElement extends HTMLElement {
    */
 
   changeListeners: Record<string,Record<string,{callback: any;binding: { expression: string; type: string };}>> = {};
-  eventCallbacks: Record<string,{callback: any;binding: { expression: string; type: string };}> = {};
+  eventCallbacks: Record<string,Record<string,{callback: any;binding: { expression: string; type: string };}>> = {};
 
   /**
    * Maps property names to the binding target IDs that depend on them.
@@ -240,12 +240,20 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   return wrap(instance);
-}
+  }
+
   protected registerChangeListenerDefinition({targetId,bindingId,definition}:{targetId: string,bindingId: string,definition: any}): void {
     if(this.changeListeners[targetId] == undefined){
       this.changeListeners[targetId] = {};
     }
     this.changeListeners[targetId][bindingId] = definition;
+  }
+
+  protected registerEventDefinition({targetId,bindingId,definition}:{targetId: string,bindingId: string,definition: any}): void {
+    if(this.eventCallbacks[targetId] == undefined){
+      this.eventCallbacks[targetId] = {};
+    }
+    this.eventCallbacks[targetId][bindingId] = definition;
   }
 
   protected registerPropertyListenerKey({targetId,bindingId,property}:{targetId: string,bindingId: string,property: string}): void {

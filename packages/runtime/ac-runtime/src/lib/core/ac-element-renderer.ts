@@ -226,6 +226,41 @@ export class AcElementRenderer {
     }
   }
 
+  async executeEventCallbackRegister({
+    targetId,
+    targetIds
+  }: {
+    targetId?: string;
+    targetIds?: string[];
+  }): Promise<void> {
+    const executeListener = async (targetKey: string) => {
+      try {
+        const targetCallbacks = this.rootElement.eventCallbacks[targetKey];
+        if (targetCallbacks) {
+          for (const bindingKey of Object.keys(targetCallbacks)) {
+            const callbackDef = targetCallbacks[bindingKey];
+              callbackDef.callback({renderer:this});
+          }
+        }
+        else {
+          // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
+        }
+      }
+      catch (ex) {
+        console.error(ex);
+        console.log(targetId, targetIds, this);
+        console.trace();
+      }
+    };
+    if (targetIds) {
+      for (const k of targetIds) {
+        await executeListener(k);
+      }
+    } else if (targetId) {
+      await executeListener(targetId);
+    }
+  }
+
   /**
    * Find a comment node within this element's subtree by its text content.
    */
@@ -379,6 +414,7 @@ export class AcElementRenderer {
     }
     for (const key of res.all) {
       await this.executeChangeListener({ targetId: key });
+      await this.executeEventCallbackRegister({ targetId: key });
     }
   }
 
