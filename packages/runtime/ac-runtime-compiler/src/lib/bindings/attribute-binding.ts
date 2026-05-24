@@ -39,48 +39,8 @@
  */
 import type { Binding } from '../types.js';
 
-/**
- * Generate code that reactively sets or removes an HTML attribute on a target element.
- *
- * @param binding        - The binding descriptor containing `target` (attribute name)
- * @param prefExpr       - The expression, already prefixed with `this.`
- * @param targetNodeExpr - The querySelector expression to find the DOM element
- * @returns A string of JavaScript code to be inserted into the render() method
- */
-export function generateAttributeBinding(
-  binding: Binding,
-  prefExpr: string,
-  targetNodeExpr: string,
-): string {
-  return `(() => {
-    const el = ${targetNodeExpr};
-    createEffect(() => {
-      if (el) {
-        const v = ${prefExpr};
-        if (v != null && v !== false) {
-          // Set the HTML attribute to the string representation of the value
-          el.setAttribute('${binding.target}', String(v));
-          // If this is a custom element, also set the property on its internal instance
-          // Convert kebab-case attribute names to camelCase property names
-          // e.g., 'data-value' → 'dataValue'
-          const __t = (el as any).acRuntimeInstance;
-          if (__t) {
-            const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
-            __t[camelKey] = v;
-          }
-        } else {
-          // Falsy value → remove the attribute entirely
-          // This is useful for boolean attributes like 'disabled'
-          el.removeAttribute('${binding.target}');
-        }
-      }
-    });
-  })();`;
-}
-
-export function acGenerateAttributeBinding({ binding, querySelector }: {
-  binding: Binding,
-  querySelector: string
+export function acGenerateAttributeBinding({ binding }: {
+  binding: Binding
 }
 ): string {
   let code = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{

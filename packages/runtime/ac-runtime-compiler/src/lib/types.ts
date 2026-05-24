@@ -51,7 +51,8 @@ export interface Binding {
     | 'model'
     | 'style'
     | 'attribute'
-    | 'template-outlet';
+    | 'template-outlet'
+    | 'template';
 
   /** The raw expression string from the template (e.g., `'count > 5'`). */
   expression: string;
@@ -131,6 +132,15 @@ export interface TemplateCompileResult {
    * along with the type of reactivity (e.g. 'value', 'class', 'model', 'bind', 'if', 'for', 'style', etc.).
    */
   reactiveProperties: Record<string, ReactivePropertyDef[]>;
+
+  /** @AcInput() property names extracted from the class definition. */
+  inputs?: string[];
+
+  /** @AcOutput() property names extracted from the class definition. */
+  outputs?: string[];
+
+  /** @AcViewChild() entries extracted from the class definition. */
+  viewChildren?: ViewChildEntry[];
 }
 
 export interface ReactivePropertyDef {
@@ -214,6 +224,12 @@ export interface CompileResult {
 
   /** The complete generated TypeScript code (imports + IIFE). */
   code: string;
+
+  /** Properties/methods decorated with @AcSubscribeChange() */
+  subscribeChanges?: { propName: string; keys: string[] }[];
+
+  /** Properties/methods decorated with @AcListenChanges() */
+  listenChanges?: { propName: string; keys: string[] }[];
 }
 
 /** Intermediate pairing of a class AST node with its extracted metadata. */

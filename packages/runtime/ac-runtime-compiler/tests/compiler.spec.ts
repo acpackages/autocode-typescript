@@ -160,6 +160,62 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain("querySelector('[ac-ref=");
   });
 
+  it('should handle @AcSubscribeChange', () => {
+    const source = `
+      import { AcElement, AcSubscribeChange } from './decorators';
+      @AcElement({
+        selector: 'test-sub',
+        template: '<div>Hello</div>'
+      })
+      export class TestSub {
+        @AcSubscribeChange('theme')
+        onThemeChange(change) {}
+
+        @AcSubscribeChange(['layout', 'sidebar'])
+        onLayoutChange(change) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].subscribeChanges).toBeDefined();
+    expect(results[0].subscribeChanges).toContainEqual({
+      propName: 'onThemeChange',
+      keys: ['theme']
+    });
+    expect(results[0].subscribeChanges).toContainEqual({
+      propName: 'onLayoutChange',
+      keys: ['layout', 'sidebar']
+    });
+  });
+
+  it('should handle @AcListenChanges', () => {
+    const source = `
+      import { AcElement, AcListenChanges } from './decorators';
+      @AcElement({
+        selector: 'test-listen',
+        template: '<div>Hello</div>'
+      })
+      export class TestListen {
+        @AcListenChanges('count')
+        onCountChange = (change) => {};
+
+        @AcListenChanges(['width', 'height'])
+        onResize(change) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].listenChanges).toBeDefined();
+    expect(results[0].listenChanges).toContainEqual({
+      propName: 'onCountChange',
+      keys: ['count']
+    });
+    expect(results[0].listenChanges).toContainEqual({
+      propName: 'onResize',
+      keys: ['width', 'height']
+    });
+  });
+
   it('should handle ac-container by not rendering the tag but rendering children', () => {
     const source = `
       @AcElement({

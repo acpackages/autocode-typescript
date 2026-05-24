@@ -160,6 +160,8 @@ export class ComponentCompiler {
       return {
         selector: compiled.selector,
         code: standardCode,
+        subscribeChanges: compiled.subscribeChanges,
+        listenChanges: compiled.listenChanges,
       };
     });
 
@@ -230,8 +232,13 @@ export class ComponentCompiler {
     const usedInTemplate = extractUsedIdentifiers(templateResult.bindings);
 
     // ── Classify properties ──
-    const { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, membersCode } =
+    const { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode } =
       this.classifyMembers(node, usedInTemplate);
+
+    // Attach class-level metadata to templateResult so element renderer can use it
+    templateResult.inputs = inputs;
+    templateResult.outputs = outputs;
+    templateResult.viewChildren = viewChildren;
 
     // ── Generate the custom element code ──
     const classSourceCode = node.getSourceFile() ? node.getText(node.getSourceFile()) : node.getText();
@@ -253,7 +260,7 @@ export class ComponentCompiler {
       classSourceCode
     });
 
-    return { selector, code };
+    return { selector, code, subscribeChanges, listenChanges };
   }
 
   // ─── Member Classification ─────────────────────────────────────────────────
@@ -273,9 +280,54 @@ export class ComponentCompiler {
     const viewChildren: ViewChildEntry[] = [];
     const reactiveProps: ReactiveProperty[] = [];
     const nonReactiveProps: ReactiveProperty[] = [];
+    const subscribeChanges: { propName: string; keys: string[] }[] = [];
+    const listenChanges: { propName: string; keys: string[] }[] = [];
     let memberIndex = 0;
 
     for (const member of node.members) {
+      if (member.name && ts.isIdentifier(member.name)) {
+        const propName = member.name.text;
+        const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
+        if (decorators) {
+          for (const d of decorators) {
+            if (isDecorator(d, 'AcSubscribeChange')) {
+              const call = d.expression as ts.CallExpression;
+              const arg = call.arguments[0];
+              const keys: string[] = [];
+              if (arg) {
+                if (ts.isStringLiteral(arg)) {
+                  keys.push(arg.text);
+                } else if (ts.isArrayLiteralExpression(arg)) {
+                  for (const el of arg.elements) {
+                    if (ts.isStringLiteral(el)) {
+                      keys.push(el.text);
+                    }
+                  }
+                }
+              }
+              subscribeChanges.push({ propName, keys });
+            }
+            if (isDecorator(d, 'AcListenChanges')) {
+              const call = d.expression as ts.CallExpression;
+              const arg = call.arguments[0];
+              const keys: string[] = [];
+              if (arg) {
+                if (ts.isStringLiteral(arg)) {
+                  keys.push(arg.text);
+                } else if (ts.isArrayLiteralExpression(arg)) {
+                  for (const el of arg.elements) {
+                    if (ts.isStringLiteral(el)) {
+                      keys.push(el.text);
+                    }
+                  }
+                }
+              }
+              listenChanges.push({ propName, keys });
+            }
+          }
+        }
+      }
+
       if (ts.isPropertyDeclaration(member) && ts.isIdentifier(member.name)) {
         const propName = member.name.text;
         const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
@@ -317,7 +369,7 @@ export class ComponentCompiler {
       .filter(m => ts.isMethodDeclaration(m) || ts.isGetAccessorDeclaration(m) || ts.isSetAccessorDeclaration(m))
       .map(m => m.getText());
 
-    return { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, membersCode };
+    return { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode };
   }
 
   // ─── Import/Export Path Resolution ─────────────────────────────────────────

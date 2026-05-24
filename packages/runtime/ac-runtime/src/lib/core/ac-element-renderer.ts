@@ -61,25 +61,66 @@ export class AcElementRenderer {
   /**
    * Insert DOM nodes between two named comment markers.
    */
-  protected appendElementsBetweenComments(
-    startCommentName: string,
-    endCommentName: string,
+  protected appendNodesBetweenComments({startComment,endComment,nodes,processNodes = true}:{
+    startComment: string,
+    endComment: string,
     nodes: Node[]
+    processNodes?:boolean
+  }
   ): void {
-    const startComment = this.findComment(startCommentName);
-    const endComment = this.findComment(endCommentName);
+    const startCommentEl = this.findComment(startComment);
+    const endCommentEl = this.findComment(endComment);
 
-    if (!startComment || !endComment) {
+    if (!startCommentEl || !endCommentEl) {
       return;
     }
-    const parent = startComment.parentNode;
+    const parent = startCommentEl.parentNode;
 
     if (!parent) {
       return;
     }
 
     for (const node of nodes) {
-      parent.insertBefore(node, endComment);
+      parent.insertBefore(node, endCommentEl);
+    }
+    if(processNodes){
+      const childRefs = this.getRefTargetIdsFromNodes(nodes);
+      this.executeChangeListener({targetIds:childRefs.all, force:true});
+      this.executeEventCallbackRegister({targetIds:childRefs.all});
+      this.assignViewChildrenRefs({targetIds:childRefs.all})
+    }
+  }
+
+  private assignViewChildrenRefs({
+    targetId,
+    targetIds
+  }: {
+    targetId?: string;
+    targetIds?: string[];
+  }):void{
+    const refIds:string[] = Object.values(this.rootElement.instanceViewChildren);
+    const executeAssigner = async (targetKey: string) => {
+      try {
+        if(refIds.includes(targetKey)){
+          for (const propKey of Object.keys(this.rootElement.instanceViewChildren)) {
+            if(this.rootElement.instanceViewChildren[propKey] == targetKey){
+              this.rootElement.acRuntimeInstance[propKey] = this.rootElement.querySelector(`[ac-ref="${targetKey}"]`);
+            }
+          }
+        }
+      }
+      catch (ex) {
+        console.error(ex);
+        console.log(targetId, targetIds, this);
+        console.trace();
+      }
+    };
+    if (targetIds) {
+      for (const k of targetIds) {
+        executeAssigner(k);
+      }
+    } else if (targetId) {
+      executeAssigner(targetId);
     }
   }
 
@@ -91,7 +132,7 @@ export class AcElementRenderer {
   /**
    * Create DOM nodes from an HTML string using a `<template>` element.
    */
-  createElementsFromHtml(html: string): Node[] {
+  createNodesFromHtml(html: string): Node[] {
     const template = document.createElement('template');
     template.innerHTML = html.trim();
     return Array.from(template.content.childNodes);
@@ -301,7 +342,7 @@ export class AcElementRenderer {
   /**
    * Get all sibling nodes between two comment markers (exclusive).
    */
-  protected getElementsBetweenComments(
+  protected getNodesBetweenComments(
     startComment: Comment,
     endComment: Comment
   ): Node[] {
@@ -400,11 +441,11 @@ export class AcElementRenderer {
   }
 
   async render() {
-    this.nodes = this.createElementsFromHtml(this.html);
+    this.nodes = this.createNodesFromHtml(this.html);
     const res = this.getRefTargetIdsFromNodes(this.nodes);
     if (this.startComment && this.endComment) {
-      this.removeElementsBetweenCommentsByName(this.startComment, this.endComment);
-      this.appendElementsBetweenComments(this.startComment, this.endComment, this.nodes);
+      this.removeNodesBetweenCommentsByName(this.startComment, this.endComment);
+      this.appendNodesBetweenComments({startComment:this.startComment,endComment: this.endComment,nodes: this.nodes,processNodes:false});
     }
     else {
       this.rootElement.innerHTML = ``;
@@ -413,6 +454,7 @@ export class AcElementRenderer {
       }
     }
     for (const key of res.all) {
+      await this.assignViewChildrenRefs({ targetId:key });
       await this.executeChangeListener({ targetId: key });
       await this.executeEventCallbackRegister({ targetId: key });
     }
@@ -522,7 +564,7 @@ export class AcElementRenderer {
   /**
    * Remove all DOM nodes between two named comment markers.
    */
-  protected removeElementsBetweenCommentsByName(
+  protected removeNodesBetweenCommentsByName(
     startCommentName: string,
     endCommentName: string
   ): void {

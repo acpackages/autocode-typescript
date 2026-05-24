@@ -19,3 +19,5 @@ export * from './ac-element.decorator';
 export * from './ac-input.decorator';
 export * from './ac-output.decorator';
 export * from './ac-view-child.decorator';
+export * from './ac-subscribe-change.decorator';
+export * from './ac-listen-changes.decorator';

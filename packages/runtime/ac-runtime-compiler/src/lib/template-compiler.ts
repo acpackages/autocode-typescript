@@ -603,7 +603,9 @@ export class TemplateCompiler {
   /**
    * Process `<ac-template #refName>...</ac-template>`.
    *
-   * Compiles to a hidden div that can be referenced by ac:template:outlet.
+   * Sub-compiles children into a binding with type 'template'.
+   * No HTML placeholder is emitted — the runtime appends the
+   * template content from the binding when required.
    */
   private processTemplateElement(
     el: Element,
@@ -613,18 +615,57 @@ export class TemplateCompiler {
     localVars: Set<string>,
   ): string {
     const id = `${this.generateHexId()}`;
+    let refName: string | undefined;
 
     // Register all #ref attributes on this template element
     for (const attrName of Object.keys(el.attribs)) {
       if (attrName.startsWith('#')) {
-        const refName = attrName.slice(1);
+        refName = attrName.slice(1);
         idMap.set(refName, id);
         idMap.set(refName.toLowerCase(), id);
       }
     }
 
-    const childrenHtml = this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars);
-    return `<div data-ac-template ac-ref="${id}" style="display:none">${childrenHtml}</div>`;
+    // Sub-compile children using the same caveman pattern as ac:if / ac:for
+    const subCompiler = new TemplateCompiler();
+    const subResult = subCompiler.compile(
+      htmlparser2.DomUtils.getInnerHTML(el),
+      localVars,
+    );
+
+    // Propagate idMap so @AcViewChild can find refs inside template blocks
+    for (const [key, val] of Object.entries(subResult.idMap)) {
+      idMap.set(key, val);
+    }
+
+    // Merge subResult.reactiveProperties
+    for (const [prop, entries] of Object.entries(subResult.reactiveProperties)) {
+      if (!reactiveProperties[prop]) {
+        reactiveProperties[prop] = [];
+      }
+      for (const entry of entries) {
+        const alreadyExists = reactiveProperties[prop].some(
+          existing => existing.targetId === entry.targetId && existing.type === entry.type
+        );
+        if (!alreadyExists) {
+          reactiveProperties[prop].push(entry);
+        }
+      }
+    }
+
+    bindings.push({
+      type: 'template',
+      bindingId: this.generateHexId(),
+      expression: refName ?? id,
+      targetId: id,
+      template: subResult.html,
+      childBindings: subResult.bindings,
+      properties: [],
+      rootIds: [],
+    });
+
+    // No HTML output — template content lives in the binding
+    return '';
   }
 
   /**
