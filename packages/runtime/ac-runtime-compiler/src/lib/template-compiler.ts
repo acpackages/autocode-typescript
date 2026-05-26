@@ -236,9 +236,9 @@ export class TemplateCompiler {
     reactiveProperties: Record<string, ReactivePropertyDef[]>;
     localVars: Set<string>;
     property?: string;
-    targetElementHtmle?: string;
+    targetElementHtml?: string;
   }): void {
-    const { expression, targetId, type, reactiveProperties, localVars, targetElementHtmle } = options;
+    const { expression, targetId, type, reactiveProperties, localVars, targetElementHtml } = options;
     const ids = extractExpressionIdentifiers(expression, localVars);
     for (const id of ids) {
       if (!reactiveProperties[id]) {
@@ -248,7 +248,7 @@ export class TemplateCompiler {
         entry => entry.targetId === targetId && entry.type === type
       );
       if (!alreadyExists) {
-        reactiveProperties[id].push({ targetId, type, expression, targetElementHtmle });
+        reactiveProperties[id].push({ targetId, type, expression, targetElementHtml });
       }
     }
   }
@@ -337,7 +337,7 @@ export class TemplateCompiler {
           type: 'value',
           reactiveProperties,
           localVars,
-          targetElementHtmle: spanHtml,
+          targetElementHtml: spanHtml,
         });
 
         finalHtml += spanHtml;
@@ -519,7 +519,7 @@ export class TemplateCompiler {
       type: 'for',
       reactiveProperties,
       localVars,
-      targetElementHtmle: finalHtml,
+      targetElementHtml: finalHtml,
     });
 
     // Return a comment node as the insertion point
@@ -592,7 +592,7 @@ export class TemplateCompiler {
       type: 'if',
       reactiveProperties,
       localVars,
-      targetElementHtmle: finalHtml,
+      targetElementHtml: finalHtml,
     });
 
     return finalHtml;
@@ -680,7 +680,8 @@ export class TemplateCompiler {
     reactiveProperties: Record<string, ReactivePropertyDef[]>,
     localVars: Set<string>,
   ): string {
-    const id = `${this.generateHexId()}`;
+    // const id = `${this.generateHexId()}`;
+    const placeholderId = `ac-template-outlet-${this.generateHexId()}`;
     let expression = acTemplateOutlet;
     let contextExpression: string | undefined;
 
@@ -703,34 +704,34 @@ export class TemplateCompiler {
         }
       }
     }
-    const finalHtml = `<div ac-ref="${id}"></div>`;
+    const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     bindings.push({
       type: 'template-outlet',
       bindingId:this.generateHexId(),
       expression,
       contextExpression,
-      targetId: id,
+      targetId: placeholderId,
       properties,
       rootIds: [],
     });
 
     this.addReactiveProperties({
       expression,
-      targetId: id,
+      targetId: placeholderId,
       type: 'bind',
       reactiveProperties,
       localVars,
-      targetElementHtmle: finalHtml,
+      targetElementHtml: finalHtml,
     });
     if (contextExpression) {
       this.addReactiveProperties({
         expression: contextExpression,
-        targetId: id,
+        targetId: placeholderId,
         type: 'bind',
         reactiveProperties,
         localVars,
-        targetElementHtmle: finalHtml,
+        targetElementHtml: finalHtml,
       });
     }
 
@@ -868,7 +869,7 @@ export class TemplateCompiler {
         type: pending.type,
         reactiveProperties,
         localVars,
-        targetElementHtmle: finalHtml
+        targetElementHtml: finalHtml
       });
     }
 

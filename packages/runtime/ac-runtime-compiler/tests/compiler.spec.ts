@@ -444,7 +444,7 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     expect(result.reactiveProperties['item']).toBeUndefined();
   });
 
-  it('should generate targetElementHtmle with correct finalized HTML on each reactive property entry', () => {
+  it('should generate targetElementHtml with correct finalized HTML on each reactive property entry', () => {
     const template = `
       <div [class.active]="isActive">
         Hello {{name}}!
@@ -455,23 +455,23 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     const result = tc.compile(template);
     expect(result.reactiveProperties).toBeDefined();
 
-    // isActive -> targetElementHtmle should be the div tag, containing the child elements and ac-ref
+    // isActive -> targetElementHtml should be the div tag, containing the child elements and ac-ref
     const activeEntry = result.reactiveProperties['isActive'][0];
-    expect(activeEntry.targetElementHtmle).toBeDefined();
-    expect(activeEntry.targetElementHtmle).toContain('<div');
-    expect(activeEntry.targetElementHtmle).toContain('ac-ref=');
-    expect(activeEntry.targetElementHtmle).toContain('<span');
+    expect(activeEntry.targetElementHtml).toBeDefined();
+    expect(activeEntry.targetElementHtml).toContain('<div');
+    expect(activeEntry.targetElementHtml).toContain('ac-ref=');
+    expect(activeEntry.targetElementHtml).toContain('<span');
 
-    // name -> targetElementHtmle should be the span placeholder
+    // name -> targetElementHtml should be the span placeholder
     const nameEntry = result.reactiveProperties['name'][0];
-    expect(nameEntry.targetElementHtmle).toBeDefined();
-    expect(nameEntry.targetElementHtmle).toContain('<span');
-    expect(nameEntry.targetElementHtmle).toContain('ac-ref=');
+    expect(nameEntry.targetElementHtml).toBeDefined();
+    expect(nameEntry.targetElementHtml).toContain('<span');
+    expect(nameEntry.targetElementHtml).toContain('ac-ref=');
 
-    // show -> targetElementHtmle should be the ac-if comment node
+    // show -> targetElementHtml should be the ac-if comment node
     const showEntry = result.reactiveProperties['show'][0];
-    expect(showEntry.targetElementHtmle).toBeDefined();
-    expect(showEntry.targetElementHtmle).toContain('<!--ac-if-');
+    expect(showEntry.targetElementHtml).toBeDefined();
+    expect(showEntry.targetElementHtml).toContain('<!--ac-if-');
   });
 
   it('should include properties in bindings matching extracted identifiers', () => {
@@ -528,7 +528,7 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     const template = `<div>Hello {{name}}! Welcome back.</div>`;
     const result = tc.compile(template);
     expect(result.bindings).toBeDefined();
-    
+
     const textBinding = result.bindings.find(b => b.type === 'text');
     expect(textBinding).toBeDefined();
     expect(textBinding?.expression).toBe("name");

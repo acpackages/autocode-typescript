@@ -139,7 +139,7 @@ export class ComponentCompiler {
     // ── Step 3: Compile each component ──
     const importsCode = importStatements.join('\n');
     const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
-    const acElementImport = `import { AcRuntimeElement } from '@autocode-ts/ac-runtime';`;
+    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent } from '@autocode-ts/ac-runtime';`;
 
     const compiledComponents = components.map(c => {
       // Split non-import statements into pre-component and post-component

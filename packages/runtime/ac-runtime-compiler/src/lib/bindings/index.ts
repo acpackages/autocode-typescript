@@ -13,7 +13,7 @@
  * 3. Dispatch to the appropriate generator (text, property, event, etc.)
  * 4. Return an array of generated code strings
  */
-import type { Binding, PrefixFn } from '../types.js';
+import type { Binding } from '../types.js';
 import { acGenerateTextBinding } from './text-binding.js';
 import { acGeneratePropertyBinding } from './property-binding.js';
 import { acGenerateEventBinding } from './event-binding.js';
@@ -23,7 +23,8 @@ import { acGenerateModelBinding } from './model-binding.js';
 import { acGenerateAttributeBinding } from './attribute-binding.js';
 import { acGenerateIfBinding } from './if-binding.js';
 import { acGenerateForBinding } from './for-binding.js';
-import { generateTemplateOutletBinding } from './template-outlet-binding.js';
+import { acGenerateTemplateOutletBinding } from './template-outlet-binding.js';
+import { acGenerateTemplateBinding } from './template-binding.js';
 
 
 export function acGenerateBindingCallbacks({bindings}:{bindings: Binding[]}
@@ -58,9 +59,12 @@ export function acGenerateBindingCallbacks({bindings}:{bindings: Binding[]}
       case 'for':
         bindingsCode.push(acGenerateForBinding({binding}));
         break;
-
-      // case 'template-outlet':
-        // return acGenerateTemplateOutletBinding({binding,localVars,rootContainer,recursiveGenerate,topLevelVars});
+      case 'template':
+        bindingsCode.push(acGenerateTemplateBinding({binding}));
+        break;
+      case 'template-outlet':
+        bindingsCode.push(acGenerateTemplateOutletBinding({binding}));
+        break;
     }
     if(binding.childBindings && binding.childBindings.length > 0){
       bindingsCode = [...bindingsCode,...acGenerateBindingCallbacks({bindings:binding.childBindings})];

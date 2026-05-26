@@ -1,40 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-/**
- * @module ac-element-base
- *
- * Shared base class for all AC Runtime generated Web Components.
- *
- * Previously, the {@link ComponentCompiler} inlined ~300 lines of shared
- * HTMLElement wrapper methods into every generated component file. This
- * base class extracts those shared methods so each generated component
- * only needs to provide its constructor (creating the inner class instance,
- * wiring bindings, registering property listeners) and a `render()` override.
- *
- * Generated components extend this class:
- * ```ts
- * class $$$MyComponent extends AcRuntimeElement {
- *   constructor() {
- *     super();
- *     this.acRuntimeInstance = new MyComponent();
- *     // ... bindings, viewChildren, property listeners ...
- *     (this.acRuntimeInstance as any).element = this;
- *   }
- *   protected async render() {
- *     this.innerHTML = `<div>...</div>`;
- *     // ... execute change listeners ...
- *   }
- * }
- * ```
- */
-import { acPipeRegistry, evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
+import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 import { AcRuntimeElement } from './ac-runtime-element';
-
-/**
- * Base HTMLElement class for all AC Runtime compiled components.
- *
- * Provides shared lifecycle management, expression evaluation,
- * property change tracking, and DOM utility methods.
- */
 export class AcElementRenderer {
   html!: string;
   context: any;
@@ -46,8 +14,6 @@ export class AcElementRenderer {
   private endComment?: string;
   isRoot?: boolean = false;
 
-  // protected changeListeners: Record<string,{callback: any;binding: { expression: string; type: string };currentValue: any;}> = {};
-
   constructor({ html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
     this.rootElement = rootElement;
     this.context = context;
@@ -58,9 +24,6 @@ export class AcElementRenderer {
     this.isRoot = isRoot;
   }
 
-  /**
-   * Insert DOM nodes between two named comment markers.
-   */
   protected appendNodesBetweenComments({startComment,endComment,nodes,processNodes = true}:{
     startComment: string,
     endComment: string,
@@ -85,9 +48,10 @@ export class AcElementRenderer {
     }
     if(processNodes){
       const childRefs = this.getRefTargetIdsFromNodes(nodes);
+      this.assignViewChildrenRefs({targetIds:childRefs.all})
+      this.resolveTemplateOutlets({ targetIds:childRefs.all });
       this.executeChangeListener({targetIds:childRefs.all, force:true});
       this.executeEventCallbackRegister({targetIds:childRefs.all});
-      this.assignViewChildrenRefs({targetIds:childRefs.all})
     }
   }
 
@@ -104,7 +68,13 @@ export class AcElementRenderer {
         if(refIds.includes(targetKey)){
           for (const propKey of Object.keys(this.rootElement.instanceViewChildren)) {
             if(this.rootElement.instanceViewChildren[propKey] == targetKey){
-              this.rootElement.acRuntimeInstance[propKey] = this.rootElement.querySelector(`[ac-ref="${targetKey}"]`);
+              const el = this.rootElement.querySelector(`[ac-ref="${targetKey}"]`);
+              if(el && (el as any).acRuntimeInstance){
+                this.rootElement.acRuntimeInstance[propKey] = (el as any).acRuntimeInstance;
+              }
+              else{
+                this.rootElement.acRuntimeInstance[propKey] = el;
+              }
             }
           }
         }
@@ -124,29 +94,20 @@ export class AcElementRenderer {
     }
   }
 
-  createChildRenderer({ html, startComment, endComment, context }: { html: string, startComment?: string, endComment?: string, context: any }) {
-    const childRenderer = new AcElementRenderer({ rootElement: this.rootElement, context: context, html, startComment, endComment });
+  createChildRenderer({ html, startComment, endComment, context,rootElement }: { html: string, startComment?: string, endComment?: string, context: any,rootElement?:AcRuntimeElement }) {
+    if(rootElement == undefined){
+      rootElement = this.rootElement;
+    }
+    const childRenderer = new AcElementRenderer({ rootElement, context: context, html, startComment, endComment });
     childRenderer.render();
   }
 
-  /**
-   * Create DOM nodes from an HTML string using a `<template>` element.
-   */
   createNodesFromHtml(html: string): Node[] {
     const template = document.createElement('template');
     template.innerHTML = html.trim();
     return Array.from(template.content.childNodes);
   }
 
-  /**
-   * Evaluate a template expression string against the component instance.
-   * Supports pipe expressions (e.g., `value | pipeName:arg`) and
-   * plain JavaScript expressions.
-   *
-   * @param options.expression       - The expression string to evaluate
-   * @param options.locals           - Optional local variables (e.g., from ac:for)
-   * @param options.isExpressionEval - Internal flag to prevent recursive pipe parsing
-   */
   protected evaluateExpression({
     expression,
     locals,
@@ -185,9 +146,6 @@ export class AcElementRenderer {
         `with (context) { with (scope) { return ${normalizedExpr} } }`
       );
       const result = fn.call(this.context, scope, this.context);
-      if (expression == 'showSidebar') {
-        console.log("[AcRuntimeRenderer] Evaluating Expression", expression, this.context['isHostSet'], this.context['showSetHost']);
-      }
       // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
       return result;
     } catch (e) {
@@ -236,9 +194,7 @@ export class AcElementRenderer {
               // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
               // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
               if (oldValue != newValue || force) {
-                if (callbackDef.binding.expression == 'showSidebar') {
-                  console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
-                }
+                  // console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
                 this.currentBindingValues[bindingKey] = newValue;
                 callbackDef.callback({ oldValue, newValue, renderer: this });
               }
@@ -302,9 +258,6 @@ export class AcElementRenderer {
     }
   }
 
-  /**
-   * Find a comment node within this element's subtree by its text content.
-   */
   protected findComment(commentText: string): Comment | null {
     const walker = document.createTreeWalker(
       this.rootElement,
@@ -339,9 +292,6 @@ export class AcElementRenderer {
     return null;
   }
 
-  /**
-   * Get all sibling nodes between two comment markers (exclusive).
-   */
   protected getNodesBetweenComments(
     startComment: Comment,
     endComment: Comment
@@ -357,19 +307,17 @@ export class AcElementRenderer {
     return nodes;
   }
 
-  /**
-   * Scan DOM subtrees for `ac-ref` attributes, `ac-if` comment markers,
-   * and `ac-for` comment markers, returning all discovered target IDs.
-   */
   protected getRefTargetIdsFromNodes(roots: Node[]): {
     refs: string[];
     ifs: string[];
     fors: string[];
+    templateOutlets: string[];
     all: string[];
   } {
     const refs = new Set<string>();
     const ifs = new Set<string>();
     const fors = new Set<string>();
+    const templateOutlets = new Set<string>();
 
     for (const root of roots) {
       const walker = document.createTreeWalker(
@@ -411,6 +359,13 @@ export class AcElementRenderer {
               fors.add(value);
             }
           }
+          else if (comment.startsWith('ac-template-outlet')) {
+            const value = comment.trim();
+
+            if (value) {
+              templateOutlets.add(value);
+            }
+          }
         }
 
         current = walker.nextNode();
@@ -421,50 +376,22 @@ export class AcElementRenderer {
       refs: [...refs],
       ifs: [...ifs],
       fors: [...fors],
-      all: [...refs, ...ifs, ...fors],
+      templateOutlets: [...templateOutlets],
+      all: [...refs, ...ifs, ...fors, ...templateOutlets],
     };
   }
 
-  /**
-   * Build the evaluation scope for expression evaluation.
-   * Currently returns the component instance directly.
-   */
   protected getScope(locals?: Record<string, any>): any {
-    // return this.context;
-
     const scope = Object.create(null);
     if (locals) {
       Object.assign(scope, locals);
     }
-
+    for(const key of Object.keys(this.rootElement.templates)){
+      scope[key] = this.rootElement.templates[key];
+    }
     return scope;
   }
 
-  async render() {
-    this.nodes = this.createNodesFromHtml(this.html);
-    const res = this.getRefTargetIdsFromNodes(this.nodes);
-    if (this.startComment && this.endComment) {
-      this.removeNodesBetweenCommentsByName(this.startComment, this.endComment);
-      this.appendNodesBetweenComments({startComment:this.startComment,endComment: this.endComment,nodes: this.nodes,processNodes:false});
-    }
-    else {
-      this.rootElement.innerHTML = ``;
-      for (const node of this.nodes) {
-        this.rootElement.appendChild(node);
-      }
-    }
-    for (const key of res.all) {
-      await this.assignViewChildrenRefs({ targetId:key });
-      await this.executeChangeListener({ targetId: key });
-      await this.executeEventCallbackRegister({ targetId: key });
-    }
-  }
-
-  /**
-   * Normalize an expression for scope-based evaluation.
-   * Rewrites known scope names (template refs, etc.) to their
-   * lowercase equivalents for case-insensitive matching.
-   */
   protected normalizeExprForScope(expression: string): string {
     const knownNames = new Set<string>();
 
@@ -561,9 +488,6 @@ export class AcElementRenderer {
     return this.rootElement.querySelector(query);
   }
 
-  /**
-   * Remove all DOM nodes between two named comment markers.
-   */
   protected removeNodesBetweenCommentsByName(
     startCommentName: string,
     endCommentName: string
@@ -584,4 +508,52 @@ export class AcElementRenderer {
     }
   }
 
+  async render() {
+    this.nodes = this.createNodesFromHtml(this.html);
+    const res = this.getRefTargetIdsFromNodes(this.nodes);
+    if (this.startComment && this.endComment) {
+      this.removeNodesBetweenCommentsByName(this.startComment, this.endComment);
+      this.appendNodesBetweenComments({startComment:this.startComment,endComment: this.endComment,nodes: this.nodes,processNodes:false});
+    }
+    else {
+      this.rootElement.innerHTML = ``;
+      for (const node of this.nodes) {
+        this.rootElement.appendChild(node);
+      }
+    }
+    for (const key of res.all) {
+      await this.assignViewChildrenRefs({ targetId:key });
+      await this.resolveTemplateOutlets({ targetId:key });
+      await this.executeChangeListener({ targetId: key });
+      await this.executeEventCallbackRegister({ targetId: key });
+    }
+  }
+
+  resolveTemplateOutlets({ targetId, targetIds }: { targetId?: string,targetIds?: string[] }){
+    const executeOutlet = async (targetKey: string) => {
+      const templateRenderer = (templateDef:any)=>{
+        const startComment = `${targetKey}-start`;
+        const endComment = `${targetKey}-end`;
+        this.createChildRenderer({html:templateDef.html,startComment:startComment,endComment:endComment,context:templateDef.rootElement.acRuntimeInstance,rootElement:templateDef.rootElement});
+      };
+      if(this.rootElement.templateOutlets[targetKey]){
+        const templateOutlet = this.rootElement.templateOutlets[targetKey];
+        const templateName = templateOutlet['template'];
+        if(this.rootElement.templates[templateName]){
+          // console.log("[AcElementRenderer] Rendering template for target : ",targetKey);
+          templateRenderer(this.rootElement.templates[templateName]);
+        }
+        else if(this.rootElement.acRuntimeInstance[templateName]){
+          templateRenderer(this.rootElement.acRuntimeInstance[templateName]);
+        }
+      }
+    };
+    if (targetIds) {
+      for (const k of targetIds) {
+        executeOutlet(k);
+      }
+    } else if (targetId) {
+        executeOutlet(targetId);
+    }
+  }
 }

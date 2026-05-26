@@ -1,79 +1,28 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-/**
- * @module ac-element-base
- *
- * Shared base class for all AC Runtime generated Web Components.
- *
- * Previously, the {@link ComponentCompiler} inlined ~300 lines of shared
- * HTMLElement wrapper methods into every generated component file. This
- * base class extracts those shared methods so each generated component
- * only needs to provide its constructor (creating the inner class instance,
- * wiring bindings, registering property listeners) and a `render()` override.
- *
- * Generated components extend this class:
- * ```ts
- * class $$$MyComponent extends AcRuntimeElement {
- *   constructor() {
- *     super();
- *     this.acRuntimeInstance = new MyComponent();
- *     // ... bindings, viewChildren, property listeners ...
- *     (this.acRuntimeInstance as any).element = this;
- *   }
- *   protected async render() {
- *     this.innerHTML = `<div>...</div>`;
- *     // ... execute change listeners ...
- *   }
- * }
- * ```
- */
-import { randomBytes } from 'crypto';
 import { AcElementRenderer } from './ac-element-renderer';
-
-/**
- * Base HTMLElement class for all AC Runtime compiled components.
- *
- * Provides shared lifecycle management, expression evaluation,
- * property change tracking, and DOM utility methods.
- */
 export class AcRuntimeElement extends HTMLElement {
   /** The inner component class instance created by the generated subclass. */
   acRuntimeInstance: any;
+  changeSubscribers: any[] = [];
   elementComponent: any;
   elementHtml!: string;
-  changeSubscribers: any[] = [];
   instanceInputs: any[] = [];
   instanceOutputs: any[] = [];
   instanceViewChildren: any = {};
   propertyToListenForChanges:string[] = [];
+  templateOutlets:any = {};
+  templates:Record<string, { targetId: any; bindingId: string, html:string,ownerInstance:any }> = {};
+
   protected renderer!: AcElementRenderer;
-
-  /** Prevents double initialization when connectedCallback fires multiple times. */
   private isInitialized: boolean = false;
-
-  /**
-   * Registry of change listeners keyed by a unique binding ID.
-   * Each entry tracks the callback, binding metadata, and last-known value
-   * for dirty-checking.
-   */
-
   changeListeners: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   eventCallbacks: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
-
-  /**
-   * Maps property names to the binding target IDs that depend on them.
-   * When a property changes, we look up which bindings need re-evaluation.
-   *
-   * Structure: `{ propertyName: { targetId: callbackKey, ... }, ... }`
-   *
-   * Populated by the generated subclass constructor.
-   */
-  protected propertyListeners: any = {};
-
-  // ─── Lifecycle ──────────────────────────────────────────────────────────────
+  propertyListeners: any = {};
 
   connectedCallback(): void {
     if (!this.isInitialized) {
+      this.isInitialized = true;
       this.init();
     }
   }
@@ -98,8 +47,14 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   init() {
+    this.setInputValuesFromAttributes();
+    for(const eventName of this.instanceOutputs as string[]){
+            (this.acRuntimeInstance as any)[eventName].subscribe((args:any)=>{
+              const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args,{bubbles: true,cancelable: true,composed: true}) as any;
+              this.dispatchEvent(event);
+            });
+          }
     this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: this.acRuntimeInstance });
-    this.isInitialized = true;
     this.style.display = 'contents';
     this.render().then(() => {
       if ((this.acRuntimeInstance as any).acOnInit) {
@@ -109,30 +64,10 @@ export class AcRuntimeElement extends HTMLElement {
 
   }
 
-  // ─── Template Rendering (overridden by generated subclass) ──────────────────
-
-  /**
-   * Render the component template and execute initial change listeners.
-   * Generated subclasses override this to set `innerHTML` with the compiled
-   * template and trigger initial binding evaluation.
-   */
   protected async render(): Promise<void> {
-    //
     await this.renderer.render();
   }
 
-  // ─── Change Detection ──────────────────────────────────────────────────────
-
-  /**
-   * Execute one or more change listeners by key, re-evaluating the expression
-   * and invoking the callback if the value has changed (or if forced).
-   */
-
-
-  /**
-   * Handle a property value change by dispatching to all registered
-   * change listeners that depend on the changed property.
-   */
   protected async handlePropertyChange({
     key,
     oldValue,
@@ -147,18 +82,13 @@ export class AcRuntimeElement extends HTMLElement {
         await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[key][targetId] });
       }
     }
-    if(this.propertyToListenForChanges.includes(key)){
+    if(this.isInitialized && this.propertyToListenForChanges.includes(key)){
       if (this.acRuntimeInstance.acOnChange) {
         this.acRuntimeInstance.acOnChange({key,oldValue,newValue});
       }
     }
   }
 
-  /**
-   * Install a property interceptor on the component instance via
-   * `Object.defineProperty`. When the property is set, it triggers
-   * `handlePropertyChange` and lifecycle hooks (`acOnChange`, `acOnPropertyChange`).
-   */
   makeReactive(instance: any) {
     const object = this;
     const proxyMap = new WeakMap<object, any>();
@@ -185,30 +115,10 @@ export class AcRuntimeElement extends HTMLElement {
           const value = Reflect.get(obj, prop, receiver);
 
           if (typeof value === 'function') {
-            const key = String(prop);
-
-            // UNIVERSAL NATIVE DETECTOR:
-            // Check if the method belongs to a native runtime object (HTMLElement, Window, Event, Map, etc.)
-            // by verifying if the method's owner constructor is native code.
-            const isNativeMethod =
-              obj.constructor &&
-              obj.constructor.toString().includes('[native code]') &&
-              !(key in obj); // Ensure it's not overridden by custom code
-
-            const isDOMMethod = obj instanceof HTMLElement && key in HTMLElement.prototype;
-
-            if (isNativeMethod || isDOMMethod) {
-              // Native platform code demands the actual object context to prevent 'Illegal invocation'
-              return value.bind(obj);
-            }
-
-            // Custom business logic methods get bound to the proxy wrapper
-            // to ensure internal `this.xxx = yyy` statements hit the SET trap.
             return value.bind(receiver);
           }
 
           if (typeof value === 'object' && value !== null && isPlainObject(value)) {
-            console.log("Wrapping value as reactive",value,prop);
             return wrap(value, [...path, String(prop)]);
           }
 
@@ -227,8 +137,11 @@ export class AcRuntimeElement extends HTMLElement {
 
           const isArrayLength = Array.isArray(obj) && key === 'length';
 
-          // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying
-          const cleanValue = value && value.__rawTarget__ ? value.__rawTarget__ : value;
+          // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
+          // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
+          const cleanValue = value && value.__rawTarget__
+            ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
+            : value;
           const success = Reflect.set(obj, prop, cleanValue, receiver);
 
           if (success && !isArrayLength) {
@@ -281,4 +194,22 @@ export class AcRuntimeElement extends HTMLElement {
     }
   }
 
+  private setInputValuesFromAttributes(){
+    Array.from(this.attributes).forEach((attr: Attr) => {
+      if(this.instanceInputs.includes(attr.name)){
+        this.acRuntimeInstance[attr.name] = attr.value;
+      }
+  });
+  }
+
+}
+
+export class AcRuntimeElementEvent extends Event {
+  // Allow any dynamic property to be read directly from the instance
+  args: any;
+
+  constructor(type: string, args: any, options?: EventInit) {
+    super(type, options);
+    this.args = args;
+  }
 }

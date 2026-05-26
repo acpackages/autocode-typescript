@@ -13,7 +13,24 @@ export function acGenerateModelBinding({ binding }: {
         (el as any).value = newValue;
       }
     }
-  }});\n`;
+  }});
+  this.registerEventDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
+    binding:{expression:\`${binding.expression}\`,type:'event'},
+    callback:async ({renderer}:{renderer:AcElementRenderer})=>{
+      const binding:any = ${JSON.stringify(binding)};
+      const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
+      if(el && !el.hasAttribute('ac-event-${binding.targetId}')){
+        el.addEventListener('change', ($event: any) => {
+          ${binding.expression} = el.value;
+        });
+        el.addEventListener('input', ($event: any) => {
+          ${binding.expression} = el.value;
+        });
+        el.setAttribute('ac-event-${binding.targetId}','true');
+      }
+    }
+  }});
+  \n`;
   for (const property of binding.properties) {
     code += `this.registerPropertyListenerKey({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',property:'${property}'});\n`;
   }

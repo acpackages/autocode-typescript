@@ -53,13 +53,23 @@ export function acGenerateAttributeBinding({ binding }: {
           const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
           __t[camelKey] = newValue;
         }
-        else{
-          if(newValue != undefined && newValue!=null){
+        else{`;
+          if(binding.target.toLowerCase() == 'innerhtml'){
+            code += `el.innerHTML = newValue;`
+          }
+          else{
+            code += `
+            if(newValue != undefined && newValue!=null){
             el.setAttribute('${binding.target}',newValue);
           }
           else{
             el.removeAttribute('${binding.target}');
           }
+            `;
+          }
+
+
+          code+=`
         }
       }
     }

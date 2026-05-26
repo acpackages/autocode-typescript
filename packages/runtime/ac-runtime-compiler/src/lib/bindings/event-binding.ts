@@ -10,8 +10,12 @@ export function acGenerateEventBinding({ binding }: {
       const binding:any = ${JSON.stringify(binding)};
       const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
       if(el && !el.hasAttribute('ac-event-${binding.targetId}')){
-        el.addEventListener('${binding.target}', ($event: any) => {
-          renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{'$event':$event}})
+        el.addEventListener('${binding.target.toLowerCase()}', (event: any) => {
+          let args:any = event;
+          if(event instanceof AcRuntimeElementEvent){
+            args = event.args;
+          }
+          renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{'$event':args}})
         });
         el.setAttribute('ac-event-${binding.targetId}','true');
       }

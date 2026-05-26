@@ -16,7 +16,6 @@ export function acGenerateForBinding(
       const binding:any = ${JSON.stringify(binding)};
       renderer.removeNodesBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
       const list = newValue ?? [];
-
       list.forEach((${itemVar}, ${indexVar}) => {
         const loopItemId = this.generateHexId();
         const startCommentHtml = \`${binding.targetId}-\${loopItemId}-start\`;

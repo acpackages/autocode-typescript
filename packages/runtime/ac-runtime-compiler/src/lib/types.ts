@@ -148,7 +148,7 @@ export interface ReactivePropertyDef {
   type: string;
   expression: string;
   property?:string;
-  targetElementHtmle?: string;
+  targetElementHtml?: string;
 }
 
 // ─── Component Compiler Types ────────────────────────────────────────────────
