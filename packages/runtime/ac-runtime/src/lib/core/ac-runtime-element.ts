@@ -77,7 +77,8 @@ export class AcRuntimeElement extends HTMLElement {
     oldValue: any;
     newValue: any;
   }): Promise<void> {
-    if (this.propertyListeners[key]) {
+    if(this.renderer){
+      if (this.propertyListeners[key]) {
       for (const targetId of Object.keys(this.propertyListeners[key])) {
         await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[key][targetId] });
       }
@@ -86,6 +87,7 @@ export class AcRuntimeElement extends HTMLElement {
       if (this.acRuntimeInstance.acOnChange) {
         this.acRuntimeInstance.acOnChange({key,oldValue,newValue});
       }
+    }
     }
   }
 
@@ -115,7 +117,19 @@ export class AcRuntimeElement extends HTMLElement {
           const value = Reflect.get(obj, prop, receiver);
 
           if (typeof value === 'function') {
-            return value.bind(receiver);
+            const bound = value.bind(receiver);
+            // Copy static properties of the original function/class to the bound function
+            // so that static properties (like enum/class values) are not lost when bound.
+            for (const key of Reflect.ownKeys(value)) {
+              if (key !== 'length' && key !== 'name' && key !== 'prototype' && key !== 'arguments' && key !== 'caller') {
+                try {
+                  Object.defineProperty(bound, key, Object.getOwnPropertyDescriptor(value, key)!);
+                } catch (e) {
+                  // Ignore if property is read-only or couldn't be defined
+                }
+              }
+            }
+            return bound;
           }
 
           if (typeof value === 'object' && value !== null && isPlainObject(value)) {

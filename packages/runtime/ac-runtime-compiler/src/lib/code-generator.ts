@@ -199,10 +199,8 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
       this.acRuntimeInstance = this.makeReactive(new ${className}());
       this.acRuntimeInstance.element = this;
-
       this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
-
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
       this.instanceViewChildren = ${JSON.stringify( acGenerateViewChildObject(viewChildren,templateResult) )};
 

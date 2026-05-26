@@ -235,6 +235,24 @@ export class ComponentCompiler {
     const { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode } =
       this.classifyMembers(node, usedInTemplate);
 
+    // ── Merge base class decorated members ──
+    if (baseClassName && filePath) {
+      const baseMembers = this.resolveBaseClassMembers(
+        baseClassName, node.getSourceFile(), filePath,
+      );
+      if (baseMembers) {
+        for (const input of baseMembers.inputs) {
+          if (!inputs.includes(input)) inputs.push(input);
+        }
+        for (const output of baseMembers.outputs) {
+          if (!outputs.includes(output)) outputs.push(output);
+        }
+        for (const vc of baseMembers.viewChildren) {
+          if (!viewChildren.some(v => v.propName === vc.propName)) viewChildren.push(vc);
+        }
+      }
+    }
+
     // Attach class-level metadata to templateResult so element renderer can use it
     templateResult.inputs = inputs;
     templateResult.outputs = outputs;
@@ -370,6 +388,110 @@ export class ComponentCompiler {
       .map(m => m.getText());
 
     return { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode };
+  }
+
+  // ─── Base Class Member Resolution ───────────────────────────────────────────
+
+  /**
+   * Resolve decorated members (@AcInput, @AcOutput, @AcViewChild) from a base
+   * class by locating its source file, parsing it, and scanning its members.
+   *
+   * Only resolves relative imports (e.g., `./base-class`). Package imports
+   * (e.g., `@autocode-ts/ac-runtime`) are skipped — their members are assumed
+   * to be framework-internal and not user-level inputs/outputs.
+   *
+   * Recurses if the base class itself extends another class.
+   */
+  private resolveBaseClassMembers(
+    baseClassName: string,
+    sourceFile: ts.SourceFile,
+    filePath: string,
+  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[] } | null {
+    // ── Find the import that brings in the base class ──
+    let moduleSpecifierText: string | null = null;
+    for (const stmt of sourceFile.statements) {
+      if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
+      const namedBindings = stmt.importClause.namedBindings;
+      if (namedBindings && ts.isNamedImports(namedBindings)) {
+        for (const specifier of namedBindings.elements) {
+          if (specifier.name.text === baseClassName) {
+            moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
+            break;
+          }
+        }
+      }
+      // Also check default imports: `import BaseClass from './base'`
+      if (!moduleSpecifierText && stmt.importClause.name?.text === baseClassName) {
+        moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
+      }
+      if (moduleSpecifierText) break;
+    }
+
+    // Only resolve relative imports
+    if (!moduleSpecifierText || !moduleSpecifierText.startsWith('.')) return null;
+
+    // ── Resolve the absolute file path ──
+    const dir = path.dirname(filePath);
+    let baseFilePath = path.resolve(dir, moduleSpecifierText);
+
+    // Try adding .ts extension if the path has no extension
+    if (!fs.existsSync(baseFilePath) && !path.extname(baseFilePath)) {
+      baseFilePath = baseFilePath + '.ts';
+    }
+    if (!fs.existsSync(baseFilePath)) return null;
+
+    // ── Parse the base class source file ──
+    const baseSource = fs.readFileSync(baseFilePath, 'utf8');
+    const baseSourceFile = ts.createSourceFile(
+      baseFilePath, baseSource, ts.ScriptTarget.Latest, true,
+    );
+
+    // ── Find the class declaration matching baseClassName ──
+    for (const stmt of baseSourceFile.statements) {
+      if (!ts.isClassDeclaration(stmt) || stmt.name?.text !== baseClassName) continue;
+
+      const inputs: string[] = [];
+      const outputs: string[] = [];
+      const viewChildren: ViewChildEntry[] = [];
+
+      // Scan members for @AcInput, @AcOutput, @AcViewChild decorators
+      for (const member of stmt.members) {
+        if (!ts.isPropertyDeclaration(member) || !ts.isIdentifier(member.name)) continue;
+        const propName = member.name.text;
+        const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
+        if (!decorators) continue;
+
+        for (const d of decorators) {
+          if (isDecorator(d, 'AcInput')) inputs.push(propName);
+          if (isDecorator(d, 'AcOutput')) outputs.push(propName);
+          if (isDecorator(d, 'AcViewChild')) {
+            const call = d.expression as ts.CallExpression;
+            const viewChildSelector = (call.arguments[0] as ts.StringLiteral).text;
+            viewChildren.push({ propName, selector: viewChildSelector });
+          }
+        }
+      }
+
+      // ── Recurse if this base class also extends another class ──
+      const extendsClause = stmt.heritageClauses?.find(
+        h => h.token === ts.SyntaxKind.ExtendsKeyword,
+      );
+      if (extendsClause) {
+        const grandBaseClassName = extendsClause.types[0].getText(baseSourceFile);
+        const grandBaseMembers = this.resolveBaseClassMembers(
+          grandBaseClassName, baseSourceFile, baseFilePath,
+        );
+        if (grandBaseMembers) {
+          inputs.push(...grandBaseMembers.inputs);
+          outputs.push(...grandBaseMembers.outputs);
+          viewChildren.push(...grandBaseMembers.viewChildren);
+        }
+      }
+
+      return { inputs, outputs, viewChildren };
+    }
+
+    return null;
   }
 
   // ─── Import/Export Path Resolution ─────────────────────────────────────────
