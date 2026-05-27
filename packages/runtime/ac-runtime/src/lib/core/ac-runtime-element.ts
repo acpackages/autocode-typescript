@@ -19,6 +19,7 @@ export class AcRuntimeElement extends HTMLElement {
   changeListeners: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   eventCallbacks: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   propertyListeners: any = {};
+  excludeLogProperty:any[] = ['time','animation','speed','showLoader','lottieJson'];
 
   connectedCallback(): void {
     if (!this.isInitialized) {
@@ -86,6 +87,9 @@ export class AcRuntimeElement extends HTMLElement {
     newValue: any;
   }): Promise<void> {
     if(this.renderer){
+      if(!this.excludeLogProperty.includes(key)){
+        // console.log("[AcRuntimeElement] Property Change : ",key,oldValue,newValue);
+      }
       const keysToNotify = new Set<string>();
       if (key) {
         keysToNotify.add(key);
@@ -131,69 +135,102 @@ export class AcRuntimeElement extends HTMLElement {
       const handler: ProxyHandler<U> = {
         get(obj: U, prop: string | symbol, receiver: any) {
            if (prop === IS_REACTIVE) return true;
-          // Transparently unwrap if the raw object is requested
-          if (prop === '__rawTarget__') return obj;
+           // Transparently unwrap if the raw object is requested
+           if (prop === '__rawTarget__') return obj;
 
-          const value = Reflect.get(obj, prop, receiver);
+           let value;
+           let prototype = obj;
+           let getter: (() => any) | undefined = undefined;
+           while (prototype) {
+             const desc = Object.getOwnPropertyDescriptor(prototype, prop);
+             if (desc) {
+               getter = desc.get;
+               break;
+             }
+             prototype = Object.getPrototypeOf(prototype);
+           }
+           if (getter) {
+             value = getter.call(receiver);
+           } else {
+             value = Reflect.get(obj, prop, receiver);
+           }
 
-          if (typeof value === 'function') {
-            const bound = value.bind(receiver);
-            // Copy static properties of the original function/class to the bound function
-            // so that static properties (like enum/class values) are not lost when bound.
-            for (const key of Reflect.ownKeys(value)) {
-              if (key !== 'length' && key !== 'name' && key !== 'prototype' && key !== 'arguments' && key !== 'caller') {
-                try {
-                  Object.defineProperty(bound, key, Object.getOwnPropertyDescriptor(value, key)!);
-                } catch (e) {
-                  // Ignore if property is read-only or couldn't be defined
-                }
-              }
-            }
-            return bound;
-          }
+           if (typeof value === 'function') {
+             const bound = value.bind(receiver);
+             // Copy static properties of the original function/class to the bound function
+             // so that static properties (like enum/class values) are not lost when bound.
+             for (const key of Reflect.ownKeys(value)) {
+               if (key !== 'length' && key !== 'name' && key !== 'prototype' && key !== 'arguments' && key !== 'caller') {
+                 try {
+                   Object.defineProperty(bound, key, Object.getOwnPropertyDescriptor(value, key)!);
+                 } catch (e) {
+                   // Ignore if property is read-only or couldn't be defined
+                 }
+               }
+             }
+             return bound;
+           }
 
-          if (typeof value === 'object' && value !== null && isPlainObject(value)) {
-            return wrap(value, [...path, String(prop)]);
-          }
+           if (typeof value === 'object' && value !== null && (isPlainObject(value) || Array.isArray(value))) {
+             return wrap(value, [...path, String(prop)]);
+           }
 
-          return value;
-        },
+           return value;
+         },
 
-        set(obj: U, prop: string | symbol, value: any, receiver: any) {
-          const key = String(prop);
-          const oldValue = (obj as any)[key];
+         set(obj: U, prop: string | symbol, value: any, receiver: any) {
+           const key = String(prop);
+           const oldValue = (obj as any)[key];
 
+           if (oldValue === value && key !== 'length') {
+             return Reflect.set(obj, prop, value);
+           }
 
+           const isArrayLength = Array.isArray(obj) && key === 'length';
 
-          if (oldValue === value && key !== 'length') {
-            return Reflect.set(obj, prop, value, receiver);
-          }
+           // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
+           // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
+           const cleanValue = value && value.__rawTarget__
+             ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
+             : value;
 
-          const isArrayLength = Array.isArray(obj) && key === 'length';
+           let prototype = obj;
+           let setter: ((v: any) => void) | undefined = undefined;
+           while (prototype) {
+             const desc = Object.getOwnPropertyDescriptor(prototype, prop);
+             if (desc) {
+               setter = desc.set;
+               break;
+             }
+             prototype = Object.getPrototypeOf(prototype);
+           }
 
-          // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
-          // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
-          const cleanValue = value && value.__rawTarget__
-            ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
-            : value;
-          const success = Reflect.set(obj, prop, cleanValue, receiver);
+           let success = false;
+           if (setter) {
+             setter.call(receiver, cleanValue);
+             success = true;
+           } else {
+             success = Reflect.set(obj, prop, cleanValue);
+           }
 
-          if (success && !isArrayLength) {
-            if (oldValue != value) {
-              object.handlePropertyChange({
-                type: 'set',
-                key,
-                path: [...path, key].join('.'),
-                // path: [...path, key].join('.'),
-                oldValue,
-                newValue: cleanValue
-              });
-            }
+           if(!object.excludeLogProperty.includes(key)){
+           console.log("[AcRuntimeElement] Set Proxy Value : ",key,oldValue,value,success,isArrayLength);
+           }
+           if (success && !isArrayLength) {
+             if (oldValue != value) {
+               object.handlePropertyChange({
+                 type: 'set',
+                 key,
+                 path: [...path, key].join('.'),
+                 oldValue,
+                 newValue: cleanValue
+               });
+             }
 
-          }
+           }
 
-          return success;
-        },
+           return success;
+         },
 
         deleteProperty(obj, prop) {
 

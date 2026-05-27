@@ -96,7 +96,7 @@ export class AcElementRenderer {
   }
 
   clearElement({element}:{element:Element}){
-    for(let el of element.children){
+    for(let el of Array.from(element.children)){
       if(el){
         this.clearElement({element:el});
         (el as any) = null;
@@ -205,7 +205,7 @@ export class AcElementRenderer {
 
               // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
               // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
-              if (oldValue != newValue || force) {
+              if (oldValue != newValue || force || (newValue !== null && typeof newValue === 'object')) {
                   // console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
                 this.currentBindingValues[bindingKey] = newValue;
                 callbackDef.callback({ oldValue, newValue, renderer: this });
