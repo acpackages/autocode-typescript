@@ -12,6 +12,7 @@ export class AcElementRenderer {
   private nodes: Node[] = [];
   private startComment?: string;
   private endComment?: string;
+  private childRenderers:Record<string,AcElementRenderer> = {};
   isRoot?: boolean = false;
 
   constructor({ html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
@@ -94,11 +95,21 @@ export class AcElementRenderer {
     }
   }
 
-  createChildRenderer({ html, startComment, endComment, context,rootElement }: { html: string, startComment?: string, endComment?: string, context: any,rootElement?:AcRuntimeElement }) {
+  clearElement({element}:{element:Element}){
+    for(let el of element.children){
+      if(el){
+        this.clearElement({element:el});
+        (el as any) = null;
+      }
+    }
+  }
+
+  createChildRenderer({ targetId,html, startComment, endComment, context,rootElement }: { targetId:string,html: string, startComment?: string, endComment?: string, context: any,rootElement?:AcRuntimeElement }) {
     if(rootElement == undefined){
       rootElement = this.rootElement;
     }
     const childRenderer = new AcElementRenderer({ rootElement, context: context, html, startComment, endComment });
+    this.childRenderers[targetId] = childRenderer;
     childRenderer.render();
   }
 
@@ -137,19 +148,20 @@ export class AcElementRenderer {
         },
       });
     }
+    const scope = this.getScope(locals);
     try {
-      const scope = this.getScope(locals);
       const normalizedExpr = this.normalizeExprForScope(expression);
       const fn = new Function(
         'scope',
         'context',
         `with (context) { with (scope) { return ${normalizedExpr} } }`
       );
-      const result = fn.call(this.context, scope, this.context);
+      const result = fn.call(this.rootElement.acRuntimeInstance, scope, this.rootElement.acRuntimeInstance);
       // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
       return result;
     } catch (e) {
       console.error(`Error evaluating expression: ${expression} `, e);
+      console.error(scope,this.context);
       return undefined;
     }
   }
@@ -207,6 +219,13 @@ export class AcElementRenderer {
         else {
           // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
         }
+        const el = this.queryElement(`[ac-ref="${targetKey}"]`);
+        if(el?.hasAttribute('ac-el-has-inputs')){
+          el.removeAttribute('ac-el-has-inputs');
+          if((el as any).acRuntimeInstance){
+            (el as any).notifyElementInit();
+          }
+        }
       }
       catch (ex) {
         console.error(ex);
@@ -218,9 +237,44 @@ export class AcElementRenderer {
       for (const k of targetIds) {
         await executeListener(k);
       }
+      this.executeChildChangeListeners({targetIds});
     } else if (targetId) {
       await executeListener(targetId);
+      this.executeChildChangeListeners({targetId});
     }
+  }
+
+  async executeChildChangeListeners({
+    targetId,
+    targetIds,
+    bindingId,
+    bindingIds,
+  }:{
+    targetId?: string;
+    targetIds?: string[];
+    bindingId?: string;
+    bindingIds?: string[];
+  }){
+    for(const childRenderer of Object.values(this.childRenderers)){
+      const res = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
+    if(targetId){
+      if(res.all.includes(targetId)){
+        childRenderer.executeChangeListener({targetId,bindingId,bindingIds});
+      }
+    }
+    else if(targetIds && targetIds.length > 0){
+      const destIds:string[] = [];
+      for(const t of targetIds){
+        if(res.all.includes(t)){
+          destIds.push(t);
+        }
+      }
+      if(destIds.length > 0){
+        childRenderer.executeChangeListener({targetIds:destIds,bindingId,bindingIds});
+      }
+    }
+    }
+
   }
 
   async executeEventCallbackRegister({
@@ -386,10 +440,19 @@ export class AcElementRenderer {
     if (locals) {
       Object.assign(scope, locals);
     }
+    if(this.context){
+      Object.assign(scope, this.context);
+    }
     for(const key of Object.keys(this.rootElement.templates)){
       scope[key] = this.rootElement.templates[key];
     }
     return scope;
+    // if(this.isRoot){
+    //   return scope;
+    // }
+    // else{
+    //   return {...scope,...this.rootElement.acRuntimeInstance};
+    // }
   }
 
   protected normalizeExprForScope(expression: string): string {
@@ -504,6 +567,7 @@ export class AcElementRenderer {
     while (current && current !== endComment) {
       const next = current.nextSibling;
       current.remove();
+      current = null;
       current = next;
     }
   }
@@ -524,8 +588,8 @@ export class AcElementRenderer {
     for (const key of res.all) {
       await this.assignViewChildrenRefs({ targetId:key });
       await this.resolveTemplateOutlets({ targetId:key });
-      await this.executeChangeListener({ targetId: key });
       await this.executeEventCallbackRegister({ targetId: key });
+      await this.executeChangeListener({ targetId: key });
     }
   }
 
@@ -534,7 +598,7 @@ export class AcElementRenderer {
       const templateRenderer = (templateDef:any)=>{
         const startComment = `${targetKey}-start`;
         const endComment = `${targetKey}-end`;
-        this.createChildRenderer({html:templateDef.html,startComment:startComment,endComment:endComment,context:templateDef.rootElement.acRuntimeInstance,rootElement:templateDef.rootElement});
+        this.createChildRenderer({targetId:targetKey,html:templateDef.html,startComment:startComment,endComment:endComment,context:templateDef.rootElement.acRuntimeInstance,rootElement:templateDef.rootElement});
       };
       if(this.rootElement.templateOutlets[targetKey]){
         const templateOutlet = this.rootElement.templateOutlets[targetKey];

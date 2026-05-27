@@ -477,7 +477,7 @@ export class ComponentCompiler {
         h => h.token === ts.SyntaxKind.ExtendsKeyword,
       );
       if (extendsClause) {
-        const grandBaseClassName = extendsClause.types[0].getText(baseSourceFile);
+        const grandBaseClassName = extendsClause.types[0].expression.getText(baseSourceFile);
         const grandBaseMembers = this.resolveBaseClassMembers(
           grandBaseClassName, baseSourceFile, baseFilePath,
         );

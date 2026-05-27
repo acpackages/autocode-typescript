@@ -1,29 +1,4 @@
 /* eslint-disable no-useless-escape */
-/**
- * @module code-generator
- *
- * Generates the complete IIFE-wrapped Web Component code string.
- *
- * This is the final stage of compilation. It takes all the analyzed
- * component data (properties, template, bindings, styles) and assembles
- * them into a self-contained Immediately Invoked Function Expression (IIFE).
- *
- * **What the generated IIFE contains:**
- *
- * 1. **Signal system** — `createSignal()` and `createEffect()` scoped
- *    inside the IIFE to avoid global pollution
- * 2. **Inner component class** — mirrors the original class with:
- *    - Signal-backed reactive properties (via Object.defineProperty)
- *    - `render()` method that sets innerHTML and wires up bindings
- *    - All original methods, getters, and setters copied verbatim
- * 3. **HTMLElement wrapper** — `${Class}Element extends HTMLElement`:
- *    - Creates the inner class instance in constructor
- *    - Forwards observedAttributes / attributeChangedCallback for inputs
- *    - Calls render() + acOnInit() on connectedCallback
- *    - Calls acOnDestroy() on disconnectedCallback
- *    - Manages scoped style injection with reference counting
- * 4. **Custom element registration** — `customElements.define(selector, Element)`
- */
 import type {
   TemplateCompileResult,
   ReactiveProperty,
@@ -139,17 +114,8 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     className,
     selector,
     templateResult,
-    templateHtml,
     styles,
-    reactiveProps,
-    nonReactiveProps,
-    inputs,
-    outputs,
     viewChildren,
-    membersCode,
-    topLevelVars,
-    baseClassName,
-    prefixFn,
     classSourceCode
   } = options;
   const htmlElementClassName = `\$\$\$${className}`;
@@ -199,14 +165,12 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
       this.acRuntimeInstance = this.makeReactive(new ${className}());
       this.acRuntimeInstance.element = this;
-      this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
+      this.elementHtml = \`${templateResult.html}\`;
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
       this.instanceViewChildren = ${JSON.stringify( acGenerateViewChildObject(viewChildren,templateResult) )};
-
-      this.elementHtml = \`${templateResult.html}\`;
-
       this.propertyListeners = {${propertyChangeListeners.join(",")}};
+      this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
 
       `;
       code += `

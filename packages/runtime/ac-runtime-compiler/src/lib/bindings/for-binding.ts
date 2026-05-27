@@ -21,7 +21,7 @@ export function acGenerateForBinding(
         const startCommentHtml = \`${binding.targetId}-\${loopItemId}-start\`;
         const endCommentHtml = \`${binding.targetId}-\${loopItemId}-end\`;
         renderer.appendNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end',nodes:renderer.createNodesFromHtml(\`<!--\${startCommentHtml}--><!--\${endCommentHtml}-->\`),processNodes:false});
-        renderer.createChildRenderer({html:binding.template,startComment:startCommentHtml,endComment:endCommentHtml,context:{${itemVar}, ${indexVar}}});
+        renderer.createChildRenderer({targetId:'${binding.targetId}'+loopItemId,html:binding.template,startComment:startCommentHtml,endComment:endCommentHtml,context:{${itemVar}, ${indexVar}}});
       });
     }
   }});\n`;

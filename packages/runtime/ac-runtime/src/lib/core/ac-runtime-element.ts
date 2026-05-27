@@ -34,6 +34,10 @@ export class AcRuntimeElement extends HTMLElement {
     if ((this.acRuntimeInstance as any).__destroy) {
       (this.acRuntimeInstance as any).__destroy();
     }
+    if(this.renderer){
+      this.renderer.clearElement({element:this});
+    }
+    (this.renderer as any) = null;
   }
 
   protected generateHexId(): string {
@@ -49,17 +53,15 @@ export class AcRuntimeElement extends HTMLElement {
   init() {
     this.setInputValuesFromAttributes();
     for(const eventName of this.instanceOutputs as string[]){
-            (this.acRuntimeInstance as any)[eventName].subscribe((args:any)=>{
-              const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args,{bubbles: true,cancelable: true,composed: true}) as any;
-              this.dispatchEvent(event);
-            });
-          }
-    this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: this.acRuntimeInstance });
+      (this.acRuntimeInstance as any)[eventName].subscribe((args:any)=>{
+        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args,{bubbles: true,cancelable: true,composed: true}) as any;
+        this.dispatchEvent(event);
+      });
+    }
+    this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
     this.style.display = 'contents';
     this.render().then(() => {
-      if ((this.acRuntimeInstance as any).acOnInit) {
-        (this.acRuntimeInstance as any).acOnInit();
-      }
+      this.notifyElementInit();
     });
 
   }
@@ -180,6 +182,14 @@ export class AcRuntimeElement extends HTMLElement {
     }
 
     return wrap(instance);
+  }
+
+  notifyElementInit(){
+    if(!this.hasAttribute('ac-el-has-inputs')){
+      if ((this.acRuntimeInstance as any).acOnInit) {
+      (this.acRuntimeInstance as any).acOnInit();
+    }
+    }
   }
 
   protected registerChangeListenerDefinition({ targetId, bindingId, definition }: { targetId: string, bindingId: string, definition: any }): void {

@@ -754,7 +754,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
   ): string {
     const id = `${this.generateHexId()}`;
-    let hasBinding = false;
+    let hasBinding = false, hasInputs = false;
     const pendingProperties: { expression: string; type: string }[] = [];
 
     const attribEntries = Object.entries(el.attribs);
@@ -771,6 +771,7 @@ export class TemplateCompiler {
           pendingProperties.push({ expression: value, type: 'style' });
         } else {
           bindings.push({ bindingId:this.generateHexId(),type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
+          hasInputs = true;
           pendingProperties.push({ expression: value, type: 'bind' });
         }
         hasBinding = true;
@@ -844,6 +845,9 @@ export class TemplateCompiler {
     // Inject ac-ref attribute if this element has any bindings
     if (hasBinding) {
       el.attribs['ac-ref'] = id;
+      if(hasInputs){
+        el.attribs['ac-el-has-inputs'] = 'true';
+      }
     }
 
     // Process child nodes

@@ -21,10 +21,10 @@ export function acGenerateModelBinding({ binding }: {
       const el:any = renderer.queryElement('[ac-ref="${binding.targetId}"]');
       if(el && !el.hasAttribute('ac-event-${binding.targetId}')){
         el.addEventListener('change', ($event: any) => {
-          ${binding.expression} = el.value;
+          renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{el}});
         });
         el.addEventListener('input', ($event: any) => {
-          ${binding.expression} = el.value;
+          renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{el}});
         });
         el.setAttribute('ac-event-${binding.targetId}','true');
       }
