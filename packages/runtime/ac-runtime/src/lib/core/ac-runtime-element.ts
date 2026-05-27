@@ -72,24 +72,42 @@ export class AcRuntimeElement extends HTMLElement {
 
   protected async handlePropertyChange({
     key,
+    type,
+    target,
+    path,
     oldValue,
     newValue,
   }: {
     key: string;
+    target?:any,
+    path:string,
+    type:string,
     oldValue: any;
     newValue: any;
   }): Promise<void> {
     if(this.renderer){
-      if (this.propertyListeners[key]) {
-      for (const targetId of Object.keys(this.propertyListeners[key])) {
-        await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[key][targetId] });
+      const keysToNotify = new Set<string>();
+      if (key) {
+        keysToNotify.add(key);
       }
-    }
-    if(this.isInitialized && this.propertyToListenForChanges.includes(key)){
-      if (this.acRuntimeInstance.acOnChange) {
-        this.acRuntimeInstance.acOnChange({key,oldValue,newValue});
+      if (path) {
+        const rootKey = path.split('.')[0];
+        if (rootKey) {
+          keysToNotify.add(rootKey);
+        }
       }
-    }
+      for (const k of keysToNotify) {
+        if (this.propertyListeners[k]) {
+          for (const targetId of Object.keys(this.propertyListeners[k])) {
+            await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[k][targetId] });
+          }
+        }
+      }
+      if(this.isInitialized && this.propertyToListenForChanges.includes(key)){
+        if (this.acRuntimeInstance.acOnChange) {
+          this.acRuntimeInstance.acOnChange({key,oldValue,newValue});
+        }
+      }
     }
   }
 
@@ -163,7 +181,9 @@ export class AcRuntimeElement extends HTMLElement {
           if (success && !isArrayLength) {
             if (oldValue != value) {
               object.handlePropertyChange({
+                type: 'set',
                 key,
+                path: [...path, key].join('.'),
                 // path: [...path, key].join('.'),
                 oldValue,
                 newValue: cleanValue
@@ -173,7 +193,66 @@ export class AcRuntimeElement extends HTMLElement {
           }
 
           return success;
+        },
+
+        deleteProperty(obj, prop) {
+
+        const key = String(prop);
+
+        const oldValue =
+          (obj as any)[key];
+
+        const result =
+          Reflect.deleteProperty(
+            obj,
+            prop
+          );
+
+        if (result) {
+          object.handlePropertyChange({
+            type: 'delete',
+            target: obj,
+            key,
+            path: [...path, key].join('.'),
+            oldValue,
+            newValue: undefined
+          });
         }
+
+        return result;
+      },
+
+      defineProperty(
+        obj,
+        prop,
+        descriptor
+      ) {
+
+        const key = String(prop);
+
+        const oldValue =
+          (obj as any)[key];
+
+        const result =
+          Reflect.defineProperty(
+            obj,
+            prop,
+            descriptor
+          );
+
+        if (result) {
+          object.handlePropertyChange({
+            type: 'define',
+            target: obj,
+            key,
+            path: [...path, key].join('.'),
+            oldValue,
+            newValue: descriptor.value
+          });
+        }
+
+        return result;
+      }
       };
 
       const proxy = new Proxy(target, handler);
