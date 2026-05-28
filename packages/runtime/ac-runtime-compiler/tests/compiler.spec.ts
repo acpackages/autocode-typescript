@@ -228,6 +228,53 @@ describe('ComponentCompiler', () => {
     expect(results[0].listenChanges).not.toContain('ignored');
   });
 
+  it('should resolve @AcListenChanges and @AcSubscribeChange keys from nested paths, static properties, enums, and constants', () => {
+    const source = `
+      import { AcElement, AcListenChanges, AcSubscribeChange } from './decorators';
+      
+      const ROOT_KEY = 'global.theme';
+      
+      export enum ConfigEnum {
+        FONT = 'theme.font',
+        SIZE = 'theme.size'
+      }
+      
+      export class ConfigClass {
+        static COLOR = 'theme.color';
+      }
+
+      @AcElement({
+        selector: 'test-nested-listen',
+        template: '<div>Nested</div>'
+      })
+      export class TestNestedListen {
+        @AcListenChanges(ROOT_KEY)
+        onGlobalTheme = () => {};
+
+        @AcListenChanges(ConfigClass.COLOR)
+        onColorChange = () => {};
+
+        @AcListenChanges([ConfigEnum.FONT, ConfigEnum.SIZE, 'sidebar.state'])
+        onStyleChange = () => {};
+
+        @AcSubscribeChange(ConfigClass.COLOR)
+        handleColorChange() {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].listenChanges).toContain('global.theme');
+    expect(results[0].listenChanges).toContain('theme.color');
+    expect(results[0].listenChanges).toContain('theme.font');
+    expect(results[0].listenChanges).toContain('theme.size');
+    expect(results[0].listenChanges).toContain('sidebar.state');
+    
+    expect(results[0].subscribeChanges).toContainEqual({
+      methodName: 'handleColorChange',
+      keys: ['theme.color']
+    });
+  });
+
   it('should handle ac-container by not rendering the tag but rendering children', () => {
     const source = `
       @AcElement({

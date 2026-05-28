@@ -33,17 +33,37 @@ import * as ts from 'typescript';
 // Re-export types so existing consumers don't break
 export type { Binding, TemplateCompileResult };
 
+
+
 /**
  * Extract bare identifiers from a template expression string.
  * Filters out JS/TS keywords, built-ins, browser globals, and local variables.
  */
+function getExpressionPropertyPath(node: ts.Expression): string | null {
+  if (ts.isIdentifier(node)) {
+    return node.text;
+  }
+  if (ts.isPropertyAccessExpression(node)) {
+    if (node.expression.kind === ts.SyntaxKind.ThisKeyword) {
+      return node.name.text;
+    }
+    const parentPath = getExpressionPropertyPath(node.expression);
+    if (parentPath) {
+      return `${parentPath}.${node.name.text}`;
+    }
+  }
+  return null;
+}
+
 function extractExpressionIdentifiers(
   expression: string,
   localVars: Set<string>,
   classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
   topLevelVars?: Set<string>,
+  resolvedConstants?: Record<string, string>,
 ): Set<string> {
   const identifiers = new Set<string>();
+  const resolved = resolvedConstants;
 
   if (!expression || !expression.trim()) return identifiers;
 
@@ -51,7 +71,7 @@ function extractExpressionIdentifiers(
   if (expression.startsWith('`') && expression.endsWith('`')) {
     const matches = expression.matchAll(/\$\{([^}]+)\}/g);
     for (const match of matches) {
-      const innerIds = extractExpressionIdentifiers(match[1], localVars, classProperties, topLevelVars);
+      const innerIds = extractExpressionIdentifiers(match[1], localVars, classProperties, topLevelVars, resolvedConstants);
       for (const id of innerIds) {
         identifiers.add(id);
       }
@@ -102,6 +122,16 @@ function extractExpressionIdentifiers(
                 }
               }
             } else {
+              const argText = n.argumentExpression.getText(sourceFile);
+              const resolvedVal = resolved ? resolved[argText] : undefined;
+              const basePath = getExpressionPropertyPath(n.expression);
+              if (basePath && resolvedVal) {
+                const rootVar = basePath.split('.')[0];
+                if (!nestedLocalVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar) && isValidProperty(rootVar)) {
+                  identifiers.add(basePath);
+                  identifiers.add(`${basePath}.${resolvedVal}`);
+                }
+              }
               visitWithScope(n.expression);
               visitWithScope(n.argumentExpression);
             }
@@ -157,6 +187,16 @@ function extractExpressionIdentifiers(
             }
           }
         } else {
+          const argText = node.argumentExpression.getText(sourceFile);
+          const resolvedVal = resolved ? resolved[argText] : undefined;
+          const basePath = getExpressionPropertyPath(node.expression);
+          if (basePath && resolvedVal) {
+            const rootVar = basePath.split('.')[0];
+            if (!localVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar) && isValidProperty(rootVar)) {
+              identifiers.add(basePath);
+              identifiers.add(`${basePath}.${resolvedVal}`);
+            }
+          }
           visit(node.expression);
           visit(node.argumentExpression);
         }
@@ -237,6 +277,7 @@ export class TemplateCompiler {
     localVars: Set<string> = new Set(),
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): TemplateCompileResult {
     // Local state per compilation — makes the compiler reentrant
     const bindings: Binding[] = [];
@@ -251,7 +292,7 @@ export class TemplateCompiler {
     parser.end();
 
     // Walk the tree, extracting bindings and producing clean HTML
-    const processedHtml = this.processNodes(handler.dom, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+    const processedHtml = this.processNodes(handler.dom, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
 
     return {
       html: processedHtml,
@@ -272,9 +313,10 @@ export class TemplateCompiler {
     targetElementHtml?: string;
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> };
     topLevelVars?: Set<string>;
+    resolvedConstants?: Record<string, string>;
   }): void {
-    const { expression, targetId, type, reactiveProperties, localVars, targetElementHtml, classProperties, topLevelVars } = options;
-    const ids = extractExpressionIdentifiers(expression, localVars, classProperties, topLevelVars);
+    const { expression, targetId, type, reactiveProperties, localVars, targetElementHtml, classProperties, topLevelVars, resolvedConstants } = options;
+    const ids = extractExpressionIdentifiers(expression, localVars, classProperties, topLevelVars, resolvedConstants);
     for (const id of ids) {
       if (!reactiveProperties[id]) {
         reactiveProperties[id] = [];
@@ -297,10 +339,11 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     let html = '';
     for (const node of nodes) {
-      html += this.processNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+      html += this.processNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
     return html;
   }
@@ -314,12 +357,13 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     if (node instanceof Text) {
-      return this.processTextNode(node, bindings, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processTextNode(node, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
     if (isTag(node)) {
-      return this.processElementNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processElementNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
     return '';
   }
@@ -339,6 +383,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     const text = node.data;
     // No interpolation markers → return as-is
@@ -360,7 +405,7 @@ export class TemplateCompiler {
       if (part.startsWith('{{') && part.endsWith('}}')) {
         const inner = part.slice(2, -2).trim();
         const id = `${this.generateHexId()}`;
-        const properties = Array.from(extractExpressionIdentifiers(inner, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(inner, localVars, classProperties, topLevelVars, resolvedConstants));
 
         bindings.push({
           bindingId:this.generateHexId(),
@@ -381,6 +426,7 @@ export class TemplateCompiler {
           targetElementHtml: spanHtml,
           classProperties,
           topLevelVars,
+          resolvedConstants,
         });
 
         finalHtml += spanHtml;
@@ -421,6 +467,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     const isContainer = el.tagName === 'ac-container';
 
@@ -429,7 +476,7 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acFor = el.attribs['ac:for'];
     if (acFor) {
-      return this.processForDirective(el, acFor, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processForDirective(el, acFor, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -437,14 +484,14 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acIf = el.attribs['ac:if'];
     if (acIf) {
-      return this.processIfDirective(el, acIf, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processIfDirective(el, acIf, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // SPECIAL ELEMENT: <ac-template>
     // ═══════════════════════════════════════════════════════════════════
     if (el.tagName === 'ac-template') {
-      return this.processTemplateElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processTemplateElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -452,20 +499,20 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acTemplateOutlet = el.attribs['ac:template:outlet'];
     if (acTemplateOutlet) {
-      return this.processTemplateOutlet(el, acTemplateOutlet, bindings, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processTemplateOutlet(el, acTemplateOutlet, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // VIRTUAL CONTAINER: <ac-container> (renders children only)
     // ═══════════════════════════════════════════════════════════════════
     if (isContainer) {
-      return this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+      return this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // REGULAR ELEMENT: Process attribute bindings
     // ═══════════════════════════════════════════════════════════════════
-    return this.processRegularElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+    return this.processRegularElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
   }
 
   // ─── Structural Directive Handlers ─────────────────────────────────────────
@@ -486,6 +533,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     delete el.attribs['ac:for'];
 
@@ -524,6 +572,7 @@ export class TemplateCompiler {
       newLocalVars,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside for blocks
@@ -546,7 +595,7 @@ export class TemplateCompiler {
       }
     }
 
-    const properties = Array.from(extractExpressionIdentifiers(listExpr, localVars, classProperties, topLevelVars));
+    const properties = Array.from(extractExpressionIdentifiers(listExpr, localVars, classProperties, topLevelVars, resolvedConstants));
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     bindings.push({
@@ -571,6 +620,7 @@ export class TemplateCompiler {
       targetElementHtml: finalHtml,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     });
 
     // Return a comment node as the insertion point
@@ -593,6 +643,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     delete el.attribs['ac:if'];
 
@@ -605,6 +656,7 @@ export class TemplateCompiler {
       localVars,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside if blocks
@@ -627,7 +679,7 @@ export class TemplateCompiler {
       }
     }
 
-    const properties = Array.from(extractExpressionIdentifiers(acIf, localVars, classProperties, topLevelVars));
+    const properties = Array.from(extractExpressionIdentifiers(acIf, localVars, classProperties, topLevelVars, resolvedConstants));
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     bindings.push({
@@ -650,6 +702,7 @@ export class TemplateCompiler {
       targetElementHtml: finalHtml,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     });
 
     return finalHtml;
@@ -672,6 +725,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     const id = `${this.generateHexId()}`;
     let refName: string | undefined;
@@ -692,6 +746,7 @@ export class TemplateCompiler {
       localVars,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside template blocks
@@ -742,6 +797,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     // const id = `${this.generateHexId()}`;
     const placeholderId = `ac-template-outlet-${this.generateHexId()}`;
@@ -758,9 +814,9 @@ export class TemplateCompiler {
       }
     }
 
-    const properties = Array.from(extractExpressionIdentifiers(expression, localVars, classProperties, topLevelVars));
+    const properties = Array.from(extractExpressionIdentifiers(expression, localVars, classProperties, topLevelVars, resolvedConstants));
     if (contextExpression) {
-      const contextProps = extractExpressionIdentifiers(contextExpression, localVars, classProperties, topLevelVars);
+      const contextProps = extractExpressionIdentifiers(contextExpression, localVars, classProperties, topLevelVars, resolvedConstants);
       for (const prop of contextProps) {
         if (!properties.includes(prop)) {
           properties.push(prop);
@@ -788,6 +844,7 @@ export class TemplateCompiler {
       targetElementHtml: finalHtml,
       classProperties,
       topLevelVars,
+      resolvedConstants,
     });
     if (contextExpression) {
       this.addReactiveProperties({
@@ -799,6 +856,7 @@ export class TemplateCompiler {
         targetElementHtml: finalHtml,
         classProperties,
         topLevelVars,
+        resolvedConstants,
       });
     }
 
@@ -821,6 +879,7 @@ export class TemplateCompiler {
     localVars: Set<string>,
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
+    resolvedConstants?: Record<string, string>,
   ): string {
     const id = `${this.generateHexId()}`;
     let hasBinding = false, hasInputs = false;
@@ -831,7 +890,7 @@ export class TemplateCompiler {
       // ── Property binding: [prop]="expr" ──
       if (name.startsWith('[') && name.endsWith(']')) {
         const prop = name.slice(1, -1);
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         if (prop.startsWith('class.')) {
           bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'class' });
@@ -849,7 +908,7 @@ export class TemplateCompiler {
       // ── Event binding: (event)="expr" ──
       else if (name.startsWith('(') && name.endsWith(')')) {
         const prop = name.slice(1, -1);
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'event' });
         hasBinding = true;
@@ -858,7 +917,7 @@ export class TemplateCompiler {
       // ── Class toggle: ac:class:name="expr" ──
       else if (name.startsWith('ac:class:')) {
         const prop = name.slice(9);
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'class' });
         hasBinding = true;
@@ -867,7 +926,7 @@ export class TemplateCompiler {
       // ── Style binding: ac:style:prop="expr" ──
       else if (name.startsWith('ac:style:')) {
         const prop = name.slice(9);
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'style' });
         hasBinding = true;
@@ -880,7 +939,7 @@ export class TemplateCompiler {
         const isSelect = el.tagName === 'select';
         const prop = (isCheckbox || isRadio) ? 'checked' : 'value';
         const event = (isCheckbox || isRadio || isSelect) ? 'change' : 'input';
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'model' });
         hasBinding = true;
@@ -889,7 +948,7 @@ export class TemplateCompiler {
       // ── Attribute binding: ac:bind:attr="expr" ──
       else if (name.startsWith('ac:bind:')) {
         const prop = name.slice(8);
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
@@ -897,7 +956,7 @@ export class TemplateCompiler {
       }
       // ── Template outlet: ac:template:outlet="expr" ──
       else if (name === 'ac:template:outlet') {
-        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars));
+        const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         bindings.push({ bindingId:this.generateHexId(),type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
@@ -920,7 +979,7 @@ export class TemplateCompiler {
     }
 
     // Process child nodes
-    const childrenHtml = this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars);
+    const childrenHtml = this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
 
     // Serialize the element back to HTML
     const attrs = Object.entries(el.attribs).map(([n, v]) => `${n}="${v}"`).join(' ');
@@ -945,6 +1004,7 @@ export class TemplateCompiler {
         targetElementHtml: finalHtml,
         classProperties,
         topLevelVars,
+        resolvedConstants,
       });
     }
 

@@ -164,6 +164,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     ${className}StyleElement.setAttribute('ac-style-for','${selector}');
     ${className}StyleElement.innerHTML = \`${selector}{\n${styles.join('\n').replaceAll(':host','&')}\n}\`;
     document.querySelector('head').append(${className}StyleElement);
+
     `;
   }
 
@@ -195,7 +196,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
-
 
     }
   }
