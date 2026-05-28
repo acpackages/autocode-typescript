@@ -44,6 +44,7 @@ import {
 import type {
   CompileResult,
   ComponentInfo,
+  ConstructorParam,
   ReactiveProperty,
   ViewChildEntry,
 } from './types.js';
@@ -100,9 +101,8 @@ export class ComponentCompiler {
     );
 
     // ── Step 2: Categorize all top-level statements ──
-    const components: ComponentInfo[] = [];
     const importStatements: string[] = [];
-    const trailingStatements: { text: string; pos: number }[] = [];
+    const orderedStatements: { text: string; isComponent: boolean; selector?: string; compiled?: any }[] = [];
     const topLevelVars = new Set<string>();
 
     for (const node of sourceFile.statements) {
@@ -110,7 +110,16 @@ export class ComponentCompiler {
       if (ts.isClassDeclaration(node) && node.name) {
         const componentMetadata = getComponentMetadata(node);
         if (componentMetadata) {
-          components.push({ node, metadata: componentMetadata });
+          // Compile this component
+          const compiled = this.compileComponent(
+            node, componentMetadata, sourceCode, topLevelVars, filePath,
+          );
+          orderedStatements.push({
+            text: compiled.code,
+            isComponent: true,
+            selector: componentMetadata.selector,
+            compiled
+          });
           continue;
         }
       }
@@ -132,48 +141,34 @@ export class ComponentCompiler {
       if (isImport || isExport) {
         importStatements.push(printed);
       } else {
-        trailingStatements.push({ text: printed, pos: node.getStart() });
+        orderedStatements.push({ text: printed, isComponent: false });
       }
     }
 
-    // ── Step 3: Compile each component ──
+    // ── Step 3: Compile and assemble code ──
     const importsCode = importStatements.join('\n');
     const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
     const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent } from '@autocode-ts/ac-runtime';`;
 
-    const compiledComponents = components.map(c => {
-      // Split non-import statements into pre-component and post-component
-      const componentPos = c.node.getStart();
-      const preStatements: string[] = [];
-      const postStatements: string[] = [];
-      for (const s of trailingStatements) {
-        (s.pos < componentPos ? preStatements : postStatements).push(s.text);
-      }
+    const bodyCode = orderedStatements.map(s => s.text).join('\n\n');
+    const combinedCode = `${pipeImport}\n${acElementImport}\n${importsCode}\n\n${bodyCode}`;
 
-      // Compile this component
-      const compiled = this.compileComponent(
-        c.node, c.metadata, sourceCode, topLevelVars, filePath,
-      );
-
-      const standardCode = `${pipeImport}\n${acElementImport}\n${importsCode}\n\n${preStatements.join('\n')}\n\n${compiled.code}\n\n${postStatements.join('\n')}`;
-
-      return {
-        selector: compiled.selector,
-        code: standardCode,
-        subscribeChanges: compiled.subscribeChanges,
-        listenChanges: compiled.listenChanges,
-      };
-    });
+    const componentOutputs = orderedStatements.filter(s => s.isComponent);
 
     // ── Step 4: Handle non-component files ──
-    if (compiledComponents.length === 0) {
+    if (componentOutputs.length === 0) {
       return [{
         selector: null,
-        code: `${importsCode}\n${trailingStatements.map(s => s.text).join('\n')}`,
+        code: `${importsCode}\n${orderedStatements.map(s => s.text).join('\n')}`,
       }];
     }
 
-    return compiledComponents;
+    return componentOutputs.map(c => ({
+      selector: c.selector!,
+      code: combinedCode,
+      subscribeChanges: c.compiled.subscribeChanges,
+      listenChanges: c.compiled.listenChanges,
+    }));
   }
 
   // ─── Component Compilation ─────────────────────────────────────────────────
@@ -228,7 +223,8 @@ export class ComponentCompiler {
     }
 
     // ── Compile template ──
-    const templateResult = this.templateCompiler.compile(template);
+    const classProperties = this.collectClassProperties(node, filePath);
+    const templateResult = this.templateCompiler.compile(template, new Set(), classProperties, topLevelVars);
     const usedInTemplate = extractUsedIdentifiers(templateResult.bindings);
 
     // ── Classify properties ──
@@ -257,6 +253,11 @@ export class ComponentCompiler {
     templateResult.inputs = inputs;
     templateResult.outputs = outputs;
     templateResult.viewChildren = viewChildren;
+    templateResult.subscribeChanges = subscribeChanges;
+    templateResult.listenChanges = listenChanges;
+
+    // ── Extract constructor parameters ──
+    const constructorParams = this.extractConstructorParams(node);
 
     // ── Generate the custom element code ──
     const classSourceCode = node.getSourceFile() ? node.getText(node.getSourceFile()) : node.getText();
@@ -275,7 +276,8 @@ export class ComponentCompiler {
       topLevelVars,
       baseClassName,
       prefixFn: prefixIdentifiers,
-      classSourceCode
+      classSourceCode,
+      constructorParams
     });
 
     return { selector, code, subscribeChanges, listenChanges };
@@ -298,8 +300,8 @@ export class ComponentCompiler {
     const viewChildren: ViewChildEntry[] = [];
     const reactiveProps: ReactiveProperty[] = [];
     const nonReactiveProps: ReactiveProperty[] = [];
-    const subscribeChanges: { propName: string; keys: string[] }[] = [];
-    const listenChanges: { propName: string; keys: string[] }[] = [];
+    const subscribeChanges: { methodName: string; keys: string[] }[] = [];
+    const listenChanges: string[] = [];
     let memberIndex = 0;
 
     for (const member of node.members) {
@@ -308,7 +310,8 @@ export class ComponentCompiler {
         const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
         if (decorators) {
           for (const d of decorators) {
-            if (isDecorator(d, 'AcSubscribeChange')) {
+            // @AcSubscribeChange is only valid on method declarations
+            if (isDecorator(d, 'AcSubscribeChange') && ts.isMethodDeclaration(member)) {
               const call = d.expression as ts.CallExpression;
               const arg = call.arguments[0];
               const keys: string[] = [];
@@ -323,9 +326,10 @@ export class ComponentCompiler {
                   }
                 }
               }
-              subscribeChanges.push({ propName, keys });
+              subscribeChanges.push({ methodName: propName, keys });
             }
-            if (isDecorator(d, 'AcListenChanges')) {
+            // @AcListenChanges is only valid on property declarations
+            if (isDecorator(d, 'AcListenChanges') && ts.isPropertyDeclaration(member)) {
               const call = d.expression as ts.CallExpression;
               const arg = call.arguments[0];
               const keys: string[] = [];
@@ -340,7 +344,10 @@ export class ComponentCompiler {
                   }
                 }
               }
-              listenChanges.push({ propName, keys });
+              if (keys.length === 0) {
+                keys.push(propName);
+              }
+              listenChanges.push(...keys);
             }
           }
         }
@@ -388,6 +395,43 @@ export class ComponentCompiler {
       .map(m => m.getText());
 
     return { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode };
+  }
+
+  // ─── Constructor Parameter Extraction ────────────────────────────────────────
+
+  /**
+   * Extract constructor parameters and their type annotations from a class.
+   *
+   * Inspects the class's constructor declaration (if present) and returns
+   * an array of parameter descriptors. The code generator uses these to
+   * determine what arguments to pass when instantiating the component class.
+   *
+   * For example, a constructor like:
+   * ```ts
+   * constructor(private element: AcRuntimeElement) {}
+   * ```
+   * yields `[{ name: 'element', typeName: 'AcRuntimeElement' }]`.
+   */
+  private extractConstructorParams(node: ts.ClassDeclaration): ConstructorParam[] {
+    const params: ConstructorParam[] = [];
+
+    for (const member of node.members) {
+      if (ts.isConstructorDeclaration(member)) {
+        for (const param of member.parameters) {
+          const paramName = ts.isIdentifier(param.name) ? param.name.text : param.name.getText();
+          let typeName: string | null = null;
+
+          if (param.type && ts.isTypeReferenceNode(param.type) && ts.isIdentifier(param.type.typeName)) {
+            typeName = param.type.typeName.text;
+          }
+
+          params.push({ name: paramName, typeName });
+        }
+        break; // Only one constructor per class
+      }
+    }
+
+    return params;
   }
 
   // ─── Base Class Member Resolution ───────────────────────────────────────────
@@ -492,6 +536,85 @@ export class ComponentCompiler {
     }
 
     return null;
+  }
+
+  private collectClassProperties(
+    node: ts.ClassDeclaration,
+    filePath?: string,
+  ): { instanceProps: Set<string>; staticProps: Set<string> } {
+    const instanceProps = new Set<string>();
+    const staticProps = new Set<string>();
+
+    const collectFromClassNode = (cls: ts.ClassDeclaration) => {
+      for (const member of cls.members) {
+        if (member.name && ts.isIdentifier(member.name)) {
+          const propName = member.name.text;
+          const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
+          const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
+          if (isStatic) {
+            staticProps.add(propName);
+          } else {
+            instanceProps.add(propName);
+          }
+        }
+      }
+    };
+
+    collectFromClassNode(node);
+
+    // If there is inheritance, resolve base class properties recursively
+    const resolveBaseProperties = (className: string, sourceFile: ts.SourceFile, currentPath: string) => {
+      let moduleSpecifierText: string | null = null;
+      for (const stmt of sourceFile.statements) {
+        if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
+        const namedBindings = stmt.importClause.namedBindings;
+        if (namedBindings && ts.isNamedImports(namedBindings)) {
+          for (const specifier of namedBindings.elements) {
+            if (specifier.name.text === className) {
+              moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
+              break;
+            }
+          }
+        }
+        if (!moduleSpecifierText && stmt.importClause.name?.text === className) {
+          moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
+        }
+        if (moduleSpecifierText) break;
+      }
+
+      if (!moduleSpecifierText || !moduleSpecifierText.startsWith('.')) return;
+
+      const dir = path.dirname(currentPath);
+      let baseFilePath = path.resolve(dir, moduleSpecifierText);
+      if (!fs.existsSync(baseFilePath) && !path.extname(baseFilePath)) {
+        baseFilePath = baseFilePath + '.ts';
+      }
+      if (!fs.existsSync(baseFilePath)) return;
+
+      const baseSource = fs.readFileSync(baseFilePath, 'utf8');
+      const baseSourceFile = ts.createSourceFile(baseFilePath, baseSource, ts.ScriptTarget.Latest, true);
+
+      for (const stmt of baseSourceFile.statements) {
+        if (!ts.isClassDeclaration(stmt) || stmt.name?.text !== className) continue;
+
+        collectFromClassNode(stmt);
+
+        const extendsClause = stmt.heritageClauses?.find(h => h.token === ts.SyntaxKind.ExtendsKeyword);
+        if (extendsClause) {
+          const grandBaseClassName = extendsClause.types[0].expression.getText(baseSourceFile);
+          resolveBaseProperties(grandBaseClassName, baseSourceFile, baseFilePath);
+        }
+        break;
+      }
+    };
+
+    const extendsClause = node.heritageClauses?.find(h => h.token === ts.SyntaxKind.ExtendsKeyword);
+    if (extendsClause && filePath) {
+      const baseClassName = extendsClause.types[0].expression.getText(node.getSourceFile());
+      resolveBaseProperties(baseClassName, node.getSourceFile(), filePath);
+    }
+
+    return { instanceProps, staticProps };
   }
 
   // ─── Import/Export Path Resolution ─────────────────────────────────────────

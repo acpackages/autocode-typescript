@@ -566,6 +566,15 @@ export class AcElementRenderer {
 
     while (current && current !== endComment) {
       const next = current.nextSibling;
+      if (current && current.nodeType === Node.COMMENT_NODE) {
+        const commentText = (current as Comment).data.trim();
+        if(commentText.includes('-start')){
+          const identifier = commentText.replace('-start','');
+          if(this.childRenderers[identifier] != undefined){
+            delete this.childRenderers[identifier];
+          }
+        }
+      }
       current.remove();
       current = null;
       current = next;

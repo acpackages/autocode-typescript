@@ -141,6 +141,12 @@ export interface TemplateCompileResult {
 
   /** @AcViewChild() entries extracted from the class definition. */
   viewChildren?: ViewChildEntry[];
+
+  /** Methods decorated with @AcSubscribeChange() and their watched keys. */
+  subscribeChanges?: { methodName: string; keys: string[] }[];
+
+  /** Properties decorated with @AcListenChanges() — just the watched keys. */
+  listenChanges?: string[];
 }
 
 export interface ReactivePropertyDef {
@@ -217,6 +223,22 @@ export interface ViewChildEntry {
   selector: string;
 }
 
+/**
+ * Describes a single constructor parameter extracted from the class AST.
+ *
+ * Used by the code generator to determine what arguments to pass when
+ * instantiating the user's component class. For example, if a parameter
+ * has `typeName: 'AcRuntimeElement'`, the generated code passes `this`
+ * (the HTMLElement wrapper) as that argument.
+ */
+export interface ConstructorParam {
+  /** The parameter name as declared in the constructor. */
+  name: string;
+
+  /** The type annotation name (e.g., `'AcRuntimeElement'`), or `null` if untyped. */
+  typeName: string | null;
+}
+
 /** Output of compiling a single component. */
 export interface CompileResult {
   /** The custom element selector, or `null` for non-component files. */
@@ -225,11 +247,11 @@ export interface CompileResult {
   /** The complete generated TypeScript code (imports + IIFE). */
   code: string;
 
-  /** Properties/methods decorated with @AcSubscribeChange() */
-  subscribeChanges?: { propName: string; keys: string[] }[];
+  /** Methods decorated with @AcSubscribeChange() */
+  subscribeChanges?: { methodName: string; keys: string[] }[];
 
-  /** Properties/methods decorated with @AcListenChanges() */
-  listenChanges?: { propName: string; keys: string[] }[];
+  /** Keys from properties decorated with @AcListenChanges() */
+  listenChanges?: string[];
 }
 
 /** Intermediate pairing of a class AST node with its extracted metadata. */

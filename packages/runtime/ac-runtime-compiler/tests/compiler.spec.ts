@@ -160,7 +160,7 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain("querySelector('[ac-ref=");
   });
 
-  it('should handle @AcSubscribeChange', () => {
+  it('should handle @AcSubscribeChange on method declarations only', () => {
     const source = `
       import { AcElement, AcSubscribeChange } from './decorators';
       @AcElement({
@@ -173,22 +173,29 @@ describe('ComponentCompiler', () => {
 
         @AcSubscribeChange(['layout', 'sidebar'])
         onLayoutChange(change) {}
+
+        @AcSubscribeChange('ignored')
+        onIgnoredProp = (change) => {};
       }
     `;
 
     const results = compiler.compile(source);
     expect(results[0].subscribeChanges).toBeDefined();
     expect(results[0].subscribeChanges).toContainEqual({
-      propName: 'onThemeChange',
+      methodName: 'onThemeChange',
       keys: ['theme']
     });
     expect(results[0].subscribeChanges).toContainEqual({
-      propName: 'onLayoutChange',
+      methodName: 'onLayoutChange',
       keys: ['layout', 'sidebar']
     });
+    // Property declaration with @AcSubscribeChange should be ignored
+    expect(results[0].subscribeChanges).not.toContainEqual(
+      expect.objectContaining({ methodName: 'onIgnoredProp' })
+    );
   });
 
-  it('should handle @AcListenChanges', () => {
+  it('should handle @AcListenChanges on property declarations only', () => {
     const source = `
       import { AcElement, AcListenChanges } from './decorators';
       @AcElement({
@@ -200,20 +207,25 @@ describe('ComponentCompiler', () => {
         onCountChange = (change) => {};
 
         @AcListenChanges(['width', 'height'])
-        onResize(change) {}
+        onResize = (change) => {};
+
+        @AcListenChanges()
+        directDecoratorChangeListenerProperty = false;
+
+        @AcListenChanges('ignored')
+        onIgnored(change) {}
       }
     `;
 
     const results = compiler.compile(source);
     expect(results[0].listenChanges).toBeDefined();
-    expect(results[0].listenChanges).toContainEqual({
-      propName: 'onCountChange',
-      keys: ['count']
-    });
-    expect(results[0].listenChanges).toContainEqual({
-      propName: 'onResize',
-      keys: ['width', 'height']
-    });
+    // listenChanges is a flat array of keys
+    expect(results[0].listenChanges).toContain('count');
+    expect(results[0].listenChanges).toContain('width');
+    expect(results[0].listenChanges).toContain('height');
+    expect(results[0].listenChanges).toContain('directDecoratorChangeListenerProperty');
+    // Method declaration with @AcListenChanges should be ignored
+    expect(results[0].listenChanges).not.toContain('ignored');
   });
 
   it('should handle ac-container by not rendering the tag but rendering children', () => {
@@ -364,6 +376,97 @@ describe('ComponentCompiler', () => {
     expect(results[0].selector).toBeNull();
     expect(results[0].code).toContain('GLOBAL_CONST');
     expect(results[0].code).toContain('helper');
+  });
+
+  it('should pass `this` to constructor when parameter type is AcRuntimeElement', () => {
+    const source = `
+      import { AcElement } from './decorators';
+      import { AcRuntimeElement } from '@autocode-ts/ac-runtime';
+      @AcElement({
+        selector: 'test-ctor',
+        template: '<div>Hello</div>'
+      })
+      export class TestCtor {
+        constructor(private element: AcRuntimeElement) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    expect(results[0].selector).toBe('test-ctor');
+    // Should pass `this` to the constructor for AcRuntimeElement param
+    expect(results[0].code).toContain('new TestCtor(this)');
+  });
+
+  it('should generate no-arg constructor call when class has no constructor', () => {
+    const source = `
+      import { AcElement } from './decorators';
+      @AcElement({
+        selector: 'test-no-ctor',
+        template: '<div>Hello</div>'
+      })
+      export class TestNoCtor {
+        name = 'World';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should call with no arguments
+    expect(results[0].code).toContain('new TestNoCtor()');
+  });
+
+  it('should handle constructor with multiple params including AcRuntimeElement', () => {
+    const source = `
+      import { AcElement } from './decorators';
+      import { AcRuntimeElement } from '@autocode-ts/ac-runtime';
+      @AcElement({
+        selector: 'test-multi-ctor',
+        template: '<div>Hello</div>'
+      })
+      export class TestMultiCtor {
+        constructor(private element: AcRuntimeElement, private other: SomeService) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // AcRuntimeElement -> this, unknown type -> undefined
+    expect(results[0].code).toContain('new TestMultiCtor(this, undefined)');
+  });
+
+  it('should compile multiple AcElement classes in a single file', () => {
+    const source = `
+      import { AcElement } from './decorators';
+      
+      @AcElement({
+        selector: 'test-multiple-a',
+        template: '<div>Component A</div>'
+      })
+      export class TestMultipleA {}
+
+      @AcElement({
+        selector: 'test-multiple-b',
+        template: '<div>Component B</div>'
+      })
+      export class TestMultipleB {}
+
+      export const helperConst = 123;
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(2);
+    expect(results[0].selector).toBe('test-multiple-a');
+    expect(results[1].selector).toBe('test-multiple-b');
+
+    // Both results should have the full code containing both component IIFEs and the helper constant
+    expect(results[0].code).toContain('export const TestMultipleA = (function()');
+    expect(results[0].code).toContain('export const TestMultipleB = (function()');
+    expect(results[0].code).toContain('export const helperConst = 123;');
+
+    expect(results[1].code).toContain('export const TestMultipleA = (function()');
+    expect(results[1].code).toContain('export const TestMultipleB = (function()');
+    expect(results[1].code).toContain('export const helperConst = 123;');
   });
 });
 

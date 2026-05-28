@@ -18,8 +18,9 @@ export class AcRuntimeElement extends HTMLElement {
   private isInitialized: boolean = false;
   changeListeners: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   eventCallbacks: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
+  changeMethodCallbacks:Record<string,any[]> = {};
   propertyListeners: any = {};
-  excludeLogProperty:any[] = ['time','animation','speed','showLoader','lottieJson'];
+  excludeLogProperty:any[] = ['time','animation','speed','showLoader','lottieJson','isHostSet','appCheckStatus','container','adContainer'];
 
   connectedCallback(): void {
     if (!this.isInitialized) {
@@ -60,7 +61,7 @@ export class AcRuntimeElement extends HTMLElement {
       });
     }
     this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
-    this.style.display = 'contents';
+    this.setAttribute('ac-runtime-element','');
     this.render().then(() => {
       this.notifyElementInit();
     });
@@ -88,7 +89,8 @@ export class AcRuntimeElement extends HTMLElement {
   }): Promise<void> {
     if(this.renderer){
       if(!this.excludeLogProperty.includes(key)){
-        // console.log("[AcRuntimeElement] Property Change : ",key,oldValue,newValue);
+        const elementId = this.getAttribute('ac-ref') || this.id || this.tagName;
+        console.log(`[AcRuntimeElement <${elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`,newValue,oldValue);
       }
       const keysToNotify = new Set<string>();
       if (key) {
@@ -112,6 +114,11 @@ export class AcRuntimeElement extends HTMLElement {
           this.acRuntimeInstance.acOnChange({key,oldValue,newValue});
         }
       }
+      if(this.isInitialized && this.changeMethodCallbacks[key]){
+        for(const callback of this.changeMethodCallbacks[key]){
+          callback({key,oldValue,newValue});
+        }
+      }
     }
   }
 
@@ -125,7 +132,7 @@ export class AcRuntimeElement extends HTMLElement {
       return Object.getPrototypeOf(obj) === Object.prototype;
     }
 
-    function wrap<U extends object>(target: U, path: string[] = []): U {
+    function wrap<U extends object>(target: U, path: string[] = [],rootKey?:string): U {
       if (target && !isPlainObject(target) && !Array.isArray(target) && target != instance) {
         return target;
       }
@@ -172,7 +179,7 @@ export class AcRuntimeElement extends HTMLElement {
            }
 
            if (typeof value === 'object' && value !== null && (isPlainObject(value) || Array.isArray(value))) {
-             return wrap(value, [...path, String(prop)]);
+             return wrap(value, [...path, String(prop)],rootKey??prop as string);
            }
 
            return value;
@@ -182,12 +189,16 @@ export class AcRuntimeElement extends HTMLElement {
            const key = String(prop);
            const oldValue = (obj as any)[key];
 
-           if (oldValue === value && key !== 'length') {
-             return Reflect.set(obj, prop, value);
+           if(oldValue == value){
+            return true;
            }
 
-           const isArrayLength = Array.isArray(obj) && key === 'length';
 
+
+           const isArrayLength = Array.isArray(obj) && key === 'length';
+           if (isArrayLength && key !== 'length') {
+             return Reflect.set(obj, prop, value);
+           }
            // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
            // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
            const cleanValue = value && value.__rawTarget__
@@ -214,13 +225,13 @@ export class AcRuntimeElement extends HTMLElement {
            }
 
            if(!object.excludeLogProperty.includes(key)){
-           console.log("[AcRuntimeElement] Set Proxy Value : ",key,oldValue,value,success,isArrayLength);
+          //  console.log("[AcRuntimeElement] Set Proxy Value : ",key,oldValue,value,success,isArrayLength);
            }
            if (success && !isArrayLength) {
              if (oldValue != value) {
                object.handlePropertyChange({
                  type: 'set',
-                 key,
+                 key:key,
                  path: [...path, key].join('.'),
                  oldValue,
                  newValue: cleanValue
@@ -249,7 +260,7 @@ export class AcRuntimeElement extends HTMLElement {
           object.handlePropertyChange({
             type: 'delete',
             target: obj,
-            key,
+            key:key,
             path: [...path, key].join('.'),
             oldValue,
             newValue: undefined
@@ -266,17 +277,13 @@ export class AcRuntimeElement extends HTMLElement {
       ) {
 
         const key = String(prop);
-
-        const oldValue =
-          (obj as any)[key];
-
+        const oldValue = (obj as any)[key];
         const result =
           Reflect.defineProperty(
             obj,
             prop,
             descriptor
           );
-
         if (result) {
           object.handlePropertyChange({
             type: 'define',
@@ -313,6 +320,15 @@ export class AcRuntimeElement extends HTMLElement {
       this.changeListeners[targetId] = {};
     }
     this.changeListeners[targetId][bindingId] = definition;
+  }
+
+  registerChangeSubscriptionMethodCallback({callback,keys}:{callback:any,keys:string[]}){
+    for(const key of keys){
+      if(this.changeMethodCallbacks[key] == undefined){
+        this.changeMethodCallbacks[key] = [];
+      }
+      this.changeMethodCallbacks[key].push(callback);
+    }
   }
 
   protected registerEventDefinition({ targetId, bindingId, definition }: { targetId: string, bindingId: string, definition: any }): void {
