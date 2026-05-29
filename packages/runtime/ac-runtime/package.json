@@ -14,6 +14,8 @@
     "web-components"
   ],
   "dependencies": {
+    "@autocode-ts/ac-pipes": "^0.0.1",
+    "on-change": "^6.0.2"
   },
   "exports": {
     ".":{

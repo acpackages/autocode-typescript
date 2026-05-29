@@ -10,19 +10,19 @@ export class AcRuntimeElement extends HTMLElement {
   instanceInputs: any[] = [];
   instanceOutputs: any[] = [];
   instanceViewChildren: any = {};
-  propertyToListenForChanges:string[] = [];
-  templateOutlets:any = {};
-  templates:Record<string, { targetId: any; bindingId: string, html:string,ownerInstance:any }> = {};
+  propertyToListenForChanges: string[] = [];
+  templateOutlets: any = {};
+  templates: Record<string, { targetId: any; bindingId: string, html: string, ownerInstance: any }> = {};
 
   protected renderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeListeners: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   eventCallbacks: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
-  changeMethodCallbacks:Record<string,any[]> = {};
+  changeMethodCallbacks: Record<string, any[]> = {};
   propertyListeners: any = {};
-  excludeLogProperty:any[] = ['time','animation','speed','showLoader','lottieJson','isHostSet','appCheckStatus','container','adContainer'];
-  includeLogProperty:any[] = ['record',"_record"];
-  elementId:string = '';
+  excludeLogProperty: any[] = ['time', 'animation', 'speed', 'showLoader', 'lottieJson', 'isHostSet', 'appCheckStatus', 'container', 'adContainer'];
+  includeLogProperty: any[] = ['record', "_record"];
+  elementId: string = '';
 
   connectedCallback(): void {
     if (!this.isInitialized) {
@@ -39,8 +39,8 @@ export class AcRuntimeElement extends HTMLElement {
     if ((this.acRuntimeInstance as any).__destroy) {
       (this.acRuntimeInstance as any).__destroy();
     }
-    if(this.renderer){
-      this.renderer.clearElement({element:this});
+    if (this.renderer) {
+      this.renderer.clearElement({ element: this });
     }
     (this.renderer as any) = null;
   }
@@ -57,18 +57,18 @@ export class AcRuntimeElement extends HTMLElement {
 
   init() {
     this.setInputValuesFromAttributes();
-    for(const eventName of this.instanceOutputs as string[]){
-      (this.acRuntimeInstance as any)[eventName].subscribe((args:any)=>{
-        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args,{bubbles: true,cancelable: true,composed: true}) as any;
+    for (const eventName of this.instanceOutputs as string[]) {
+      (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
+        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
         this.dispatchEvent(event);
       });
     }
     this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
-    this.setAttribute('ac-runtime-element','');
+    this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
       this.notifyElementInit();
     });
-
+    console.dir(this);
   }
 
   protected async render(): Promise<void> {
@@ -86,16 +86,19 @@ export class AcRuntimeElement extends HTMLElement {
   }: {
     key: string;
     rootKey?: string;
-    target?:any,
-    path:string,
-    type:string,
+    target?: any,
+    path: string,
+    type: string,
     oldValue: any;
     newValue: any;
   }): Promise<void> {
-    if(this.renderer){
+    if (this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)) {
+      console.log("[AcRuntimeElement] Handlining property change : ", key, oldValue, newValue);
+    }
+    if (this.renderer) {
       const property = path;
-      if(this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)){
-        console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`,newValue,oldValue);
+      if (this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)) {
+        console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`, newValue, oldValue);
       }
 
       // const keysToNotify = new Set<string>();
@@ -110,213 +113,304 @@ export class AcRuntimeElement extends HTMLElement {
       //   }
       // }
       if (this.propertyListeners[property]) {
-          for (const targetId of Object.keys(this.propertyListeners[property])) {
-            await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
-          }
+        for (const targetId of Object.keys(this.propertyListeners[property])) {
+          await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
         }
+      }
       if (this.isInitialized) {
         if (this.acRuntimeInstance.acOnChange) {
           this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
         }
       }
       if (this.isInitialized && this.changeMethodCallbacks[property]) {
-          for (const callback of this.changeMethodCallbacks[property]) {
-            callback({ key: path || key, oldValue, newValue });
-          }
+        for (const callback of this.changeMethodCallbacks[property]) {
+          callback({ key: path || key, oldValue, newValue });
         }
+      }
     }
   }
 
   makeReactive(instance: any) {
     const object = this;
-    const proxyMap = new WeakMap<object, any>();
+    const proxyMap = new WeakMap<object, Map<string, any>>();
     const IS_REACTIVE = '__is_reactive__';
+    let proxySetActive = false;
 
     function isPlainObject(obj: any): boolean {
       if (obj === null || typeof obj !== 'object') return false;
       return Object.getPrototypeOf(obj) === Object.prototype;
     }
 
-    function wrap<U extends object>(target: U, path: string[] = [],rootKey?:string): U {
-      if (target && !isPlainObject(target) && !Array.isArray(target) && target != instance) {
+    function wrap<U extends object>(target: U, path: string[] = [], rootKey?: string): U {
+      let rawTarget: any = target;
+      if (target && (target as any)[IS_REACTIVE] && (target as any).__rawTarget__) {
+        rawTarget = (target as any).__rawTarget__;
+      }
+      if (rawTarget && !isPlainObject(rawTarget) && !Array.isArray(rawTarget) && rawTarget != instance) {
         return target;
       }
-      if ((target as any)[IS_REACTIVE]) return target;
-      if (proxyMap.has(target)) return proxyMap.get(target);
+      const pathKey = path.join('.');
+      let targetCache = proxyMap.get(rawTarget);
+      if (!targetCache) {
+        targetCache = new Map<string, any>();
+        proxyMap.set(rawTarget, targetCache);
+      }
+      if (targetCache.has(pathKey)) return targetCache.get(pathKey);
 
       const handler: ProxyHandler<U> = {
         get(obj: U, prop: string | symbol, receiver: any) {
-           if (prop === IS_REACTIVE) return true;
-           // Transparently unwrap if the raw object is requested
-           if (prop === '__rawTarget__') return obj;
+          if (prop === IS_REACTIVE) return true;
+          // Transparently unwrap if the raw object is requested
+          if (prop === '__rawTarget__') return obj;
 
-           let value;
-           let prototype = obj;
-           let getter: (() => any) | undefined = undefined;
-           while (prototype) {
-             const desc = Object.getOwnPropertyDescriptor(prototype, prop);
-             if (desc) {
-               getter = desc.get;
-               break;
-             }
-             prototype = Object.getPrototypeOf(prototype);
-           }
-           if (getter) {
-             value = getter.call(receiver);
-           } else {
-             value = Reflect.get(obj, prop, receiver);
-           }
+          let value;
+          let prototype = obj;
+          let getter: (() => any) | undefined = undefined;
+          while (prototype) {
+            const desc = Object.getOwnPropertyDescriptor(prototype, prop);
+            if (desc) {
+              getter = desc.get;
+              break;
+            }
+            prototype = Object.getPrototypeOf(prototype);
+          }
+          if (getter) {
+            value = getter.call(receiver);
+          } else {
+            value = Reflect.get(obj, prop, receiver);
+          }
 
-           if (typeof value === 'function') {
-             const bound = value.bind(receiver);
-             // Copy static properties of the original function/class to the bound function
-             // so that static properties (like enum/class values) are not lost when bound.
-             for (const key of Reflect.ownKeys(value)) {
-               if (key !== 'length' && key !== 'name' && key !== 'prototype' && key !== 'arguments' && key !== 'caller') {
-                 try {
-                   Object.defineProperty(bound, key, Object.getOwnPropertyDescriptor(value, key)!);
-                 } catch (e) {
-                   // Ignore if property is read-only or couldn't be defined
-                 }
-               }
-             }
-             return bound;
-           }
+          if (typeof value === 'function') {
+            const bound = value.bind(receiver);
+            // Copy static properties of the original function/class to the bound function
+            // so that static properties (like enum/class values) are not lost when bound.
+            for (const key of Reflect.ownKeys(value)) {
+              if (key !== 'length' && key !== 'name' && key !== 'prototype' && key !== 'arguments' && key !== 'caller') {
+                try {
+                  Object.defineProperty(bound, key, Object.getOwnPropertyDescriptor(value, key)!);
+                } catch (e) {
+                  // Ignore if property is read-only or couldn't be defined
+                }
+              }
+            }
+            return bound;
+          }
 
-           if (typeof value === 'object' && value !== null && (isPlainObject(value) || Array.isArray(value))) {
-             return wrap(value, [...path, String(prop)],rootKey??prop as string);
-           }
+          if (typeof value === 'object' && value !== null && (isPlainObject(value) || Array.isArray(value))) {
+            return wrap(value, [...path, String(prop)]);
+          }
 
-           return value;
-         },
+          return value;
+        },
 
-         set(obj: U, prop: string | symbol, value: any, receiver: any) {
-           const key = String(prop);
-           const oldValue = (obj as any)[key];
+        set(obj: U, prop: string | symbol, value: any, receiver: any) {
+          const key = String(prop);
+          const oldValue = (obj as any)[key];
 
-           if(object.includeLogProperty.includes(key) || object.includeLogProperty.includes(rootKey)){
-            console.log("[AcRuntimeElement] Set Proxy Value : ",key,oldValue,value);
-           }
+          if (object.includeLogProperty.includes(key) || object.includeLogProperty.includes(rootKey)) {
+            console.log("[AcRuntimeElement] Set Proxy Value : ", key, oldValue, value);
+          }
 
-           if(oldValue == value){
+          if (oldValue == value) {
             return true;
-           }
+          }
 
-           const isArrayLength = Array.isArray(obj) && key === 'length';
-           if (isArrayLength && key !== 'length') {
-             return Reflect.set(obj, prop, value);
-           }
-           // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
-           // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
-           const cleanValue = value != undefined && value != null && value.__rawTarget__
-             ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
-             : value;
+          const isArrayLength = Array.isArray(obj) && key === 'length';
+          if (isArrayLength && key !== 'length') {
+            return Reflect.set(obj, prop, value);
+          }
+          // Unwrap value if a proxy is being assigned to prevent deep nested circular proxying.
+          // However, do not unwrap if it's not a plain object or array (e.g. custom element acRuntimeInstance proxy).
+          let cleanValue = value != undefined && value != null && value.__rawTarget__
+            ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
+            : value;
 
-           let prototype = obj;
-           let setter: ((v: any) => void) | undefined = undefined;
-           while (prototype) {
-             const desc = Object.getOwnPropertyDescriptor(prototype, prop);
-             if (desc) {
-               setter = desc.set;
-               break;
-             }
-             prototype = Object.getPrototypeOf(prototype);
-           }
+          if (cleanValue && typeof cleanValue === 'object' && (isPlainObject(cleanValue) || Array.isArray(cleanValue))) {
+            cleanValue = wrap(cleanValue, [...path, key], rootKey ?? key);
+          }
 
-           let success = false;
-           if (setter) {
-             setter.call(receiver, cleanValue);
-             success = true;
-           } else {
-             success = Reflect.set(obj, prop, cleanValue);
-           }
+          let prototype = obj;
+          let setter: ((v: any) => void) | undefined = undefined;
+          while (prototype) {
+            const desc = Object.getOwnPropertyDescriptor(prototype, prop);
+            if (desc) {
+              setter = desc.set;
+              break;
+            }
+            prototype = Object.getPrototypeOf(prototype);
+          }
 
-           if (success && !isArrayLength) {
-             if (oldValue != value) {
-               object.handlePropertyChange({
-                 type: 'set',
-                 key:key,
-                 path: [...path, key].join('.'),
-                 oldValue,
-                 newValue: cleanValue
-               });
-             }
+          let success = false;
+          proxySetActive = true;
+          try {
+            if (setter) {
+              setter.call(receiver, cleanValue);
+              success = true;
+            } else {
+              success = Reflect.set(obj, prop, cleanValue);
+            }
+          } finally {
+            proxySetActive = false;
+          }
 
-           }
+          if (success && !isArrayLength) {
+            if (oldValue != value) {
+              object.handlePropertyChange({
+                type: 'set',
+                key: key,
+                path: [...path, key].join('.'),
+                oldValue,
+                newValue: cleanValue
+              });
+            }
 
-           return success;
-         },
+          }
+
+          return success;
+        },
 
         deleteProperty(obj, prop) {
 
-        const key = String(prop);
+          const key = String(prop);
 
-        const oldValue =
-          (obj as any)[key];
+          const oldValue =
+            (obj as any)[key];
 
-        const result =
-          Reflect.deleteProperty(
-            obj,
-            prop
-          );
+          const result =
+            Reflect.deleteProperty(
+              obj,
+              prop
+            );
 
-        if (result) {
-          object.handlePropertyChange({
-            type: 'delete',
-            target: obj,
-            key:key,
-            path: [...path, key].join('.'),
-            oldValue,
-            newValue: undefined
-          });
+          if (result) {
+            object.handlePropertyChange({
+              type: 'delete',
+              target: obj,
+              key: key,
+              path: [...path, key].join('.'),
+              oldValue,
+              newValue: undefined
+            });
+          }
+
+          return result;
+        },
+
+        defineProperty(
+          obj,
+          prop,
+          descriptor
+        ) {
+
+          const key = String(prop);
+          const oldValue = (obj as any)[key];
+          let value = descriptor.value;
+          if (value && typeof value === 'object' && (isPlainObject(value) || Array.isArray(value))) {
+            value = wrap(value, [...path, key], rootKey ?? key);
+            descriptor = { ...descriptor, value };
+          }
+          const result =
+            Reflect.defineProperty(
+              obj,
+              prop,
+              descriptor
+            );
+          if (result) {
+            object.handlePropertyChange({
+              type: 'define',
+              target: obj,
+              key,
+              path: [...path, key].join('.'),
+              oldValue,
+              newValue: descriptor.value
+            });
+          }
+
+          return result;
         }
-
-        return result;
-      },
-
-      defineProperty(
-        obj,
-        prop,
-        descriptor
-      ) {
-
-        const key = String(prop);
-        const oldValue = (obj as any)[key];
-        const result =
-          Reflect.defineProperty(
-            obj,
-            prop,
-            descriptor
-          );
-        if (result) {
-          object.handlePropertyChange({
-            type: 'define',
-            target: obj,
-            key,
-            path: [...path, key].join('.'),
-            oldValue,
-            newValue: descriptor.value
-          });
-        }
-
-        return result;
-      }
       };
 
-      const proxy = new Proxy(target, handler);
-      proxyMap.set(target, proxy);
+      const proxy = new Proxy(rawTarget, handler);
+      targetCache.set(pathKey, proxy);
+
       return proxy;
     }
 
+    // Force make all properties reactive when instance is created
+    for (const key of Reflect.ownKeys(instance)) {
+      if (typeof key === 'string') {
+        const val = instance[key];
+        if (val && typeof val === 'object' && (isPlainObject(val) || Array.isArray(val))) {
+          instance[key] = wrap(val, [key], key);
+        }
+      }
+    }
+
     const proxyInstance = wrap(instance);
+
+    // Install reactive getter/setter pairs on the raw instance for all own data
+    // properties that hold plain objects or arrays. Arrow function property
+    // initializers capture the raw `this` (not the proxy), so any method called
+    // from such callbacks accesses the raw instance directly, bypassing the
+    // proxy's get/set traps. These getter/setter pairs ensure that even direct
+    // access on the raw instance auto-wraps values and fires change notifications.
+    for (const key of Reflect.ownKeys(instance)) {
+      if (typeof key !== 'string') continue;
+      const desc = Object.getOwnPropertyDescriptor(instance, key);
+      // Skip existing accessors (e.g. `get record()` / `set record()`)
+      if (!desc || desc.get || desc.set) continue;
+      const val = desc.value;
+      if (val && typeof val === 'object' && (isPlainObject(val) || Array.isArray(val))) {
+        let storedValue = val; // already wrapped from the loop above
+        Object.defineProperty(instance, key, {
+          configurable: true,
+          enumerable: desc.enumerable,
+          get() {
+            // If the stored value is a raw plain object/array, wrap it
+            if (storedValue && typeof storedValue === 'object'
+              && (isPlainObject(storedValue) || Array.isArray(storedValue))
+              && !(storedValue as any)[IS_REACTIVE]) {
+              storedValue = wrap(storedValue, [key], key);
+            }
+            return storedValue;
+          },
+          set(newVal: any) {
+            const oldValue = storedValue;
+            // Unwrap if proxy
+            let cleanVal = newVal != undefined && newVal != null && newVal.__rawTarget__
+              ? (isPlainObject(newVal.__rawTarget__) || Array.isArray(newVal.__rawTarget__) ? newVal.__rawTarget__ : newVal)
+              : newVal;
+            // Wrap plain objects/arrays
+            if (cleanVal && typeof cleanVal === 'object' && (isPlainObject(cleanVal) || Array.isArray(cleanVal))) {
+              cleanVal = wrap(cleanVal, [key], key);
+            }
+            if (oldValue == cleanVal) return;
+            storedValue = cleanVal;
+            // Only fire change notification if not already being handled by the
+            // proxy set trap (which fires its own notification). This prevents
+            // double notifications when the proxy calls this setter.
+            if (!proxySetActive) {
+              object.handlePropertyChange({
+                type: 'set',
+                key: key,
+                path: key,
+                oldValue,
+                newValue: cleanVal
+              });
+            }
+          }
+        });
+      }
+    }
+
     return proxyInstance;
   }
 
-  notifyElementInit(){
-    if(!this.hasAttribute('ac-el-has-inputs')){
+  notifyElementInit() {
+    if (!this.hasAttribute('ac-el-has-inputs')) {
       if ((this.acRuntimeInstance as any).acOnInit) {
-      (this.acRuntimeInstance as any).acOnInit();
-    }
+        (this.acRuntimeInstance as any).acOnInit();
+      }
     }
   }
 
@@ -327,9 +421,9 @@ export class AcRuntimeElement extends HTMLElement {
     this.changeListeners[targetId][bindingId] = definition;
   }
 
-  registerChangeSubscriptionMethodCallback({callback,keys}:{callback:any,keys:string[]}){
-    for(const key of keys){
-      if(this.changeMethodCallbacks[key] == undefined){
+  registerChangeSubscriptionMethodCallback({ callback, keys }: { callback: any, keys: string[] }) {
+    for (const key of keys) {
+      if (this.changeMethodCallbacks[key] == undefined) {
         this.changeMethodCallbacks[key] = [];
       }
       this.changeMethodCallbacks[key].push(callback);
@@ -355,12 +449,12 @@ export class AcRuntimeElement extends HTMLElement {
     }
   }
 
-  private setInputValuesFromAttributes(){
+  private setInputValuesFromAttributes() {
     Array.from(this.attributes).forEach((attr: Attr) => {
-      if(this.instanceInputs.includes(attr.name)){
+      if (this.instanceInputs.includes(attr.name)) {
         this.acRuntimeInstance[attr.name] = attr.value;
       }
-  });
+    });
   }
 
 }
