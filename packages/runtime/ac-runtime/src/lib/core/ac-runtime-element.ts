@@ -135,6 +135,7 @@ export class AcRuntimeElement extends HTMLElement {
     const proxyMap = new WeakMap<object, Map<string, any>>();
     const IS_REACTIVE = '__is_reactive__';
     let proxySetActive = false;
+    let arrayMutating = false;
 
     function isPlainObject(obj: any): boolean {
       if (obj === null || typeof obj !== 'object') return false;
@@ -162,6 +163,184 @@ export class AcRuntimeElement extends HTMLElement {
           if (prop === IS_REACTIVE) return true;
           // Transparently unwrap if the raw object is requested
           if (prop === '__rawTarget__') return obj;
+
+          // Intercept array mutating methods to fire semantic change notifications
+          if (Array.isArray(obj) && typeof prop === 'string') {
+            const arrayPath = path.join('.');
+            const arrayRootKey = rootKey ?? path[0];
+
+            switch (prop) {
+              case 'push': return (...items: any[]) => {
+                const startIndex = obj.length;
+                const wrappedItems = items.map((item, i) => {
+                  if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
+                    return wrap(item, [...path, String(startIndex + i)], arrayRootKey);
+                  }
+                  return item;
+                });
+                arrayMutating = true;
+                const result = Array.prototype.push.apply(obj, wrappedItems);
+                arrayMutating = false;
+                console.log("[AcRuntimeElement] Array Item Push",startIndex,wrappedItems);
+                object.handlePropertyChange({
+                  type: 'array-insert',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: undefined,
+                  newValue: { index: startIndex, items: wrappedItems }
+                });
+                return result;
+              };
+
+              case 'pop': return () => {
+                if (obj.length === 0) return undefined;
+                const removedIndex = obj.length - 1;
+                const removed = obj[removedIndex];
+                arrayMutating = true;
+                Array.prototype.pop.call(obj);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-delete',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: { index: removedIndex, items: [removed] },
+                  newValue: undefined
+                });
+                console.log("[AcRuntimeElement] Array Item Pop",removedIndex,[removed]);
+                return removed;
+              };
+
+              case 'unshift': return (...items: any[]) => {
+                const wrappedItems = items.map((item, i) => {
+                  if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
+                    return wrap(item, [...path, String(i)], arrayRootKey);
+                  }
+                  return item;
+                });
+                arrayMutating = true;
+                const result = Array.prototype.unshift.apply(obj, wrappedItems);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-insert',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: undefined,
+                  newValue: { index: 0, items: wrappedItems }
+                });
+                console.log("[AcRuntimeElement] Array Item Unshift",0,wrappedItems);
+                return result;
+              };
+
+              case 'shift': return () => {
+                if (obj.length === 0) return undefined;
+                const removed = obj[0];
+                arrayMutating = true;
+                Array.prototype.shift.call(obj);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-delete',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: { index: 0, items: [removed] },
+                  newValue: undefined
+                });
+                console.log("[AcRuntimeElement] Array Item Shift",0,[removed]);
+                return removed;
+              };
+
+              case 'splice': return (start: number, deleteCount?: number, ...items: any[]) => {
+                const len = obj.length;
+                const actualStart = start < 0 ? Math.max(len + start, 0) : Math.min(start, len);
+                const actualDeleteCount = deleteCount === undefined ? len - actualStart : Math.max(0, Math.min(deleteCount, len - actualStart));
+                const wrappedItems = items.map((item, i) => {
+                  if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
+                    return wrap(item, [...path, String(actualStart + i)], arrayRootKey);
+                  }
+                  return item;
+                });
+                arrayMutating = true;
+                const removed = Array.prototype.splice.apply(obj, [actualStart, actualDeleteCount, ...wrappedItems] as any);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-splice',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: { index: actualStart, items: removed },
+                  newValue: { index: actualStart, items: wrappedItems }
+                });
+                console.log("[AcRuntimeElement] Array Item Slice",actualStart,removed,wrappedItems);
+                return removed;
+              };
+
+              case 'sort': return (compareFn?: (a: any, b: any) => number) => {
+                const snapshot = [...obj];
+                arrayMutating = true;
+                Array.prototype.sort.call(obj, compareFn);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-sort',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: snapshot,
+                  newValue: [...obj]
+                });
+                console.log("[AcRuntimeElement] Array Item Sort",obj);
+                return receiver;
+              };
+
+              case 'reverse': return () => {
+                const snapshot = [...obj];
+                arrayMutating = true;
+                Array.prototype.reverse.call(obj);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-reverse',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: snapshot,
+                  newValue: [...obj]
+                });
+                console.log("[AcRuntimeElement] Array Item Reverse",obj);
+                return receiver;
+              };
+
+              case 'fill': return (value: any, start?: number, end?: number) => {
+                const snapshot = [...obj];
+                let fillValue = value;
+                if (fillValue && typeof fillValue === 'object' && (isPlainObject(fillValue) || Array.isArray(fillValue))) {
+                  fillValue = wrap(fillValue, path, arrayRootKey);
+                }
+                arrayMutating = true;
+                Array.prototype.fill.call(obj, fillValue, start, end);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-fill',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: snapshot,
+                  newValue: [...obj]
+                });
+                console.log("[AcRuntimeElement] Array Item Fill",obj);
+                return receiver;
+              };
+
+              case 'copyWithin': return (target: number, start?: number, end?: number) => {
+                const snapshot = [...obj];
+                arrayMutating = true;
+                Array.prototype.copyWithin.call(obj, target, start, end);
+                arrayMutating = false;
+                object.handlePropertyChange({
+                  type: 'array-copyWithin',
+                  key: prop,
+                  path: arrayPath,
+                  oldValue: snapshot,
+                  newValue: [...obj]
+                });
+                console.log("[AcRuntimeElement] Array Item Copy within",obj);
+                return receiver;
+              };
+            }
+          }
 
           let value;
           let prototype = obj;
@@ -253,15 +432,28 @@ export class AcRuntimeElement extends HTMLElement {
             proxySetActive = false;
           }
 
-          if (success && !isArrayLength) {
+          if (success && !isArrayLength && !arrayMutating) {
             if (oldValue != value) {
-              object.handlePropertyChange({
-                type: 'set',
-                key: key,
-                path: [...path, key].join('.'),
-                oldValue,
-                newValue: cleanValue
-              });
+              // Detect direct array index assignment (e.g. arr[3] = value)
+              const isArrayIndex = Array.isArray(obj) && /^\d+$/.test(key);
+              if (isArrayIndex) {
+                const index = Number(key);
+                object.handlePropertyChange({
+                  type: oldValue === undefined && index >= (obj as any).length - 1 ? 'array-insert' : 'array-update',
+                  key: key,
+                  path: path.join('.'),
+                  oldValue: { index, items: [oldValue] },
+                  newValue: { index, items: [cleanValue] }
+                });
+              } else {
+                object.handlePropertyChange({
+                  type: 'set',
+                  key: key,
+                  path: [...path, key].join('.'),
+                  oldValue,
+                  newValue: cleanValue
+                });
+              }
             }
 
           }
@@ -282,7 +474,7 @@ export class AcRuntimeElement extends HTMLElement {
               prop
             );
 
-          if (result) {
+          if (result && !arrayMutating) {
             object.handlePropertyChange({
               type: 'delete',
               target: obj,
