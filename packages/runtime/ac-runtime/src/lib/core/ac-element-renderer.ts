@@ -113,6 +113,61 @@ export class AcElementRenderer {
     childRenderer.render();
   }
 
+  destroyChildRenderer(targetId: string): void {
+    console.log(`[AcElementRenderer] destroyChildRenderer: targetId=${targetId}`);
+    const childRenderer = this.childRenderers[targetId];
+    if (childRenderer) {
+      childRenderer.destroy();
+      delete this.childRenderers[targetId];
+    }
+  }
+
+  removeChildRenderer(targetId: string, startCommentName: string, endCommentName: string): void {
+    console.log(`[AcElementRenderer] removeChildRenderer: targetId=${targetId}, start=${startCommentName}, end=${endCommentName}`);
+    this.destroyChildRenderer(targetId);
+    this.removeNodesBetweenCommentsByName(startCommentName, endCommentName);
+  }
+
+  getChildRenderer(targetId: string): AcElementRenderer | undefined {
+    return this.childRenderers[targetId];
+  }
+
+  getChildRenderers(): Record<string, AcElementRenderer> {
+    return this.childRenderers;
+  }
+
+  updateChildRendererContext(targetId: string, contextUpdates: any): void {
+    console.log(`[AcElementRenderer] updateChildRendererContext: targetId=${targetId}`, contextUpdates);
+    const childRenderer = this.childRenderers[targetId];
+    if (childRenderer) {
+      childRenderer.context = { ...childRenderer.context, ...contextUpdates };
+      const refs = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
+      childRenderer.executeChangeListener({ targetIds: refs.all, force: true });
+    }
+  }
+
+  destroy(): void {
+    console.log(`[AcElementRenderer] destroy`);
+    for (const key of Object.keys(this.childRenderers)) {
+      this.destroyChildRenderer(key);
+    }
+    // Clean up dynamic/loop change listeners registered by this renderer
+    if (this.rootElement && this.rootElement.dynamicPropertyListeners) {
+      for (const property of Object.keys(this.rootElement.dynamicPropertyListeners)) {
+        for (const targetId of Object.keys(this.rootElement.dynamicPropertyListeners[property])) {
+          for (const bindingId of Object.keys(this.rootElement.dynamicPropertyListeners[property][targetId])) {
+            // Unregister if it belongs to this element/sub-renderers
+            if (targetId.startsWith(this.startComment || '') || targetId === this.startComment) {
+              this.rootElement.unregisterLoopChangeListener({ targetId, bindingId, property });
+            }
+          }
+        }
+      }
+    }
+    this.nodes = [];
+    this.childRenderers = {};
+  }
+
   createNodesFromHtml(html: string): Node[] {
     const template = document.createElement('template');
     template.innerHTML = html.trim();

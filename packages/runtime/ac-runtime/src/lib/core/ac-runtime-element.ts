@@ -75,6 +75,32 @@ export class AcRuntimeElement extends HTMLElement {
     await this.renderer.render();
   }
 
+  dynamicPropertyListeners: Record<string, Record<string, Record<string, (args: any) => void>>> = {};
+
+  registerLoopChangeListener({ targetId, bindingId, property, callback }: { targetId: string, bindingId: string, property: string, callback: (args: any) => void }): void {
+    console.log(`[AcRuntimeElement <${this.elementId}>] registerLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
+    if (this.dynamicPropertyListeners[property] == undefined) {
+      this.dynamicPropertyListeners[property] = {};
+    }
+    if (this.dynamicPropertyListeners[property][targetId] == undefined) {
+      this.dynamicPropertyListeners[property][targetId] = {};
+    }
+    this.dynamicPropertyListeners[property][targetId][bindingId] = callback;
+  }
+
+  unregisterLoopChangeListener({ targetId, bindingId, property }: { targetId: string, bindingId: string, property: string }): void {
+    console.log(`[AcRuntimeElement <${this.elementId}>] unregisterLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
+    if (this.dynamicPropertyListeners[property] && this.dynamicPropertyListeners[property][targetId]) {
+      delete this.dynamicPropertyListeners[property][targetId][bindingId];
+      if (Object.keys(this.dynamicPropertyListeners[property][targetId]).length === 0) {
+        delete this.dynamicPropertyListeners[property][targetId];
+      }
+      if (Object.keys(this.dynamicPropertyListeners[property]).length === 0) {
+        delete this.dynamicPropertyListeners[property];
+      }
+    }
+  }
+
   protected async handlePropertyChange({
     key,
     type,
@@ -92,8 +118,9 @@ export class AcRuntimeElement extends HTMLElement {
     oldValue: any;
     newValue: any;
   }): Promise<void> {
+    console.log(`[AcRuntimeElement <${this.elementId}>] handlePropertyChange: key=${key}, path=${path}, type=${type}`);
     if (this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)) {
-      console.log("[AcRuntimeElement] Handlining property change : ", key, oldValue, newValue);
+      console.log("[AcRuntimeElement] Handling property change : ", key, oldValue, newValue);
     }
     if (this.renderer) {
       const property = path;
@@ -101,22 +128,61 @@ export class AcRuntimeElement extends HTMLElement {
         console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`, newValue, oldValue);
       }
 
-      // const keysToNotify = new Set<string>();
-      // if (key) {
-      //   keysToNotify.add(key);
-      // }
-      // if (path) {
-      //   keysToNotify.add(path);
-      //   const rootKey = path.split('.')[0];
-      //   if (rootKey) {
-      //     keysToNotify.add(rootKey);
-      //   }
-      // }
+      // Check standard exact-match propertyListeners
       if (this.propertyListeners[property]) {
+        console.log(`[AcRuntimeElement <${this.elementId}>] Executing standard propertyListeners for property: ${property}`);
         for (const targetId of Object.keys(this.propertyListeners[property])) {
           await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
         }
       }
+
+      // Path Bubbling: Check parent paths in both propertyListeners and dynamicPropertyListeners
+      const pathParts = path.split('.');
+      for (let i = pathParts.length - 1; i >= 1; i--) {
+        const parentPath = pathParts.slice(0, i).join('.');
+        console.log(`[AcRuntimeElement <${this.elementId}>] Path Bubbling check parentPath: ${parentPath}`);
+        
+        // Notify standard listeners registered at parent path
+        if (this.propertyListeners[parentPath]) {
+          console.log(`[AcRuntimeElement <${this.elementId}>] Executing parent standard listeners for parentPath: ${parentPath}`);
+          for (const targetId of Object.keys(this.propertyListeners[parentPath])) {
+            await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[parentPath][targetId] });
+          }
+        }
+
+        // Notify dynamic/loop listeners registered at parent path
+        if (this.dynamicPropertyListeners[parentPath]) {
+          console.log(`[AcRuntimeElement <${this.elementId}>] Executing dynamic loop listeners for parentPath: ${parentPath}`);
+          for (const targetId of Object.keys(this.dynamicPropertyListeners[parentPath])) {
+            for (const bindingId of Object.keys(this.dynamicPropertyListeners[parentPath][targetId])) {
+              const callback = this.dynamicPropertyListeners[parentPath][targetId][bindingId];
+              try {
+                console.log(`[AcRuntimeElement <${this.elementId}>] Triggering dynamic loop listener: targetId=${targetId}, bindingId=${bindingId}`);
+                await callback({ key, type, rootKey, target, path, oldValue, newValue });
+              } catch (err) {
+                console.error(`[AcRuntimeElement <${this.elementId}>] Error triggering dynamic loop listener:`, err);
+              }
+            }
+          }
+        }
+      }
+
+      // Also check dynamic loop listeners on exact property match
+      if (this.dynamicPropertyListeners[property]) {
+        console.log(`[AcRuntimeElement <${this.elementId}>] Executing dynamic loop listeners for exact property: ${property}`);
+        for (const targetId of Object.keys(this.dynamicPropertyListeners[property])) {
+          for (const bindingId of Object.keys(this.dynamicPropertyListeners[property][targetId])) {
+            const callback = this.dynamicPropertyListeners[property][targetId][bindingId];
+            try {
+              console.log(`[AcRuntimeElement <${this.elementId}>] Triggering dynamic loop listener: targetId=${targetId}, bindingId=${bindingId}`);
+              await callback({ key, type, rootKey, target, path, oldValue, newValue });
+            } catch (err) {
+              console.error(`[AcRuntimeElement <${this.elementId}>] Error triggering dynamic loop listener:`, err);
+            }
+          }
+        }
+      }
+
       if (this.isInitialized) {
         if (this.acRuntimeInstance.acOnChange) {
           this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
@@ -327,7 +393,7 @@ export class AcRuntimeElement extends HTMLElement {
               case 'copyWithin': return (target: number, start?: number, end?: number) => {
                 const snapshot = [...obj];
                 arrayMutating = true;
-                Array.prototype.copyWithin.call(obj, target, start, end);
+                Array.prototype.copyWithin.call(obj, target, start ?? 0, end);
                 arrayMutating = false;
                 object.handlePropertyChange({
                   type: 'array-copyWithin',
