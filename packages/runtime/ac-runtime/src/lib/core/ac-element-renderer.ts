@@ -117,6 +117,11 @@ export class AcElementRenderer {
     childRenderer.render();
   }
 
+  triggerUpdate(force = true) {
+    const res = this.getRefTargetIdsFromNodes(this.nodes);
+    this.executeChangeListener({ targetIds: res.all, force });
+  }
+
   destroyChildRenderer(targetId: string): void {
     console.log(`[AcElementRenderer] destroyChildRenderer: targetId=${targetId}`);
     const childRenderer = this.childRenderers[targetId];

@@ -84,6 +84,8 @@ export class AcRuntimeElement extends HTMLElement {
     path,
     oldValue,
     newValue,
+    index,
+    fullPath
   }: {
     key: string;
     rootKey?: string;
@@ -92,6 +94,8 @@ export class AcRuntimeElement extends HTMLElement {
     type: string,
     oldValue: any;
     newValue: any;
+    index?: number;
+    fullPath?: string;
   }): Promise<void> {
     if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
       console.log(`[AcRuntimeElement <${this.elementId}>] handleArrayPropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
@@ -99,7 +103,7 @@ export class AcRuntimeElement extends HTMLElement {
     if (this.renderer) {
       const property = path;
       for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
-        this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path });
+        this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path, index, fullPath });
       }
     }
   }
@@ -445,66 +449,81 @@ export class AcRuntimeElement extends HTMLElement {
 
           if (success && !isArrayLength && !arrayMutating) {
             if (oldValue != value) {
-              // Detect direct array index assignment (e.g. arr[3] = value)
               const isArrayIndex = Array.isArray(obj) && /^\d+$/.test(key);
               if (isArrayIndex) {
                 const index = Number(key);
-                object.handlePropertyChange({
-                  type: oldValue === undefined && index >= (obj as any).length - 1 ? 'array-insert' : 'array-update',
+                object.handleArrayPropertyChange({
+                  type: oldValue === undefined && index >= (obj as any).length - 1 ? 'arrayInsert' : 'arrayUpdate',
                   key: key,
                   path: path.join('.'),
                   oldValue: { index, items: [oldValue] },
                   newValue: { index, items: [cleanValue] }
                 });
               } else {
-                object.handlePropertyChange({
-                  type: 'set',
-                  key: key,
-                  path: [...path, key].join('.'),
-                  oldValue,
-                  newValue: cleanValue
-                });
+                const isArrayItemChange = path.some(seg => /^\d+$/.test(seg));
+                if (isArrayItemChange) {
+                  const numericIdx = path.findIndex(seg => /^\d+$/.test(seg));
+                  const index = Number(path[numericIdx]);
+                  object.handleArrayPropertyChange({
+                    type: 'arrayUpdate',
+                    key: key,
+                    path: path.slice(0, numericIdx).join('.'),
+                    oldValue,
+                    newValue: cleanValue,
+                    index: index,
+                    fullPath: [...path, key].join('.')
+                  });
+                } else {
+                  object.handlePropertyChange({
+                    type: 'set',
+                    key: key,
+                    path: [...path, key].join('.'),
+                    oldValue,
+                    newValue: cleanValue
+                  });
+                }
               }
             }
-
           }
 
           return success;
         },
 
         deleteProperty(obj, prop) {
-
           const key = String(prop);
-
-          const oldValue =
-            (obj as any)[key];
-
-          const result =
-            Reflect.deleteProperty(
-              obj,
-              prop
-            );
+          const oldValue = (obj as any)[key];
+          const result = Reflect.deleteProperty(obj, prop);
 
           if (result && !arrayMutating) {
-            object.handlePropertyChange({
-              type: 'delete',
-              target: obj,
-              key: key,
-              path: [...path, key].join('.'),
-              oldValue,
-              newValue: undefined
-            });
+            const isArrayItemChange = path.some(seg => /^\d+$/.test(seg));
+            if (isArrayItemChange) {
+              const numericIdx = path.findIndex(seg => /^\d+$/.test(seg));
+              const index = Number(path[numericIdx]);
+              object.handleArrayPropertyChange({
+                type: 'arrayUpdate',
+                key: key,
+                path: path.slice(0, numericIdx).join('.'),
+                oldValue,
+                newValue: undefined,
+                index: index,
+                fullPath: [...path, key].join('.')
+              });
+            } else {
+              object.handlePropertyChange({
+                type: 'delete',
+                target: obj,
+                key: key,
+                path: [...path, key].join('.'),
+                oldValue,
+                newValue: undefined
+              });
+            }
           }
 
           return result;
         },
 
-        defineProperty(
-          obj,
-          prop,
-          descriptor
-        ) {
-
+        defineProperty(obj, prop, descriptor) {
           const key = String(prop);
           const oldValue = (obj as any)[key];
           let value = descriptor.value;
@@ -512,21 +531,31 @@ export class AcRuntimeElement extends HTMLElement {
             value = wrap(value, [...path, key], rootKey ?? key);
             descriptor = { ...descriptor, value };
           }
-          const result =
-            Reflect.defineProperty(
-              obj,
-              prop,
-              descriptor
-            );
+          const result = Reflect.defineProperty(obj, prop, descriptor);
           if (result) {
-            object.handlePropertyChange({
-              type: 'define',
-              target: obj,
-              key,
-              path: [...path, key].join('.'),
-              oldValue,
-              newValue: descriptor.value
-            });
+            const isArrayItemChange = path.some(seg => /^\d+$/.test(seg));
+            if (isArrayItemChange) {
+              const numericIdx = path.findIndex(seg => /^\d+$/.test(seg));
+              const index = Number(path[numericIdx]);
+              object.handleArrayPropertyChange({
+                type: 'arrayUpdate',
+                key,
+                path: path.slice(0, numericIdx).join('.'),
+                oldValue,
+                newValue: descriptor.value,
+                index: index,
+                fullPath: [...path, key].join('.')
+              });
+            } else {
+              object.handlePropertyChange({
+                type: 'define',
+                target: obj,
+                key,
+                path: [...path, key].join('.'),
+                oldValue,
+                newValue: descriptor.value
+              });
+            }
           }
 
           return result;

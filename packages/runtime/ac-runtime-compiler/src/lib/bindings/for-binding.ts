@@ -9,7 +9,6 @@ export function acGenerateForBinding(
 ): string {
   const itemVar = binding.itemVar;
   const indexVar = binding.indexVar || '__index';
-  const arrayProperty = binding.properties[0] || '';
 
   let code  = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'for'},
@@ -30,7 +29,6 @@ export function acGenerateForBinding(
       else{
         renderer.loopRenderers[binding.bindingId].refresh({items:newValue});
       }
-
     }
   }});\n`
   for (const property of binding.properties) {

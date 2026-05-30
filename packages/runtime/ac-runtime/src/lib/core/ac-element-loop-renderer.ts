@@ -87,6 +87,24 @@ export class AcElementLoopRenderer extends AcElementRenderer {
           console.log(`[AcElementLoopRenderer] Deleting ${items.length} items at index ${index}`);
           this.removeArrayItems({ items, index });
         }
+        else if (args.type === 'arrayUpdate') {
+          console.log(`[AcElementLoopRenderer] Updating item`, args);
+          let targetIndex = args.index;
+          if (args.newValue && typeof args.newValue === 'object' && 'items' in args.newValue && 'index' in args.newValue) {
+            targetIndex = args.newValue.index;
+          }
+          if (targetIndex !== undefined) {
+            const key = Object.keys(this.loopItemRendererMap).find(
+              k => this.loopItemRendererMap[k] === targetIndex
+            );
+            if (key) {
+              const childRenderer = this.childRenderers[key];
+              if (childRenderer) {
+                childRenderer.triggerUpdate();
+              }
+            }
+          }
+        }
         else if (args.type === 'arraySplice') {
           console.log(`[AcElementLoopRenderer] Splicing items`, args);
           this.removeArrayItems({ items: args.oldValue.items, index: args.oldValue.index });
