@@ -594,6 +594,24 @@ export class AcElementRenderer {
 
   queryElement(query: string): Element | null {
     if (this.startComment && this.endComment) {
+      const startEl = this.findComment(this.startComment);
+      const endEl = this.findComment(this.endComment);
+      if (startEl && endEl) {
+        const liveNodes = this.getNodesBetweenComments(startEl, endEl);
+        for (const node of liveNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            if (element.matches(query)) {
+              return element;
+            }
+            const child = element.querySelector(query);
+            if (child) {
+              return child;
+            }
+          }
+        }
+      }
+
       for (const node of this.nodes) {
         if (node.nodeType === Node.ELEMENT_NODE) {
           const element = node as Element;
