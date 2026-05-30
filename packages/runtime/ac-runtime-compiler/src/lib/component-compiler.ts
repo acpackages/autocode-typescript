@@ -148,7 +148,7 @@ export class ComponentCompiler {
     // ── Step 3: Compile and assemble code ──
     const importsCode = importStatements.join('\n');
     const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
-    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent } from '@autocode-ts/ac-runtime';`;
+    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent,AcElementRenderer,AcElementLoopRenderer } from '@autocode-ts/ac-runtime';`;
 
     const bodyCode = orderedStatements.map(s => s.text).join('\n\n');
     const combinedCode = `${pipeImport}\n${acElementImport}\n${importsCode}\n\n${bodyCode}`;

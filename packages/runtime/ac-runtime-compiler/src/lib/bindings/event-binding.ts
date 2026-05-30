@@ -17,6 +17,8 @@ export function acGenerateEventBinding({ binding }: {
           if(event instanceof AcRuntimeElementEvent){
             args = event.args;
           }
+
+
           // console.log("[AcEventBinding] Forwarding ${binding.target} event",args);
           renderer.evaluateExpression({expression:\`${binding.expression}\`,locals:{'$event':args}})
         });

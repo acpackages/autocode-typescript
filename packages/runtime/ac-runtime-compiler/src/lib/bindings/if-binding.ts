@@ -9,10 +9,11 @@ export function acGenerateIfBinding({
     binding:{expression:\`${binding.expression}\`,type:'if'},
     callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
       const binding:any = ${JSON.stringify(binding)};
-      renderer.removeNodesBetweenCommentsByName('${binding.targetId}-start','${binding.targetId}-end');
+      renderer.removeNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end'});
       if(newValue){
         const newElements = renderer.createNodesFromHtml(binding.template);
         renderer.appendNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end',nodes:newElements});
+
       }
     }
   }});\n`;

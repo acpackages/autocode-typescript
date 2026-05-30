@@ -33,5 +33,7 @@
 export * from './lib/decorators/_decorators.export';
 export * from './lib/interfaces/_interfaces.export';
 export * from './lib/runtime-helpers';
+export * from './lib/core/ac-element-renderer';
+export * from './lib/core/ac-element-loop-renderer';
 export * from './lib/core/ac-runtime-element';
 export * from './lib/router';

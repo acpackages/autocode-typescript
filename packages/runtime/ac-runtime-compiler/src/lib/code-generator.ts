@@ -196,6 +196,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
 
+
     }
   }
 

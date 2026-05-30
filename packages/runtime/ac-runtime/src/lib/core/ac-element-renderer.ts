@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 import { AcRuntimeElement } from './ac-runtime-element';
+import { AcElementLoopRenderer } from './ac-element-loop-renderer';
 export class AcElementRenderer {
   html!: string;
   context: any;
@@ -12,10 +13,12 @@ export class AcElementRenderer {
   private nodes: Node[] = [];
   private startComment?: string;
   private endComment?: string;
-  private childRenderers:Record<string,AcElementRenderer> = {};
+  childRenderers:Record<string,AcElementRenderer> = {};
+  loopRenderers:Record<string,AcElementLoopRenderer> = {};
   isRoot?: boolean = false;
+  protected targetId?:string = '';
 
-  constructor({ html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
+  constructor({ targetId, html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { targetId?:string,html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
     this.rootElement = rootElement;
     this.context = context;
     this.parentRenderer = parentRenderer;
@@ -23,9 +26,10 @@ export class AcElementRenderer {
     this.startComment = startComment;
     this.endComment = endComment;
     this.isRoot = isRoot;
+    this.targetId = targetId;
   }
 
-  protected appendNodesBetweenComments({startComment,endComment,nodes,processNodes = true}:{
+  appendNodesBetweenComments({startComment,endComment,nodes,processNodes = true}:{
     startComment: string,
     endComment: string,
     nodes: Node[]
@@ -108,7 +112,7 @@ export class AcElementRenderer {
     if(rootElement == undefined){
       rootElement = this.rootElement;
     }
-    const childRenderer = new AcElementRenderer({ rootElement, context: context, html, startComment, endComment });
+    const childRenderer = new AcElementRenderer({ targetId,rootElement, context: context, html, startComment, endComment });
     this.childRenderers[targetId] = childRenderer;
     childRenderer.render();
   }
@@ -122,10 +126,10 @@ export class AcElementRenderer {
     }
   }
 
-  removeChildRenderer(targetId: string, startCommentName: string, endCommentName: string): void {
-    console.log(`[AcElementRenderer] removeChildRenderer: targetId=${targetId}, start=${startCommentName}, end=${endCommentName}`);
+  removeChildRenderer(targetId: string, startComment: string, endComment: string): void {
+    console.log(`[AcElementRenderer] removeChildRenderer: targetId=${targetId}, start=${startComment}, end=${endComment}`);
     this.destroyChildRenderer(targetId);
-    this.removeNodesBetweenCommentsByName(startCommentName, endCommentName);
+    this.removeNodesBetweenComments({startComment, endComment});
   }
 
   getChildRenderer(targetId: string): AcElementRenderer | undefined {
@@ -158,6 +162,7 @@ export class AcElementRenderer {
           for (const bindingId of Object.keys(this.rootElement.dynamicPropertyListeners[property][targetId])) {
             // Unregister if it belongs to this element/sub-renderers
             if (targetId.startsWith(this.startComment || '') || targetId === this.startComment) {
+
               this.rootElement.unregisterLoopChangeListener({ targetId, bindingId, property });
             }
           }
@@ -606,20 +611,17 @@ export class AcElementRenderer {
     return this.rootElement.querySelector(query);
   }
 
-  protected removeNodesBetweenCommentsByName(
-    startCommentName: string,
-    endCommentName: string
-  ): void {
-    const startComment = this.findComment(startCommentName);
-    const endComment = this.findComment(endCommentName);
+  removeNodesBetweenComments({startComment,endComment}:{startComment: string,endComment: string}): void {
+    const startCommentEl = this.findComment(startComment);
+    const endCommentEl = this.findComment(endComment);
 
-    if (!startComment || !endComment) {
+    if (!startCommentEl || !endCommentEl) {
       return;
     }
 
-    let current = startComment.nextSibling;
+    let current = startCommentEl.nextSibling;
 
-    while (current && current !== endComment) {
+    while (current && current !== endCommentEl) {
       const next = current.nextSibling;
       if (current && current.nodeType === Node.COMMENT_NODE) {
         const commentText = (current as Comment).data.trim();
@@ -640,7 +642,7 @@ export class AcElementRenderer {
     this.nodes = this.createNodesFromHtml(this.html);
     const res = this.getRefTargetIdsFromNodes(this.nodes);
     if (this.startComment && this.endComment) {
-      this.removeNodesBetweenCommentsByName(this.startComment, this.endComment);
+      this.removeNodesBetweenComments({startComment:this.startComment, endComment:this.endComment});
       this.appendNodesBetweenComments({startComment:this.startComment,endComment: this.endComment,nodes: this.nodes,processNodes:false});
     }
     else {
@@ -652,8 +654,8 @@ export class AcElementRenderer {
     for (const key of res.all) {
       await this.assignViewChildrenRefs({ targetId:key });
       await this.resolveTemplateOutlets({ targetId:key });
-      await this.executeEventCallbackRegister({ targetId: key });
       await this.executeChangeListener({ targetId: key });
+      await this.executeEventCallbackRegister({ targetId: key });
     }
   }
 
