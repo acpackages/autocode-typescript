@@ -89,6 +89,13 @@ export function acGenerateViewChildObject(
     }
   }
 
+  // ── Template-only references (elementRefs) ──
+  for (const refName of Object.keys(templateResult.idMap)) {
+    if (!definedProps.has(refName)) {
+      viewChildrenDetails[refName] = templateResult.idMap[refName];
+    }
+  }
+
   return viewChildrenDetails;
 }
 
@@ -195,8 +202,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
-
-
     }
   }
 

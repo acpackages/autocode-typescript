@@ -10,24 +10,25 @@ export class AcElementLoopRenderer extends AcElementRenderer {
   private loopItemRendererMap:Record<string,number> = {};
 
   appendArrayItems({ items, index = -1 }: { items: any[], index?: number }) {
+    const startIdx = Number(index);
     let endComment = `${this.targetId}-end`;
-    if (index !== -1) {
+    if (startIdx !== -1) {
       const targetItemId = Object.keys(this.loopItemRendererMap).find(
-        key => this.loopItemRendererMap[key] === index
+        key => this.loopItemRendererMap[key] === startIdx
       );
       if (targetItemId) {
         endComment = `${targetItemId}-start`;
       }
     }
 
-    if (index !== -1) {
+    if (startIdx !== -1) {
       const shiftCount = items.length;
       const sortedKeys = Object.keys(this.loopItemRendererMap).sort(
         (a, b) => this.loopItemRendererMap[b] - this.loopItemRendererMap[a]
       );
       for (const key of sortedKeys) {
         const currIdx = this.loopItemRendererMap[key];
-        if (currIdx >= index) {
+        if (currIdx >= startIdx) {
           const newIdx = currIdx + shiftCount;
           this.loopItemRendererMap[key] = newIdx;
           this.updateChildRendererContext(key, { [this.indexVar]: newIdx });
@@ -35,7 +36,7 @@ export class AcElementLoopRenderer extends AcElementRenderer {
       }
     }
 
-    let i: number = index !== -1 ? index : Object.keys(this.loopItemRendererMap).length;
+    let i: number = startIdx !== -1 ? startIdx : Object.keys(this.loopItemRendererMap).length;
     for (const item of items) {
       const itemId: string = this.rootElement.generateHexId();
       const startCommentHtml = `${itemId}-start`;
@@ -82,6 +83,10 @@ export class AcElementLoopRenderer extends AcElementRenderer {
           console.log(`[AcElementLoopRenderer] Inserting ${items.length} items at index ${index}`);
           this.appendArrayItems({ items, index });
         }
+        else if (args.type === 'arrayReplace') {
+          console.log(`[AcElementLoopRenderer] Replacing items`, args);
+          this.refresh({ items: args.newValue });
+        }
         else if (args.type === 'arrayDelete') {
           const { index, items } = args.oldValue;
           console.log(`[AcElementLoopRenderer] Deleting ${items.length} items at index ${index}`);
@@ -90,8 +95,12 @@ export class AcElementLoopRenderer extends AcElementRenderer {
         else if (args.type === 'arrayUpdate') {
           console.log(`[AcElementLoopRenderer] Updating item`, args);
           let targetIndex = args.index;
+          let newItem = undefined;
           if (args.newValue && typeof args.newValue === 'object' && 'items' in args.newValue && 'index' in args.newValue) {
             targetIndex = args.newValue.index;
+            if (Array.isArray(args.newValue.items) && args.newValue.items.length > 0) {
+              newItem = args.newValue.items[0];
+            }
           }
           if (targetIndex !== undefined) {
             const key = Object.keys(this.loopItemRendererMap).find(
@@ -100,7 +109,11 @@ export class AcElementLoopRenderer extends AcElementRenderer {
             if (key) {
               const childRenderer = this.childRenderers[key];
               if (childRenderer) {
-                childRenderer.triggerUpdate();
+                if (newItem !== undefined) {
+                  this.updateChildRendererContext(key, { [this.itemVar]: newItem });
+                } else {
+                  childRenderer.triggerUpdate();
+                }
               }
             }
           }
@@ -138,13 +151,16 @@ export class AcElementLoopRenderer extends AcElementRenderer {
   }
 
   removeArrayItems({ items, index = 0 }: { items: any[], index?: number }) {
+    const startIdx = Number(index);
+    console.log(`[AcElementLoopRenderer] removeArrayItems: index=${index} (cast to ${startIdx}), deleteCount=${items.length}, loopItemRendererMap=`, { ...this.loopItemRendererMap });
     const deleteCount = items.length;
     const keysToDelete: string[] = [];
     for (let i = 0; i < deleteCount; i++) {
-      const targetIdx = index + i;
+      const targetIdx = startIdx + i;
       const key = Object.keys(this.loopItemRendererMap).find(
         k => this.loopItemRendererMap[k] === targetIdx
       );
+      console.log(`[AcElementLoopRenderer] targetIdx=${targetIdx}, foundKey=${key}`);
       if (key) {
         keysToDelete.push(key);
       }
@@ -164,7 +180,7 @@ export class AcElementLoopRenderer extends AcElementRenderer {
     );
     for (const key of sortedKeys) {
       const currIdx = this.loopItemRendererMap[key];
-      if (currIdx >= index + deleteCount) {
+      if (currIdx >= startIdx + deleteCount) {
         const newIdx = currIdx - deleteCount;
         this.loopItemRendererMap[key] = newIdx;
         this.updateChildRendererContext(key, { [this.indexVar]: newIdx });

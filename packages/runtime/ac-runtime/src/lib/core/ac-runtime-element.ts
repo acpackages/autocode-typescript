@@ -98,12 +98,14 @@ export class AcRuntimeElement extends HTMLElement {
     fullPath?: string;
   }): Promise<void> {
     if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
-      console.log(`[AcRuntimeElement <${this.elementId}>] handleArrayPropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
+      // console.log(`[AcRuntimeElement <${this.elementId}>] handleArrayPropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
     }
     if (this.renderer) {
       const property = path;
-      for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
-        this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path, index, fullPath });
+      if(this.arrayPropertyChangeListeners[property]){
+        for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
+          this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path, index, fullPath });
+        }
       }
     }
   }
@@ -126,12 +128,12 @@ export class AcRuntimeElement extends HTMLElement {
     newValue: any;
   }): Promise<void> {
     if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
-      console.log(`[AcRuntimeElement <${this.elementId}>] handlePropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
+      // console.log(`[AcRuntimeElement <${this.elementId}>] handlePropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
     }
     if (this.renderer) {
       const property = path;
       if (this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)) {
-        console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`, newValue, oldValue);
+        // console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`, newValue, oldValue);
       }
 
       if (this.propertyListeners[property]) {
@@ -204,7 +206,7 @@ export class AcRuntimeElement extends HTMLElement {
                 arrayMutating = true;
                 const result = Array.prototype.push.apply(obj, wrappedItems);
                 arrayMutating = false;
-                console.log("[AcRuntimeElement] Array Item Push",startIndex,wrappedItems);
+                // console.log("[AcRuntimeElement] Array Item Push",startIndex,wrappedItems);
                 object.handleArrayPropertyChange({
                   type: 'arrayInsert',
                   key: prop,
@@ -402,7 +404,7 @@ export class AcRuntimeElement extends HTMLElement {
           const oldValue = (obj as any)[key];
 
           if (object.includeLogProperty.includes(key) || object.includeLogProperty.includes(rootKey)) {
-            console.log("[AcRuntimeElement] Set Proxy Value : ", key, oldValue, value);
+            // console.log("[AcRuntimeElement] Set Proxy Value : ", key, oldValue, value);
           }
 
           if (oldValue == value) {
@@ -474,10 +476,20 @@ export class AcRuntimeElement extends HTMLElement {
                     fullPath: [...path, key].join('.')
                   });
                 } else {
+                  const targetPath = [...path, key].join('.');
+                  if (object.arrayPropertyChangeListeners[targetPath]) {
+                    object.handleArrayPropertyChange({
+                      type: 'arrayReplace',
+                      key: key,
+                      path: targetPath,
+                      oldValue,
+                      newValue: Array.isArray(cleanValue) ? cleanValue : []
+                    });
+                  }
                   object.handlePropertyChange({
                     type: 'set',
                     key: key,
-                    path: [...path, key].join('.'),
+                    path: targetPath,
                     oldValue,
                     newValue: cleanValue
                   });
@@ -495,28 +507,40 @@ export class AcRuntimeElement extends HTMLElement {
           const result = Reflect.deleteProperty(obj, prop);
 
           if (result && !arrayMutating) {
-            const isArrayItemChange = path.some(seg => /^\d+$/.test(seg));
-            if (isArrayItemChange) {
-              const numericIdx = path.findIndex(seg => /^\d+$/.test(seg));
-              const index = Number(path[numericIdx]);
+            const isArrayIndex = Array.isArray(obj) && /^\d+$/.test(key);
+            if (isArrayIndex) {
+              const index = Number(key);
               object.handleArrayPropertyChange({
-                type: 'arrayUpdate',
+                type: 'arrayDelete',
                 key: key,
-                path: path.slice(0, numericIdx).join('.'),
-                oldValue,
-                newValue: undefined,
-                index: index,
-                fullPath: [...path, key].join('.')
-              });
-            } else {
-              object.handlePropertyChange({
-                type: 'delete',
-                target: obj,
-                key: key,
-                path: [...path, key].join('.'),
-                oldValue,
+                path: path.join('.'),
+                oldValue: { index, items: [oldValue] },
                 newValue: undefined
               });
+            } else {
+              const isArrayItemChange = path.some(seg => /^\d+$/.test(seg));
+              if (isArrayItemChange) {
+                const numericIdx = path.findIndex(seg => /^\d+$/.test(seg));
+                const index = Number(path[numericIdx]);
+                object.handleArrayPropertyChange({
+                  type: 'arrayUpdate',
+                  key: key,
+                  path: path.slice(0, numericIdx).join('.'),
+                  oldValue,
+                  newValue: undefined,
+                  index: index,
+                  fullPath: [...path, key].join('.')
+                });
+              } else {
+                object.handlePropertyChange({
+                  type: 'delete',
+                  target: obj,
+                  key: key,
+                  path: [...path, key].join('.'),
+                  oldValue,
+                  newValue: undefined
+                });
+              }
             }
           }
 
@@ -690,7 +714,7 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   subscribeArrayPropertyChangeListeners({ bindingId,property, callback }: { bindingId:string,property: string, callback: (args: any) => void }): void {
-    console.log(`[AcRuntimeElement <${this.elementId}>] subscribeArrayPropertyChangeListeners: property=${property}`);
+    // console.log(`[AcRuntimeElement <${this.elementId}>] subscribeArrayPropertyChangeListeners: property=${property}`);
     if(this.arrayPropertyChangeListeners[property] == undefined){
       this.arrayPropertyChangeListeners[property] = {};
     }
@@ -698,7 +722,7 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   unsubscribeArrayPropertyChangeListeners({ property,bindingId }: { property: string,bindingId:string}): void {
-    console.log(`[AcRuntimeElement <${this.elementId}>] unsubscribeArrayPropertyChangeListeners: property=${property}`);
+    // console.log(`[AcRuntimeElement <${this.elementId}>] unsubscribeArrayPropertyChangeListeners: property=${property}`);
     if(this.arrayPropertyChangeListeners[property] != undefined){
       delete this.arrayPropertyChangeListeners[property][bindingId];
     }
@@ -711,7 +735,7 @@ export class AcRuntimeElement extends HTMLElement {
 
 
   registerLoopChangeListener({ targetId, bindingId, property, callback }: { targetId: string, bindingId: string, property: string, callback: (args: any) => void }): void {
-    console.log(`[AcRuntimeElement <${this.elementId}>] registerLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
+    // console.log(`[AcRuntimeElement <${this.elementId}>] registerLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
     if (this.dynamicPropertyListeners[property] == undefined) {
       this.dynamicPropertyListeners[property] = {};
     }
@@ -722,7 +746,7 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   unregisterLoopChangeListener({ targetId, bindingId, property }: { targetId: string, bindingId: string, property: string }): void {
-    console.log(`[AcRuntimeElement <${this.elementId}>] unregisterLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
+    // console.log(`[AcRuntimeElement <${this.elementId}>] unregisterLoopChangeListener: targetId=${targetId}, bindingId=${bindingId}, property=${property}`);
     if (this.dynamicPropertyListeners[property] && this.dynamicPropertyListeners[property][targetId]) {
       delete this.dynamicPropertyListeners[property][targetId][bindingId];
       if (Object.keys(this.dynamicPropertyListeners[property][targetId]).length === 0) {

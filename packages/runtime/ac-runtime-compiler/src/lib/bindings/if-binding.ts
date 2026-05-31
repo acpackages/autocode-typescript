@@ -13,7 +13,6 @@ export function acGenerateIfBinding({
       if(newValue){
         const newElements = renderer.createNodesFromHtml(binding.template);
         renderer.appendNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end',nodes:newElements});
-
       }
     }
   }});\n`;
