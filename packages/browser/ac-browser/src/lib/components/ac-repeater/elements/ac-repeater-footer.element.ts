@@ -8,6 +8,7 @@ import { AcEnumRepeaterHook } from "../_ac-repeater.export";
 
 export class AcRepeaterFooterElement extends AcElementBase {
   private repeaterApi: AcRepeaterApi;
+  private isPaginationAdded:boolean = false;
 
   private autoBindRepeater() {
     if (this.isConnected) {
@@ -41,9 +42,13 @@ export class AcRepeaterFooterElement extends AcElementBase {
   setPagination() {
     if (this.repeaterApi) {
       if (this.repeaterApi.usePagination && this.repeaterApi.pagination) {
-        this.append(this.repeaterApi.pagination);
+        if(!this.isPaginationAdded){
+          this.isPaginationAdded = true;
+          this.append(this.repeaterApi.pagination);
+        }
       } else if (!this.repeaterApi.usePagination && this.repeaterApi?.pagination) {
         this.repeaterApi.pagination.remove();
+        this.isPaginationAdded = false;
       }
     }
 

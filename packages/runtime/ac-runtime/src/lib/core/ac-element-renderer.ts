@@ -9,6 +9,7 @@ export class AcElementRenderer {
   context: any;
   parentRenderer?: AcElementRenderer;
   rootElement!: AcRuntimeElement;
+  private rendererId: string = '';
   private currentBindingValues: any = {};
   private nodes: Node[] = [];
   private startComment?: string;
@@ -17,8 +18,10 @@ export class AcElementRenderer {
   loopRenderers: Record<string, AcElementLoopRenderer> = {};
   isRoot?: boolean = false;
   protected targetId?: string = '';
+  private ownedTargetIds: string[] = [];
 
   constructor({ targetId, html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { targetId?: string, html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
+    this.rendererId = rootElement.generateHexId();
     this.rootElement = rootElement;
     this.context = context;
     this.parentRenderer = parentRenderer;
@@ -27,6 +30,7 @@ export class AcElementRenderer {
     this.endComment = endComment;
     this.isRoot = isRoot;
     this.targetId = targetId;
+    // console.log(this);
   }
 
   appendNodesBetweenComments({ startComment, endComment, nodes, processNodes = true }: {
@@ -51,6 +55,8 @@ export class AcElementRenderer {
     for (const node of nodes) {
       parent.insertBefore(node, endCommentEl);
     }
+
+    this.setOwnedTargetIds();
     if (processNodes) {
       const childRefs = this.getRefTargetIdsFromNodes(nodes);
       this.assignViewChildrenRefs({ targetIds: childRefs.all })
@@ -124,7 +130,7 @@ export class AcElementRenderer {
   }
 
   destroy(): void {
-    console.log(`[AcElementRenderer] destroy`);
+    // console.log(`[AcElementRenderer] destroy`);
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
     }
@@ -147,7 +153,7 @@ export class AcElementRenderer {
   }
 
   destroyChildRenderer(targetId: string): void {
-    console.log(`[AcElementRenderer] destroyChildRenderer: targetId=${targetId}`);
+    // console.log(`[AcElementRenderer] destroyChildRenderer: targetId=${targetId}`);
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
       childRenderer.destroy();
@@ -218,49 +224,52 @@ export class AcElementRenderer {
   }): Promise<void> {
     const executeListener = async (targetKey: string) => {
       try {
-        const targetCallbacks = this.rootElement.changeListeners[targetKey];
-        if (targetCallbacks) {
-          for (const bindingKey of Object.keys(targetCallbacks)) {
-            let continueExecution: boolean = true;
-            if (bindingId != undefined || bindingIds != undefined) {
-              continueExecution = false;
-              if (bindingId) {
-                continueExecution = bindingKey == bindingId;
-              }
-              else if (bindingIds) {
-                continueExecution = bindingIds.includes(bindingKey);
-              }
-            }
-            if (continueExecution) {
-              // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
-              // console.dir("[AcRuntimeRenderer] ",this.rootElement);
-              const callbackDef = targetCallbacks[bindingKey];
-              const newValue = await this.evaluateExpression({
-                expression: callbackDef.binding.expression,
-              });
-              const oldValue = this.currentBindingValues[bindingKey];
+        if (this.ownedTargetIds.includes(targetKey)) {
 
-              // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
-              // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
-              if (oldValue != newValue || force || (newValue !== null && typeof newValue === 'object')) {
-                // console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
-                this.currentBindingValues[bindingKey] = newValue;
-                callbackDef.callback({ oldValue, newValue, renderer: this });
+          const targetCallbacks = this.rootElement.changeListeners[targetKey];
+          if (targetCallbacks) {
+            for (const bindingKey of Object.keys(targetCallbacks)) {
+              let continueExecution: boolean = true;
+              if (bindingId != undefined || bindingIds != undefined) {
+                continueExecution = false;
+                if (bindingId) {
+                  continueExecution = bindingKey == bindingId;
+                }
+                else if (bindingIds) {
+                  continueExecution = bindingIds.includes(bindingKey);
+                }
               }
-            }
-            else {
-              // console.log("[AcRuntimeRenderer] Skipping execution because binding key(s) does not match", targetId, targetIds, bindingId, bindingIds, this);
+              if (continueExecution) {
+                // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
+                // console.dir("[AcRuntimeRenderer] ",this.rootElement);
+                const callbackDef = targetCallbacks[bindingKey];
+                const newValue = await this.evaluateExpression({
+                  expression: callbackDef.binding.expression,
+                });
+                const oldValue = this.currentBindingValues[bindingKey];
+
+                // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
+                // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
+                if (oldValue != newValue || force || (newValue !== null && typeof newValue === 'object')) {
+                  // console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
+                  this.currentBindingValues[bindingKey] = newValue;
+                  callbackDef.callback({ oldValue, newValue, renderer: this });
+                }
+              }
+              else {
+                // console.log("[AcRuntimeRenderer] Skipping execution because binding key(s) does not match", targetId, targetIds, bindingId, bindingIds, this);
+              }
             }
           }
-        }
-        else {
-          // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
-        }
-        const el = this.queryElement(`[ac-ref="${targetKey}"]`);
-        if (el?.hasAttribute('ac-el-has-inputs')) {
-          el.removeAttribute('ac-el-has-inputs');
-          if ((el as any).acRuntimeInstance) {
-            (el as any).notifyElementInit();
+          else {
+            // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
+          }
+          const el = this.queryElement(`[ac-ref="${targetKey}"]`);
+          if (el?.hasAttribute('ac-el-has-inputs')) {
+            el.removeAttribute('ac-el-has-inputs');
+            if ((el as any).acRuntimeInstance) {
+              (el as any).notifyElementInit();
+            }
           }
         }
       }
@@ -629,7 +638,6 @@ export class AcElementRenderer {
   }
 
   removeChildRenderer(targetId: string, startComment: string, endComment: string): void {
-    console.log(`[AcElementRenderer] removeChildRenderer: targetId=${targetId}, start=${startComment}, end=${endComment}`);
     const startCommentEl = this.findComment(startComment);
     const endCommentEl = this.findComment(endComment);
     this.destroyChildRenderer(targetId);
@@ -666,7 +674,7 @@ export class AcElementRenderer {
   }
 
   async render() {
-    this.nodes = this.createNodesFromHtml(this.html);
+    this.nodes = this.createNodesFromHtml(`<!--ac-renderer-${this.rendererId}-start-->${this.html}<!--ac-renderer-${this.rendererId}-end-->`);
     const res = this.getRefTargetIdsFromNodes(this.nodes);
     if (this.startComment && this.endComment) {
       this.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
@@ -678,12 +686,16 @@ export class AcElementRenderer {
         this.rootElement.appendChild(node);
       }
     }
+    this.setOwnedTargetIds();
     for (const key of res.all) {
-      await this.assignViewChildrenRefs({ targetId: key });
-      await this.resolveTemplateOutlets({ targetId: key });
-      await this.executeChangeListener({ targetId: key });
-      await this.executeEventCallbackRegister({ targetId: key });
+      if (this.ownedTargetIds.includes(key)) {
+        await this.assignViewChildrenRefs({ targetId: key });
+        await this.resolveTemplateOutlets({ targetId: key });
+        await this.executeChangeListener({ targetId: key });
+        await this.executeEventCallbackRegister({ targetId: key });
+      }
     }
+    this.setOwnedTargetIds();
   }
 
   resolveTemplateOutlets({ targetId, targetIds }: { targetId?: string, targetIds?: string[] }) {
@@ -714,13 +726,67 @@ export class AcElementRenderer {
     }
   }
 
+
+  setOwnedTargetIds(): void {
+    const targetSet = new Set<string>();
+    const walker = document.createTreeWalker(
+      this.rootElement,
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT
+    );
+
+    const stack: string[] = [];
+    let current: Node | null = walker.currentNode;
+
+    while (current) {
+      if (current.nodeType === Node.COMMENT_NODE) {
+        const val = current.nodeValue?.trim() || '';
+        const startMatch = val.startsWith('ac-renderer-') && val.endsWith('-start');
+        if (startMatch) {
+          stack.push(val.replace('ac-renderer-','').replace('-start',''));
+        } else {
+          const endMatch = val.startsWith('ac-renderer-') && val.endsWith('-end');
+          if (endMatch) {
+            const idx = stack.lastIndexOf(val.replace('ac-renderer-','').replace('-end',''));
+            if (idx !== -1) {
+              stack.splice(idx, 1);
+            }
+          }
+        }
+      }
+
+      let matchedKey: string | null = null;
+      if (current.nodeType === Node.ELEMENT_NODE) {
+        const ref = (current as Element).getAttribute('ac-ref');
+        if (ref) {
+          matchedKey = ref;
+        }
+      } else if (current.nodeType === Node.COMMENT_NODE) {
+        const val = current.nodeValue?.trim() || '';
+        if (val.startsWith('ac-if') || val.startsWith('ac-for') || val.startsWith('ac-template-outlet')) {
+          const cleanVal = val.replace(/-start$/, '').replace(/-end$/, '');
+          matchedKey = cleanVal;
+        }
+      }
+
+      if (matchedKey) {
+        const ownerId = stack.length > 0 ? stack[stack.length - 1] : null;
+        if (ownerId === null || ownerId === this.rendererId) {
+          targetSet.add(matchedKey);
+        }
+      }
+
+      current = walker.nextNode();
+    }
+
+    this.ownedTargetIds = Array.from(targetSet);
+  }
+
   triggerUpdate(force = true) {
-    const res = this.getRefTargetIdsFromNodes(this.nodes);
-    this.executeChangeListener({ targetIds: res.all, force });
+    this.executeChangeListener({ targetIds: this.ownedTargetIds, force });
   }
 
   updateChildRendererContext(targetId: string, contextUpdates: any): void {
-    console.log(`[AcElementRenderer] updateChildRendererContext: targetId=${targetId}`, contextUpdates);
+    // console.log(`[AcElementRenderer] updateChildRendererContext: targetId=${targetId}`, contextUpdates);
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
       childRenderer.context = { ...childRenderer.context, ...contextUpdates };

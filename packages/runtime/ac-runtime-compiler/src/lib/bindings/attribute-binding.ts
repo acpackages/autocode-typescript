@@ -80,7 +80,8 @@ export function acGenerateAttributeBinding({ binding }: {
         const __t = (el as any).acRuntimeInstance;
         if (__t) {
           const camelKey = '${binding.target}'.replace(/-([a-z])/g, (_: any, c: string) => c.toUpperCase());
-          __t[camelKey] = newValue;
+          const matchingInput = (el.instanceInputs || []).find((i: string) => i.toLowerCase() === camelKey.toLowerCase()) || camelKey;
+          __t[matchingInput] = newValue;
         }
         else{`;
           if(binding.target.toLowerCase() == 'innerhtml'){
@@ -99,15 +100,13 @@ export function acGenerateAttributeBinding({ binding }: {
           else{
             code += `
             if(newValue != undefined && newValue!=null){
-            el.setAttribute('${binding.target}',newValue);
-          }
-          else{
-            el.removeAttribute('${binding.target}');
-          }
+              el.setAttribute('${binding.target}',newValue);
+            }
+            else{
+              el.removeAttribute('${binding.target}');
+            }
             `;
           }
-
-
           code+=`
         }
       }

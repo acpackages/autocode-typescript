@@ -183,6 +183,10 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
   class ${htmlElementClassName} extends AcRuntimeElement {
 
+    static get observedAttributes() {
+      return ${JSON.stringify((options.templateResult.inputs || []).map(i => i.toLowerCase()))};
+    }
+
     constructor() {
       super();
 
@@ -202,9 +206,11 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
+
+
+
     }
   }
-
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
 })();`;

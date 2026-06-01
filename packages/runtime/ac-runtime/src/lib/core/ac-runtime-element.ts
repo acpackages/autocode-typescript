@@ -15,7 +15,7 @@ export class AcRuntimeElement extends HTMLElement {
   templateOutlets: any = {};
   templates: Record<string, { targetId: any; bindingId: string, html: string, ownerInstance: any }> = {};
 
-  protected renderer!: AcElementRenderer;
+  protected elementRenderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeListeners: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
   eventCallbacks: Record<string, Record<string, { callback: any; binding: { expression: string; type: string }; }>> = {};
@@ -40,10 +40,10 @@ export class AcRuntimeElement extends HTMLElement {
     if ((this.acRuntimeInstance as any).__destroy) {
       (this.acRuntimeInstance as any).__destroy();
     }
-    if (this.renderer) {
-      this.renderer.clearElement({ element: this });
+    if (this.elementRenderer) {
+      this.elementRenderer.clearElement({ element: this });
     }
-    (this.renderer as any) = null;
+    (this.elementRenderer as any) = null;
   }
 
   generateHexId(): string {
@@ -64,7 +64,7 @@ export class AcRuntimeElement extends HTMLElement {
         this.dispatchEvent(event);
       });
     }
-    this.renderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
+    this.elementRenderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
       this.notifyElementInit();
@@ -73,7 +73,7 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   protected async render(): Promise<void> {
-    await this.renderer.render();
+    await this.elementRenderer.render();
   }
 
   protected async handleArrayPropertyChange({
@@ -100,7 +100,7 @@ export class AcRuntimeElement extends HTMLElement {
     if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
       // console.log(`[AcRuntimeElement <${this.elementId}>] handleArrayPropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
     }
-    if (this.renderer) {
+    if (this.elementRenderer) {
       const property = path;
       if(this.arrayPropertyChangeListeners[property]){
         for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
@@ -131,7 +131,7 @@ export class AcRuntimeElement extends HTMLElement {
     if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
       // console.log(`[AcRuntimeElement <${this.elementId}>] handlePropertyChange: key=${key}, path=${path}, type=${type}`,newValue,oldValue);
     }
-    if (this.renderer) {
+    if (this.elementRenderer) {
       const property = path;
       if (this.includeLogProperty.includes(key) || this.includeLogProperty.includes(rootKey)) {
         // console.log(`[AcRuntimeElement <${this.elementId}>] Property Change >>> Key : ${key}, Path : ${path}, Type : ${type}`, newValue, oldValue);
@@ -139,7 +139,7 @@ export class AcRuntimeElement extends HTMLElement {
 
       if (this.propertyListeners[property]) {
           for (const targetId of Object.keys(this.propertyListeners[property])) {
-            await this.renderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
+            await this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
           }
         }
 
@@ -757,10 +757,25 @@ export class AcRuntimeElement extends HTMLElement {
 
   private setInputValuesFromAttributes() {
     Array.from(this.attributes).forEach((attr: Attr) => {
-      if (this.instanceInputs.includes(attr.name)) {
-        this.acRuntimeInstance[attr.name] = attr.value;
+      const matchingInput = this.instanceInputs.find(
+        (inputName) => inputName.toLowerCase() === attr.name.toLowerCase()
+      );
+      if (matchingInput) {
+        this.acRuntimeInstance[matchingInput] = attr.value;
       }
     });
+  }
+
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (oldValue === newValue) return;
+    if (this.acRuntimeInstance && this.instanceInputs) {
+      const matchingInput = this.instanceInputs.find(
+        (inputName) => inputName.toLowerCase() === name.toLowerCase()
+      );
+      if (matchingInput) {
+        this.acRuntimeInstance[matchingInput] = newValue;
+      }
+    }
   }
 
   subscribeArrayPropertyChangeListeners({ bindingId,property, callback }: { bindingId:string,property: string, callback: (args: any) => void }): void {
