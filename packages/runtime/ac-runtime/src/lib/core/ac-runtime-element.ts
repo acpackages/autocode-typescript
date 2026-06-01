@@ -64,7 +64,6 @@ export class AcRuntimeElement extends HTMLElement {
         this.dispatchEvent(event);
       });
     }
-    this.elementRenderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
       this.notifyElementInit();

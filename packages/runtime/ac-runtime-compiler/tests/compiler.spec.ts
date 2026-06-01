@@ -686,5 +686,62 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     expect(result.html).toContain('Hello <span ac-ref="');
     expect(result.html).toContain('></span>! Welcome back.');
   });
+
+  it('should compute ownedElementIds correctly for nested structures', () => {
+    const template = `
+      <div [class.active]="isActive">
+        <span [id]="someId"></span>
+        <ac-datagrid #grid></ac-datagrid>
+        <div ac:if="show">
+          <p [class.visible]="isVisible"></p>
+          <div ac:for="item of items">
+            <span [class.active]="item.active"></span>
+          </div>
+        </div>
+        <ac-template #myTemplate>
+          <span [class.selected]="isSelected"></span>
+        </ac-template>
+      </div>
+    `;
+    const result = tc.compile(template);
+    expect(result.ownedElementIds).toBeDefined();
+
+    const divId = result.bindings.find(b => b.type === 'class' && b.expression === 'isActive')?.targetId;
+    const spanId = result.bindings.find(b => b.type === 'property' && b.expression === 'someId')?.targetId;
+    const gridId = result.idMap['grid'];
+    const ifBinding = result.bindings.find(b => b.type === 'if');
+    const pId = ifBinding?.childBindings?.find(b => b.type === 'class' && b.expression === 'isVisible')?.targetId;
+    const forBinding = ifBinding?.childBindings?.find(b => b.type === 'for');
+    const innerSpanId = forBinding?.childBindings?.find(b => b.type === 'class' && b.expression === 'item.active')?.targetId;
+    const templateBinding = result.bindings.find(b => b.type === 'template');
+    const templateSpanId = templateBinding?.childBindings?.find(b => b.type === 'class' && b.expression === 'isSelected')?.targetId;
+
+    expect(divId).toBeDefined();
+    expect(spanId).toBeDefined();
+    expect(gridId).toBeDefined();
+    expect(ifBinding).toBeDefined();
+    expect(pId).toBeDefined();
+    expect(forBinding).toBeDefined();
+    expect(innerSpanId).toBeDefined();
+    expect(templateBinding).toBeDefined();
+    expect(templateSpanId).toBeDefined();
+
+    expect(result.ownedElementIds).toContain(divId);
+    expect(result.ownedElementIds).toContain(spanId);
+    expect(result.ownedElementIds).toContain(gridId);
+    expect(result.ownedElementIds).toContain(ifBinding?.targetId);
+    expect(result.ownedElementIds).toContain(pId);
+    expect(result.ownedElementIds).toContain(forBinding?.targetId);
+    expect(result.ownedElementIds).toContain(templateBinding?.targetId);
+    expect(result.ownedElementIds).not.toContain(innerSpanId);
+    expect(result.ownedElementIds).not.toContain(templateSpanId);
+
+    expect(forBinding?.ownedElementIds).toBeUndefined();
+    expect(forBinding?.item?.ownedElementIds).toContain(innerSpanId);
+    expect(forBinding?.item?.ownedElementIds).not.toContain(divId);
+
+    expect(templateBinding?.ownedElementIds).toContain(templateSpanId);
+    expect(templateBinding?.ownedElementIds).not.toContain(divId);
+  });
 });
 

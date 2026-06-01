@@ -18,7 +18,7 @@ export class AcElementRenderer {
   loopRenderers: Record<string, AcElementLoopRenderer> = {};
   isRoot?: boolean = false;
   protected targetId?: string = '';
-  private ownedTargetIds: string[] = [];
+  ownedTargetIds: string[] = [];
 
   constructor({ targetId, html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { targetId?: string, html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
     this.rendererId = rootElement.generateHexId();
@@ -30,14 +30,14 @@ export class AcElementRenderer {
     this.endComment = endComment;
     this.isRoot = isRoot;
     this.targetId = targetId;
-    // console.log(this);
+    console.log(this);
   }
 
   appendNodesBetweenComments({ startComment, endComment, nodes, processNodes = true }: {
     startComment: string,
     endComment: string,
     nodes: Node[]
-    processNodes?: boolean
+    processNodes?: boolean,
   }
   ): void {
     const startCommentEl = this.findComment(startComment);
@@ -56,7 +56,6 @@ export class AcElementRenderer {
       parent.insertBefore(node, endCommentEl);
     }
 
-    this.setOwnedTargetIds();
     if (processNodes) {
       const childRefs = this.getRefTargetIdsFromNodes(nodes);
       this.assignViewChildrenRefs({ targetIds: childRefs.all })
@@ -114,11 +113,12 @@ export class AcElementRenderer {
     }
   }
 
-  createChildRenderer({ targetId, html, startComment, endComment, context, rootElement }: { targetId: string, html: string, startComment?: string, endComment?: string, context: any, rootElement?: AcRuntimeElement }) {
+  createChildRenderer({ targetId, html, startComment, endComment, context, rootElement,ownedTargetIds = [] }: { targetId: string, html: string, startComment?: string, endComment?: string, context: any, rootElement?: AcRuntimeElement,ownedTargetIds?:string[] }) {
     if (rootElement == undefined) {
       rootElement = this.rootElement;
     }
-    const childRenderer = new AcElementRenderer({ targetId, rootElement, context: context, html, startComment, endComment });
+    const childRenderer = new AcElementRenderer({ targetId, rootElement, context: context, html, startComment, endComment});
+    childRenderer.ownedTargetIds = ownedTargetIds;
     this.childRenderers[targetId] = childRenderer;
     childRenderer.render();
   }
@@ -686,7 +686,6 @@ export class AcElementRenderer {
         this.rootElement.appendChild(node);
       }
     }
-    this.setOwnedTargetIds();
     for (const key of res.all) {
       if (this.ownedTargetIds.includes(key)) {
         await this.assignViewChildrenRefs({ targetId: key });
@@ -695,7 +694,6 @@ export class AcElementRenderer {
         await this.executeEventCallbackRegister({ targetId: key });
       }
     }
-    this.setOwnedTargetIds();
   }
 
   resolveTemplateOutlets({ targetId, targetIds }: { targetId?: string, targetIds?: string[] }) {
@@ -703,7 +701,7 @@ export class AcElementRenderer {
       const templateRenderer = (templateDef: any) => {
         const startComment = `${targetKey}-start`;
         const endComment = `${targetKey}-end`;
-        this.createChildRenderer({ targetId: targetKey, html: templateDef.html, startComment: startComment, endComment: endComment, context: templateDef.rootElement.acRuntimeInstance, rootElement: templateDef.rootElement });
+        this.createChildRenderer({ targetId: targetKey, html: templateDef.html, startComment: startComment, endComment: endComment, context: templateDef.rootElement.acRuntimeInstance, rootElement: templateDef.rootElement,ownedTargetIds:templateDef.ownedTargetIds });
       };
       if (this.rootElement.templateOutlets[targetKey]) {
         const templateOutlet = this.rootElement.templateOutlets[targetKey];
@@ -726,60 +724,6 @@ export class AcElementRenderer {
     }
   }
 
-
-  setOwnedTargetIds(): void {
-    const targetSet = new Set<string>();
-    const walker = document.createTreeWalker(
-      this.rootElement,
-      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT
-    );
-
-    const stack: string[] = [];
-    let current: Node | null = walker.currentNode;
-
-    while (current) {
-      if (current.nodeType === Node.COMMENT_NODE) {
-        const val = current.nodeValue?.trim() || '';
-        const startMatch = val.startsWith('ac-renderer-') && val.endsWith('-start');
-        if (startMatch) {
-          stack.push(val.replace('ac-renderer-','').replace('-start',''));
-        } else {
-          const endMatch = val.startsWith('ac-renderer-') && val.endsWith('-end');
-          if (endMatch) {
-            const idx = stack.lastIndexOf(val.replace('ac-renderer-','').replace('-end',''));
-            if (idx !== -1) {
-              stack.splice(idx, 1);
-            }
-          }
-        }
-      }
-
-      let matchedKey: string | null = null;
-      if (current.nodeType === Node.ELEMENT_NODE) {
-        const ref = (current as Element).getAttribute('ac-ref');
-        if (ref) {
-          matchedKey = ref;
-        }
-      } else if (current.nodeType === Node.COMMENT_NODE) {
-        const val = current.nodeValue?.trim() || '';
-        if (val.startsWith('ac-if') || val.startsWith('ac-for') || val.startsWith('ac-template-outlet')) {
-          const cleanVal = val.replace(/-start$/, '').replace(/-end$/, '');
-          matchedKey = cleanVal;
-        }
-      }
-
-      if (matchedKey) {
-        const ownerId = stack.length > 0 ? stack[stack.length - 1] : null;
-        if (ownerId === null || ownerId === this.rendererId) {
-          targetSet.add(matchedKey);
-        }
-      }
-
-      current = walker.nextNode();
-    }
-
-    this.ownedTargetIds = Array.from(targetSet);
-  }
 
   triggerUpdate(force = true) {
     this.executeChangeListener({ targetIds: this.ownedTargetIds, force });

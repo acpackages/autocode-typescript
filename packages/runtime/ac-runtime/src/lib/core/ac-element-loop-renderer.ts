@@ -58,7 +58,8 @@ export class AcElementLoopRenderer extends AcElementRenderer {
         startComment: startCommentHtml,
         endComment: endCommentHtml,
         context,
-        rootElement: this.parentRenderer?.rootElement
+        rootElement: this.parentRenderer?.rootElement,
+        ownedTargetIds:this.ownedTargetIds
       });
       this.loopItemRendererMap[itemId] = i;
       i++;

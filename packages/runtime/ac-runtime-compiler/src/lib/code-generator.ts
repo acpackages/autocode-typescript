@@ -193,6 +193,8 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
       this.acRuntimeInstance.element = this;
       this.elementHtml = \`${templateResult.html}\`;
+      this.elementRenderer = new AcElementRenderer({ isRoot: true, rootElement: this, html: this.elementHtml, context: {} });
+      this.elementRenderer.ownedTargetIds = ${JSON.stringify(options.templateResult.ownedElementIds)};
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
       this.instanceViewChildren = ${JSON.stringify( acGenerateViewChildObject(viewChildren,templateResult) )};
@@ -206,8 +208,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
-
-
 
     }
   }

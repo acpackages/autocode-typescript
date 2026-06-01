@@ -5,7 +5,8 @@ export function acGenerateTemplateBinding({binding}:{binding: Binding}): string 
     targetId:'${binding.targetId}',
     bindingId:'${binding.bindingId}',
     html:\`${binding.template}\`,
-    rootElement:this
+    rootElement:this,
+    ownedTargetIds:${JSON.stringify(binding.ownedElementIds)}
   };\n`;
 
   return code;

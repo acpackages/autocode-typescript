@@ -257,6 +257,7 @@ function extractExpressionIdentifiers(
 export class TemplateCompiler {
   /** Counter for ID uniqueness (not currently used — hex IDs used instead). */
   private idCounter = 0;
+  private localRefIds: string[] = [];
 
   /**
    * Generate a unique 8-character hex ID for `ac-ref` attributes.
@@ -283,6 +284,7 @@ export class TemplateCompiler {
     const bindings: Binding[] = [];
     const idMap = new Map<string, string>();
     const reactiveProperties: Record<string, ReactivePropertyDef[]> = {};
+    this.localRefIds = [];
 
     // Parse HTML into a DOM tree
     // lowerCaseAttributeNames: false preserves camelCase like [usePagination]
@@ -294,11 +296,14 @@ export class TemplateCompiler {
     // Walk the tree, extracting bindings and producing clean HTML
     const processedHtml = this.processNodes(handler.dom, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
 
+    const ownedElementIds = [...this.localRefIds];
+
     return {
       html: processedHtml,
       bindings,
       idMap: Object.fromEntries(idMap),
       reactiveProperties,
+      ownedElementIds,
     };
   }
 
@@ -408,7 +413,7 @@ export class TemplateCompiler {
         const properties = Array.from(extractExpressionIdentifiers(inner, localVars, classProperties, topLevelVars, resolvedConstants));
 
         bindings.push({
-          bindingId:this.generateHexId(),
+          bindingId: this.generateHexId(),
           type: 'text',
           expression: inner,
           targetId: id,
@@ -417,6 +422,7 @@ export class TemplateCompiler {
         });
 
         const spanHtml = `<span ac-ref="${id}"></span>`;
+        this.localRefIds.push(id);
         this.addReactiveProperties({
           expression: inner,
           targetId: id,
@@ -598,9 +604,11 @@ export class TemplateCompiler {
     const properties = Array.from(extractExpressionIdentifiers(listExpr, localVars, classProperties, topLevelVars, resolvedConstants));
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
+    this.localRefIds.push(placeholderId);
+
     bindings.push({
       type: 'for',
-      bindingId:this.generateHexId(),
+      bindingId: this.generateHexId(),
       expression: listExpr,
       itemVar,
       indexVar,
@@ -609,6 +617,8 @@ export class TemplateCompiler {
       childBindings: subResult.bindings,
       properties,
       rootIds: [],
+      ownedElementIds: subResult.ownedElementIds || []
+
     });
 
     this.addReactiveProperties({
@@ -682,9 +692,14 @@ export class TemplateCompiler {
     const properties = Array.from(extractExpressionIdentifiers(acIf, localVars, classProperties, topLevelVars, resolvedConstants));
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
+    this.localRefIds.push(placeholderId);
+    if (subResult.ownedElementIds) {
+      this.localRefIds.push(...subResult.ownedElementIds);
+    }
+
     bindings.push({
       type: 'if',
-      bindingId:this.generateHexId(),
+      bindingId: this.generateHexId(),
       expression: acIf,
       targetId: placeholderId,
       template: subResult.html,
@@ -769,6 +784,8 @@ export class TemplateCompiler {
       }
     }
 
+    this.localRefIds.push(id);
+
     bindings.push({
       type: 'template',
       bindingId: this.generateHexId(),
@@ -778,6 +795,7 @@ export class TemplateCompiler {
       childBindings: subResult.bindings,
       properties: [],
       rootIds: [],
+      ownedElementIds: subResult.ownedElementIds || []
     });
 
     // No HTML output — template content lives in the binding
@@ -825,14 +843,17 @@ export class TemplateCompiler {
     }
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
+    this.localRefIds.push(placeholderId);
+
     bindings.push({
       type: 'template-outlet',
-      bindingId:this.generateHexId(),
+      bindingId: this.generateHexId(),
       expression,
       contextExpression,
       targetId: placeholderId,
       properties,
       rootIds: [],
+      ownedElementIds: []
     });
 
     this.addReactiveProperties({
@@ -892,13 +913,13 @@ export class TemplateCompiler {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
         if (prop.startsWith('class.')) {
-          bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'class' });
         } else if (prop.startsWith('style.')) {
-          bindings.push({ bindingId:this.generateHexId(),type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
           pendingProperties.push({ expression: value, type: 'style' });
         } else {
-          bindings.push({ bindingId:this.generateHexId(),type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
           hasInputs = true;
           pendingProperties.push({ expression: value, type: 'bind' });
         }
@@ -909,7 +930,7 @@ export class TemplateCompiler {
       else if (name.startsWith('(') && name.endsWith(')')) {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'event' });
         hasBinding = true;
         delete el.attribs[name];
@@ -918,7 +939,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:class:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'class' });
         hasBinding = true;
         delete el.attribs[name];
@@ -927,7 +948,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:style:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'style' });
         hasBinding = true;
         delete el.attribs[name];
@@ -940,7 +961,7 @@ export class TemplateCompiler {
         const prop = (isCheckbox || isRadio) ? 'checked' : 'value';
         const event = (isCheckbox || isRadio || isSelect) ? 'change' : 'input';
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'model' });
         hasBinding = true;
         delete el.attribs[name];
@@ -949,7 +970,7 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:bind:')) {
         const prop = name.slice(8);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];
@@ -957,7 +978,7 @@ export class TemplateCompiler {
       // ── Template outlet: ac:template:outlet="expr" ──
       else if (name === 'ac:template:outlet') {
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId:this.generateHexId(),type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
+        bindings.push({ bindingId: this.generateHexId(), type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];
@@ -973,7 +994,8 @@ export class TemplateCompiler {
     // Inject ac-ref attribute if this element has any bindings
     if (hasBinding) {
       el.attribs['ac-ref'] = id;
-      if(hasInputs){
+      this.localRefIds.push(id);
+      if (hasInputs) {
         el.attribs['ac-el-has-inputs'] = 'true';
       }
     }

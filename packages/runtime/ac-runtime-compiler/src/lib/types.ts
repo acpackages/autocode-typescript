@@ -97,6 +97,12 @@ export interface Binding {
   rootIds: string[];
 
   bindingId: string;
+
+  ownedElementIds?: string[];
+
+  item?: {
+    ownedElementIds: string[];
+  };
 }
 
 /**
@@ -147,6 +153,8 @@ export interface TemplateCompileResult {
 
   /** Properties decorated with @AcListenChanges() — just the watched keys. */
   listenChanges?: string[];
+
+  ownedElementIds?: string[];
 }
 
 export interface ReactivePropertyDef {

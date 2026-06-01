@@ -24,6 +24,7 @@ export function acGenerateForBinding(
           context:{...renderer.context},
           rootElement:renderer.rootElement
         });
+        renderer.loopRenderers[binding.bindingId].ownedTargetIds = JSON.stringify(binding.ownedElementIds);
         renderer.loopRenderers[binding.bindingId].init({itemVar:'${itemVar}',indexVar:'${indexVar}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
       }
       else{
