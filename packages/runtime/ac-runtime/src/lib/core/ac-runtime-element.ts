@@ -101,9 +101,9 @@ export class AcRuntimeElement extends HTMLElement {
     }
     if (this.elementRenderer) {
       const property = path;
-      if(this.arrayPropertyChangeListeners[property]){
+      if (this.arrayPropertyChangeListeners[property]) {
         for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
-          this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path, index, fullPath });
+          this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type, target, path, index, fullPath });
         }
       }
       // Trigger property change notifications for the array itself and the array's length property
@@ -137,21 +137,21 @@ export class AcRuntimeElement extends HTMLElement {
       }
 
       if (this.propertyListeners[property]) {
-          for (const targetId of Object.keys(this.propertyListeners[property])) {
-            await this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
-          }
+        for (const targetId of Object.keys(this.propertyListeners[property])) {
+          this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
         }
+      }
 
-        if (this.isInitialized) {
-          if (this.acRuntimeInstance.acOnChange) {
-            this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
-          }
+      if (this.isInitialized) {
+        if (this.acRuntimeInstance.acOnChange) {
+          this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
         }
-        if (this.isInitialized && this.changeMethodCallbacks[property]) {
-          for (const callback of this.changeMethodCallbacks[property]) {
-            callback({ key: path || key, oldValue, newValue });
-          }
+      }
+      if (this.isInitialized && this.changeMethodCallbacks[property]) {
+        for (const callback of this.changeMethodCallbacks[property]) {
+          callback({ key: path || key, oldValue, newValue });
         }
+      }
     }
   }
 
@@ -165,6 +165,32 @@ export class AcRuntimeElement extends HTMLElement {
     function isPlainObject(obj: any): boolean {
       if (obj === null || typeof obj !== 'object') return false;
       return Object.getPrototypeOf(obj) === Object.prototype;
+    }
+
+    function getValueAtPath(obj: any, path: string[]): any {
+      let current = obj;
+      for (const key of path) {
+        if (current === null || current === undefined) return undefined;
+        current = current[key];
+      }
+      return current;
+    }
+
+    function isPathReactive(path: string[]): boolean {
+      if (path.length === 0) return true;
+
+      const isNumeric = (seg: string) => /^\d+$/.test(seg);
+      const firstNumericIdx = path.findIndex(isNumeric);
+
+      if (firstNumericIdx !== -1) {
+        const arrayPath = path.slice(0, firstNumericIdx);
+        return isPathReactive(arrayPath);
+      }
+
+      const pathStr = path.join('.');
+      return object.propertyToListenForChanges.some(prop =>
+        prop === pathStr || prop.startsWith(pathStr + '.')
+      );
     }
 
     function wrap<U extends object>(target: U, path: string[] = [], rootKey?: string): U {
@@ -199,7 +225,10 @@ export class AcRuntimeElement extends HTMLElement {
                 const startIndex = obj.length;
                 const wrappedItems = items.map((item, i) => {
                   if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
-                    return wrap(item, [...path, String(startIndex + i)], arrayRootKey);
+                    const itemPath = [...path, String(startIndex + i)];
+                    if (isPathReactive(itemPath)) {
+                      return wrap(item, itemPath, arrayRootKey);
+                    }
                   }
                   return item;
                 });
@@ -251,7 +280,10 @@ export class AcRuntimeElement extends HTMLElement {
               case 'unshift': return (...items: any[]) => {
                 const wrappedItems = items.map((item, i) => {
                   if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
-                    return wrap(item, [...path, String(i)], arrayRootKey);
+                    const itemPath = [...path, String(i)];
+                    if (isPathReactive(itemPath)) {
+                      return wrap(item, itemPath, arrayRootKey);
+                    }
                   }
                   return item;
                 });
@@ -304,7 +336,10 @@ export class AcRuntimeElement extends HTMLElement {
                 const actualDeleteCount = deleteCount === undefined ? len - actualStart : Math.max(0, Math.min(deleteCount, len - actualStart));
                 const wrappedItems = items.map((item, i) => {
                   if (item && typeof item === 'object' && (isPlainObject(item) || Array.isArray(item))) {
-                    return wrap(item, [...path, String(actualStart + i)], arrayRootKey);
+                    const itemPath = [...path, String(actualStart + i)];
+                    if (isPathReactive(itemPath)) {
+                      return wrap(item, itemPath, arrayRootKey);
+                    }
                   }
                   return item;
                 });
@@ -362,7 +397,9 @@ export class AcRuntimeElement extends HTMLElement {
                 const snapshot = [...obj];
                 let fillValue = value;
                 if (fillValue && typeof fillValue === 'object' && (isPlainObject(fillValue) || Array.isArray(fillValue))) {
-                  fillValue = wrap(fillValue, path, arrayRootKey);
+                  if (isPathReactive(path)) {
+                    fillValue = wrap(fillValue, path, arrayRootKey);
+                  }
                 }
                 arrayMutating = true;
                 Array.prototype.fill.call(obj, fillValue, start, end);
@@ -442,7 +479,10 @@ export class AcRuntimeElement extends HTMLElement {
           }
 
           if (typeof value === 'object' && value !== null && (isPlainObject(value) || Array.isArray(value))) {
-            return wrap(value, [...path, String(prop)]);
+            const nextPath = [...path, String(prop)];
+            if (isPathReactive(nextPath)) {
+              return wrap(value, nextPath);
+            }
           }
 
           return value;
@@ -470,8 +510,11 @@ export class AcRuntimeElement extends HTMLElement {
             ? (isPlainObject(value.__rawTarget__) || Array.isArray(value.__rawTarget__) ? value.__rawTarget__ : value)
             : value;
 
+          const nextPath = [...path, key];
           if (cleanValue && typeof cleanValue === 'object' && (isPlainObject(cleanValue) || Array.isArray(cleanValue))) {
-            cleanValue = wrap(cleanValue, [...path, key], rootKey ?? key);
+            if (isPathReactive(nextPath)) {
+              cleanValue = wrap(cleanValue, nextPath, rootKey ?? key);
+            }
           }
 
           let prototype = obj;
@@ -600,9 +643,12 @@ export class AcRuntimeElement extends HTMLElement {
           const key = String(prop);
           const oldValue = (obj as any)[key];
           let value = descriptor.value;
+          const nextPath = [...path, key];
           if (value && typeof value === 'object' && (isPlainObject(value) || Array.isArray(value))) {
-            value = wrap(value, [...path, key], rootKey ?? key);
-            descriptor = { ...descriptor, value };
+            if (isPathReactive(nextPath)) {
+              value = wrap(value, nextPath, rootKey ?? key);
+              descriptor = { ...descriptor, value };
+            }
           }
           const result = Reflect.defineProperty(obj, prop, descriptor);
           if (result) {
@@ -644,9 +690,11 @@ export class AcRuntimeElement extends HTMLElement {
     // Force make all properties reactive when instance is created
     for (const key of Reflect.ownKeys(instance)) {
       if (typeof key === 'string') {
-        const val = instance[key];
-        if (val && typeof val === 'object' && (isPlainObject(val) || Array.isArray(val))) {
-          instance[key] = wrap(val, [key], key);
+        if (isPathReactive([key])) {
+          const val = instance[key];
+          if (val && typeof val === 'object' && (isPlainObject(val) || Array.isArray(val))) {
+            instance[key] = wrap(val, [key], key);
+          }
         }
       }
     }
@@ -661,6 +709,7 @@ export class AcRuntimeElement extends HTMLElement {
     // access on the raw instance auto-wraps values and fires change notifications.
     for (const key of Reflect.ownKeys(instance)) {
       if (typeof key !== 'string') continue;
+      if (!isPathReactive([key])) continue;
       const desc = Object.getOwnPropertyDescriptor(instance, key);
       // Skip existing accessors (e.g. `get record()` / `set record()`)
       if (!desc || desc.get || desc.set) continue;
@@ -675,7 +724,9 @@ export class AcRuntimeElement extends HTMLElement {
             if (storedValue && typeof storedValue === 'object'
               && (isPlainObject(storedValue) || Array.isArray(storedValue))
               && !(storedValue as any)[IS_REACTIVE]) {
-              storedValue = wrap(storedValue, [key], key);
+              if (isPathReactive([key])) {
+                storedValue = wrap(storedValue, [key], key);
+              }
             }
             return storedValue;
           },
@@ -687,7 +738,9 @@ export class AcRuntimeElement extends HTMLElement {
               : newVal;
             // Wrap plain objects/arrays
             if (cleanVal && typeof cleanVal === 'object' && (isPlainObject(cleanVal) || Array.isArray(cleanVal))) {
-              cleanVal = wrap(cleanVal, [key], key);
+              if (isPathReactive([key])) {
+                cleanVal = wrap(cleanVal, [key], key);
+              }
             }
             if (oldValue == cleanVal) return;
             storedValue = cleanVal;
@@ -777,17 +830,17 @@ export class AcRuntimeElement extends HTMLElement {
     }
   }
 
-  subscribeArrayPropertyChangeListeners({ bindingId,property, callback }: { bindingId:string,property: string, callback: (args: any) => void }): void {
+  subscribeArrayPropertyChangeListeners({ bindingId, property, callback }: { bindingId: string, property: string, callback: (args: any) => void }): void {
     // console.log(`[AcRuntimeElement <${this.elementId}>] subscribeArrayPropertyChangeListeners: property=${property}`);
-    if(this.arrayPropertyChangeListeners[property] == undefined){
+    if (this.arrayPropertyChangeListeners[property] == undefined) {
       this.arrayPropertyChangeListeners[property] = {};
     }
     this.arrayPropertyChangeListeners[property][bindingId] = callback;
   }
 
-  unsubscribeArrayPropertyChangeListeners({ property,bindingId }: { property: string,bindingId:string}): void {
+  unsubscribeArrayPropertyChangeListeners({ property, bindingId }: { property: string, bindingId: string }): void {
     // console.log(`[AcRuntimeElement <${this.elementId}>] unsubscribeArrayPropertyChangeListeners: property=${property}`);
-    if(this.arrayPropertyChangeListeners[property] != undefined){
+    if (this.arrayPropertyChangeListeners[property] != undefined) {
       delete this.arrayPropertyChangeListeners[property][bindingId];
     }
   }

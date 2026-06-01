@@ -203,16 +203,18 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       `;
       for(const changeDetails of templateResult.subscribeChanges){
         code += `this.registerChangeSubscriptionMethodCallback({callback:async ({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any})=>{
-          this.renderer.evaluateExpression({expression:\`${changeDetails.methodName}({key,oldValue,newValue})\`,locals:{key,oldValue,newValue}});
+          this.elementRenderer.evaluateExpression({expression:\`${changeDetails.methodName}({key,oldValue,newValue})\`,locals:{key,oldValue,newValue}});
         },keys:${JSON.stringify(changeDetails.keys)}});\n`;
       }
       code += `
       ${acGenerateBindingCallbacks({bindings:templateResult.bindings}).join("\n")};
-
     }
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
+
+
+
 })();`;
 return code;
 }
