@@ -69,7 +69,7 @@ export class AcRuntimeElement extends HTMLElement {
     this.render().then(() => {
       this.notifyElementInit();
     });
-    console.dir(this);
+    // console.dir(this);
   }
 
   protected async render(): Promise<void> {
@@ -107,6 +107,7 @@ export class AcRuntimeElement extends HTMLElement {
           this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type,target,path, index, fullPath });
         }
       }
+      // Trigger property change notifications for the array itself and the array's length property
     }
   }
 
@@ -214,6 +215,13 @@ export class AcRuntimeElement extends HTMLElement {
                   oldValue: undefined,
                   newValue: { index: startIndex, items: wrappedItems }
                 });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
+                  newValue: undefined
+                });
                 return result;
               };
 
@@ -229,6 +237,13 @@ export class AcRuntimeElement extends HTMLElement {
                   key: prop,
                   path: arrayPath,
                   oldValue: { index: removedIndex, items: [removed] },
+                  newValue: undefined
+                });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
                   newValue: undefined
                 });
                 return removed;
@@ -251,6 +266,13 @@ export class AcRuntimeElement extends HTMLElement {
                   oldValue: undefined,
                   newValue: { index: 0, items: wrappedItems }
                 });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
+                  newValue: undefined
+                });
                 return result;
               };
 
@@ -265,6 +287,13 @@ export class AcRuntimeElement extends HTMLElement {
                   key: prop,
                   path: arrayPath,
                   oldValue: { index: 0, items: [removed] },
+                  newValue: undefined
+                });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
                   newValue: undefined
                 });
                 return removed;
@@ -289,6 +318,13 @@ export class AcRuntimeElement extends HTMLElement {
                   path: arrayPath,
                   oldValue: { index: actualStart, items: removed },
                   newValue: { index: actualStart, items: wrappedItems }
+                });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
+                  newValue: undefined
                 });
                 return removed;
               };
@@ -339,6 +375,13 @@ export class AcRuntimeElement extends HTMLElement {
                   oldValue: snapshot,
                   newValue: [...obj]
                 });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
+                  newValue: undefined
+                });
                 return receiver;
               };
 
@@ -353,6 +396,13 @@ export class AcRuntimeElement extends HTMLElement {
                   path: arrayPath,
                   oldValue: snapshot,
                   newValue: [...obj]
+                });
+                object.handlePropertyChange({
+                  key: 'length',
+                  path: `${arrayPath}.length`,
+                  type: 'set',
+                  oldValue: undefined,
+                  newValue: undefined
                 });
                 return receiver;
               };

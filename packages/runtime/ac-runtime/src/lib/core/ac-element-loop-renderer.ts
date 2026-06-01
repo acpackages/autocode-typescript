@@ -73,27 +73,27 @@ export class AcElementLoopRenderer extends AcElementRenderer {
     this.bindingId = bindingId;
 
     this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
-    console.log(items, this);
+    // console.log(items, this);
     this.appendArrayItems({ items });
     this.rootElement.subscribeArrayPropertyChangeListeners({
       bindingId: this.bindingId, property: this.expression, callback: (args: any) => {
-        console.log(`[AcElementLoopRenderer] Array changes`, args);
+        // console.log(`[AcElementLoopRenderer] Array changes`, args);
         if (args.type === 'arrayInsert') {
           const { index, items } = args.newValue;
-          console.log(`[AcElementLoopRenderer] Inserting ${items.length} items at index ${index}`);
+          // console.log(`[AcElementLoopRenderer] Inserting ${items.length} items at index ${index}`);
           this.appendArrayItems({ items, index });
         }
         else if (args.type === 'arrayReplace') {
-          console.log(`[AcElementLoopRenderer] Replacing items`, args);
+          // console.log(`[AcElementLoopRenderer] Replacing items`, args);
           this.refresh({ items: args.newValue });
         }
         else if (args.type === 'arrayDelete') {
           const { index, items } = args.oldValue;
-          console.log(`[AcElementLoopRenderer] Deleting ${items.length} items at index ${index}`);
+          // console.log(`[AcElementLoopRenderer] Deleting ${items.length} items at index ${index}`);
           this.removeArrayItems({ items, index });
         }
         else if (args.type === 'arrayUpdate') {
-          console.log(`[AcElementLoopRenderer] Updating item`, args);
+          // console.log(`[AcElementLoopRenderer] Updating item`, args);
           let targetIndex = args.index;
           let newItem = undefined;
           if (args.newValue && typeof args.newValue === 'object' && 'items' in args.newValue && 'index' in args.newValue) {
@@ -119,24 +119,24 @@ export class AcElementLoopRenderer extends AcElementRenderer {
           }
         }
         else if (args.type === 'arraySplice') {
-          console.log(`[AcElementLoopRenderer] Splicing items`, args);
+          // console.log(`[AcElementLoopRenderer] Splicing items`, args);
           this.removeArrayItems({ items: args.oldValue.items, index: args.oldValue.index });
           this.appendArrayItems({ items: args.newValue.items, index: args.newValue.index });
         }
         else if (args.type === 'arraySort') {
-          console.log(`[AcElementLoopRenderer] Sorting items`, args);
+          // console.log(`[AcElementLoopRenderer] Sorting items`, args);
           this.refresh({ items: args.newValue });
         }
         else if (args.type === 'arrayReverse') {
-          console.log(`[AcElementLoopRenderer] Reversing items`, args);
+          // console.log(`[AcElementLoopRenderer] Reversing items`, args);
           this.refresh({ items: args.newValue });
         }
         else if (args.type === 'arrayFill') {
-          console.log(`[AcElementLoopRenderer] Filling items`, args);
+          // console.log(`[AcElementLoopRenderer] Filling items`, args);
           this.refresh({ items: args.newValue });
         }
         else if (args.type === 'arrayCopyWithin') {
-          console.log(`[AcElementLoopRenderer] CopyWithin items`, args);
+          // console.log(`[AcElementLoopRenderer] CopyWithin items`, args);
           this.refresh({ items: args.newValue });
         }
       }
@@ -152,7 +152,7 @@ export class AcElementLoopRenderer extends AcElementRenderer {
 
   removeArrayItems({ items, index = 0 }: { items: any[], index?: number }) {
     const startIdx = Number(index);
-    console.log(`[AcElementLoopRenderer] removeArrayItems: index=${index} (cast to ${startIdx}), deleteCount=${items.length}, loopItemRendererMap=`, { ...this.loopItemRendererMap });
+    // console.log(`[AcElementLoopRenderer] removeArrayItems: index=${index} (cast to ${startIdx}), deleteCount=${items.length}, loopItemRendererMap=`, { ...this.loopItemRendererMap });
     const deleteCount = items.length;
     const keysToDelete: string[] = [];
     for (let i = 0; i < deleteCount; i++) {
@@ -160,7 +160,7 @@ export class AcElementLoopRenderer extends AcElementRenderer {
       const key = Object.keys(this.loopItemRendererMap).find(
         k => this.loopItemRendererMap[k] === targetIdx
       );
-      console.log(`[AcElementLoopRenderer] targetIdx=${targetIdx}, foundKey=${key}`);
+      // console.log(`[AcElementLoopRenderer] targetIdx=${targetIdx}, foundKey=${key}`);
       if (key) {
         keysToDelete.push(key);
       }

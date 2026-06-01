@@ -368,13 +368,31 @@ export function acRuntimePlugin(): Plugin {
         },
         configureServer(server) {
             server.watcher.on('change', async (file) => {
-                if (file.endsWith('.ts') && !file.includes('.ac-runtime-cache') && !file.includes('node_modules')) {
+                const normalizedFile = normalizePath(file);
+                if (normalizedFile.includes('.ac-runtime-cache') || normalizedFile.includes('node_modules')) {
+                    return;
+                }
+
+                if (file.endsWith('.ts')) {
                     console.log(`[AC Compiler] File changed, re-compiling: ${path.basename(file)}`);
                     try {
                         const code = fs.readFileSync(file, 'utf8');
                         await doTransform(code, file, true);
                     } catch (err) {
                         console.error(`[AC Compiler] Error reading changed file: ${path.basename(file)}`, err);
+                    }
+                    server.ws.send({ type: 'full-reload' });
+                } else if (file.endsWith('.html') || file.endsWith('.css')) {
+                    console.log(`[AC Compiler] Asset changed, reloading: ${path.basename(file)}`);
+                    const tsFile = file.replace(/\.(html|css)$/, '.ts');
+                    if (fs.existsSync(tsFile)) {
+                        console.log(`[AC Compiler] Re-compiling component owner: ${path.basename(tsFile)}`);
+                        try {
+                            const code = fs.readFileSync(tsFile, 'utf8');
+                            await doTransform(code, tsFile, true);
+                        } catch (err) {
+                            console.error(`[AC Compiler] Error re-compiling component owner: ${path.basename(tsFile)}`, err);
+                        }
                     }
                     server.ws.send({ type: 'full-reload' });
                 }

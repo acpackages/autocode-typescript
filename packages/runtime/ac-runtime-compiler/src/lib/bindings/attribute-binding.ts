@@ -43,6 +43,35 @@ export function acGenerateAttributeBinding({ binding }: {
   binding: Binding
 }
 ): string {
+  const BOOLEAN_HTML_ATTRIBUTES:string[] = [
+  'allowfullscreen',
+  'async',
+  'autofocus',
+  'autoplay',
+  'checked',
+  'controls',
+  'default',
+  'defer',
+  'disabled',
+  'formnovalidate',
+  'hidden',
+  'inert',
+  'ismap',
+  'itemscope',
+  'loop',
+  'multiple',
+  'muted',
+  'nomodule',
+  'novalidate',
+  'open',
+  'playsinline',
+  'readonly',
+  'required',
+  'reversed',
+  'selected',
+  'typemustmatch',
+  'webkitdirectory',
+] as const;
   let code = `this.registerChangeListenerDefinition({targetId:'${binding.targetId}',bindingId:'${binding.bindingId}',definition:{
     binding:{expression:\`${binding.expression}\`,type:'attribute'},
     callback:async ({oldValue,newValue,renderer}:{oldValue:any,newValue:any,renderer:AcElementRenderer})=>{
@@ -56,6 +85,16 @@ export function acGenerateAttributeBinding({ binding }: {
         else{`;
           if(binding.target.toLowerCase() == 'innerhtml'){
             code += `el.innerHTML = newValue;`
+          }
+          else if(BOOLEAN_HTML_ATTRIBUTES.includes(binding.target.toLowerCase())){
+            code += `
+            if(newValue){
+              el.setAttribute('${binding.target}',newValue);
+            }
+            else{
+              el.removeAttribute('${binding.target}');
+            }
+            `;
           }
           else{
             code += `
