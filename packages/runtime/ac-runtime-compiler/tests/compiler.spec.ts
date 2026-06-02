@@ -90,10 +90,10 @@ describe('ComponentCompiler', () => {
     const results = compiler.compile(source);
     // Should produce a comment placeholder for ac:if
     expect(results[0].code).toContain('<!--ac-if-');
-    // Should use findComment to locate the placeholder
-    expect(results[0].code).toContain('findComment(');
-    // Should check the condition
-    expect(results[0].code).toContain('const condition = this.show');
+    // Should use removeNodesBetweenComments to clear structural block elements
+    expect(results[0].code).toContain('removeNodesBetweenComments(');
+    // Should check the condition on the context
+    expect(results[0].code).toContain('const newValue = ctx.show');
     // Should show reactive signal for 'show'
     expect(results[0].code).toContain("Object.defineProperty(this, 'show'");
   });
@@ -304,10 +304,10 @@ describe('ComponentCompiler', () => {
     const results = compiler.compile(source);
     // Should produce a comment placeholder for ac:for
     expect(results[0].code).toContain('<!--ac-for-');
-    // Should use findComment to locate placeholder
-    expect(results[0].code).toContain('findComment(');
-    // Should iterate the list
-    expect(results[0].code).toContain('const list = (this.items as any[]) || []');
+    // Should use initLoop to instantiate loop items
+    expect(results[0].code).toContain('initLoop(');
+    // Should define the child renderer class
+    expect(results[0].code).toContain('childRendererClass: $$$TestFor$ForItem$');
     // 'items' should be reactive
     expect(results[0].code).toContain("Object.defineProperty(this, 'items'");
   });
@@ -742,6 +742,137 @@ describe('TemplateCompiler - reactiveProperties map', () => {
 
     expect(templateBinding?.ownedElementIds).toContain(templateSpanId);
     expect(templateBinding?.ownedElementIds).not.toContain(divId);
+  });
+});
+
+describe('Compile-time event/model/pipe migration', () => {
+  const compiler = new ComponentCompiler();
+
+  it('should compile event handlers to direct code instead of evaluateExpression', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-event-compiled',
+        template: '<button (click)="handleClick($event)">Click</button>'
+      })
+      export class TestEventCompiled {
+        handleClick(e: any) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression for event handlers
+    expect(results[0].code).not.toContain('this.evaluateExpression');
+    // Should generate direct compiled code with ctx reference
+    expect(results[0].code).toContain('ctx.handleClick($event)');
+    // Should still set up event listener
+    expect(results[0].code).toContain("addEventListener('click'");
+    // Should extract $event from AcRuntimeElementEvent or use native event
+    expect(results[0].code).toContain('AcRuntimeElementEvent');
+  });
+
+  it('should compile model bindings to direct assignment instead of evaluateExpression', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-model-compiled',
+        template: '<input ac:model="username" />'
+      })
+      export class TestModelCompiled {
+        username = '';
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression for model write-back
+    expect(results[0].code).not.toContain('this.evaluateExpression');
+    // Should generate direct assignment
+    expect(results[0].code).toContain('ctx.username = el.value');
+    // Should set up both input and change listeners
+    expect(results[0].code).toContain("addEventListener('input'");
+    expect(results[0].code).toContain("addEventListener('change'");
+  });
+
+  it('should compile pipe expressions at build time instead of deferring to runtime', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-pipe-compiled',
+        template: '<div>{{amount | currency}}</div>'
+      })
+      export class TestPipeCompiled {
+        amount = 100;
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression for pipe evaluation
+    expect(results[0].code).not.toContain('this.evaluateExpression');
+    // Should have compiled the pipe to evaluateAcPipeExpression call
+    expect(results[0].code).toContain('evaluateAcPipeExpression');
+    expect(results[0].code).toContain("'currency'");
+  });
+
+  it('should compile chained pipe expressions at build time', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-chained-pipe',
+        template: '<div>{{amount | currency | uppercase}}</div>'
+      })
+      export class TestChainedPipe {
+        amount = 100;
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression
+    expect(results[0].code).not.toContain('this.evaluateExpression');
+    // Should have nested evaluateAcPipeExpression calls for chained pipes
+    expect(results[0].code).toContain("evaluateAcPipeExpression(evaluateAcPipeExpression(");
+  });
+
+  it('should compile event handler with complex expression to direct code', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-complex-event',
+        template: '<div (click)="count = count + 1">Increment</div>'
+      })
+      export class TestComplexEvent {
+        count = 0;
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression
+    expect(results[0].code).not.toContain('this.evaluateExpression');
+    // Should generate direct assignment with prefixed identifiers
+    expect(results[0].code).toContain('ctx.count = ctx.count + 1');
+  });
+
+  it('should compile @AcSubscribeChange to direct method call instead of evaluateExpression', () => {
+    const source = `
+      import { AcSubscribeChange } from './decorators';
+
+      @AcElement({
+        selector: 'test-subscribe',
+        template: '<div>{{name}}</div>'
+      })
+      export class TestSubscribe {
+        name = '';
+
+        @AcSubscribeChange('name')
+        onNameChange(args: any) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // Should NOT use evaluateExpression for subscribe change callbacks
+    expect(results[0].code).not.toContain('evaluateExpression');
+    // Should generate direct method call on acRuntimeInstance
+    expect(results[0].code).toContain('this.acRuntimeInstance.onNameChange(');
   });
 });
 

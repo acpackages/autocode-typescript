@@ -617,8 +617,9 @@ export class TemplateCompiler {
       childBindings: subResult.bindings,
       properties,
       rootIds: [],
-      ownedElementIds: subResult.ownedElementIds || []
-
+      item: {
+        ownedElementIds: subResult.ownedElementIds || []
+      }
     });
 
     this.addReactiveProperties({
@@ -706,6 +707,7 @@ export class TemplateCompiler {
       childBindings: subResult.bindings,
       properties,
       rootIds: [],
+      ownedElementIds: subResult.ownedElementIds || []
     });
 
     this.addReactiveProperties({

@@ -1,8 +1,8 @@
 # AC Runtime Compiler: Comprehensive Execution and Logic Flow Guide
 
-The `@autocode-ts/ac-runtime-compiler` is a high-performance, build-time compilation engine. It transforms declarative, `@AcElement`-decorated TypeScript source files into native, self-contained Web Components. By moving the template parsing, AST transformation, expression prefixing, and binding configuration to build time, the runtime overhead is reduced to zero-overhead signal-based reactivity.
+The `@autocode-ts/ac-runtime-compiler` is a high-performance, build-time compilation engine. It transforms declarative, `@AcElement`-decorated TypeScript source files into native, self-contained Web Components. By moving the template parsing, AST transformation, expression prefixing, and binding code generation to build time, the runtime overhead is reduced to Proxy-based change detection and direct DOM updates.
 
-This document describes the compiler's modular pipeline, its internal orchestration logic, and how compiler-generated code interacts with DOM elements and reactive signals at runtime.
+This document describes the compiler's modular pipeline, its internal orchestration logic, and how compiler-generated code interacts with `AcElementRenderer` subclasses and `AcRuntimeElement` wrappers at runtime.
 
 ---
 
@@ -13,9 +13,9 @@ At a high level, the compiler processes input source files and outputs valid Typ
 ```
 ┌─────────────────────────┐      Build-Time Compilation      ┌─────────────────────────────────┐
 │  TypeScript Source file │ ───────────────────────────────> │ Scoped IIFE Native Web Element  │
-│  - @AcElement Component │                                  │ - Scoped Signal System          │
-│  - Reactive Properties  │                                  │ - Signal-Backed Properties      │
-│  - HTML Template Syntax │                                  │ - Direct-DOM-Update Effects     │
+│  - @AcElement Component │                                  │ - AcElementRenderer Subclasses  │
+│  - Reactive Properties  │                                  │ - Proxy-Backed Properties       │
+│  - HTML Template Syntax │                                  │ - Direct-DOM-Update Listeners   │
 └─────────────────────────┘                                  └─────────────────────────────────┘
 ```
 
@@ -164,24 +164,21 @@ Back inside the component compiler, the component class body is analyzed using T
 
 ### Phase 5: Code Generation & IIFE Assembly
 The final phase assembly is handled by the [code-generator](file:///f:/Packages/AutoCode/Github/autocode-typescript/packages/runtime/ac-runtime-compiler/src/lib/code-generator.ts):
-1. **Property Initializers**: Generates field assignments to represent the original class properties.
-2. **Outputs & ViewChildren**:
-   - Event Emitter wrappers are generated for `@AcOutput()` fields to dispatch standard DOM custom events with bubble propagation.
-   - High-performance getters are defined for `@AcViewChild()` properties using `Object.defineProperty` and direct `querySelector('[ac-ref="ac-xxx"]')` calls.
-3. **Signal Generation**:
-   - For every reactive property, the compiler generates a local signal inside the IIFE scope (`const [myPropSig, setMyPropSig] = createSignal(initialValue)`).
-   - It re-defines the class property with a getter and setter using `Object.defineProperty`.
-   - The **getter** retrieves its value from the signal (registering an active reactivity effect).
-   - The **setter** updates the signal (triggering reactive re-renders) and calls the lifecycles `acOnChange` / `acOnPropertyChange`.
-4. **Binding Generation**:
-   - Dispatches each compiled binding descriptor to its specialized code generator under the [bindings/](file:///f:/Packages/AutoCode/Github/autocode-typescript/packages/runtime/ac-runtime-compiler/src/lib/bindings) module.
-   - Generated code for simple bindings (like text, styles, classes, and properties) is wrapped in a `createEffect(() => { ... })` function block.
-5. **HTMLElement Wrapper Assembly**:
-   - Generates a wrapper class extending `HTMLElement`.
-   - Maps observed attributes to component properties.
-   - Implements `connectedCallback()` which inserts the static HTML into the DOM, inserts scoped CSS, executes the `render()` method to trigger effects, and calls the `acOnInit` hook.
-   - Implements `disconnectedCallback()` which cleans up all reactivity effects, removes style tags when reference count is zero, and calls `acOnDestroy`.
-6. **Reassembly**: The imports, pre-component statements, IIFE wrapper, class wrapper, custom element registration `customElements.define(...)`, and trailing code are joined into the final output.
+1. **Renderer Subclass Generation**: For each block scope (root, `ac:if`, `ac:for`), generates a class extending `AcElementRenderer` with:
+   - `createNodes()`: Creates DOM nodes from a statically cached `DocumentFragment` (`templateFragment`), caches element references via `querySelector('[ac-ref="..."]')`, and registers compiled event listeners.
+   - `executeChangeListener()`: Contains the compiled change detection logic. For each binding, evaluates the expression using the component context (`ctx`), compares with cached values, and updates the DOM directly.
+2. **Event & Model Compilation**: Event handlers and model write-backs are compiled to **direct code** at build time:
+   - Event: `ctx.handleClick($event)` — no runtime eval
+   - Model: `ctx.name = el.value` — no runtime eval
+   - Pipes: `__acPipe(ctx.amount, 'currency')` — transformed at compile time
+3. **HTMLElement Wrapper Assembly**:
+   - Generates a wrapper class extending `AcRuntimeElement`.
+   - Instantiates the user's component class and wraps it with `makeReactive()` (Proxy-based deep change tracking).
+   - Wires up `elementRenderer` (root `AcElementRenderer` subclass), `propertyListeners` (compile-time binding map), and `propertyToListenForChanges`.
+   - Maps observed attributes to `@AcInput()` component properties.
+   - Implements `connectedCallback()` which inserts scoped CSS with reference counting.
+   - Implements `disconnectedCallback()` which removes scoped CSS when reference count drops to zero.
+4. **Reassembly**: The imports (including `AcRuntimeElement`, `AcElementRenderer`, `AcRuntimeElementEvent`, `__acPipe`), pre-component statements, IIFE wrapper, custom element registration `customElements.define(...)`, and trailing code are joined into the final output.
 
 ---
 
@@ -201,13 +198,13 @@ To understand how build-time compilation relates directly to runtime DOM and sta
 
 Here is the exact structural conversion that takes place between compilation and execution:
 
-| Compiler (Build-Time Analysis) | Compiled Output HTML / JS Code | Runtime Behavior (DOM & Signal Mechanics) |
+| Compiler (Build-Time Analysis) | Compiled Output (Renderer Subclass Code) | Runtime Behavior (Proxy & DOM) |
 | :--- | :--- | :--- |
-| **Static HTML & Ref Generation** | `<div ac-ref="ac-e10f" ...><span ac-ref="ac-a22b"></span><button ac-ref="ac-b88c">Increment</button></div>` | A single string allocation sets the element's `innerHTML`. Element references are resolved once via fast `querySelector` calls. |
-| **`[class.active]="isActive"`** | `createEffect(() => {`<br/>`  if (el) el.classList.toggle('active', !!this.isActive);`<br/>`});` | The property getter `this.isActive` is read. Because `activeEffect` is currently running, the effect callback is added to `isActiveSig`'s subscriber Set. When `isActive` changes, the effect is called, instantly modifying classList. |
-| **`(click)="toggleActive()"`** | `el?.addEventListener('click', ($event: any) => {`<br/>`  this.toggleActive();`<br/>`});` | An event listener is attached to the element during mounting. Clicking the div directly calls the method on the class instance. This is **not** wrapped in `createEffect` because events are static attachments. |
-| **`{{count}}` (Text Interpolation)** | `createEffect(() => {`<br/>`  if (el) el.textContent = String(this.count ?? '');`<br/>`});` | A dependency is registered on the `count` signal. Changing `this.count` modifies the underlying signal, immediately flushing the new text value directly into the DOM node's `textContent`. |
-| **`[disabled]="count >= 10"`** | `createEffect(() => {`<br/>`  if (el) el.disabled = this.count >= 10;`<br/>`});` | Tracks the `count` signal dependency. The boolean value `this.count >= 10` is calculated reactively and assigned straight to the button's DOM property. |
+| **Static HTML & Ref Generation** | `template.innerHTML = \`<div ac-ref="e10f">...</div>\``<br/>`this.el$e10f = fragment.querySelector('[ac-ref="e10f"]')` | Static HTML is set once into a cached `DocumentFragment`. Element references are resolved via `querySelector` during `createNodes()` and cached as instance properties. |
+| **`[class.active]="isActive"`** | `const newValue = ctx.isActive;`<br/>`el.classList.add/remove('active')` | Inside `executeChangeListener()`, the expression is evaluated against the Proxy-wrapped component instance. The Proxy's `set` trap triggers `executeChangeListener` whenever `isActive` changes. |
+| **`(click)="toggleActive()"`** | `el.addEventListener('click', (event) => {`<br/>`  const ctx = this.rootElement.acRuntimeInstance;`<br/>`  ctx.toggleActive();`<br/>`});` | An event listener is attached during `createNodes()`. Clicking the element directly calls the compiled method on the component instance. No runtime eval — fully compiled at build time. |
+| **`{{count}}` (Text Interpolation)** | `const newValue = ctx.count;`<br/>`el.textContent = String(newValue);` | The Proxy's `set` trap on `count` triggers `executeChangeListener` which compares cached vs. new values and updates `textContent` only when changed. |
+| **`[disabled]="count >= 10"`** | `const newValue = ctx.count >= 10;`<br/>`el['disabled'] = newValue;` | Same Proxy-driven mechanism. The compiled expression `ctx.count >= 10` is evaluated directly (no `new Function`). |
 
 ---
 
@@ -216,21 +213,23 @@ Here is the exact structural conversion that takes place between compilation and
 Let's look at the generated runtime patterns for some of the most critical structural and complex directive bindings.
 
 ### A. Two-way Data Binding (`ac:model`)
-The [generateModelBinding](file:///f:/Packages/AutoCode/Github/autocode-typescript/packages/runtime/ac-runtime-compiler/src/lib/bindings/model-binding.ts) maps two-way data flows.
-* **Data-to-DOM Flow**: An effect keeps the element's property (`value` or `checked`) in sync with the signal.
-* **DOM-to-Data Flow**: An event listener (`input` or `change`) updates the signal when the user types or toggles the input.
-* **Deep Path Resolution**: If the expression contains a deep path (e.g., `invoice.item.quantity`), updates trigger a root re-assignment (`this.invoice = this.invoice`) to force the root signal to trigger change notifications.
+The code generator compiles `ac:model` into two-way data flows:
+* **Data-to-DOM Flow**: Inside `executeChangeListener()`, the element's `value` property is set from the component property.
+* **DOM-to-Data Flow**: During `createNodes()`, event listeners for `input` and `change` are attached. These write back to the component property using **direct compiled code** (no `evaluateExpression`).
 
 ```typescript
 // Compiled ac:model="quantity" on an input field:
-(() => {
-  const el = this.element.querySelector('[ac-ref="ac-m101"]') as any;
-  if (!el) return;
-  // Data -> DOM
-  createEffect(() => { el.value = this.quantity; });
-  // DOM -> Data
-  el.addEventListener('input', ($event: any) => { this.quantity = el.value; });
-})();
+
+// In executeChangeListener():
+const newValue = ctx.quantity;
+if (this.el$m101) (this.el$m101 as any).value = newValue;
+
+// In createNodes():
+const ctx = this.rootElement.acRuntimeInstance;
+const el = this.el$m101 as any;
+const __modelUpdate = () => { ctx.quantity = el.value; };
+el.addEventListener('input', __modelUpdate);
+el.addEventListener('change', __modelUpdate);
 ```
 
 ---
@@ -340,8 +339,12 @@ Instead of wiping the entire DOM list clean and re-rendering on every list chang
 The compiler is specifically tuned to generate runtime code that has exceptionally low memory allocation overhead, and avoids common memory leak vectors in single-page applications:
 
 > [!TIP]
-> **Static HTML Hydration**
-> Components do not possess complex DOM diffing libraries. Instead, the raw string is mapped to `element.innerHTML` in one atomic operation, after which bindings bind directly to the native elements by ID reference.
+> **Static Template Fragment Caching**
+> Each renderer subclass caches a static `DocumentFragment` (`templateFragment`) created once from the compiled HTML. Subsequent instances clone from this cached fragment via `cloneNode(true)`, avoiding repeated HTML parsing.
+
+> [!TIP]
+> **Compile-Time Expression Evaluation**
+> All expressions (event handlers, model write-backs, pipe transforms) are compiled to direct code at build time. No `new Function` or `eval` is used at runtime, ensuring CSP compliance and eliminating expression parsing overhead.
 
 > [!IMPORTANT]
 > **Double-Callback Scoped Style Reference Counting**
@@ -349,4 +352,4 @@ The compiler is specifically tuned to generate runtime code that has exceptional
 
 > [!WARNING]
 > **Automatic Destruction Hooks**
-> When a custom element is disconnected from the DOM (`disconnectedCallback`), the HTMLElement wrapper calls the component's internal `__destroy()` method which clears all active signal subscriptions (`__signalCleanups`) and tears down effect cycles. This ensures detached DOM fragments are garbage collected immediately.
+> When a custom element is disconnected from the DOM (`disconnectedCallback`), the `AcRuntimeElement` wrapper calls the component's `acOnDestroy()` lifecycle hook and cleans up Proxy subscriptions and child renderers. This ensures detached DOM fragments are garbage collected immediately.

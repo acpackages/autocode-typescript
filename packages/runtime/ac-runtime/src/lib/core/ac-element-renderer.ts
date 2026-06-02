@@ -1,26 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 import { AcRuntimeElement } from './ac-runtime-element';
-import { AcElementLoopRenderer } from './ac-element-loop-renderer';
 export class AcElementRenderer {
   html!: string;
   context: any;
   parentRenderer?: AcElementRenderer;
   rootElement!: AcRuntimeElement;
   private rendererId: string = '';
-  private currentBindingValues: any = {};
+  protected currentBindingValues: any = {};
   private nodes: Node[] = [];
   private startComment?: string;
   private endComment?: string;
   childRenderers: Record<string, AcElementRenderer> = {};
-  loopRenderers: Record<string, AcElementLoopRenderer> = {};
   isRoot?: boolean = false;
   protected targetId?: string = '';
   ownedTargetIds: string[] = [];
+  childRendererClass?: any;
 
-  constructor({ targetId, html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false }: { targetId?: string, html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean }) {
+  // Loop properties
+  private expression: string = '';
+  private indexVar: string = '';
+  private itemVar: string = '';
+  private bindingId: string = '';
+  private loopItemRendererMap: Record<string, number> = {};
+
+  constructor({ targetId, html, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, html: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
     this.rendererId = rootElement.generateHexId();
     this.rootElement = rootElement;
     this.context = context;
@@ -30,6 +33,7 @@ export class AcElementRenderer {
     this.endComment = endComment;
     this.isRoot = isRoot;
     this.targetId = targetId;
+    this.childRendererClass = childRendererClass;
     console.log(this);
   }
 
@@ -61,7 +65,6 @@ export class AcElementRenderer {
       this.assignViewChildrenRefs({ targetIds: childRefs.all })
       this.resolveTemplateOutlets({ targetIds: childRefs.all });
       this.executeChangeListener({ targetIds: childRefs.all, force: true });
-      this.executeEventCallbackRegister({ targetIds: childRefs.all });
     }
   }
 
@@ -91,8 +94,6 @@ export class AcElementRenderer {
       }
       catch (ex) {
         console.error(ex);
-        console.log(targetId, targetIds, this);
-        console.trace();
       }
     };
     if (targetIds) {
@@ -104,20 +105,14 @@ export class AcElementRenderer {
     }
   }
 
-  clearElement({ element }: { element: Element }) {
-    for (let el of Array.from(element.children)) {
-      if (el) {
-        this.clearElement({ element: el });
-        (el as any) = null;
-      }
-    }
-  }
+
 
   createChildRenderer({ targetId, html, startComment, endComment, context, rootElement,ownedTargetIds = [] }: { targetId: string, html: string, startComment?: string, endComment?: string, context: any, rootElement?: AcRuntimeElement,ownedTargetIds?:string[] }) {
     if (rootElement == undefined) {
       rootElement = this.rootElement;
     }
-    const childRenderer = new AcElementRenderer({ targetId, rootElement, context: context, html, startComment, endComment});
+    const RendererClass = this.childRendererClass || AcElementRenderer;
+    const childRenderer = new RendererClass({ targetId, rootElement, context: context, parentRenderer: this, html, startComment, endComment});
     childRenderer.ownedTargetIds = ownedTargetIds;
     this.childRenderers[targetId] = childRenderer;
     childRenderer.render();
@@ -130,30 +125,14 @@ export class AcElementRenderer {
   }
 
   destroy(): void {
-    // console.log(`[AcElementRenderer] destroy`);
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
-    }
-    // Clean up dynamic/loop change listeners registered by this renderer
-    if (this.rootElement && this.rootElement.dynamicPropertyListeners) {
-      for (const property of Object.keys(this.rootElement.dynamicPropertyListeners)) {
-        for (const targetId of Object.keys(this.rootElement.dynamicPropertyListeners[property])) {
-          for (const bindingId of Object.keys(this.rootElement.dynamicPropertyListeners[property][targetId])) {
-            // Unregister if it belongs to this element/sub-renderers
-            if (targetId.startsWith(this.startComment || '') || targetId === this.startComment) {
-
-              this.rootElement.unregisterLoopChangeListener({ targetId, bindingId, property });
-            }
-          }
-        }
-      }
     }
     this.nodes = [];
     this.childRenderers = {};
   }
 
   destroyChildRenderer(targetId: string): void {
-    // console.log(`[AcElementRenderer] destroyChildRenderer: targetId=${targetId}`);
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
       childRenderer.destroy();
@@ -161,53 +140,6 @@ export class AcElementRenderer {
     }
   }
 
-  protected evaluateExpression({
-    expression,
-    locals,
-    isExpressionEval = false,
-  }: {
-    expression: string;
-    locals?: Record<string, any>;
-    isExpressionEval?: boolean;
-  }): any {
-    if (expression.includes('|') && !isExpressionEval) {
-      const context = { ...this.context };
-      return evaluateAcPipeExpression({
-        expression,
-        context,
-        evaluateFunction: ({
-          expression,
-          context,
-        }: {
-          expression: string;
-          context: any;
-        }) => {
-          return this.evaluateExpression({
-            expression,
-            locals,
-            isExpressionEval: true,
-          });
-        },
-      });
-    }
-    const scope = this.getScope(locals);
-    try {
-      const normalizedExpr = this.normalizeExprForScope(expression);
-      const fn = new Function(
-        'scope',
-        'context',
-        `with (context) { with (scope) { return ${normalizedExpr} } }`
-      );
-      const result = fn.call(this.rootElement.acRuntimeInstance, scope, this.rootElement.acRuntimeInstance);
-      // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
-      return result;
-    } catch (e) {
-      console.error(this);
-      console.error(`Error evaluating expression: ${expression} `, e);
-      console.error(scope, this.context);
-      return undefined;
-    }
-  }
 
   async executeChangeListener({
     targetId,
@@ -222,161 +154,10 @@ export class AcElementRenderer {
     bindingIds?: string[];
     force?: boolean;
   }): Promise<void> {
-    const executeListener = async (targetKey: string) => {
-      try {
-        if (this.ownedTargetIds.includes(targetKey)) {
-
-          const targetCallbacks = this.rootElement.changeListeners[targetKey];
-          if (targetCallbacks) {
-            for (const bindingKey of Object.keys(targetCallbacks)) {
-              let continueExecution: boolean = true;
-              if (bindingId != undefined || bindingIds != undefined) {
-                continueExecution = false;
-                if (bindingId) {
-                  continueExecution = bindingKey == bindingId;
-                }
-                else if (bindingIds) {
-                  continueExecution = bindingIds.includes(bindingKey);
-                }
-              }
-              if (continueExecution) {
-                // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
-                // console.dir("[AcRuntimeRenderer] ",this.rootElement);
-                const callbackDef = targetCallbacks[bindingKey];
-                const newValue = await this.evaluateExpression({
-                  expression: callbackDef.binding.expression,
-                });
-                const oldValue = this.currentBindingValues[bindingKey];
-
-                // console.log("[AcRuntimeRenderer] ",targetCallbacks,bindingKey);
-                // console.log("[AcRuntimeRenderer] ",callbackDef.binding.expression,newValue,oldValue);
-                if (oldValue != newValue || force || (newValue !== null && typeof newValue === 'object')) {
-                  // console.log("[AcRuntimeRenderer] ", "Executing " + bindingKey);
-                  this.currentBindingValues[bindingKey] = newValue;
-                  callbackDef.callback({ oldValue, newValue, renderer: this });
-                }
-              }
-              else {
-                // console.log("[AcRuntimeRenderer] Skipping execution because binding key(s) does not match", targetId, targetIds, bindingId, bindingIds, this);
-              }
-            }
-          }
-          else {
-            // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
-          }
-          const el = this.queryElement(`[ac-ref="${targetKey}"]`);
-          if (el?.hasAttribute('ac-el-has-inputs')) {
-            el.removeAttribute('ac-el-has-inputs');
-            if ((el as any).acRuntimeInstance) {
-              (el as any).notifyElementInit();
-            }
-          }
-        }
-      }
-      catch (ex) {
-        console.error(ex);
-        console.log(targetId, targetIds, bindingId, bindingIds, force, this);
-        console.trace();
-      }
-    };
-    if (targetIds) {
-      for (const k of targetIds) {
-        await executeListener(k);
-      }
-      this.executeChildChangeListeners({ targetIds });
-    } else if (targetId) {
-      await executeListener(targetId);
-      this.executeChildChangeListeners({ targetId });
-    }
+    // Fully overridden by generated element renderer subclasses
   }
 
-  async executeChildChangeListeners({
-    targetId,
-    targetIds,
-    bindingId,
-    bindingIds,
-  }: {
-    targetId?: string;
-    targetIds?: string[];
-    bindingId?: string;
-    bindingIds?: string[];
-  }) {
-    for (const childRenderer of Object.values(this.childRenderers)) {
-      const res = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
-      if (targetId) {
-        if (res.all.includes(targetId)) {
-          childRenderer.executeChangeListener({ targetId, bindingId, bindingIds });
-        }
-      }
-      else if (targetIds && targetIds.length > 0) {
-        const destIds: string[] = [];
-        for (const t of targetIds) {
-          if (res.all.includes(t)) {
-            destIds.push(t);
-          }
-        }
-        if (destIds.length > 0) {
-          childRenderer.executeChangeListener({ targetIds: destIds, bindingId, bindingIds });
-        }
-      }
-    }
-    for (const loopRenderer of Object.values(this.loopRenderers)) {
-      for (const childRenderer of Object.values(loopRenderer.childRenderers)) {
-        const res = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
-        if (targetId) {
-          if (res.all.includes(targetId)) {
-            childRenderer.executeChangeListener({ targetId, bindingId, bindingIds });
-          }
-        }
-        else if (targetIds && targetIds.length > 0) {
-          const destIds: string[] = [];
-          for (const t of targetIds) {
-            if (res.all.includes(t)) {
-              destIds.push(t);
-            }
-          }
-          if (destIds.length > 0) {
-            childRenderer.executeChangeListener({ targetIds: destIds, bindingId, bindingIds });
-          }
-        }
-      }
-    }
-  }
 
-  async executeEventCallbackRegister({
-    targetId,
-    targetIds
-  }: {
-    targetId?: string;
-    targetIds?: string[];
-  }): Promise<void> {
-    const executeListener = async (targetKey: string) => {
-      try {
-        const targetCallbacks = this.rootElement.eventCallbacks[targetKey];
-        if (targetCallbacks) {
-          for (const bindingKey of Object.keys(targetCallbacks)) {
-            const callbackDef = targetCallbacks[bindingKey];
-            callbackDef.callback({ renderer: this });
-          }
-        }
-        else {
-          // console.log("[AcRuntimeRenderer] Skipping execution because target does not have change listeners", targetId, targetIds, bindingId, bindingIds, this);
-        }
-      }
-      catch (ex) {
-        console.error(ex);
-        console.log(targetId, targetIds, this);
-        console.trace();
-      }
-    };
-    if (targetIds) {
-      for (const k of targetIds) {
-        await executeListener(k);
-      }
-    } else if (targetId) {
-      await executeListener(targetId);
-    }
-  }
 
   protected findComment(commentText: string): Comment | null {
     const walker = document.createTreeWalker(
@@ -509,91 +290,9 @@ export class AcElementRenderer {
     };
   }
 
-  protected getScope(locals?: Record<string, any>): any {
-    const scope = Object.create(null);
-    if (locals) {
-      Object.assign(scope, locals);
-    }
-    if (this.context) {
-      Object.assign(scope, this.context);
-    }
-    for (const key of Object.keys(this.rootElement.templates)) {
-      scope[key] = this.rootElement.templates[key];
-    }
-    return scope;
-  }
 
-  protected normalizeExprForScope(expression: string): string {
-    const knownNames = new Set<string>();
 
-    if (knownNames.size === 0) return expression;
 
-    const sorted = Array.from(knownNames).sort(
-      (a, b) => b.length - a.length
-    );
-    const escaped = sorted.map((n) =>
-      n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    );
-    const pattern = escaped.join('|');
-    const regex = new RegExp(`\\b(${pattern})\\b`, 'gi');
-
-    let result = '';
-    let i = 0;
-    let inString: string | null = null;
-    let buffer = '';
-
-    while (i < expression.length) {
-      const char = expression[i];
-
-      if (inString) {
-        buffer += char;
-
-        // Handle escape
-        if (char === '\\\\') {
-          buffer += expression[i + 1] || '';
-          i += 2;
-          continue;
-        }
-
-        // End of string
-        if (char === inString) {
-          result += buffer;
-          buffer = '';
-          inString = null;
-        }
-
-        i++;
-        continue;
-      }
-
-      // Enter string
-      if (char === '"' || char === "'" || char === '`') {
-        if (buffer) {
-          result += buffer.replace(regex, (match) => match.toLowerCase());
-          buffer = '';
-        }
-
-        inString = char;
-        buffer += char;
-        i++;
-        continue;
-      }
-
-      buffer += char;
-      i++;
-    }
-
-    // process remaining buffer
-    if (buffer) {
-      if (inString) {
-        result += buffer;
-      } else {
-        result += buffer.replace(regex, (match) => match.toLowerCase());
-      }
-    }
-
-    return result;
-  }
 
   queryElement(query: string): Element | null {
     if (this.startComment && this.endComment) {
@@ -673,8 +372,12 @@ export class AcElementRenderer {
     }
   }
 
+  createNodes(): Node[] {
+    return this.createNodesFromHtml(`<!--ac-renderer-${this.rendererId}-start-->${this.html}<!--ac-renderer-${this.rendererId}-end-->`);
+  }
+
   async render() {
-    this.nodes = this.createNodesFromHtml(`<!--ac-renderer-${this.rendererId}-start-->${this.html}<!--ac-renderer-${this.rendererId}-end-->`);
+    this.nodes = this.createNodes();
     const res = this.getRefTargetIdsFromNodes(this.nodes);
     if (this.startComment && this.endComment) {
       this.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
@@ -691,7 +394,6 @@ export class AcElementRenderer {
         await this.assignViewChildrenRefs({ targetId: key });
         await this.resolveTemplateOutlets({ targetId: key });
         await this.executeChangeListener({ targetId: key });
-        await this.executeEventCallbackRegister({ targetId: key });
       }
     }
   }
@@ -707,7 +409,6 @@ export class AcElementRenderer {
         const templateOutlet = this.rootElement.templateOutlets[targetKey];
         const templateName = templateOutlet['template'];
         if (this.rootElement.templates[templateName]) {
-          // console.log("[AcElementRenderer] Rendering template for target : ",targetKey);
           templateRenderer(this.rootElement.templates[templateName]);
         }
         else if (this.rootElement.acRuntimeInstance[templateName]) {
@@ -730,12 +431,178 @@ export class AcElementRenderer {
   }
 
   updateChildRendererContext(targetId: string, contextUpdates: any): void {
-    // console.log(`[AcElementRenderer] updateChildRendererContext: targetId=${targetId}`, contextUpdates);
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
       childRenderer.context = { ...childRenderer.context, ...contextUpdates };
       const refs = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
       childRenderer.executeChangeListener({ targetIds: refs.all, force: true });
+    }
+  }
+
+  appendArrayItems({ items, index = -1 }: { items: any[], index?: number }) {
+    const startIdx = Number(index);
+    let endComment = `${this.targetId}-end`;
+    if (startIdx !== -1) {
+      const targetItemId = Object.keys(this.loopItemRendererMap).find(
+        key => this.loopItemRendererMap[key] === startIdx
+      );
+      if (targetItemId) {
+        endComment = `${targetItemId}-start`;
+      }
+    }
+
+    if (startIdx !== -1) {
+      const shiftCount = items.length;
+      const sortedKeys = Object.keys(this.loopItemRendererMap).sort(
+        (a, b) => this.loopItemRendererMap[b] - this.loopItemRendererMap[a]
+      );
+      for (const key of sortedKeys) {
+        const currIdx = this.loopItemRendererMap[key];
+        if (currIdx >= startIdx) {
+          const newIdx = currIdx + shiftCount;
+          this.loopItemRendererMap[key] = newIdx;
+          this.updateChildRendererContext(key, { [this.indexVar]: newIdx });
+        }
+      }
+    }
+
+    let i: number = startIdx !== -1 ? startIdx : Object.keys(this.loopItemRendererMap).length;
+    for (const item of items) {
+      const itemId: string = this.rootElement.generateHexId();
+      const startCommentHtml = `${itemId}-start`;
+      const endCommentHtml = `${itemId}-end`;
+      this.appendNodesBetweenComments({
+        startComment: `${this.targetId}-start`,
+        endComment: endComment,
+        nodes: this.createNodesFromHtml(`<!--${startCommentHtml}--><!--${endCommentHtml}-->`),
+        processNodes: false
+      });
+      const context: any = {
+        ...this.context
+      };
+      context[this.itemVar] = item;
+      context[this.indexVar] = i;
+      this.createChildRenderer({
+        targetId: `${itemId}`,
+        html: this.html,
+        startComment: startCommentHtml,
+        endComment: endCommentHtml,
+        context,
+        rootElement: this.parentRenderer?.rootElement,
+        ownedTargetIds:this.ownedTargetIds
+      });
+      this.loopItemRendererMap[itemId] = i;
+      i++;
+    }
+  }
+
+  initLoop(
+    { indexVar, itemVar, expression, items, bindingId }: { indexVar: string, itemVar: string, expression: string, items: any, bindingId: string }) {
+    this.indexVar = indexVar;
+    this.itemVar = itemVar;
+    this.expression = expression;
+    this.bindingId = bindingId;
+
+    this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
+    this.appendArrayItems({ items });
+    this.rootElement.subscribeArrayPropertyChangeListeners({
+      bindingId: this.bindingId, property: this.expression, callback: (args: any) => {
+        if (args.type === 'arrayInsert') {
+          const { index, items } = args.newValue;
+          this.appendArrayItems({ items, index });
+        }
+        else if (args.type === 'arrayReplace') {
+          this.refreshLoop({ items: args.newValue });
+        }
+        else if (args.type === 'arrayDelete') {
+          const { index, items } = args.oldValue;
+          this.removeArrayItems({ items, index });
+        }
+        else if (args.type === 'arrayUpdate') {
+          let targetIndex = args.index;
+          let newItem = undefined;
+          if (args.newValue && typeof args.newValue === 'object' && 'items' in args.newValue && 'index' in args.newValue) {
+            targetIndex = args.newValue.index;
+            if (Array.isArray(args.newValue.items) && args.newValue.items.length > 0) {
+              newItem = args.newValue.items[0];
+            }
+          }
+          if (targetIndex !== undefined) {
+            const key = Object.keys(this.loopItemRendererMap).find(
+              k => this.loopItemRendererMap[k] === targetIndex
+            );
+            if (key) {
+              const childRenderer = this.childRenderers[key];
+              if (childRenderer) {
+                if (newItem !== undefined) {
+                  this.updateChildRendererContext(key, { [this.itemVar]: newItem });
+                } else {
+                  childRenderer.triggerUpdate();
+                }
+              }
+            }
+          }
+        }
+        else if (args.type === 'arraySplice') {
+          this.removeArrayItems({ items: args.oldValue.items, index: args.oldValue.index });
+          this.appendArrayItems({ items: args.newValue.items, index: args.newValue.index });
+        }
+        else if (args.type === 'arraySort') {
+          this.refreshLoop({ items: args.newValue });
+        }
+        else if (args.type === 'arrayReverse') {
+          this.refreshLoop({ items: args.newValue });
+        }
+        else if (args.type === 'arrayFill') {
+          this.refreshLoop({ items: args.newValue });
+        }
+        else if (args.type === 'arrayCopyWithin') {
+          this.refreshLoop({ items: args.newValue });
+        }
+      }
+    });
+  }
+
+  refreshLoop({ items }: { items: any[] }) {
+    this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
+    this.childRenderers = {};
+    this.loopItemRendererMap = {};
+    this.appendArrayItems({ items });
+  }
+
+  removeArrayItems({ items, index = 0 }: { items: any[], index?: number }) {
+    const startIdx = Number(index);
+    const deleteCount = items.length;
+    const keysToDelete: string[] = [];
+    for (let i = 0; i < deleteCount; i++) {
+      const targetIdx = startIdx + i;
+      const key = Object.keys(this.loopItemRendererMap).find(
+        k => this.loopItemRendererMap[k] === targetIdx
+      );
+      if (key) {
+        keysToDelete.push(key);
+      }
+    }
+
+    for (const key of keysToDelete) {
+      this.removeChildRenderer(
+        key,
+        `${key}-start`,
+        `${key}-end`
+      );
+      delete this.loopItemRendererMap[key];
+    }
+
+    const sortedKeys = Object.keys(this.loopItemRendererMap).sort(
+      (a, b) => this.loopItemRendererMap[a] - this.loopItemRendererMap[b]
+    );
+    for (const key of sortedKeys) {
+      const currIdx = this.loopItemRendererMap[key];
+      if (currIdx >= startIdx + deleteCount) {
+        const newIdx = currIdx - deleteCount;
+        this.loopItemRendererMap[key] = newIdx;
+        this.updateChildRendererContext(key, { [this.indexVar]: newIdx });
+      }
     }
   }
 }

@@ -25,7 +25,7 @@
  * - Built-in objects (`Math`, `JSON`, `Array`, `Object`, etc.)
  * - Built-in functions (`parseInt`, `parseFloat`, `setTimeout`, etc.)
  * - Special template variable (`$event` — the event object in handlers)
- * - AC Runtime internals (`__acPipe` — the pipe transform helper)
+ * - AC Runtime internals (`evaluateAcPipeExpression` - the pipe transform helper)
  *
  * Uses a `Set` for O(1) lookup since this check runs once per identifier
  * per binding expression.
@@ -85,7 +85,7 @@ export const GLOBAL_IDENTIFIERS = new Set([
 
   // ── Template-specific ──
   '$event',         // The DOM event object in event handlers (e.g., (click)="handler($event)")
-  '__acPipe',       // Pipe helper function injected by the compiler into every IIFE
+  'evaluateAcPipeExpression',       // Pipe helper function injected by the compiler into every IIFE
 ]);
 
 /**

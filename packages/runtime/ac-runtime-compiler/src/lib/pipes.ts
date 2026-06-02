@@ -8,19 +8,19 @@
  *   `{{ amount | currency:'INR' }}`    → Format as INR currency
  *   `{{ amount | currency | number:2 }}` → Chain: currency then number
  *
- * This module converts pipe syntax into `__acPipe()` function calls
+ * This module converts pipe syntax into `evaluateAcPipeExpression()` function calls
  * that the runtime resolves via the global pipe registry.
  *
  * **Transformation examples:**
  * ```
  * Input:  "amount | currency"
- * Output: "__acPipe(amount, 'currency')"
+ * Output: "evaluateAcPipeExpression(amount, 'currency')"
  *
  * Input:  "amount | currency:'INR'"
- * Output: "__acPipe(amount, 'currency', 'INR')"
+ * Output: "evaluateAcPipeExpression(amount, 'currency', 'INR')"
  *
  * Input:  "amount | currency | number:2"
- * Output: "__acPipe(__acPipe(amount, 'currency'), 'number', 2)"
+ * Output: "evaluateAcPipeExpression(evaluateAcPipeExpression(amount, 'currency'), 'number', 2)"
  * ```
  */
 
@@ -99,12 +99,12 @@ export function splitTopLevelPipes(expr: string): string[] {
 }
 
 /**
- * Transform a template expression containing pipes into nested `__acPipe()` calls.
+ * Transform a template expression containing pipes into nested `evaluateAcPipeExpression()` calls.
  *
  * Each pipe is converted to a function call that wraps the previous value:
- * - Single pipe:  `value | pipeName` → `__acPipe(value, 'pipeName')`
- * - With args:    `value | pipeName:arg1` → `__acPipe(value, 'pipeName', arg1)`
- * - Chained:      `value | pipe1 | pipe2` → `__acPipe(__acPipe(value, 'pipe1'), 'pipe2')`
+ * - Single pipe:  `value | pipeName` → `evaluateAcPipeExpression(value, 'pipeName')`
+ * - With args:    `value | pipeName:arg1` → `evaluateAcPipeExpression(value, 'pipeName', arg1)`
+ * - Chained:      `value | pipe1 | pipe2` → `evaluateAcPipeExpression(evaluateAcPipeExpression(value, 'pipe1'), 'pipe2')`
  *
  * @param inner - The expression string (may or may not contain pipes)
  * @returns The transformed expression, or the original if no pipes found
@@ -129,10 +129,10 @@ export function transformPipeExpression(inner: string): string {
     const pipeName = (colonIdx === -1 ? pipePart : pipePart.slice(0, colonIdx)).trim();
     const argsStr = colonIdx === -1 ? '' : pipePart.slice(colonIdx + 1).trim();
 
-    // Build the __acPipe() call
-    // Without args: __acPipe(value, 'pipeName')
-    // With args:    __acPipe(value, 'pipeName', arg1, arg2)
-    result = `__acPipe(${result}, '${pipeName}'${argsStr ? ', ' + argsStr : ''})`;
+    // Build the evaluateAcPipeExpression() call
+    // Without args: evaluateAcPipeExpression(value, 'pipeName')
+    // With args:    evaluateAcPipeExpression(value, 'pipeName', arg1, arg2)
+    result = `evaluateAcPipeExpression(${result}, '${pipeName}'${argsStr ? ', ' + argsStr : ''})`;
   }
 
   return result;

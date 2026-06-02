@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /**
  * @module component-compiler
  *
@@ -43,7 +44,6 @@ import {
 } from './ast-helpers.js';
 import type {
   CompileResult,
-  ComponentInfo,
   ConstructorParam,
   ReactiveProperty,
   ViewChildEntry,
@@ -69,7 +69,6 @@ export type { CompileResult };
  * once and reused across compilations.
  */
 export class ComponentCompiler {
-  constructor() {}
 
   /** Shared template compiler instance (stateless per invocation). */
   private readonly templateCompiler = new TemplateCompiler();
@@ -148,7 +147,7 @@ export class ComponentCompiler {
     // ── Step 3: Compile and assemble code ──
     const importsCode = importStatements.join('\n');
     const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
-    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent,AcElementRenderer,AcElementLoopRenderer } from '@autocode-ts/ac-runtime';`;
+    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent,AcElementRenderer } from '@autocode-ts/ac-runtime';`;
 
     const bodyCode = orderedStatements.map(s => s.text).join('\n\n');
     const combinedCode = `${pipeImport}\n${acElementImport}\n${importsCode}\n\n${bodyCode}`;
