@@ -158,6 +158,17 @@ describe('ComponentCompiler', () => {
     // Should generate a getter via Object.defineProperty for the view child
     expect(results[0].code).toContain("Object.defineProperty(this, 'myDiv'");
     expect(results[0].code).toContain("querySelector('[ac-ref=");
+    // The serialized templateResult should include viewChildren with elementRefId
+    const templateResultMatch = results[0].code.match(/const templateResult = ({.*?});/s);
+    expect(templateResultMatch).toBeTruthy();
+    const templateResult = JSON.parse(templateResultMatch![1]);
+    expect(templateResult.viewChildren).toBeDefined();
+    expect(templateResult.viewChildren).toHaveLength(1);
+    expect(templateResult.viewChildren[0].propName).toBe('myDiv');
+    expect(templateResult.viewChildren[0].selector).toBe('myDiv');
+    expect(templateResult.viewChildren[0].elementRefId).toBeDefined();
+    // The elementRefId should match the id in the idMap
+    expect(templateResult.viewChildren[0].elementRefId).toBe(templateResult.idMap['mydiv'] || templateResult.idMap['myDiv']);
   });
 
   it('should handle @AcSubscribeChange on method declarations only', () => {
@@ -743,6 +754,74 @@ describe('TemplateCompiler - reactiveProperties map', () => {
     expect(templateBinding?.ownedElementIds).toContain(templateSpanId);
     expect(templateBinding?.ownedElementIds).not.toContain(divId);
   });
+
+  it('should create viewChildren bindings for #ref element references', () => {
+    const template = `
+      <div #myDiv>Hello</div>
+      <input #myInput />
+      <span>No ref</span>
+    `;
+    const result = tc.compile(template);
+
+    const vcBindings = result.bindings.filter(b => b.type === 'viewChildren');
+    expect(vcBindings).toHaveLength(2);
+
+    // Check #myDiv binding
+    const myDivBinding = vcBindings.find(b => b.selector === 'myDiv');
+    expect(myDivBinding).toBeDefined();
+    expect(myDivBinding!.elementRefId).toBeDefined();
+    expect(myDivBinding!.elementRefId).toBe(myDivBinding!.targetId);
+    expect(myDivBinding!.expression).toBe('myDiv');
+    // idMap should also contain the ref
+    expect(result.idMap['myDiv']).toBe(myDivBinding!.elementRefId);
+
+    // Check #myInput binding
+    const myInputBinding = vcBindings.find(b => b.selector === 'myInput');
+    expect(myInputBinding).toBeDefined();
+    expect(myInputBinding!.elementRefId).toBe(myInputBinding!.targetId);
+    expect(result.idMap['myInput']).toBe(myInputBinding!.elementRefId);
+
+    // propertyName is not set at template level (resolved later by component compiler)
+    expect(myDivBinding!.propertyName).toBeUndefined();
+  });
+});
+
+describe('ComponentCompiler - viewChildren bindings', () => {
+  const compiler = new ComponentCompiler();
+
+  it('should enrich viewChildren bindings with propertyName from @AcViewChild', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-vc-binding',
+        template: '<div #myDiv>Hello</div><span #otherRef>World</span>'
+      })
+      export class TestVcBinding {
+        @AcViewChild('myDiv') myDivProp;
+      }
+    `;
+
+    const results = compiler.compile(source);
+    // Parse the serialized templateResult from the generated code
+    const templateResultMatch = results[0].code.match(/const templateResult = ({.*?});/s);
+    expect(templateResultMatch).toBeTruthy();
+    const templateResult = JSON.parse(templateResultMatch![1]);
+
+    const vcBindings = templateResult.bindings.filter((b: any) => b.type === 'viewChildren');
+    expect(vcBindings).toHaveLength(2);
+
+    // #myDiv should have propertyName set from @AcViewChild('myDiv')
+    const myDivBinding = vcBindings.find((b: any) => b.selector === 'myDiv');
+    expect(myDivBinding).toBeDefined();
+    expect(myDivBinding.propertyName).toBe('myDivProp');
+    expect(myDivBinding.elementRefId).toBeDefined();
+    expect(myDivBinding.elementRefId).toBe(templateResult.idMap['mydiv'] || templateResult.idMap['myDiv']);
+
+    // #otherRef has no @AcViewChild, so propertyName should be undefined
+    const otherRefBinding = vcBindings.find((b: any) => b.selector === 'otherRef');
+    expect(otherRefBinding).toBeDefined();
+    expect(otherRefBinding.propertyName).toBeUndefined();
+    expect(otherRefBinding.elementRefId).toBeDefined();
+  });
 });
 
 describe('Compile-time event/model/pipe migration', () => {
@@ -873,6 +952,40 @@ describe('Compile-time event/model/pipe migration', () => {
     expect(results[0].code).not.toContain('evaluateExpression');
     // Should generate direct method call on acRuntimeInstance
     expect(results[0].code).toContain('this.acRuntimeInstance.onNameChange(');
+  });
+
+  describe('ac-template and ac:template:outlet', () => {
+    it('should compile ac-template and template-outlet bindings correctly', () => {
+      const source = `
+        @AcElement({
+          selector: 'test-template-outlet',
+          template: \`
+            <ac-template #myTemp>
+              <span>Inside Template: {{value}}</span>
+            </ac-template>
+            <div ac:template:outlet="myTemp"></div>
+          \`
+        })
+        export class TestTemplateOutlet {
+          value = 'hello';
+        }
+      `;
+
+      const results = compiler.compile(source);
+      expect(results).toHaveLength(1);
+      const code = results[0].code;
+
+      // Should generate the template class
+      expect(code).toContain('class $$$TestTemplateOutlet$Template$');
+
+      // Should register template in resolveTemplateOutlets
+      expect(code).toContain("this.rootElement.templates['myTemp'] = {");
+      expect(code).toContain("rendererClass: $$$TestTemplateOutlet$Template$");
+
+      // Should create child renderer for outlet in resolveTemplateOutlets
+      expect(code).toContain("this.createChildRenderer({");
+      expect(code).toContain("targetId: 'ac-template-outlet-");
+    });
   });
 });
 

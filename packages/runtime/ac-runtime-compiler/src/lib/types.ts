@@ -40,6 +40,7 @@ export interface Binding {
    * | `'if'`            | Conditional DOM insertion/removal                     |
    * | `'for'`           | Repeated DOM rendering for each list item             |
    * | `'template-outlet'`| Injects a template's innerHTML into a target element |
+   * | `'viewChildren'`  | Element reference (`#ref`) for @AcViewChild resolution|
    */
   type:
     | 'text'
@@ -52,7 +53,8 @@ export interface Binding {
     | 'style'
     | 'attribute'
     | 'template-outlet'
-    | 'template';
+    | 'template'
+    | 'viewChildren';
 
   /** The raw expression string from the template (e.g., `'count > 5'`). */
   expression: string;
@@ -103,6 +105,15 @@ export interface Binding {
   item?: {
     ownedElementIds: string[];
   };
+
+  /** For `'viewChildren'`: the resolved `ac-ref` element ID from the compiled template. */
+  elementRefId?: string;
+
+  /** For `'viewChildren'`: the template reference name (e.g., `'myDiv'` from `#myDiv`). */
+  selector?: string;
+
+  /** For `'viewChildren'`: the class property name decorated with `@AcViewChild`. Set after component member classification. */
+  propertyName?: string;
 }
 
 /**
@@ -229,6 +240,9 @@ export interface ViewChildEntry {
 
   /** The template reference name (value of `#name` in the template). */
   selector: string;
+
+  /** The resolved `ac-ref` element ID from the compiled template (set after template compilation). */
+  elementRefId?: string;
 }
 
 /**

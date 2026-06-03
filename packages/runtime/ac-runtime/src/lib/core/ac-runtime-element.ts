@@ -50,6 +50,11 @@ export class AcRuntimeElement extends HTMLElement {
 
   init() {
     this.setInputValuesFromAttributes();
+    for (const key of this.instanceInputs) {
+          if ((this as any)[key] != undefined) {
+            this.acRuntimeInstance[key] = (this as any)[key];
+          }
+        }
     for (const eventName of this.instanceOutputs as string[]) {
       (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
         const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
@@ -58,7 +63,9 @@ export class AcRuntimeElement extends HTMLElement {
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
-      this.notifyElementInit();
+      if ((this.acRuntimeInstance as any).acOnInit) {
+        (this.acRuntimeInstance as any).acOnInit();
+      }
     });
   }
 
@@ -122,12 +129,9 @@ export class AcRuntimeElement extends HTMLElement {
           this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
         }
       }
-
-      if (this.isInitialized) {
-        if (this.acRuntimeInstance.acOnChange) {
+      if (this.acRuntimeInstance.acOnChange) {
           this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
         }
-      }
       if (this.isInitialized && this.changeMethodCallbacks[property]) {
         for (const callback of this.changeMethodCallbacks[property]) {
           callback({ key: path || key, oldValue, newValue });

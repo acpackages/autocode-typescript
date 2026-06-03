@@ -50,6 +50,32 @@ export async function evaluateAcPipeExpression({
   }
 }
 
+export async function evaluateAcPipe({
+  value,
+  pipe,
+  args
+}: {
+  value: any;
+  pipe: string;
+  args?:any[]
+}): Promise<any> {
+  try {
+    const pipeHandler = getPipeSafe(pipe);
+    if (!pipeHandler) {
+        console.warn(`Unknown pipe: ${name}`);
+        return '';
+      }
+      const evaluatedArgs = args?args:[];
+      const result = pipeHandler?.transform(value, ...evaluatedArgs);
+      value = result instanceof Promise ? await result : result;
+      return value ?? '';
+
+  } catch (ex) {
+    console.error(`Pipe evaluation failed: "${value}"|"${pipe}"`, ex);
+    return '';
+  }
+}
+
 /**
  * Get pipe from global registry safely
  */

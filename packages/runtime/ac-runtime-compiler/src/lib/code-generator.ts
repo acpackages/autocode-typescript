@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-useless-escape */
 import type {
   TemplateCompileResult,
@@ -7,8 +8,6 @@ import type {
   PrefixFn,
   ConstructorParam,
 } from './types.js';
-import { transformPipeExpression } from './pipes.js';
-
 
 
 function stripAcElementDecorator(source: string): string {
@@ -73,7 +72,7 @@ export function acGenerateViewChildObject(
 ): string {
   const definedProps = new Set<string>();
   const assignments: string[] = [];
-  const viewChildrenDetails:any = {};
+  const viewChildrenDetails: any = {};
 
   // ── Explicit @AcViewChild declarations ──
   for (const vc of viewChildren) {
@@ -127,7 +126,8 @@ function generateBlockRenderers(
   type: string,
   localVars: Set<string>,
   topLevelVars: Set<string>,
-  prefixFn: PrefixFn
+  prefixFn: PrefixFn,
+  templateResult:TemplateCompileResult
 ): string {
   let childClasses = '';
 
@@ -145,7 +145,8 @@ function generateBlockRenderers(
         'ForItem',
         childLocalVars,
         topLevelVars,
-        prefixFn
+        prefixFn,
+        templateResult
       );
 
 
@@ -158,78 +159,112 @@ function generateBlockRenderers(
         'If',
         localVars,
         topLevelVars,
-        prefixFn
+        prefixFn,
+        templateResult
+      );
+    } else if (binding.type === 'template') {
+      // Generate a renderer sub-class for the template's inner content
+      childClasses += generateBlockRenderers(
+        className,
+        binding.childBindings || [],
+        binding.template || '',
+        binding.bindingId,
+        'Template',
+        localVars,
+        topLevelVars,
+        prefixFn,
+        templateResult
       );
     }
   }
 
+  // Filter out bindings that use comment placeholders (not ac-ref elements) from element caching
+  // const elementBindingTypes = new Set(['text', 'property', 'class', 'style', 'attribute', 'event', 'model', 'viewChildren']);
+  // const elementBindings = bindings.filter(b => elementBindingTypes.has(b.type));
   const targetIds = [...new Set(bindings.map(b => b.targetId))];
 
   let propertiesCode = '';
   let cachingCode = '';
+  let initialStateCode = '';
+  let viewChildCode = '';
   for (const tid of targetIds) {
-    propertiesCode += `  private ${getElementPropertyName({targetId:tid})}?: HTMLElement;\n`;
-    cachingCode += `    this.${getElementPropertyName({targetId:tid})} = fragment.querySelector('[ac-ref="${tid}"]') as HTMLElement;\n`;
+    propertiesCode += ` private ${getElementPropertyName({ targetId: tid })}?: HTMLElement;\n`;
+    cachingCode += `this.${getElementPropertyName({ targetId: tid })} = fragment.querySelector('[ac-ref="${tid}"]') as HTMLElement;\n`;
+    initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
+    for(const viewChild of templateResult.viewChildren){
+        if(viewChild.elementRefId == tid){
+          viewChildCode += `(this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};`
+        }
+    }
   }
 
   let eventRegistrationCode = '';
   let changeListenersCode = '';
   for (const binding of bindings) {
     const hasPipe = binding.expression.replaceAll('||', '').includes('|');
-    const rawExpr = hasPipe ? transformPipeExpression(binding.expression) : binding.expression;
-    const prefixed = prefixFn(rawExpr, localVars, topLevelVars);
-    const evalExpr = prefixed.replaceAll('this.', 'ctx.');
-    const safeTid = binding.targetId.replaceAll('ac-', '$').replaceAll("-","$");
+    let expression = binding.expression;
+    if (hasPipe) {
+      expression = `await this.evaluateExpression({expression:\`${expression}\`,context:{ctx:ctx}});`;
+    }
+    else {
+      expression = prefixFn(expression, localVars, topLevelVars).replaceAll('this.', 'ctx.');
+    }
     const targetId = binding.targetId;
 
     let updateStatement = '';
     switch (binding.type) {
       case 'text':
-        updateStatement = `if(this.${getElementPropertyName({targetId})}){\n
-          this.${getElementPropertyName({targetId})}.textContent = String(newValue);\n
+        updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
+          this.${getElementPropertyName({ targetId })}.textContent = String(newValue);\n
         }\n`;
         break;
       case 'property':
-        updateStatement = `if(this.${getElementPropertyName({targetId})}){\n
-          this.${getElementPropertyName({targetId})}['${binding.target}'] = newValue;\n
+        updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
+          if((this.${getElementPropertyName({ targetId })} as any).acRuntimeInstance){\n
+            (this.${getElementPropertyName({ targetId })} as any).acRuntimeInstance['${binding.target}'] = newValue;\n
+          }\n
+          else{\n
+            this.${getElementPropertyName({ targetId })}['${binding.target}'] = newValue;\n
+          }\n
         }\n`;
         break;
       case 'class':
-        updateStatement = `if(this.${getElementPropertyName({targetId})}){\n
+        updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
           if(newValue){\n
-            this.${getElementPropertyName({targetId})}.classList.add('${binding.target}');\n
+            this.${getElementPropertyName({ targetId })}.classList.add('${binding.target}');\n
           }
           else{\n
-            this.${getElementPropertyName({targetId})}.classList.remove('${binding.target}');\n
+            this.${getElementPropertyName({ targetId })}.classList.remove('${binding.target}');\n
           }\n
         }\n`;
         break;
       case 'style':
-        updateStatement = `if(this.${getElementPropertyName({targetId})}){\n
-          this.${getElementPropertyName({targetId})}.style['${binding.target}'] = newValue;\n
+        updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
+          this.${getElementPropertyName({ targetId })}.style['${binding.target}'] = newValue;\n
         }\n`;
         break;
       case 'attribute':
-        updateStatement = `if(this.${getElementPropertyName({targetId})}){\n
+        updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
           if(newValue === null || newValue === undefined || newValue === false){\n
-            this.${getElementPropertyName({targetId})}.removeAttribute('${binding.target}')\n;
+            this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
           }\n
           else{\n
-            this.${getElementPropertyName({targetId})}.setAttribute('${binding.target}', String(newValue));\n
+            this.${getElementPropertyName({ targetId })}.setAttribute('${binding.target}', String(newValue));\n
           }\n
         }\n`;
         break;
       case 'if':
+
         updateStatement = `
         this.removeNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end'});\n
         if(newValue){\n
-          const childRenderer = new ${getRendererClassName({className,suffix:`If$${binding.bindingId}`})}({\n
+          const childRenderer = new ${getRendererClassName({ className, suffix: `If$${binding.bindingId}` })}({\n
             targetId: '${binding.targetId}',\n
             rootElement: this.rootElement,\n
             context: this.context,\n
-            html: '',\n
             startComment: '${binding.targetId}-start',\n
-            endComment: '${binding.targetId}-end'\n
+            endComment: '${binding.targetId}-end'\n,
+            parentRenderer:this\n
           });\n
           childRenderer.ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};\n
           this.childRenderers['${binding.targetId}'] = childRenderer;\n
@@ -242,18 +277,18 @@ function generateBlockRenderers(
         if(this.childRenderers['${binding.bindingId}'] == undefined){
           this.childRenderers['${binding.bindingId}'] = new AcElementRenderer({
             targetId: '${binding.targetId}',
-            html: '',
             startComment: '${binding.targetId}-start',
             endComment: '${binding.targetId}-end',
             parentRenderer: this,
             context: { ...this.context },
             rootElement: this.rootElement,
-            childRendererClass: ${getRendererClassName({className,suffix:`ForItem$${binding.bindingId}`})}
+            childRendererClass: ${getRendererClassName({ className, suffix: `ForItem$${binding.bindingId}` })}
           });
           this.childRenderers['${binding.bindingId}'].ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
           this.childRenderers['${binding.bindingId}'].initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
         } else {
           this.childRenderers['${binding.bindingId}'].refreshLoop({items:newValue});
+
         }\n
         `;
         break;
@@ -263,15 +298,15 @@ function generateBlockRenderers(
         eventLocalVars.add('$event');
         const eventExpr = prefixFn(binding.expression, eventLocalVars, topLevelVars).replaceAll('this.', 'ctx.');
         eventRegistrationCode += `
-        if (this.${getElementPropertyName({targetId})} && !this.${getElementPropertyName({targetId})}.hasAttribute('ac-event-${binding.bindingId}')) {\n
-      this.${getElementPropertyName({targetId})}.addEventListener('${binding.target?.toLowerCase()}', (event: any) => {\n
+        if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
+      this.${getElementPropertyName({ targetId })}.addEventListener('${binding.target?.toLowerCase()}', (event: any) => {\n
         const ctx = this.rootElement.acRuntimeInstance;\n
         ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
         const $event = event instanceof AcRuntimeElementEvent ? event.args : event;\n
         ${eventExpr};\n
       });\n
 
-      this.${getElementPropertyName({targetId})}.setAttribute('ac-event-${binding.bindingId}', 'true');\n
+      this.${getElementPropertyName({ targetId })}.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
         `;
         break;
@@ -279,74 +314,154 @@ function generateBlockRenderers(
       case 'model': {
         // Compile model write-back to direct assignment at build time
         const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replaceAll('this.', 'ctx.');
-        updateStatement = `if (this.${getElementPropertyName({targetId})}) (this.${getElementPropertyName({targetId})} as any).value = newValue;\n`;
+        updateStatement = `if (this.${getElementPropertyName({ targetId })}) (this.${getElementPropertyName({ targetId })} as any).value = newValue;\n`;
         eventRegistrationCode += `
-    if (this.${getElementPropertyName({targetId})} && !this.${getElementPropertyName({targetId})}.hasAttribute('ac-event-${binding.bindingId}')) {\n
+    if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
       const ctx = this.rootElement.acRuntimeInstance;\n
       ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
-      const el = this.${getElementPropertyName({targetId})} as any;\n
+      const el = this.${getElementPropertyName({ targetId })} as any;\n
       const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
       el.addEventListener('input', __modelUpdate);\n
       el.addEventListener('change', __modelUpdate);\n
       el.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
+
         `;
+        break;
+      }
+      case 'template': {
+        // No updateStatement needed — templates register themselves during initial state
+        break;
+      }
+      case 'template-outlet': {
+        // No updateStatement needed — outlets resolve during resolveTemplateOutlets
         break;
       }
     }
 
     if (updateStatement) {
       changeListenersCode += `
+
     if (targetId === '${binding.targetId}' || !targetId) {\n
-      const newValue = ${evalExpr};\n
+      const newValue = ${expression};\n
       const oldValue = this.currentBindingValues['${binding.bindingId}'];\n
       if (oldValue !== newValue || force || (newValue !== null && typeof newValue === 'object')) {\n
-        this.currentBindingValues['${binding.bindingId}'] = newValue;\n
+        if(!isFirst){
+          this.currentBindingValues['${binding.bindingId}'] = newValue;\n
+        }
         ${updateStatement}
       }\n
     }\n
+    `;
 
-`;
     }
   }
 
-  const suffix = type === 'root' ? 'Root' : `${type}$${blockId}`;
-  const classNameSub = getRendererClassName({className,suffix});
 
-  const classCode = `
+  const suffix = type === 'root' ? 'Root' : `${type}$${blockId}`;
+  const classNameSub = getRendererClassName({ className, suffix });
+
+  let classCode:string = `
 class ${classNameSub} extends AcElementRenderer {
   private static templateFragment: DocumentFragment | null = null;
-${propertiesCode}
-  override createNodes(): Node[] {
+  ${propertiesCode}
+
+  override createRendererNodes(): void {
     if (!${classNameSub}.templateFragment) {
       const template = document.createElement('template');
-      template.innerHTML = \`${html}\`;
+      template.innerHTML = \`\${this.rendererStartComment} ${html} \${this.rendererEndComment}\`;
       ${classNameSub}.templateFragment = template.content;
     }
     const fragment = ${classNameSub}.templateFragment.cloneNode(true) as DocumentFragment;
-    const nodes = Array.from(fragment.childNodes);
+    this.nodes = Array.from(fragment.childNodes);
     ${cachingCode}
-    ${eventRegistrationCode}
-    return nodes;
+    console.log(this);
   }
 
-  override async executeChangeListener({ targetId, force = false }: { targetId?: string; force?: boolean }): Promise<void> {
+  override async executeChangeListener({ targetId, force = false, isFirst = false}: { targetId?: string; force?: boolean;isFirst?: boolean }): Promise<void> {
     const ctx = this.rootElement.acRuntimeInstance;
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
-${changeListenersCode}
+    ${changeListenersCode}
+  } `;
+
+  if(eventRegistrationCode != ''){
+    classCode += `
+    override registerElementEvents(){
+      ${eventRegistrationCode}
+    }`;
   }
-}
-`;
+
+  if(initialStateCode != ''){
+    classCode += `
+    override setInitialState(){
+      ${initialStateCode}
+    }`;
+  }
+
+  if(viewChildCode != ''){
+    classCode += `
+    override setViewChildRefs(){
+      ${viewChildCode}
+    }`;
+  }
+
+  // Generate resolveTemplateOutlets override for template-outlet bindings
+  const templateOutletBindings = bindings.filter(b => b.type === 'template-outlet');
+  const templateBindings = bindings.filter(b => b.type === 'template');
+  let templateOutletCode = '';
+
+  // Register template definitions on the root element
+  for (const tb of templateBindings) {
+    const templateRefName = tb.expression;
+    const templateRendererClass = getRendererClassName({ className, suffix: `Template$${tb.bindingId}` });
+    templateOutletCode += `
+    this.rootElement.templates['${templateRefName}'] = {
+      html: \`${tb.template || ''}\`,
+      ownedElementIds: ${JSON.stringify(tb.ownedElementIds || [])},
+      rootElement: this.rootElement,
+      rendererClass: ${templateRendererClass}
+    };\n`;
+  }
+
+  // Resolve template outlets by creating child renderers
+  for (const ob of templateOutletBindings) {
+    const outletTargetId = ob.targetId;
+    templateOutletCode += `
+    {
+      const templateDef = this.rootElement.templates['${ob.expression}'];
+      if (templateDef) {
+        this.createChildRenderer({
+          targetId: '${outletTargetId}',
+          startComment: '${outletTargetId}-start',
+          endComment: '${outletTargetId}-end',
+          context: {},
+          rootElement: templateDef.rootElement,
+          ownedTargetIds: templateDef.ownedElementIds || [],
+          childRendererClass: templateDef.rendererClass
+        });
+
+      }
+    }\n`;
+  }
+
+  if (templateOutletCode) {
+    classCode += `
+    override resolveTemplateOutlets(){
+      ${templateOutletCode}
+    }`;
+  }
+
+  classCode += `}`;
 
   return childClasses + classCode;
 }
 
-function getRendererClassName({className,suffix}:{className:string,suffix:string}){
+function getRendererClassName({ className, suffix }: { className: string, suffix: string }) {
   return `$$$${className}$${suffix}`;
 }
 
-function getElementPropertyName({targetId}:{targetId:string}){
-  return `el$${targetId.replaceAll('ac-if-','AcIf$').replaceAll('ac-for-','AcFor$').replaceAll('ac-template-outlet-','AcOutlet$')}`;
+function getElementPropertyName({ targetId }: { targetId: string }) {
+  return `el$${targetId.replaceAll('ac-if-', 'AcIf$').replaceAll('ac-for-', 'AcFor$').replaceAll('ac-template-outlet-', 'AcOutlet$')}`;
 }
 
 export function acGenerateCustomElement(options: AcGenerateCustomElementOptions): string {
@@ -363,11 +478,12 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     outputs
   } = options;
   const htmlElementClassName = `\$\$\$${className}`;
-  const changeListenerProperties:string[] = [...new Set(
+  const changeListenerProperties: string[] = [...new Set(
     [
       ...(options.templateResult.inputs || []),
       ...(options.templateResult.listenChanges || []),
       ...(reactiveProps || []).map(p => p.name),
+
     ])
   ];
 
@@ -385,6 +501,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         if (!propertyListenersMap[property][binding.targetId].includes(binding.bindingId)) {
           propertyListenersMap[property][binding.targetId].push(binding.bindingId);
         }
+
       }
       if (binding.childBindings && binding.childBindings.length > 0) {
         buildPropertyListenersMap(binding.childBindings);
@@ -399,28 +516,35 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     return 'undefined';
   }).join(', ');
 
+  const stylesScript = styles.join('\n').replaceAll(':host', '&').trim();
   const cleanClassSourceCode = stripAcElementDecorator(classSourceCode || '').replace(/\bexport\s+(?:default\s+)?class\s+/, 'class ');
   let code = `
   /** Generated by AC Runtime Compiler */
   export const ${className} = (function() {
 
-  const templateResult = ${JSON.stringify(templateResult)};
-  const __styles = \`${styles.join('\n').replaceAll(':host', selector)}\`;
-  let __styleRefCount = 0;
+  const templateResult = ${JSON.stringify(templateResult)};`;
+
+  if(stylesScript != ''){
+    code += `\nconst __styles = \`${selector} {\n ${stylesScript} \n}\`;
+  let __styleRefCount = 0;`;
+  }
+
+  code += `
+
 
   // For test suite assertions:
   // createSignal
   // querySelector('[ac-ref=
   // el.textContent = String(
-  ${(reactiveProps || []).map(p => `// Object.defineProperty(this, '${p.name}')`).join('\n  ')}
-  ${(nonReactiveProps || []).map(p => `// (this as any).${p.name} = ${p.init}`.replaceAll('\n', '\n  // ')).join('\n  ')}
-  ${(viewChildren || []).map(vc => `// Object.defineProperty(this, '${vc.propName}')`).join('\n  ')}
+  // ${(reactiveProps || []).map(p => `// Object.defineProperty(this, '${p.name}')`).join('\n  ')}
+  // ${(nonReactiveProps || []).map(p => `// (this as any).${p.name} = ${p.init}`.replaceAll('\n', '\n  // ')).join('\n  ')}
+  // ${(viewChildren || []).map(vc => `// Object.defineProperty(this, '${vc.propName}')`).join('\n  ')}
   ${(outputs || []).map(o => `// (this as any).${o} =\n  // emit: (data: any) => this.element.dispatchEvent(new CustomEvent('${o}'`).join('\n  ')}
 
   // Original class declaration copied as is (stripped of AcElement decorator and export keyword)
   ${cleanClassSourceCode}
 
-  ${generateBlockRenderers(className, templateResult.bindings, templateResult.html, 'root', 'root', new Set(), new Set(), prefixFn)}
+  ${generateBlockRenderers(className, templateResult.bindings, templateResult.html, 'root', 'root', new Set(), new Set(), prefixFn,templateResult)}
 
   class ${htmlElementClassName} extends AcRuntimeElement {
 
@@ -434,7 +558,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
       this.acRuntimeInstance.element = this;
       this.elementHtml = \`${templateResult.html}\`;
-      this.elementRenderer = new ${getRendererClassName({className,suffix:'Root'})}({ targetId: 'root', rootElement: this, html: '', context: {} });
+      this.elementRenderer = new ${getRendererClassName({ className, suffix: 'Root' })}({ targetId: 'root', rootElement: this, html: '', context: {} });
       this.elementRenderer.ownedTargetIds = ${JSON.stringify(options.templateResult.ownedElementIds)};
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
       if (this.instanceInputs) {
@@ -452,19 +576,23 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         }
       }
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
-      this.instanceViewChildren = ${JSON.stringify( acGenerateViewChildObject(viewChildren,templateResult) )};
+      this.instanceViewChildren = ${JSON.stringify(acGenerateViewChildObject(viewChildren, templateResult))};
       this.propertyListeners = ${JSON.stringify(propertyListenersMap)};
       this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
+
       `;
-      for(const changeDetails of templateResult.subscribeChanges || []){
-        code += `this.registerChangeSubscriptionMethodCallback({callback:async ({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any})=>{
+  for (const changeDetails of templateResult.subscribeChanges || []) {
+    code += `this.registerChangeSubscriptionMethodCallback({callback:async ({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any})=>{
           this.acRuntimeInstance.${changeDetails.methodName}({key,oldValue,newValue});
         },keys:${JSON.stringify(changeDetails.keys)}});\n`;
-      }
-      code += `
+  }
+  code += `
     }
 
-    override connectedCallback() {
+    `;
+
+  if(stylesScript != ''){
+    code += `override connectedCallback() {
       super.connectedCallback();
       if (__styles) {
         if (__styleRefCount === 0) {
@@ -477,7 +605,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       }
     }
 
-
     override disconnectedCallback() {
       super.disconnectedCallback();
       if (__styles) {
@@ -488,9 +615,13 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         }
       }
     }
+      `;
+  }
+code += `
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
+
 })();`;
   return code;
 }

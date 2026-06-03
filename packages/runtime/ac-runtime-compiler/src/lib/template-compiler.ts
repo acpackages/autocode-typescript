@@ -27,7 +27,6 @@ import { DomHandler, Element, Node, Text, isTag } from 'domhandler';
 import { randomBytes } from 'node:crypto';
 import type { Binding, ReactivePropertyDef, TemplateCompileResult } from './types.js';
 import { VOID_ELEMENTS, GLOBAL_IDENTIFIERS } from './constants.js';
-import { transformPipeExpression } from './pipes.js';
 import * as ts from 'typescript';
 
 // Re-export types so existing consumers don't break
@@ -987,7 +986,18 @@ export class TemplateCompiler {
       }
       // ── Template reference: #refName ──
       else if (name.startsWith('#')) {
-        idMap.set(name.slice(1), id);
+        const refSelector = name.slice(1);
+        idMap.set(refSelector, id);
+        bindings.push({
+          bindingId: this.generateHexId(),
+          type: 'viewChildren',
+          expression: refSelector,
+          targetId: id,
+          elementRefId: id,
+          selector: refSelector,
+          properties: [],
+          rootIds: [],
+        });
         hasBinding = true;
         delete el.attribs[name];
       }

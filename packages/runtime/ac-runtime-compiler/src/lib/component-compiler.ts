@@ -257,6 +257,27 @@ export class ComponentCompiler {
     templateResult.subscribeChanges = subscribeChanges;
     templateResult.listenChanges = listenChanges;
 
+    // Resolve elementRefId for each viewChild from the template's idMap
+    for (const vc of viewChildren) {
+      const selectorLower = vc.selector.toLowerCase();
+      const resolvedId = templateResult.idMap[selectorLower] || templateResult.idMap[vc.selector];
+      if (resolvedId) {
+        vc.elementRefId = resolvedId;
+      }
+    }
+
+    // Enrich viewChildren bindings with propertyName from @AcViewChild entries
+    for (const binding of templateResult.bindings) {
+      if (binding.type === 'viewChildren' && binding.selector) {
+        const matchingVc = viewChildren.find(
+          vc => vc.selector === binding.selector || vc.selector.toLowerCase() === binding.selector!.toLowerCase()
+        );
+        if (matchingVc) {
+          binding.propertyName = matchingVc.propName;
+        }
+      }
+    }
+
     // ── Extract constructor parameters ──
     const constructorParams = this.extractConstructorParams(node);
 
