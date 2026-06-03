@@ -178,6 +178,7 @@ function generateBlockRenderers(
     }
   }
 
+
   // Filter out bindings that use comment placeholders (not ac-ref elements) from element caching
   // const elementBindingTypes = new Set(['text', 'property', 'class', 'style', 'attribute', 'event', 'model', 'viewChildren']);
   // const elementBindings = bindings.filter(b => elementBindingTypes.has(b.type));
@@ -193,7 +194,16 @@ function generateBlockRenderers(
     initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
     for(const viewChild of templateResult.viewChildren){
         if(viewChild.elementRefId == tid){
-          viewChildCode += `(this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};`
+          viewChildCode += `
+          if(this.${getElementPropertyName({ targetId: tid })}){
+            if((this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance){
+              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
+            }
+            else{
+              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};
+            }
+          }
+          `
         }
     }
   }
@@ -260,6 +270,7 @@ function generateBlockRenderers(
         if(newValue){\n
           const childRenderer = new ${getRendererClassName({ className, suffix: `If$${binding.bindingId}` })}({\n
             targetId: '${binding.targetId}',\n
+
             rootElement: this.rootElement,\n
             context: this.context,\n
             startComment: '${binding.targetId}-start',\n
@@ -334,7 +345,28 @@ function generateBlockRenderers(
         break;
       }
       case 'template-outlet': {
-        // No updateStatement needed — outlets resolve during resolveTemplateOutlets
+        const outletTargetId = binding.targetId;
+        updateStatement = `
+        {
+          let templateDef = this.rootElement.templates[newValue];
+          if (!templateDef && newValue && typeof newValue === 'object' && newValue.rendererClass) {
+            templateDef = newValue;
+          }
+          this.destroyChildRenderer('${outletTargetId}');
+          this.removeNodesBetweenComments({ startComment: '${outletTargetId}-start', endComment: '${outletTargetId}-end' });
+          if (templateDef) {
+            this.createChildRenderer({
+              targetId: '${outletTargetId}',
+              startComment: '${outletTargetId}-start',
+              endComment: '${outletTargetId}-end',
+              context: {},
+              rootElement: templateDef.rootElement,
+              ownedTargetIds: templateDef.ownedElementIds || [],
+              childRendererClass: templateDef.rendererClass
+            });
+          }
+        }
+        `;
         break;
       }
     }
@@ -420,7 +452,10 @@ class ${classNameSub} extends AcElementRenderer {
       ownedElementIds: ${JSON.stringify(tb.ownedElementIds || [])},
       rootElement: this.rootElement,
       rendererClass: ${templateRendererClass}
-    };\n`;
+    };
+    if (this.rootElement.acRuntimeInstance) {
+      this.rootElement.acRuntimeInstance['${templateRefName}'] = this.rootElement.templates['${templateRefName}'];
+    }\n`;
   }
 
   // Resolve template outlets by creating child renderers
@@ -428,7 +463,17 @@ class ${classNameSub} extends AcElementRenderer {
     const outletTargetId = ob.targetId;
     templateOutletCode += `
     {
-      const templateDef = this.rootElement.templates['${ob.expression}'];
+      let templateDef = this.rootElement.templates['${ob.expression}'];
+      if (!templateDef && this.rootElement.acRuntimeInstance) {
+        const val = this.rootElement.acRuntimeInstance['${ob.expression}'];
+        if (val) {
+          if (typeof val === 'string') {
+            templateDef = this.rootElement.templates[val];
+          } else if (typeof val === 'object' && val.rendererClass) {
+            templateDef = val;
+          }
+        }
+      }
       if (templateDef) {
         this.createChildRenderer({
           targetId: '${outletTargetId}',

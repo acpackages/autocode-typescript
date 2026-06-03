@@ -124,9 +124,11 @@ export class AcRuntimeElement extends HTMLElement {
     if (this.elementRenderer) {
       const property = path;
 
-      if (this.propertyListeners[property]) {
-        for (const targetId of Object.keys(this.propertyListeners[property])) {
-          this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[property][targetId] });
+      for (const listenerProp of Object.keys(this.propertyListeners)) {
+        if (property === listenerProp || property.startsWith(listenerProp + '.')) {
+          for (const targetId of Object.keys(this.propertyListeners[listenerProp])) {
+            this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[listenerProp][targetId] });
+          }
         }
       }
       if (this.acRuntimeInstance.acOnChange) {
@@ -165,7 +167,7 @@ export class AcRuntimeElement extends HTMLElement {
 
       const pathStr = path.join('.');
       return object.propertyToListenForChanges.some(prop =>
-        prop === pathStr || prop.startsWith(pathStr + '.')
+        prop === pathStr || prop.startsWith(pathStr + '.') || pathStr.startsWith(prop + '.')
       );
     }
 
@@ -719,6 +721,15 @@ export class AcRuntimeElement extends HTMLElement {
             // proxy set trap (which fires its own notification). This prevents
             // double notifications when the proxy calls this setter.
             if (!proxySetActive) {
+              if (object.arrayPropertyChangeListeners[key]) {
+                object.handleArrayPropertyChange({
+                  type: 'arrayReplace',
+                  key: key,
+                  path: key,
+                  oldValue,
+                  newValue: Array.isArray(cleanVal) ? cleanVal : []
+                });
+              }
               object.handlePropertyChange({
                 type: 'set',
                 key: key,

@@ -982,9 +982,39 @@ describe('Compile-time event/model/pipe migration', () => {
       expect(code).toContain("this.rootElement.templates['myTemp'] = {");
       expect(code).toContain("rendererClass: $$$TestTemplateOutlet$Template$");
 
+      // Should expose template definition on acRuntimeInstance
+      expect(code).toContain("this.rootElement.acRuntimeInstance['myTemp'] = this.rootElement.templates['myTemp'];");
+
       // Should create child renderer for outlet in resolveTemplateOutlets
       expect(code).toContain("this.createChildRenderer({");
       expect(code).toContain("targetId: 'ac-template-outlet-");
+    });
+
+    it('should compile template-outlet bindings referencing class properties correctly', () => {
+      const source = `
+        @AcElement({
+          selector: 'test-dynamic-outlet',
+          template: \`
+            <div ac:template:outlet="customTemplate"></div>
+          \`
+        })
+        export class TestDynamicOutlet {
+          customTemplate = 'someTemplateName';
+        }
+      `;
+
+      const results = compiler.compile(source);
+      expect(results).toHaveLength(1);
+      const code = results[0].code;
+
+      // Should check this.rootElement.acRuntimeInstance for customTemplate in resolveTemplateOutlets
+      expect(code).toContain("const val = this.rootElement.acRuntimeInstance['customTemplate']");
+      expect(code).toContain("templateDef = this.rootElement.templates[val]");
+
+      // Should generate updateStatement inside executeChangeListener for reactive re-rendering
+      expect(code).toContain("this.destroyChildRenderer('ac-template-outlet-");
+      expect(code).toContain("this.removeNodesBetweenComments({ startComment: 'ac-template-outlet-");
+      expect(code).toContain("this.createChildRenderer({");
     });
   });
 });

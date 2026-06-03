@@ -170,8 +170,8 @@ export class AcElementRenderer {
     if (rootElement == undefined) {
       rootElement = this.rootElement;
     }
-    // const RendererClass = childRendererClass || this.childRendererClass || AcElementRenderer;
-    const RendererClass = this.childRendererClass || AcElementRenderer;
+    const RendererClass = childRendererClass || this.childRendererClass || AcElementRenderer;
+    // const RendererClass = this.childRendererClass || AcElementRenderer;
     const childRenderer = new RendererClass({ targetId, rootElement, context: context, parentRenderer: this, startComment, endComment });
     childRenderer.ownedTargetIds = ownedTargetIds;
     this.childRenderers[targetId] = childRenderer;
@@ -606,7 +606,7 @@ export class AcElementRenderer {
       this.rootElement.append(...this.nodes);
     }
 
-
+    this.resolveTemplateOutlets();
     this.registerElementEvents();
     this.setViewChildRefs();
     this.setInitialState();

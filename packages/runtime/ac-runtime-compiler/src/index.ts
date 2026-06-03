@@ -33,7 +33,8 @@
  */
 export { ComponentCompiler } from './lib/component-compiler.js';
 export { TemplateCompiler } from './lib/template-compiler.js';
-export { acGenerateCustomElement, AcGenerateCustomElementOptions } from './lib/code-generator.js';
+export { acGenerateCustomElement } from './lib/code-generator.js';
+export type { AcGenerateCustomElementOptions } from './lib/code-generator.js';
 
 // Re-export types from centralized types module
 export type {
