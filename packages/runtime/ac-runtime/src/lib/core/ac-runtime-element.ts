@@ -14,11 +14,46 @@ export class AcRuntimeElement extends HTMLElement {
   templateOutlets: any = {};
   templates: Record<string, { targetId: any; bindingId: string, html: string, ownerInstance: any }> = {};
 
+  pathSubscriptions: Record<string, Set<() => void>> = {};
+  private pendingUpdates = new Set<() => void>();
+  private isBatchScheduled = false;
+
+  viewChildren:any = {};
   protected elementRenderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeMethodCallbacks: Record<string, any[]> = {};
   propertyListeners: any = {};
   elementId: string = '';
+
+  subscribePath(path: string, callback: () => void): () => void {
+    if (!this.pathSubscriptions[path]) {
+      this.pathSubscriptions[path] = new Set();
+    }
+    this.pathSubscriptions[path].add(callback);
+    return () => {
+      if (this.pathSubscriptions[path]) {
+        this.pathSubscriptions[path].delete(callback);
+        if (this.pathSubscriptions[path].size === 0) {
+          delete this.pathSubscriptions[path];
+        }
+      }
+    };
+  }
+
+  scheduleUpdate(callback: () => void) {
+    this.pendingUpdates.add(callback);
+    if (!this.isBatchScheduled) {
+      this.isBatchScheduled = true;
+      queueMicrotask(() => {
+        this.isBatchScheduled = false;
+        const updates = Array.from(this.pendingUpdates);
+        this.pendingUpdates.clear();
+        for (const update of updates) {
+          update();
+        }
+      });
+    }
+  }
 
   connectedCallback(): void {
     if (!this.isInitialized) {
@@ -101,6 +136,17 @@ export class AcRuntimeElement extends HTMLElement {
           this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type, target, path, index, fullPath });
         }
       }
+
+      for (const subPath of Object.keys(this.pathSubscriptions)) {
+        if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
+          const cbs = this.pathSubscriptions[subPath];
+          if (cbs) {
+            for (const cb of cbs) {
+              this.scheduleUpdate(cb);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -131,6 +177,18 @@ export class AcRuntimeElement extends HTMLElement {
           }
         }
       }
+
+      for (const subPath of Object.keys(this.pathSubscriptions)) {
+        if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
+          const cbs = this.pathSubscriptions[subPath];
+          if (cbs) {
+            for (const cb of cbs) {
+              this.scheduleUpdate(cb);
+            }
+          }
+        }
+      }
+
       if (this.acRuntimeInstance.acOnChange) {
           this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
         }
@@ -658,18 +716,6 @@ export class AcRuntimeElement extends HTMLElement {
       targetCache.set(pathKey, proxy);
 
       return proxy;
-    }
-
-    // Force make all properties reactive when instance is created
-    for (const key of Reflect.ownKeys(instance)) {
-      if (typeof key === 'string') {
-        if (isPathReactive([key])) {
-          const val = instance[key];
-          if (val && typeof val === 'object' && (isPlainObject(val) || Array.isArray(val))) {
-            instance[key] = wrap(val, [key], key);
-          }
-        }
-      }
     }
 
     const proxyInstance = wrap(instance);

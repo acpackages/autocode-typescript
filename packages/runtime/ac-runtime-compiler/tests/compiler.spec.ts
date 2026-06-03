@@ -317,6 +317,8 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain('<!--ac-for-');
     // Should use initLoop to instantiate loop items
     expect(results[0].code).toContain('initLoop(');
+    // Should instantiate AcElementArrayRenderer
+    expect(results[0].code).toContain('new AcElementArrayRenderer(');
     // Should define the child renderer class
     expect(results[0].code).toContain('childRendererClass: $$$TestFor$ForItem$');
     // 'items' should be reactive

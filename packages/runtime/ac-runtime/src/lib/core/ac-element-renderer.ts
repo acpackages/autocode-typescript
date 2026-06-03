@@ -8,7 +8,7 @@ export class AcElementRenderer {
   rootElement!: AcRuntimeElement;
   private rendererId: string = '';
   protected currentBindingValues: any = {};
-  private nodes: Node[] = [];
+  nodes: Node[] = [];
   private startComment?: string;
   private endComment?: string;
   childRenderers: Record<string, AcElementRenderer> = {};
@@ -19,12 +19,9 @@ export class AcElementRenderer {
   protected rendererEndComment: string = '';
   protected rendererStartComment: string = '';
 
-  // Loop properties
-  private expression: string = '';
-  private indexVar: string = '';
-  private itemVar: string = '';
-  private bindingId: string = '';
-  private loopItemRendererMap: Record<string, number> = {};
+
+
+  private subscriptions: (() => void)[] = [];
 
   constructor({ targetId, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
     this.rendererId = rootElement.generateHexId();
@@ -41,61 +38,7 @@ export class AcElementRenderer {
 
   }
 
-  appendArrayItems({ items, index = -1 }: { items: any[], index?: number }) {
-    const startIdx = Number(index);
-    let endComment = `${this.targetId}-end`;
-    if (startIdx !== -1) {
-      const targetItemId = Object.keys(this.loopItemRendererMap).find(
-        key => this.loopItemRendererMap[key] === startIdx
-      );
-      if (targetItemId) {
-        endComment = `${targetItemId}-start`;
-      }
-    }
 
-    if (startIdx !== -1) {
-      const shiftCount = items.length;
-      const sortedKeys = Object.keys(this.loopItemRendererMap).sort(
-        (a, b) => this.loopItemRendererMap[b] - this.loopItemRendererMap[a]
-      );
-      for (const key of sortedKeys) {
-        const currIdx = this.loopItemRendererMap[key];
-        if (currIdx >= startIdx) {
-          const newIdx = currIdx + shiftCount;
-          this.loopItemRendererMap[key] = newIdx;
-          this.updateChildRendererContext(key, { [this.indexVar]: newIdx });
-        }
-      }
-    }
-
-    let i: number = startIdx !== -1 ? startIdx : Object.keys(this.loopItemRendererMap).length;
-    for (const item of items) {
-      const itemId: string = this.rootElement.generateHexId();
-      const startCommentHtml = `${itemId}-start`;
-      const endCommentHtml = `${itemId}-end`;
-      this.appendNodesBetweenComments({
-        startComment: `${this.targetId}-start`,
-        endComment: endComment,
-        nodes: this.createNodesFromHtml(`<!--${startCommentHtml}--><!--${endCommentHtml}-->`),
-        processNodes: false
-      });
-      const context: any = {
-        ...this.context
-      };
-      context[this.itemVar] = item;
-      context[this.indexVar] = i;
-      this.createChildRenderer({
-        targetId: `${itemId}`,
-        startComment: startCommentHtml,
-        endComment: endCommentHtml,
-        context,
-        rootElement: this.parentRenderer?.rootElement,
-        ownedTargetIds: this.ownedTargetIds
-      });
-      this.loopItemRendererMap[itemId] = i;
-      i++;
-    }
-  }
 
   appendNodesBetweenComments({ startComment, endComment, nodes, processNodes = true }: {
     startComment: string,
@@ -194,6 +137,15 @@ export class AcElementRenderer {
     }
     this.nodes = [];
     this.childRenderers = {};
+    for (const unsub of this.subscriptions) {
+      unsub();
+    }
+    this.subscriptions = [];
+  }
+
+  protected subscribe(path: string, callback: () => void): void {
+    const unsub = this.rootElement.subscribePath(path, callback);
+    this.subscriptions.push(unsub);
   }
 
   destroyChildRenderer(targetId: string): void {
@@ -329,7 +281,7 @@ export class AcElementRenderer {
     return nodes;
   }
 
-  protected getRefTargetIdsFromNodes(roots: Node[]): {
+  getRefTargetIdsFromNodes(roots: Node[]): {
     refs: string[];
     ifs: string[];
     fors: string[];
@@ -403,72 +355,7 @@ export class AcElementRenderer {
     };
   }
 
-  initLoop(
-    { indexVar, itemVar, expression, items, bindingId }: { indexVar: string, itemVar: string, expression: string, items: any, bindingId: string }) {
-    this.indexVar = indexVar;
-    this.itemVar = itemVar;
-    this.expression = expression;
-    this.bindingId = bindingId;
 
-    this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
-    this.appendArrayItems({ items });
-    this.rootElement.subscribeArrayPropertyChangeListeners({
-      bindingId: this.bindingId, property: this.expression, callback: (args: any) => {
-        if (args.type === 'arrayInsert') {
-          const { index, items } = args.newValue;
-          this.appendArrayItems({ items, index });
-        }
-        else if (args.type === 'arrayReplace') {
-          this.refreshLoop({ items: args.newValue });
-        }
-        else if (args.type === 'arrayDelete') {
-          const { index, items } = args.oldValue;
-          this.removeArrayItems({ items, index });
-        }
-        else if (args.type === 'arrayUpdate') {
-          let targetIndex = args.index;
-          let newItem = undefined;
-          if (args.newValue && typeof args.newValue === 'object' && 'items' in args.newValue && 'index' in args.newValue) {
-            targetIndex = args.newValue.index;
-            if (Array.isArray(args.newValue.items) && args.newValue.items.length > 0) {
-              newItem = args.newValue.items[0];
-            }
-          }
-          if (targetIndex !== undefined) {
-            const key = Object.keys(this.loopItemRendererMap).find(
-              k => this.loopItemRendererMap[k] === targetIndex
-            );
-            if (key) {
-              const childRenderer = this.childRenderers[key];
-              if (childRenderer) {
-                if (newItem !== undefined) {
-                  this.updateChildRendererContext(key, { [this.itemVar]: newItem });
-                } else {
-                  childRenderer.triggerUpdate();
-                }
-              }
-            }
-          }
-        }
-        else if (args.type === 'arraySplice') {
-          this.removeArrayItems({ items: args.oldValue.items, index: args.oldValue.index });
-          this.appendArrayItems({ items: args.newValue.items, index: args.newValue.index });
-        }
-        else if (args.type === 'arraySort') {
-          this.refreshLoop({ items: args.newValue });
-        }
-        else if (args.type === 'arrayReverse') {
-          this.refreshLoop({ items: args.newValue });
-        }
-        else if (args.type === 'arrayFill') {
-          this.refreshLoop({ items: args.newValue });
-        }
-        else if (args.type === 'arrayCopyWithin') {
-          this.refreshLoop({ items: args.newValue });
-        }
-      }
-    });
-  }
 
   queryElement(query: string): Element | null {
     if (this.startComment && this.endComment) {
@@ -512,61 +399,13 @@ export class AcElementRenderer {
     return this.rootElement.querySelector(query);
   }
 
-  refreshLoop({ items }: { items: any[] }) {
-    this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
-    this.childRenderers = {};
-    this.loopItemRendererMap = {};
-    this.appendArrayItems({ items });
-  }
+
 
   registerElementEvents(){
     // Implemented via compiler
   }
 
-  removeArrayItems({ items, index = 0 }: { items: any[], index?: number }) {
-    const startIdx = Number(index);
-    const deleteCount = items.length;
-    const keysToDelete: string[] = [];
-    for (let i = 0; i < deleteCount; i++) {
-      const targetIdx = startIdx + i;
-      const key = Object.keys(this.loopItemRendererMap).find(
-        k => this.loopItemRendererMap[k] === targetIdx
-      );
-      if (key) {
-        keysToDelete.push(key);
-      }
-    }
 
-    for (const key of keysToDelete) {
-      this.removeChildRenderer(
-        key,
-        `${key}-start`,
-        `${key}-end`
-      );
-      delete this.loopItemRendererMap[key];
-    }
-
-    const sortedKeys = Object.keys(this.loopItemRendererMap).sort(
-      (a, b) => this.loopItemRendererMap[a] - this.loopItemRendererMap[b]
-    );
-    for (const key of sortedKeys) {
-      const currIdx = this.loopItemRendererMap[key];
-      if (currIdx >= startIdx + deleteCount) {
-        const newIdx = currIdx - deleteCount;
-        this.loopItemRendererMap[key] = newIdx;
-        this.updateChildRendererContext(key, { [this.indexVar]: newIdx });
-      }
-    }
-  }
-
-  removeChildRenderer(targetId: string, startComment: string, endComment: string): void {
-    const startCommentEl = this.findComment(startComment);
-    const endCommentEl = this.findComment(endComment);
-    this.destroyChildRenderer(targetId);
-    this.removeNodesBetweenComments({ startComment, endComment });
-    if (startCommentEl) startCommentEl.remove();
-    if (endCommentEl) endCommentEl.remove();
-  }
 
   removeNodesBetweenComments({ startComment, endComment }: { startComment: string, endComment: string }): void {
     const startCommentEl = this.findComment(startComment);
@@ -662,13 +501,6 @@ export class AcElementRenderer {
     // this.executeChangeListener({ targetIds: this.ownedTargetIds, force });
   }
 
-  updateChildRendererContext(targetId: string, contextUpdates: any): void {
-    const childRenderer = this.childRenderers[targetId];
-    if (childRenderer) {
-      childRenderer.context = { ...childRenderer.context, ...contextUpdates };
-      const refs = childRenderer.getRefTargetIdsFromNodes(childRenderer.nodes);
-      // childRenderer.executeChangeListener({ targetIds: refs.all, force: true });
-    }
-  }
+
 
 }

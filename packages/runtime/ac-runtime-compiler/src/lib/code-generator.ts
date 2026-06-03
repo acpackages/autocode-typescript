@@ -198,9 +198,11 @@ function generateBlockRenderers(
           if(this.${getElementPropertyName({ targetId: tid })}){
             if((this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
+              this.rootElement.viewChildren['${viewChild.selector}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
             }
             else{
               (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};
+              this.rootElement.viewChildren['${viewChild.selector}'] = (this.${getElementPropertyName({ targetId: tid })} as any);
             }
           }
           `
@@ -210,6 +212,8 @@ function generateBlockRenderers(
 
   let eventRegistrationCode = '';
   let changeListenersCode = '';
+  let updaterMethods = '';
+  let subscriptionCode = '';
   for (const binding of bindings) {
     const hasPipe = binding.expression.replaceAll('||', '').includes('|');
     let expression = binding.expression;
@@ -286,7 +290,7 @@ function generateBlockRenderers(
       case 'for':
         updateStatement = `
         if(this.childRenderers['${binding.bindingId}'] == undefined){
-          this.childRenderers['${binding.bindingId}'] = new AcElementRenderer({
+          this.childRenderers['${binding.bindingId}'] = new AcElementArrayRenderer({
             targetId: '${binding.targetId}',
             startComment: '${binding.targetId}-start',
             endComment: '${binding.targetId}-end',
@@ -372,20 +376,34 @@ function generateBlockRenderers(
     }
 
     if (updateStatement) {
+      const updaterName = `update$${binding.bindingId}`;
+      updaterMethods += `
+  private async ${updaterName}(force = false): void {
+    const ctx = this.rootElement.acRuntimeInstance;
+    ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
+    const newValue = ${expression};
+    const oldValue = this.currentBindingValues['${binding.bindingId}'];
+    if (oldValue !== newValue || force || (newValue !== null && typeof newValue === 'object')) {
+      this.currentBindingValues['${binding.bindingId}'] = newValue;
+      ${updateStatement}
+    }
+  }
+      `;
+
       changeListenersCode += `
+    if (targetId === '${binding.targetId}' || !targetId) {
+      this.${updaterName}(force);
+    }
+      `;
 
-    if (targetId === '${binding.targetId}' || !targetId) {\n
-      const newValue = ${expression};\n
-      const oldValue = this.currentBindingValues['${binding.bindingId}'];\n
-      if (oldValue !== newValue || force || (newValue !== null && typeof newValue === 'object')) {\n
-        if(!isFirst){
-          this.currentBindingValues['${binding.bindingId}'] = newValue;\n
-        }
-        ${updateStatement}
-      }\n
-    }\n
-    `;
-
+      subscriptionCode += `
+    this.${updaterName}(true);
+      `;
+      for (const property of binding.properties || []) {
+        subscriptionCode += `
+    this.subscribe('${property}', () => this.${updaterName}());
+        `;
+      }
     }
   }
 
@@ -397,6 +415,7 @@ function generateBlockRenderers(
 class ${classNameSub} extends AcElementRenderer {
   private static templateFragment: DocumentFragment | null = null;
   ${propertiesCode}
+  ${updaterMethods}
 
   override createRendererNodes(): void {
     if (!${classNameSub}.templateFragment) {
@@ -423,10 +442,10 @@ class ${classNameSub} extends AcElementRenderer {
     }`;
   }
 
-  if(initialStateCode != ''){
+  if(subscriptionCode != ''){
     classCode += `
     override setInitialState(){
-      ${initialStateCode}
+      ${subscriptionCode}
     }`;
   }
 
