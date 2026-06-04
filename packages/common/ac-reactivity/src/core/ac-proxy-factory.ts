@@ -1,6 +1,6 @@
 import { RAW_TARGET, AcMetadataStore } from "./ac-metadata-store";
 import { AcPropertyTree } from "./ac-property-tree";
-import { getReactiveValueType, updateParentLink, findRoots, emitChange } from "./ac-utilities";
+import { getReactiveValueType, updateParentLink, findRoots, emitChange, canBeReactive } from "./ac-utilities";
 import { AcReactiveOperation } from "../types/ac-reactive-operation.type";
 
 export class AcProxyFactory {
@@ -41,7 +41,7 @@ export class AcProxyFactory {
                 if (typeof key === "symbol") return value;
                 if (typeof value === "function") return value.bind(receiver);
 
-                if (value && typeof value === "object") {
+                if (value && canBeReactive(value)) {
                     const roots = findRoots({ target: t, currentPath: [key] });
                     let isReactive = false;
                     for (const r of roots) {
@@ -71,8 +71,11 @@ export class AcProxyFactory {
                 if (!success) return false;
 
                 const meta = AcMetadataStore.get({ target: t });
-                if (meta && meta.root && meta.root.properties[String(key)] !== undefined) {
-                    return true;
+                if (meta && meta.root) {
+                    const isRootProp = meta.root.properties.some(p => p.split(".")[0] === String(key));
+                    if (isRootProp) {
+                        return true;
+                    }
                 }
 
                 const roots = findRoots({ target: t, currentPath: [key] });
@@ -200,7 +203,7 @@ export class AcProxyFactory {
                 const value = Reflect.get(t, key, receiver);
                 if (typeof key === "symbol") return value;
 
-                if (value && typeof value === "object") {
+                if (value && canBeReactive(value)) {
                     const indexKey = isNaN(Number(key)) ? key : Number(key);
                     const roots = findRoots({ target: t, currentPath: [indexKey] });
                     let isReactive = false;

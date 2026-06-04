@@ -1,4 +1,3 @@
-import { IAcReactivePropertyTree } from "../interfaces/ac-reactive-property-tree.interface";
 import { IAcReactiveChange } from "../interfaces/ac-reactive-change.interface";
 
 export interface IParentLink {
@@ -7,7 +6,7 @@ export interface IParentLink {
 }
 
 export interface IRootMetadata {
-    readonly properties: IAcReactivePropertyTree;
+    readonly properties: string[];
     readonly onChange: (change: IAcReactiveChange) => void;
     readonly batch: boolean;
     pendingChanges?: Map<string, IAcReactiveChange>;

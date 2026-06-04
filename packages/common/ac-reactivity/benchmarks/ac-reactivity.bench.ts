@@ -1,4 +1,4 @@
-import { AcReactivity } from "../src/core/AcReactivity";
+import { AcReactivity } from "../src/ac-reactivity";
 import { performance } from "perf_hooks";
 
 // Recursive full-proxy wrapper for comparative baseline
@@ -37,7 +37,7 @@ function runBenchmark() {
         
         const reactive = AcReactivity.makeReactive({
             instance: { count: 10 },
-            properties: { count: true },
+            properties: ["count"],
             onChange: () => {}
         });
 
@@ -80,7 +80,7 @@ function runBenchmark() {
         const fullProxy = createRecursiveFullProxy({ count: 10 });
         const reactive = AcReactivity.makeReactive({
             instance: { count: 10 },
-            properties: { count: true },
+            properties: ["count"],
             onChange: () => {}
         });
 
@@ -131,13 +131,7 @@ function runBenchmark() {
         const fullProxy = createRecursiveFullProxy(makeNested());
         const reactive = AcReactivity.makeReactive({
             instance: makeNested(),
-            properties: {
-                user: {
-                    address: {
-                        city: true
-                    }
-                }
-            },
+            properties: ["user.address.city"],
             onChange: () => {}
         });
 
@@ -174,7 +168,7 @@ function runBenchmark() {
         const fullProxy = createRecursiveFullProxy([]);
         const reactive = AcReactivity.makeReactive({
             instance: { items: [] as any[] },
-            properties: { items: true },
+            properties: ["items"],
             onChange: () => {}
         });
 

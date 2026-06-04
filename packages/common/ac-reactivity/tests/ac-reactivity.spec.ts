@@ -1,7 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { AcReactivity } from "../src/core/AcReactivity";
-import { RAW_TARGET, metadataStore } from "../src/core/AcMetadataStore";
-import { IAcReactiveChange } from "../src/interfaces/IAcReactiveChange";
+import { AcReactivity, RAW_TARGET, metadataStore, IAcReactiveChange } from "../src/ac-reactivity";
 
 describe("AcReactivity", () => {
     it("should preserve original instance identity, prototypes, and properties", () => {
@@ -18,7 +16,7 @@ describe("AcReactivity", () => {
         const original = new User("Alice");
         const reactive = AcReactivity.makeReactive({
             instance: original,
-            properties: { name: true },
+            properties: ["name"],
             onChange: () => {}
         });
 
@@ -40,10 +38,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                count: true,
-                name: true
-            },
+            properties: ["count", "name"],
             onChange: (c) => changes.push(c)
         });
 
@@ -82,14 +77,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                user: {
-                    name: true,
-                    address: {
-                        city: true
-                    }
-                }
-            },
+            properties: ["user.name", "user.address.city"],
             onChange: (c) => changes.push(c)
         });
 
@@ -116,9 +104,7 @@ describe("AcReactivity", () => {
 
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                user: { name: true }
-            },
+            properties: ["user.name"],
             onChange: () => {}
         });
 
@@ -139,9 +125,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                user: { name: true }
-            },
+            properties: ["user.name"],
             onChange: (c) => changes.push(c)
         });
 
@@ -166,9 +150,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                items: true
-            },
+            properties: ["items"],
             onChange: (c) => changes.push(c)
         });
 
@@ -218,9 +200,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                value: true
-            },
+            properties: ["value"],
             onChange: (c) => changes.push(c)
         });
 
@@ -285,9 +265,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                code: true
-            },
+            properties: ["code"],
             onChange: (c) => changes.push(c)
         });
 
@@ -323,10 +301,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                name: true,
-                self: true
-            },
+            properties: ["name", "self"],
             onChange: (c) => changes.push(c)
         });
 
@@ -352,9 +327,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                name: true
-            },
+            properties: ["name"],
             onChange: (c) => changes.push(c),
             batch: true
         });
@@ -387,9 +360,7 @@ describe("AcReactivity", () => {
 
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                child: { name: true }
-            },
+            properties: ["child.name"],
             onChange: () => {}
         });
 
@@ -417,12 +388,7 @@ describe("AcReactivity", () => {
         const changes: IAcReactiveChange[] = [];
         const reactive = AcReactivity.makeReactive({
             instance,
-            properties: {
-                tracked: true,
-                user: {
-                    trackedName: true
-                }
-            },
+            properties: ["tracked", "user.trackedName"],
             onChange: (c) => changes.push(c)
         });
 
@@ -438,4 +404,49 @@ describe("AcReactivity", () => {
         expect(changes[0].property).toBe("tracked");
         expect(changes[1].property).toBe("user.trackedName");
     });
+
+    it("should only make plain objects and arrays reactive, excluding class instances and simulated HTMLElements", () => {
+        class CustomClass {
+            public value: string;
+            constructor(val: string) {
+                this.value = val;
+            }
+        }
+
+        class FakeHTMLElement {
+            public tagName = "DIV";
+            public innerHTML = "";
+        }
+
+        const instance = {
+            custom: new CustomClass("hello") as any,
+            element: new FakeHTMLElement() as any,
+            plain: { value: "world" }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["custom.value", "element.innerHTML", "plain.value"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Verify that plain object is wrapped in a proxy
+        expect(reactive.plain[RAW_TARGET]).toBeDefined();
+
+        // Verify that class instance and fake HTMLElement are NOT wrapped in a proxy
+        expect(reactive.custom[RAW_TARGET]).toBeUndefined();
+        expect(reactive.element[RAW_TARGET]).toBeUndefined();
+
+        // Verify that modifying the plain object triggers change notification
+        reactive.plain.value = "new world";
+        expect(changes.length).toBe(1);
+
+        // Verify that modifying class instance or element does NOT trigger change notifications
+        changes.length = 0;
+        reactive.custom.value = "new custom";
+        reactive.element.innerHTML = "<span>new</span>";
+        expect(changes.length).toBe(0);
+    });
 });
+

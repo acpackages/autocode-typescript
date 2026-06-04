@@ -23,6 +23,7 @@
     "build:ac-number-to-words-pipe": "nx run ac-number-to-words-pipe:build",
     "build:ac-pipes": "nx run ac-pipes:build",
     "build:ac-quill-editor-input": "nx run ac-quill-editor-input:build",
+    "build:ac-reactivity": "nx run ac-reactivity:build",
     "build:ac-report-engine": "nx run ac-report-engine:build",
     "build:ac-runtime": "nx run ac-runtime:build",
     "build:ac-sql-node": "nx run ac-sql-node:build",

@@ -114,3 +114,16 @@ export function emitChange(options: {
         rootMetadata.onChange(change);
     }
 }
+
+export function isPlainObject(value: unknown): boolean {
+    if (value === null || typeof value !== "object") {
+        return false;
+    }
+    const proto = Object.getPrototypeOf(value);
+    return proto === null || proto === Object.prototype;
+}
+
+export function canBeReactive(value: unknown): boolean {
+    return Array.isArray(value) || isPlainObject(value);
+}
+
