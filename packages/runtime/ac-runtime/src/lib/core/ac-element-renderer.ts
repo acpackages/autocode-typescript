@@ -11,22 +11,22 @@ export class AcElementRenderer {
   nodes: Node[] = [];
   private startComment?: string;
   private endComment?: string;
+  rendererStartCommentText: string = '';
+  rendererEndCommentText: string = '';
   childRenderers: Record<string, AcElementRenderer> = {};
+  isRendered?: boolean = false;
   isRoot?: boolean = false;
   protected targetId?: string = '';
   ownedTargetIds: string[] = [];
   childRendererClass?: any;
-  protected rendererEndComment: string = '';
-  protected rendererStartComment: string = '';
-
-
-
+  protected rendererEndComment?: Node;
+  protected rendererStartComment?: Node;
   private subscriptions: (() => void)[] = [];
 
   constructor({ targetId, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
     this.rendererId = rootElement.generateHexId();
-    this.rendererStartComment = `<!--ac-renderer-${this.rendererId}-start-->`;
-    this.rendererEndComment = `<!--ac-renderer-${this.rendererId}-end-->`;
+    this.rendererStartCommentText = `ac-renderer-${this.rendererId}-start`;
+    this.rendererEndCommentText = `ac-renderer-${this.rendererId}-end`;
     this.rootElement = rootElement;
     this.context = context;
     this.parentRenderer = parentRenderer;
@@ -35,10 +35,7 @@ export class AcElementRenderer {
     this.isRoot = isRoot;
     this.targetId = targetId;
     this.childRendererClass = childRendererClass;
-
   }
-
-
 
   appendNodesBetweenComments({ startComment, endComment, nodes, processNodes = true }: {
     startComment: string,
@@ -54,7 +51,6 @@ export class AcElementRenderer {
       return;
     }
     const parent = startCommentEl.parentNode;
-    console.log("Appending node before ", startComment, parent);
 
     if (!parent) {
       return;
@@ -62,50 +58,6 @@ export class AcElementRenderer {
 
     for (const node of nodes) {
       parent.insertBefore(node, endCommentEl);
-    }
-
-    if (processNodes) {
-      // const childRefs = this.getRefTargetIdsFromNodes(nodes);
-      // this.assignViewChildrenRefs({ targetIds: childRefs.all })
-      // this.resolveTemplateOutlets({ targetIds: childRefs.all });
-      // this.executeChangeListener({ targetIds: childRefs.all, force: true });
-    }
-  }
-
-  private assignViewChildrenRefsLegacy({
-    targetId,
-    targetIds
-  }: {
-    targetId?: string;
-    targetIds?: string[];
-  }): void {
-    const refIds: string[] = Object.values(this.rootElement.instanceViewChildren);
-    const executeAssigner = async (targetKey: string) => {
-      try {
-        if (refIds.includes(targetKey)) {
-          for (const propKey of Object.keys(this.rootElement.instanceViewChildren)) {
-            if (this.rootElement.instanceViewChildren[propKey] == targetKey) {
-              const el = this.rootElement.querySelector(`[ac-ref="${targetKey}"]`);
-              if (el && (el as any).acRuntimeInstance) {
-                this.rootElement.acRuntimeInstance[propKey] = (el as any).acRuntimeInstance;
-              }
-              else {
-                this.rootElement.acRuntimeInstance[propKey] = el;
-              }
-            }
-          }
-        }
-      }
-      catch (ex) {
-        console.error(ex);
-      }
-    };
-    if (targetIds) {
-      for (const k of targetIds) {
-        executeAssigner(k);
-      }
-    } else if (targetId) {
-      executeAssigner(targetId);
     }
   }
 
@@ -195,8 +147,9 @@ export class AcElementRenderer {
         'context',
         `with (context) { with (scope) { return ${expression} } }`
       );
-      const result = fn.call(this.rootElement.acRuntimeInstance, context, this.rootElement.acRuntimeInstance);
-      // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
+      const rootElement = this.rootElement;
+      const evaluationContext = rootElement.evaluationContext;
+      const result = fn.call(rootElement.acRuntimeInstance, context, evaluationContext);
       return result;
     } catch (e) {
       console.error(this);
@@ -206,18 +159,6 @@ export class AcElementRenderer {
     }
   }
 
-  protected findCommentNew(commentText: string): Comment | null {
-    const result = (
-      this.nodes.find(
-        (node) =>
-          node.nodeType === Node.COMMENT_NODE &&
-          node.nodeValue?.trim() === commentText
-      ) as Comment | undefined
-    ) ?? null;
-    console.log("Getting comment : " + commentText, result, this);
-    return result;
-  }
-
   protected findComment(commentText: string): Comment | null {
     const walker = document.createTreeWalker(
       this.rootElement,
@@ -225,6 +166,9 @@ export class AcElementRenderer {
     );
 
     let current = walker.nextNode();
+    if(this.isRendered && this.rendererStartComment){
+      current = this.rendererStartComment;
+    }
     let childFound: boolean = this.startComment == undefined || this.isRoot == true;
 
     while (current) {
@@ -355,8 +299,6 @@ export class AcElementRenderer {
     };
   }
 
-
-
   queryElement(query: string): Element | null {
     if (this.startComment && this.endComment) {
       const startEl = this.findComment(this.startComment);
@@ -399,13 +341,9 @@ export class AcElementRenderer {
     return this.rootElement.querySelector(query);
   }
 
-
-
   registerElementEvents(){
     // Implemented via compiler
   }
-
-
 
   removeNodesBetweenComments({ startComment, endComment }: { startComment: string, endComment: string }): void {
     const startCommentEl = this.findComment(startComment);
@@ -436,6 +374,8 @@ export class AcElementRenderer {
 
   async render() {
     this.createRendererNodes();
+    this.rendererStartComment = this.nodes[0];
+    this.rendererEndComment = this.nodes[this.nodes.length - 1];
     if (this.startComment && this.endComment && this.parentRenderer) {
       this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
       this.parentRenderer.appendNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment, nodes: this.nodes, processNodes: false });
@@ -444,18 +384,11 @@ export class AcElementRenderer {
       this.rootElement.innerHTML = ``;
       this.rootElement.append(...this.nodes);
     }
-
+    this.isRendered = true;
     this.resolveTemplateOutlets();
     this.registerElementEvents();
     this.setViewChildRefs();
     this.setInitialState();
-    // for (const key of res.all) {
-    //   if (this.ownedTargetIds.includes(key)) {
-    //     await this.assignViewChildrenRefs({ targetId: key });
-    //     await this.resolveTemplateOutlets({ targetId: key });
-    //     await this.executeChangeListener({ targetId: key });
-    //   }
-    // }
   }
 
   resolveTemplateOutlets(){

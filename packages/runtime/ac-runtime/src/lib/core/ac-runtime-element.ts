@@ -20,6 +20,28 @@ export class AcRuntimeElement extends HTMLElement {
   private isBatchScheduled = false;
 
   viewChildren:any = {};
+  private _evaluationContextProxy: any;
+  get evaluationContext(): any {
+    if (!this._evaluationContextProxy) {
+      const self = this;
+      this._evaluationContextProxy = new Proxy(this.acRuntimeInstance, {
+        has(t, key) {
+          return key in t || (self.viewChildren && key in self.viewChildren);
+        },
+        get(t, key, receiver) {
+          if (key in t) {
+            const val = Reflect.get(t, key, receiver);
+            return typeof val === 'function' ? val.bind(t) : val;
+          }
+          if (self.viewChildren && key in self.viewChildren) {
+            return self.viewChildren[key as string];
+          }
+          return undefined;
+        }
+      });
+    }
+    return this._evaluationContextProxy;
+  }
   protected elementRenderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeMethodCallbacks: Record<string, any[]> = {};
@@ -134,22 +156,25 @@ export class AcRuntimeElement extends HTMLElement {
   }): Promise<void> {
     if (this.elementRenderer) {
       const property = path;
+      if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
+      console.log(`[AcRuntimeElement] handlePropertyChange for ${key}`,newValue,oldValue,type,rootKey,path,target);
+    }
       if (this.arrayPropertyChangeListeners[property]) {
         for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
           this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type, target, path, index, fullPath });
         }
       }
 
-      for (const subPath of Object.keys(this.pathSubscriptions)) {
-        if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
-          const cbs = this.pathSubscriptions[subPath];
-          if (cbs) {
-            for (const cb of cbs) {
-              this.scheduleUpdate(cb);
-            }
-          }
-        }
-      }
+      // for (const subPath of Object.keys(this.pathSubscriptions)) {
+      //   if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
+      //     const cbs = this.pathSubscriptions[subPath];
+      //     if (cbs) {
+      //       for (const cb of cbs) {
+      //         this.scheduleUpdate(cb);
+      //       }
+      //     }
+      //   }
+      // }
     }
   }
 
@@ -176,24 +201,12 @@ export class AcRuntimeElement extends HTMLElement {
     if (this.elementRenderer) {
       const property = path;
 
-      for (const listenerProp of Object.keys(this.propertyListeners)) {
-        if (property === listenerProp || property.startsWith(listenerProp + '.')) {
-          for (const targetId of Object.keys(this.propertyListeners[listenerProp])) {
-            this.elementRenderer.executeChangeListener({ targetId: targetId, bindingIds: this.propertyListeners[listenerProp][targetId] });
-          }
-        }
-      }
-
-      for (const subPath of Object.keys(this.pathSubscriptions)) {
-        if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
-          const cbs = this.pathSubscriptions[subPath];
+      const cbs = this.pathSubscriptions[property];
           if (cbs) {
             for (const cb of cbs) {
               this.scheduleUpdate(cb);
             }
           }
-        }
-      }
 
       if (this.acRuntimeInstance.acOnChange) {
           this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
@@ -221,7 +234,7 @@ export class AcRuntimeElement extends HTMLElement {
         if (context === "array") {
           const segments = property.split('.');
           const isArrayLength = segments[segments.length - 1] === "length" || operation === "length";
-
+          console.log(`[AcRuntimeElement] IsArrayLength`,isArrayLength);
           if (isArrayLength) {
             object.handlePropertyChange({
               key: "length",
@@ -351,7 +364,6 @@ export class AcRuntimeElement extends HTMLElement {
         }
       }
     });
-    console.log("Making instance reactive",instance,result,properties);
     return result;
   }
 

@@ -130,6 +130,7 @@ function generateBlockRenderers(
   templateResult:TemplateCompileResult
 ): string {
   let childClasses = '';
+  let rootViewChildCode = '';
 
   for (const binding of bindings) {
     if (binding.type === 'for') {
@@ -176,6 +177,17 @@ function generateBlockRenderers(
         templateResult
       );
     }
+     else if (binding.type === 'viewChildren') {
+      // Generate a renderer sub-class for the template's inner content
+      rootViewChildCode += `if((this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
+              (this.rootElement as any).acRuntimeInstance['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
+              this.rootElement.viewChildren['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
+            }
+            else{
+              (this.rootElement as any).acRuntimeInstance['${binding.expression}'] = this.${getElementPropertyName({ targetId: binding.targetId })};
+              this.rootElement.viewChildren['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any);
+            }`;
+    }
   }
 
 
@@ -186,23 +198,19 @@ function generateBlockRenderers(
 
   let propertiesCode = '';
   let cachingCode = '';
-  let initialStateCode = '';
   let viewChildCode = '';
   for (const tid of targetIds) {
     propertiesCode += ` private ${getElementPropertyName({ targetId: tid })}?: HTMLElement;\n`;
     cachingCode += `this.${getElementPropertyName({ targetId: tid })} = fragment.querySelector('[ac-ref="${tid}"]') as HTMLElement;\n`;
-    initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
     for(const viewChild of templateResult.viewChildren){
         if(viewChild.elementRefId == tid){
           viewChildCode += `
           if(this.${getElementPropertyName({ targetId: tid })}){
             if((this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
-              this.rootElement.viewChildren['${viewChild.selector}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
             }
             else{
               (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};
-              this.rootElement.viewChildren['${viewChild.selector}'] = (this.${getElementPropertyName({ targetId: tid })} as any);
             }
           }
           `
@@ -211,7 +219,6 @@ function generateBlockRenderers(
   }
 
   let eventRegistrationCode = '';
-  let changeListenersCode = '';
   let updaterMethods = '';
   let subscriptionCode = '';
   for (const binding of bindings) {
@@ -259,13 +266,26 @@ function generateBlockRenderers(
         break;
       case 'attribute':
         updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
+        `;
+        if(binding.target.toLowerCase() == 'innerhtml'){
+          updateStatement +=  `
           if(newValue === null || newValue === undefined || newValue === false){\n
-            this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
+            this.${getElementPropertyName({ targetId })}.innerHTML = ''\n;
           }\n
           else{\n
-            this.${getElementPropertyName({ targetId })}.setAttribute('${binding.target}', String(newValue));\n
-          }\n
-        }\n`;
+            this.${getElementPropertyName({ targetId })}.innerHTML = String(newValue);\n
+          }\n`;
+        }
+        else{
+          updateStatement +=  `
+            if(newValue === null || newValue === undefined || newValue === false){\n
+              this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
+            }\n
+            else{\n
+              this.${getElementPropertyName({ targetId })}.setAttribute('${binding.target}', String(newValue));\n
+            }\n`;
+        }
+        updateStatement +=  `}\n`;
         break;
       case 'if':
 
@@ -340,8 +360,7 @@ function generateBlockRenderers(
       el.addEventListener('change', __modelUpdate);\n
       el.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
-
-        `;
+            `;
         break;
       }
       case 'template': {
@@ -390,18 +409,10 @@ function generateBlockRenderers(
   }
       `;
 
-      changeListenersCode += `
-    if (targetId === '${binding.targetId}' || !targetId) {
-      this.${updaterName}(force);
-    }
-      `;
-
-      subscriptionCode += `
-    this.${updaterName}(true);
-      `;
+      subscriptionCode += `this.${updaterName}(true);`;
+      // initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
       for (const property of binding.properties || []) {
-        subscriptionCode += `
-    this.subscribe('${property}', () => this.${updaterName}());
+        subscriptionCode += ` this.subscribe('${property}', () => this.${updaterName}());
         `;
       }
     }
@@ -420,19 +431,13 @@ class ${classNameSub} extends AcElementRenderer {
   override createRendererNodes(): void {
     if (!${classNameSub}.templateFragment) {
       const template = document.createElement('template');
-      template.innerHTML = \`\${this.rendererStartComment} ${html} \${this.rendererEndComment}\`;
+      template.innerHTML = \`<!--\${this.rendererStartCommentText}--> ${html} <!--\${this.rendererEndCommentText}-->\`;
       ${classNameSub}.templateFragment = template.content;
     }
     const fragment = ${classNameSub}.templateFragment.cloneNode(true) as DocumentFragment;
     this.nodes = Array.from(fragment.childNodes);
     ${cachingCode}
     console.log(this);
-  }
-
-  override async executeChangeListener({ targetId, force = false, isFirst = false}: { targetId?: string; force?: boolean;isFirst?: boolean }): Promise<void> {
-    const ctx = this.rootElement.acRuntimeInstance;
-    ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
-    ${changeListenersCode}
   } `;
 
   if(eventRegistrationCode != ''){
@@ -449,10 +454,11 @@ class ${classNameSub} extends AcElementRenderer {
     }`;
   }
 
-  if(viewChildCode != ''){
+  if(viewChildCode != '' || rootViewChildCode != ''){
     classCode += `
 
     override setViewChildRefs(){
+      ${rootViewChildCode}
       ${viewChildCode}
     }`;
   }
@@ -679,7 +685,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         }
       }
     }
-      `;
+    `;
   }
 code += `
   }

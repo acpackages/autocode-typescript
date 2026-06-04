@@ -115,6 +115,27 @@ describe("AcReactivity", () => {
         expect(firstProxy).toBe(secondProxy);
     });
 
+    it("should NOT track dependencies inside raw functions/methods", () => {
+        const instance = {
+            firstName: "John",
+            lastName: "Doe",
+            fullName() {
+                return this.firstName + " " + this.lastName;
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["fullName"],
+            onChange: (c) => changes.push(c)
+        });
+
+        reactive.firstName = "Jane";
+
+        expect(changes.map(c => c.property)).not.toContain("fullName");
+    });
+
     it("should support property deletion and track changes", () => {
         const instance: { user?: { name?: string } } = {
             user: {

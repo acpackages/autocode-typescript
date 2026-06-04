@@ -10,6 +10,7 @@ export interface IRootMetadata {
     readonly onChange: (change: IAcReactiveChange) => void;
     readonly batch: boolean;
     pendingChanges?: Map<string, IAcReactiveChange>;
+    dependencies?: Map<string, Set<string>>;
 }
 
 export interface IReactiveMetadata {
