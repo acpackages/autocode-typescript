@@ -99,6 +99,9 @@
       "@autocode-ts/ac-react": [
         "packages/react/ac-react/index.ts"
       ],
+      "@autocode-ts/ac-reactivity": [
+        "packages/common/ac-reactivity/src/ac-reactivity.ts"
+      ],
       "@autocode-ts/ac-remote-dao": [
         "packages/common/ac-remote-dao/src/index.ts"
       ],

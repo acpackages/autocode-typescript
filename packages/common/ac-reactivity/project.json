@@ -1,0 +1,8 @@
+{
+  "name": "ac-reactivity",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/common/ac-reactivity/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}

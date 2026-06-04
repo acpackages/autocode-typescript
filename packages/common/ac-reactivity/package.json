@@ -1,0 +1,26 @@
+{
+  "name": "@autocode-ts/ac-reactivity",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./ac-reactivity.js",
+  "module": "./ac-reactivity.js",
+  "browser": "./ac-reactivity.umd.js",
+  "types": "./ac-reactivity.d.ts",
+  "dependencies": {},
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./ac-reactivity.d.ts",
+      "import": "./ac-reactivity.js",
+      "require": "./ac-reactivity.cjs"
+    }
+  },
+  "files": [
+    "ac-reactivity.js",
+    "ac-reactivity.cjs",
+    "ac-reactivity.d.ts"
+  ]
+}

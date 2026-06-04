@@ -44,6 +44,7 @@
       "@autocode-ts/ac-nodeflow-designer": ["dist/packages/browser/ac-nodeflow-designer"],
       "@autocode-ts/ac-quill-editor-input": ["dist/packages/browser/ac-quill-editor-input"],
       "@autocode-ts/ac-react": ["dist/packages/react/ac-react"],
+      "@autocode-ts/ac-reactivity": ["dist/packages/common/ac-reactivity"],
       "@autocode-ts/ac-remote-dao": ["dist/packages/common/ac-remote-dao"],
       "@autocode-ts/ac-repeater": ["dist/packages/browser/ac-repeater"],
       "@autocode-ts/ac-report-designer": ["dist/packages/browser/ac-report-designer"],
