@@ -525,5 +525,32 @@ describe("AcReactivity", () => {
             newValue: 4
         });
     });
+
+    it("should emit getter setter changes when array object value changed", () => {
+        const instance = {
+            list: [{ val: 1 }, { val: 2 }],
+            get total() {
+                return this.list.reduce((acc, item) => acc + item.val, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list", "total"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Modifying a value inside an object in the array
+        reactive.list[0].val = 10;
+
+        // Verify we got a change event for total
+        const totalChange = changes.find(c => c.property === "total");
+        expect(totalChange).toBeDefined();
+        expect(totalChange).toMatchObject({
+            property: "total",
+            newValue: 12
+        });
+    });
 });
 

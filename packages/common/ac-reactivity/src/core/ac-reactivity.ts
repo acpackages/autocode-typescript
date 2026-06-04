@@ -32,11 +32,33 @@ export class AcReactivity {
 
       const segments = currentProp.split(".");
       let targetObj = rawInstance;
+      let pathSegments: string[] = [];
+      let stop = false;
       for (let i = 0; i < segments.length - 1; i++) {
         if (targetObj) {
+          pathSegments.push(segments[i]);
           targetObj = targetObj[segments[i]];
+          if (targetObj && (Array.isArray(targetObj) || !canBeReactive(targetObj))) {
+            stop = true;
+            break;
+          }
         }
       }
+
+      if (stop) {
+        const truncatedPath = pathSegments.join(".");
+        if (!dependenciesMap.has(truncatedPath)) {
+          dependenciesMap.set(truncatedPath, new Set());
+        }
+        dependenciesMap.get(truncatedPath)!.add(currentProp);
+
+        if (!allPropertiesSet.has(truncatedPath)) {
+          allPropertiesSet.add(truncatedPath);
+          queue.push(truncatedPath);
+        }
+        continue;
+      }
+
       const propKey = segments[segments.length - 1];
       if (targetObj && (typeof targetObj === "object" || typeof targetObj === "function")) {
         const deps = AcReactivity._findDependencies(targetObj, propKey);
