@@ -97,7 +97,8 @@ export class AcProxyFactory {
                                     target: t,
                                     timestamp: Date.now(),
                                     type: getReactiveValueType({ value }),
-                                    operation: "set"
+                                    operation: "set",
+                                    context: "object"
                                 }
                             });
                         }
@@ -134,7 +135,8 @@ export class AcProxyFactory {
                                     target: t,
                                     timestamp: Date.now(),
                                     type: getReactiveValueType({ value: oldValue }),
-                                    operation: "delete"
+                                    operation: "delete",
+                                    context: "object"
                                 }
                             });
                         }
@@ -190,7 +192,8 @@ export class AcProxyFactory {
                                                 target: t,
                                                 timestamp: Date.now(),
                                                 type: "array",
-                                                operation: key as AcReactiveOperation
+                                                operation: key as AcReactiveOperation,
+                                                context: "array"
                                             }
                                         });
                                     }
@@ -251,7 +254,8 @@ export class AcProxyFactory {
                                     target: t,
                                     timestamp: Date.now(),
                                     type: "array",
-                                    operation: "length"
+                                    operation: "length",
+                                    context: "array"
                                 }
                             });
                         }
@@ -279,7 +283,8 @@ export class AcProxyFactory {
                                     target: t,
                                     timestamp: Date.now(),
                                     type: "array",
-                                    operation: "set"
+                                    operation: "set",
+                                    context: "array"
                                 }
                             });
                         }
@@ -320,7 +325,8 @@ export class AcProxyFactory {
                                     target: t,
                                     timestamp: Date.now(),
                                     type: "array",
-                                    operation: "delete"
+                                    operation: "delete",
+                                    context: "array"
                                 }
                             });
                         }

@@ -10,4 +10,5 @@ export interface IAcReactiveChange {
     timestamp: number;
     type: AcReactiveValueType;
     operation: AcReactiveOperation;
+    context: "root" | "object" | "array";
 }

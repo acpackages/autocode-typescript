@@ -448,5 +448,34 @@ describe("AcReactivity", () => {
         reactive.element.innerHTML = "<span>new</span>";
         expect(changes.length).toBe(0);
     });
+
+    it("should emit correct context (root, object, array) for each change", () => {
+        const instance = {
+            count: 10,
+            user: {
+                name: "John"
+            },
+            items: [1, 2, 3]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["count", "user.name", "items"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // 1. root change
+        reactive.count = 20;
+        expect(changes[0].context).toBe("root");
+
+        // 2. object change
+        reactive.user.name = "Jane";
+        expect(changes[1].context).toBe("object");
+
+        // 3. array change
+        reactive.items.push(4);
+        expect(changes[2].context).toBe("array");
+    });
 });
 

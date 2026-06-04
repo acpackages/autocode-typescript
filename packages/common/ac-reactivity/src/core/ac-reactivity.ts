@@ -84,7 +84,8 @@ export class AcReactivity {
               target: instance,
               timestamp: Date.now(),
               type: getReactiveValueType({ value: newValue }),
-              operation: "set"
+              operation: "set",
+              context: "root"
             }
           });
         }
