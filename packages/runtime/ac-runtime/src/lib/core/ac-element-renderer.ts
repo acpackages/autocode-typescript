@@ -147,9 +147,8 @@ export class AcElementRenderer {
         'context',
         `with (context) { with (scope) { return ${expression} } }`
       );
-      const rootElement = this.rootElement;
-      const evaluationContext = rootElement.evaluationContext;
-      const result = fn.call(rootElement.acRuntimeInstance, context, evaluationContext);
+      const result = fn.call(this.rootElement.acRuntimeInstance, context, this.rootElement.acRuntimeInstance);
+      // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
       return result;
     } catch (e) {
       console.error(this);
@@ -167,7 +166,7 @@ export class AcElementRenderer {
 
     let current = walker.nextNode();
     if(this.isRendered && this.rendererStartComment){
-      current = this.rendererStartComment;
+      // current = this.rendererStartComment;
     }
     let childFound: boolean = this.startComment == undefined || this.isRoot == true;
 
@@ -374,8 +373,6 @@ export class AcElementRenderer {
 
   async render() {
     this.createRendererNodes();
-    this.rendererStartComment = this.nodes[0];
-    this.rendererEndComment = this.nodes[this.nodes.length - 1];
     if (this.startComment && this.endComment && this.parentRenderer) {
       this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
       this.parentRenderer.appendNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment, nodes: this.nodes, processNodes: false });

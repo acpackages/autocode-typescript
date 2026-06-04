@@ -20,28 +20,6 @@ export class AcRuntimeElement extends HTMLElement {
   private isBatchScheduled = false;
 
   viewChildren:any = {};
-  private _evaluationContextProxy: any;
-  get evaluationContext(): any {
-    if (!this._evaluationContextProxy) {
-      const self = this;
-      this._evaluationContextProxy = new Proxy(this.acRuntimeInstance, {
-        has(t, key) {
-          return key in t || (self.viewChildren && key in self.viewChildren);
-        },
-        get(t, key, receiver) {
-          if (key in t) {
-            const val = Reflect.get(t, key, receiver);
-            return typeof val === 'function' ? val.bind(t) : val;
-          }
-          if (self.viewChildren && key in self.viewChildren) {
-            return self.viewChildren[key as string];
-          }
-          return undefined;
-        }
-      });
-    }
-    return this._evaluationContextProxy;
-  }
   protected elementRenderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeMethodCallbacks: Record<string, any[]> = {};
