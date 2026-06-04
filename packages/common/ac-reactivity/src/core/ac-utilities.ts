@@ -102,16 +102,60 @@ export function findRoots(options: {
     return results;
 }
 
+function getValueAtPath(obj: any, path: string): any {
+    const segments = path.split(".");
+    let current = obj;
+    for (const seg of segments) {
+        if (current === null || current === undefined) {
+            return undefined;
+        }
+        current = current[seg];
+    }
+    return current;
+}
+
 export function emitChange(options: {
     root: object;
     rootMetadata: IRootMetadata;
     change: IAcReactiveChange;
+    visited?: Set<string>;
 }): void {
-    const { root, rootMetadata, change } = options;
+    const { root, rootMetadata, change, visited = new Set<string>() } = options;
+    if (visited.has(change.property)) return;
+    visited.add(change.property);
+
     if (rootMetadata.batch) {
         AcBatchScheduler.schedule({ root, rootMetadata, change });
     } else {
         rootMetadata.onChange(change);
+    }
+
+    if (rootMetadata.dependencies) {
+        const changedProperty = change.property;
+        for (const [depKey, depProps] of rootMetadata.dependencies.entries()) {
+            if (
+                changedProperty === depKey ||
+                changedProperty.startsWith(depKey + ".") ||
+                depKey.startsWith(changedProperty + ".")
+            ) {
+                for (const depProp of depProps) {
+                    if (visited.has(depProp)) continue;
+                    const depValue = getValueAtPath(root, depProp);
+                    const depChange: IAcReactiveChange = {
+                        property: depProp,
+                        rootProperty: depProp.split(".")[0],
+                        oldValue: undefined,
+                        newValue: depValue,
+                        target: root,
+                        timestamp: Date.now(),
+                        type: getReactiveValueType({ value: depValue }),
+                        operation: "set",
+                        context: depProp.includes(".") ? "object" : "root"
+                    };
+                    emitChange({ root, rootMetadata, change: depChange, visited });
+                }
+            }
+        }
     }
 }
 

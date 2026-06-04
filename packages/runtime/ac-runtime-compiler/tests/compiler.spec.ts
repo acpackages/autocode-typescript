@@ -824,6 +824,43 @@ describe('ComponentCompiler - viewChildren bindings', () => {
     expect(otherRefBinding.propertyName).toBeUndefined();
     expect(otherRefBinding.elementRefId).toBeDefined();
   });
+
+  it('should include getter and setter properties in reactiveProps list', () => {
+    const source = `
+      import { AcElement, AcInput } from './decorators';
+      @AcElement({
+        selector: 'test-get-set',
+        template: '<div>Hello {{name}}</div>'
+      })
+      export class TestGetSet {
+        private _name = 'World';
+        
+        get name() {
+          return this._name;
+        }
+        
+        set name(val: string) {
+          this._name = val;
+        }
+
+        @AcInput()
+        get title() {
+          return 'Sir';
+        }
+        set title(v) {}
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results).toHaveLength(1);
+    // name should be reactive because it is used in the template
+    expect(results[0].code).toContain("Object.defineProperty(this, 'name'");
+    // title should be reactive because it has the AcInput decorator
+    expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
+    // It should not add duplicates for name or title in reactiveProps/nonReactiveProps
+    const matches = results[0].code.match(/\/\/ Object\.defineProperty\(this, 'name'\)/g);
+    expect(matches).toHaveLength(1);
+  });
 });
 
 describe('Compile-time event/model/pipe migration', () => {

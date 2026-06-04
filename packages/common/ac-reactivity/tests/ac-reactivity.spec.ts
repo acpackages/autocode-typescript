@@ -498,5 +498,32 @@ describe("AcReactivity", () => {
         reactive.items.push(4);
         expect(changes[2].context).toBe("array");
     });
+
+    it("should emit getter setter changes when getter/setter also had dependency on array", () => {
+        const instance = {
+            list: [1, 2, 3],
+            get count() {
+                return this.list.length;
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list", "count"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Mutate array using push
+        reactive.list.push(4);
+
+        // Verify we got a change event for count
+        const countChange = changes.find(c => c.property === "count");
+        expect(countChange).toBeDefined();
+        expect(countChange).toMatchObject({
+            property: "count",
+            newValue: 4
+        });
+    });
 });
 

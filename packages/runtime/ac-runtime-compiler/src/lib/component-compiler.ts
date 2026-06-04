@@ -330,6 +330,7 @@ export class ComponentCompiler {
     const subscribeChanges: { methodName: string; keys: string[] }[] = [];
     const listenChanges: string[] = [];
     let memberIndex = 0;
+    const processedPropNames = new Set<string>();
 
     for (const member of node.members) {
       if (member.name && ts.isIdentifier(member.name)) {
@@ -347,8 +348,13 @@ export class ComponentCompiler {
               }
               subscribeChanges.push({ methodName: propName, keys });
             }
-            // @AcListenChanges is only valid on property declarations
-            if (isDecorator(d, 'AcListenChanges') && ts.isPropertyDeclaration(member)) {
+            // @AcListenChanges is only valid on property declarations and accessors
+            if (
+              isDecorator(d, 'AcListenChanges') &&
+              (ts.isPropertyDeclaration(member) ||
+                ts.isGetAccessorDeclaration(member) ||
+                ts.isSetAccessorDeclaration(member))
+            ) {
               const call = d.expression as ts.CallExpression;
               const arg = call.arguments[0];
               const keys: string[] = [];
@@ -364,8 +370,38 @@ export class ComponentCompiler {
         }
       }
 
-      if (ts.isPropertyDeclaration(member) && ts.isIdentifier(member.name)) {
+      if (
+        (ts.isPropertyDeclaration(member) ||
+          ts.isGetAccessorDeclaration(member) ||
+          ts.isSetAccessorDeclaration(member)) &&
+        ts.isIdentifier(member.name)
+      ) {
         const propName = member.name.text;
+
+        if (processedPropNames.has(propName)) {
+          // If we have already processed this name, we might still have decorators on this accessor
+          const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
+          if (decorators) {
+            for (const d of decorators) {
+              if (isDecorator(d, 'AcInput') && !inputs.includes(propName)) {
+                inputs.push(propName);
+                // Since it's now an input, it must be reactive. If it was classified as non-reactive, move it.
+                const nonReactiveIdx = nonReactiveProps.findIndex(p => p.name === propName);
+                if (nonReactiveIdx !== -1) {
+                  const [removed] = nonReactiveProps.splice(nonReactiveIdx, 1);
+                  reactiveProps.push(removed);
+                }
+              }
+              if (isDecorator(d, 'AcOutput') && !outputs.includes(propName)) {
+                outputs.push(propName);
+              }
+            }
+          }
+          continue;
+        }
+
+        processedPropNames.add(propName);
+
         const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
         let isInput = false;
         let isOutput = false;
@@ -385,7 +421,9 @@ export class ComponentCompiler {
           }
         }
 
-        const init = member.initializer ? member.initializer.getText() : 'undefined';
+        const init = (ts.isPropertyDeclaration(member) && member.initializer)
+          ? member.initializer.getText()
+          : 'undefined';
 
         if (propName === 'element') {
           // Skip — managed by the HTMLElement wrapper
