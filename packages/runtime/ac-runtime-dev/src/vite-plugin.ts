@@ -23,6 +23,18 @@ import { Plugin, ResolvedConfig } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ComponentCompiler } from '../../ac-runtime-compiler/src/index';
+import * as ts from 'typescript';
+
+const TS_COMPILER_OPTIONS: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.ESNext,
+    removeComments: true,
+    alwaysStrict: true,
+    sourceMap: true,
+    inlineSourceMap: true,
+    inlineSources: true,
+};
+
 
 /**
  * Application config derived from `package.json`.
@@ -48,7 +60,30 @@ interface AppConfig {
  * @returns A Vite plugin with `configResolved`, `buildStart`,
  *          `transform`, `transformIndexHtml`, and `configureServer` hooks.
  */
-export function acRuntimePlugin(): Plugin {
+export function acRuntimePlugin(options?: { output?: 'ts' | 'js' }): Plugin {
+    // Resolve output format (default is 'ts')
+    let outputFormat: 'ts' | 'js' = 'ts';
+    
+    // 1. Check options argument
+    if (options?.output === 'ts' || options?.output === 'js') {
+        outputFormat = options.output;
+    } else {
+        // 2. Check process.env.OUTPUT or process.env.output
+        const envVal = process.env.OUTPUT || process.env.output;
+        if (envVal === 'ts' || envVal === 'js') {
+            outputFormat = envVal as 'ts' | 'js';
+        } else {
+            // 3. Check process.argv for output=ts or --output=ts, etc.
+            for (const arg of process.argv) {
+                const match = arg.match(/^(?:--)?output=(ts|js)$/i);
+                if (match) {
+                    outputFormat = match[1].toLowerCase() as 'ts' | 'js';
+                    break;
+                }
+            }
+        }
+    }
+
     /** Resolved Vite config (available after `configResolved`). */
     let config: ResolvedConfig;
     /** Shared compiler instance — reused across all compilations. */
@@ -75,19 +110,23 @@ export function acRuntimePlugin(): Plugin {
      */
     const getCachePath = (absolutePath: string): string => {
         const normalizedAbs = normalizePath(absolutePath);
+        let targetPath = absolutePath;
+        if (outputFormat === 'js' && targetPath.endsWith('.ts')) {
+            targetPath = targetPath.slice(0, -3) + '.js';
+        }
 
         if (normalizedAbs.startsWith(normalizedRoot)) {
-            return path.join(projectRoot, '.ac-runtime-cache', path.relative(projectRoot, absolutePath));
+            return path.join(projectRoot, '.ac-runtime-cache', path.relative(projectRoot, targetPath));
         }
         
         // Handle files outside project root (e.g. workspace packages)
         // Map them to .ac-runtime-cache/packages/... for consistency
         if (normalizedAbs.includes('/packages/')) {
-            const parts = normalizedAbs.split('/packages/');
+            const parts = normalizePath(targetPath).split('/packages/');
             return path.join(projectRoot, '.ac-runtime-cache', 'packages', parts[parts.length - 1]);
         }
         
-        const safePath = normalizedAbs.replace(/[:\/]/g, '_');
+        const safePath = normalizePath(targetPath).replace(/[:\/]/g, '_');
         return path.join(projectRoot, '.ac-runtime-cache', 'ext', safePath);
     };
 
@@ -128,12 +167,12 @@ export function acRuntimePlugin(): Plugin {
 
         if (normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
             const targetCachePath = getCachePath(resolvedPath);
-
-            // Only rewrite if the cache file was actually created (compilation succeeded)
-            if (fs.existsSync(targetCachePath)) {
-                const relativeToProjectRoot = path.relative(projectRoot, targetCachePath).replace(/\\/g, '/');
-                return '/' + relativeToProjectRoot;
+            const importerCachePath = getCachePath(importerPath);
+            let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
+            if (!relativePath.startsWith('.')) {
+                relativePath = './' + relativePath;
             }
+            return relativePath;
         }
 
         return originalPath;
@@ -159,25 +198,28 @@ export function acRuntimePlugin(): Plugin {
             const results = compiler.compile(code, id, resolveImport);
 
             if (results.length === 0) {
-            // Non-component file (constants, types, barrel re-exports, etc.).
-            // Still write to cache with rewritten relative imports so that
-            // component files that import from this file can find it in the cache.
-            if (isForCache) {
-                const rewritten = code
-                    .replace(/\bfrom\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
-                        const resolved = resolveImport(importPath, id);
-                        return `from ${q}${resolved}${q}`;
-                    })
-                    .replace(/\bimport\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
-                        const resolved = resolveImport(importPath, id);
-                        return `import ${q}${resolved}${q}`;
-                    });
-                const dir = path.dirname(cachePath);
-                fs.mkdirSync(dir, { recursive: true });
-                fs.writeFileSync(cachePath, rewritten);
+                // Non-component file (constants, types, barrel re-exports, etc.).
+                // Still write to cache with rewritten relative imports so that
+                // component files that import from this file can find it in the cache.
+                if (isForCache) {
+                    const rewritten = code
+                        .replace(/\bfrom\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
+                            const resolved = resolveImport(importPath, id);
+                            return `from ${q}${resolved}${q}`;
+                        })
+                        .replace(/\bimport\s+(['"])(\.\.?\/[^'"]+)\1/g, (_, q, importPath) => {
+                            const resolved = resolveImport(importPath, id);
+                            return `import ${q}${resolved}${q}`;
+                        });
+                    const finalCode = outputFormat === 'js'
+                        ? ts.transpileModule(rewritten, { compilerOptions: TS_COMPILER_OPTIONS }).outputText
+                        : rewritten;
+                    const dir = path.dirname(cachePath);
+                    fs.mkdirSync(dir, { recursive: true });
+                    fs.writeFileSync(cachePath, finalCode);
+                }
+                return null;
             }
-            return null;
-        }
 
             let compiledCode = results[0].code;
 
@@ -192,17 +234,21 @@ export function acRuntimePlugin(): Plugin {
                 },
             );
 
+            const finalComponentCode = outputFormat === 'js'
+                ? ts.transpileModule(compiledCode, { compilerOptions: TS_COMPILER_OPTIONS }).outputText
+                : compiledCode;
+
             // Always write to cache (for import path rewriting)
             if (isForCache) {
                 const dir = path.dirname(cachePath);
                 fs.mkdirSync(dir, { recursive: true });
-                fs.writeFileSync(cachePath, compiledCode);
+                fs.writeFileSync(cachePath, finalComponentCode);
             }
 
             // Only return compiled code for component files (has selector)
             // Non-component files: let Vite's esbuild handle type stripping
             if (results[0].selector) {
-                return compiledCode;
+                return finalComponentCode;
             }
         } catch (err) {
             console.error(`[AC Compiler] Error compiling ${id}:`, err);

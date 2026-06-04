@@ -2,7 +2,42 @@ import { Plugin, ResolvedConfig } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ComponentCompiler } from '../../ac-runtime-compiler/src/index';
-export function acRuntimePlugin(): Plugin {
+import * as ts from 'typescript';
+
+const TS_COMPILER_OPTIONS: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.ESNext,
+    removeComments: true,
+    alwaysStrict: true,
+    sourceMap: true,
+    inlineSourceMap: true,
+    inlineSources: true,
+};
+
+export function acRuntimePlugin(options?: { output?: 'ts' | 'js' }): Plugin {
+    // Resolve output format (default is 'ts')
+    let outputFormat: 'ts' | 'js' = 'ts';
+    
+    // 1. Check options argument
+    if (options?.output === 'ts' || options?.output === 'js') {
+        outputFormat = options.output;
+    } else {
+        // 2. Check process.env.OUTPUT or process.env.output
+        const envVal = process.env.OUTPUT || process.env.output;
+        if (envVal === 'ts' || envVal === 'js') {
+            outputFormat = envVal as 'ts' | 'js';
+        } else {
+            // 3. Check process.argv for output=ts or --output=ts, etc.
+            for (const arg of process.argv) {
+                const match = arg.match(/^(?:--)?output=(ts|js)$/i);
+                if (match) {
+                    outputFormat = match[1].toLowerCase() as 'ts' | 'js';
+                    break;
+                }
+            }
+        }
+    }
+
     let config: ResolvedConfig;
     const compiler = new ComponentCompiler();
     let projectRoot = '';
@@ -16,10 +51,14 @@ export function acRuntimePlugin(): Plugin {
      * Gets the path in the cache directory for a given absolute source path.
      */
     const getCachePath = (absolutePath: string): string => {
+        let targetPath = absolutePath;
+        if (outputFormat === 'js' && targetPath.endsWith('.ts')) {
+            targetPath = targetPath.slice(0, -3) + '.js';
+        }
         // Find a common root for tests and packages if needed, but here we mirror relative to projectRoot or workspace root?
         // Let's use the workspace root for mirroring to handle cross-project imports correctly within the cache.
         const workspaceRoot = path.resolve(projectRoot, '../../');
-        const relativeToWorkspace = path.relative(workspaceRoot, absolutePath);
+        const relativeToWorkspace = path.relative(workspaceRoot, targetPath);
         const safeRelativePath = relativeToWorkspace.replace(/\.\./g, 'up');
         return path.join(projectRoot, 'ac-runtime-cache', safeRelativePath);
     };
@@ -69,14 +108,17 @@ export function acRuntimePlugin(): Plugin {
                     let compiledCode = results[0].code;
                     compiledCode = compiledCode.replace(/import\s+['"].*?\.(css|scss)['"];?\n?/g, '');
                     compiledCode = compiledCode.replace(/import\s+.*?\s+from\s+['"].*?\.(css|scss)['"];?\n?/g, '');
+                    const finalComponentCode = outputFormat === 'js'
+                        ? ts.transpileModule(compiledCode, { compilerOptions: TS_COMPILER_OPTIONS }).outputText
+                        : compiledCode;
                     if (isForCache) {
                         const dir = path.dirname(cachePath);
                         if (!fs.existsSync(dir)) {
                             fs.mkdirSync(dir, { recursive: true });
                         }
-                        fs.writeFileSync(cachePath, compiledCode);
+                        fs.writeFileSync(cachePath, finalComponentCode);
                     }
-                    return compiledCode;
+                    return finalComponentCode;
                 }
             }
             catch (err) {

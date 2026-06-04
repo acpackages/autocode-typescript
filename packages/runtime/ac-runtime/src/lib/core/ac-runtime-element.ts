@@ -167,6 +167,7 @@ export class AcRuntimeElement extends HTMLElement {
     oldValue: any;
     newValue: any;
   }): Promise<void> {
+    console.log(`[AcRuntimeElement] handlePropertyChange for ${key}`,newValue,oldValue,type,rootKey,path,target)
     if (this.elementRenderer) {
       const property = path;
 

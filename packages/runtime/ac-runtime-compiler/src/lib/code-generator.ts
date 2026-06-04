@@ -451,6 +451,7 @@ class ${classNameSub} extends AcElementRenderer {
 
   if(viewChildCode != ''){
     classCode += `
+
     override setViewChildRefs(){
       ${viewChildCode}
     }`;
