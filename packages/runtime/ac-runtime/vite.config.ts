@@ -43,7 +43,16 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: [
+        "@autocode-ts/ac-pipes",
+        "@autocode-ts/ac-reactivity",
+      ],
+        output: {
+          globals: {
+            "@autocode-ts/ac-pipes": "acPipes",
+            "@autocode-ts/ac-reactivity": "acReactivity",
+          }
+        }
     },
   },
   test: {

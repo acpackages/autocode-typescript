@@ -619,7 +619,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
     constructor() {
       super();
-
+      this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
       this.acRuntimeInstance.element = this;
       this.elementHtml = \`${templateResult.html}\`;
@@ -643,7 +643,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
       this.instanceViewChildren = ${JSON.stringify(acGenerateViewChildObject(viewChildren, templateResult))};
       this.propertyListeners = ${JSON.stringify(propertyListenersMap)};
-      this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
 
       `;
   for (const changeDetails of templateResult.subscribeChanges || []) {
