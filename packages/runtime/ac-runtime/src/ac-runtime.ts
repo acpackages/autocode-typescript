@@ -36,4 +36,3 @@ export * from './lib/runtime-helpers';
 export * from './lib/core/ac-element-renderer';
 // export * from './lib/core/ac-element-array-renderer';
 export * from './lib/core/ac-runtime-element';
-export * from './lib/router';

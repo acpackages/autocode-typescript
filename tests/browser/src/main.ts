@@ -1,6 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-// import "./assets/scss/styles.scss";
-// import "./assets/scss/autocode.scss";
+import "./assets/scss/styles.scss";
+import "./assets/scss/autocode.scss";
 // import "@autocode-ts/ac-browser/src/lib/components/ac-datagrid/css/ac-datagrid.css";
 // import "@autocode-ts/ac-browser/src/lib/components/ac-pagination/css/ac-pagination.css";
 
@@ -14,7 +14,6 @@
 // console.log('🚀 [Main] Compiled components loaded:', allCompiled);
 // console.log('🚀 [Main] Total components:', Object.keys(allCompiled).length);
 
-import { provideRouter } from "@autocode-ts/ac-runtime-router";
 import { APP_ROUTES } from "./shared/consts/app-routes.consts";
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -23,8 +22,8 @@ import { AcDatagridExtensionManager, acInit } from "@autocode-ts/ac-browser";
 import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDataDictionary } from "@autocode-ts/ac-data-dictionary";
 import { dataDictionaryJson as actDataDictionary } from './data/accountea-pro';
-import { acRouter, IAcRoute } from "@autocode-ts/ac-runtime";
 import './_app.export';
+import { IAcRoute,acRouter } from "@autocode-ts/ac-runtime-router";
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
@@ -86,10 +85,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         { path: APP_ROUTES.tabs.window, element:{selector: 'tabs-window-page' }},
         { path: APP_ROUTES.templateEngine, element:{selector: 'template-engine-page' }},
         { path: APP_ROUTES.utils.http, element:{selector: 'utils-page' }},
-        { path: APP_ROUTES.utils.webSocket, element:{selector: 'web-socket-page' }},
-        { path: '*', element:{selector: 'dashboard-page' }}
+        { path: APP_ROUTES.utils.webSocket, element:{selector: 'web-socket-page' }}
     ];
 
+    console.log(routes);
      acRouter.registerRoutes(routes);
     // Set up the main layout
     const appRoot = document.getElementById('app');

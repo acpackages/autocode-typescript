@@ -19,7 +19,7 @@ export class App {
 
   static navigateByUrl(url: string) {
     this.initRouter();
-    AcRouter.getInstance().navigate(url);
+    AcRouter.getInstance().navigate('#'+url);
   }
 
   static notify({ event, args }: { event: string, args?: any }) {

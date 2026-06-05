@@ -26,6 +26,7 @@
     "build:ac-reactivity": "nx run ac-reactivity:build",
     "build:ac-report-engine": "nx run ac-report-engine:build",
     "build:ac-runtime": "nx run ac-runtime:build",
+    "build:ac-runtime-router": "nx run ac-runtime-router:build",
     "build:ac-sql-node": "nx run ac-sql-node:build",
     "build:ac-sql": "nx run ac-sql:build",
     "build:ac-web": "nx run ac-web:build",

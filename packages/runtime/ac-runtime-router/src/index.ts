@@ -1,28 +1,21 @@
 /**
- * @module ac-runtime-router
+ * @module router
  *
- * Standalone router package for AC Runtime applications.
+ * Lightweight client-side router for AC Runtime applications.
  *
- * Provides three web components and a setup function for client-side routing:
+ * Provides:
+ * - {@link IAcRoute} — Route definition interface.
+ * - {@link IAcRouteSnapshot} — Snapshot of the matched route with params.
+ * - {@link AcRouterElement} — `<ac-router>` custom element that renders
+ *   the matched component inside itself.
+ * - {@link AcRouter} — Singleton router class managing route registration,
+ *   navigation, and URL matching.
+ * - {@link acRouter} — Pre-created singleton instance, ready to use.
  *
- * - {@link AcRouter} — Singleton router service managing route state.
- * - {@link AcRouterOutlet} — `<ac-router-outlet>` element that renders
- *   the matched component, with support for async route guards.
- * - {@link AcRouterLink} — `<ac-router-link to="/path">` element for
- *   declarative navigation links (prevents full page reloads).
- * - {@link provideRouter} — Bootstrap function that registers custom
- *   elements and sets the initial route table.
- *
- * @example
- * ```ts
- * import { provideRouter } from 'ac-runtime-router';
- *
- * provideRouter([
- *   { path: '/', component: 'app-home' },
- *   { path: '/about', component: 'app-about' },
- *   { path: '*', component: 'app-not-found' },
- * ]);
- * ```
+ * The router uses **hash-based routing** (`#/path`) for compatibility
+ * with file:// protocol, WebView, and mobile environments. It listens
+ * for `hashchange` events and exposes a publish/subscribe model so
+ * multiple `<ac-router>` outlets can react to URL changes.
  */
 
 // ─── Route Definition ────────────────────────────────────────────────────────
@@ -32,254 +25,433 @@
  *
  * @example
  * ```ts
- * const route: Route = {
- *   path: '/admin',
- *   component: 'admin-panel',
- *   canActivate: () => isLoggedIn(),
- * };
+ * const routes: IAcRoute[] = [
+ *   { path: '/dashboard', element: DashboardComponent },
+ *   { path: '/users/:id', element: UserDetailComponent },
+ *   { path: '**', element: NotFoundComponent },
+ * ];
  * ```
  */
-export interface Route {
-    /** URL path to match. Use `'*'` as a catch-all wildcard. */
-    path: string;
+export interface IAcRoute {
+  /** URL path to match (exact or parameterized). Use `'*'` or `'**'` for wildcard/fallback. */
+  path: string;
 
-    /** Custom element tag name to render when this route is active. */
-    component: string;
+  /**
+   * Component class reference. Must have a static `selector` property
+   * (set by the AC Runtime Compiler) or a `name` property that will be
+   * converted from PascalCase to kebab-case.
+   */
+  element?: { selector?: string; name?: string };
 
-    /**
-     * Optional async guard function. Return `false` or `Promise<false>`
-     * to prevent navigation. The route component will not be rendered.
-     */
-    canActivate?: () => boolean | Promise<boolean>;
+  /** Custom element tag name to create when this route is active. */
+  component?: string;
+
+  /** Optional static data passed to the route snapshot. */
+  data?: Record<string, any>;
+
+  /** Named outlet this route targets. Defaults to `'primary'`. */
+  outlet?: string;
+
+  /** If set, navigates to this path instead of rendering. */
+  redirectTo?: string;
+
+  /**
+   * Optional route guard. Return `false` or a `Promise<false>` to
+   * prevent navigation to this route.
+   */
+  canActivate?: () => boolean | Promise<boolean>;
+}
+
+/**
+ * Snapshot of a matched route, including extracted URL parameters.
+ */
+export interface IAcRouteSnapshot {
+  /** The matched URL path (without query params). */
+  path: string;
+  /** The component class reference from the route definition. */
+  element?: { selector?: string; name?: string };
+  /** Extracted URL parameters (e.g., `{ id: '123' }` from `/users/:id`). */
+  params: Record<string, string>;
+  /** Static data from the route definition. */
+  data: Record<string, any>;
+  /** The outlet name this route targets. */
+  outlet: string;
+}
+
+// ─── Router Outlet Element ───────────────────────────────────────────────────
+
+/**
+ * `<ac-router>` custom element — renders the component matching the
+ * current URL inside itself.
+ *
+ * **Lifecycle:**
+ * 1. On `connectedCallback`, subscribes to the {@link acRouter} singleton.
+ * 2. On each hash change, matches the route and creates the corresponding
+ *    custom element, replacing the previous one.
+ * 3. On `disconnectedCallback`, unsubscribes to prevent memory leaks.
+ *
+ * Supports `pause()` / `resume()` to temporarily ignore route changes
+ * (useful during tab management or modal overlays).
+ */
+export class AcRouterElement extends HTMLElement {
+  /** Reference to the currently rendered child component. */
+  private currentComponent: HTMLElement | null = null;
+
+  /** The selector tag of the currently rendered component. */
+  private currentSelector: string | null = null;
+
+  /** The path of the currently rendered route (for wildcard route detection). */
+  private currentPath: string | null = null;
+
+  /** When `true`, route change notifications are ignored. */
+  private _paused = false;
+
+  /** Cleanup function returned by `acRouter.routeChange.subscribe()`. */
+  private _unsubscribe: (() => void) | null = null;
+
+  /** Last handled snapshot for refresh support. */
+  lastSnapshot: IAcRouteSnapshot | null = null;
+
+  /** Subscribe to route changes when the element enters the DOM. */
+  connectedCallback(): void {
+    this.style.display = 'contents';
+    this._unsubscribe = acRouter.routeChange.subscribe((snapshot: IAcRouteSnapshot) => {
+      if (this._paused) return;
+      this.handleRouteChange(snapshot);
+    });
+    // If router already has a last snapshot (late connection), render it
+    if (acRouter.lastSnapshot) {
+      this.handleRouteChange(acRouter.lastSnapshot);
+    }
+  }
+
+  /** Unsubscribe from route changes when removed from the DOM. */
+  disconnectedCallback(): void {
+    this._unsubscribe?.();
+    this._unsubscribe = null;
+  }
+
+  /** Temporarily stop reacting to route changes. */
+  pause(): void {
+    this._paused = true;
+  }
+
+  /** Resume reacting to route changes after a {@link pause}. */
+  resume(): void {
+    this._paused = false;
+  }
+
+  /** Re-handle the last snapshot (useful after pause/resume). */
+  refresh(): void {
+    const snapshot = this.lastSnapshot || acRouter.lastSnapshot;
+    if (snapshot) {
+      this.handleRouteChange(snapshot);
+    }
+  }
+
+  /**
+   * Handle a route change by creating and mounting the matched component.
+   *
+   * @param snapshot - The matched route snapshot.
+   */
+  private handleRouteChange(snapshot: IAcRouteSnapshot): void {
+    this.lastSnapshot = snapshot;
+    const ComponentClass = snapshot.element;
+    if (!ComponentClass) return;
+
+    // Resolve the custom element tag name
+    const selector = this.resolveSelector(ComponentClass);
+    if (!selector) return;
+
+    // Skip re-render ONLY if the same component AND same path are already mounted
+    // (path must be checked because wildcard routes use the same selector for all pages)
+    if (this.currentSelector === selector && this.currentPath === snapshot.path && this.currentComponent) {
+      return;
+    }
+
+    // Clear current content
+    this.clearContent();
+
+    // Create and mount the new component
+    this.currentSelector = selector;
+    this.currentPath = snapshot.path;
+    this.currentComponent = document.createElement(selector);
+    this.appendChild(this.currentComponent);
+  }
+
+  /**
+   * Resolve the custom element tag name from a component class.
+   * Checks `selector` static property first (set by compiler),
+   * then falls back to PascalCase → kebab-case conversion.
+   */
+  private resolveSelector(componentClass: any): string | null {
+    if (!componentClass) return null;
+
+    // 1. Direct component string
+    if (typeof componentClass === 'string') return componentClass;
+
+    // 2. Static `selector` property (set by AC Runtime Compiler)
+    if (componentClass.selector) return componentClass.selector;
+
+    // 3. Derive from class name: PascalCase → kebab-case
+    if (componentClass.name) {
+      return componentClass.name
+        .replace(/([A-Z])/g, '-$1')
+        .toLowerCase()
+        .slice(1); // Remove leading dash
+    }
+
+    return null;
+  }
+
+  /** Remove current child component from the DOM. */
+  private clearContent(): void {
+    if (this.currentComponent) {
+      this.currentComponent.remove();
+      this.currentComponent = null;
+      this.currentSelector = null;
+      this.currentPath = null;
+    }
+    // Also clear any remaining children
+    while (this.firstChild) {
+      this.removeChild(this.firstChild);
+    }
+  }
+}
+
+// ─── Lightweight Event Emitter ───────────────────────────────────────────────
+
+/**
+ * Minimal typed event emitter used internally by the router.
+ * Uses `Set` for O(1) add/delete of subscribers.
+ */
+class RouterEventEmitter<T> {
+  private readonly listeners = new Set<(value: T) => void>();
+
+  emit(value: T): void {
+    for (const fn of this.listeners) {
+      fn(value);
+    }
+  }
+
+  subscribe(fn: (value: T) => void): () => void {
+    this.listeners.add(fn);
+    return () => {
+      this.listeners.delete(fn);
+    };
+  }
 }
 
 // ─── Router Singleton ────────────────────────────────────────────────────────
 
 /**
- * Singleton client-side router managing route state and navigation.
+ * Singleton router managing route registration, URL matching, and navigation.
  *
- * **Design:** Uses the Singleton pattern to ensure a single source of
- * truth for routing state. All `<ac-router-outlet>` elements subscribe
- * to the same instance.
+ * Uses **hash-based routing** (`#/path`) for maximum compatibility with
+ * file:// protocol, Android WebView, iOS Safari, and in-app webviews.
  *
- * **Navigation methods:**
- * - `navigate(path)` — Programmatic navigation (pushes history state).
- * - `popstate` event — Automatically handled for browser back/forward.
+ * Uses the **Singleton pattern** — obtain the instance via
+ * `AcRouter.getInstance()` or use the pre-exported {@link acRouter} constant.
  *
- * **Matching:** Currently uses exact path matching, falling back to
- * a wildcard route (`'*'`) if no exact match is found.
+ * **Internal mechanics:**
+ * - Listens for `hashchange` events on the window.
+ * - Extracts the path from `window.location.hash`.
+ * - Matches routes via regex-based path comparison with parameter extraction.
+ * - Falls back to wildcard routes (`'*'` or `'**'`) if no exact match.
+ * - Emits `IAcRouteSnapshot` objects to all subscribers.
  */
 export class AcRouter {
-    /** The single shared instance. */
-    private static instance: AcRouter;
+  /** The single shared instance. */
+  private static instance: AcRouter;
 
-    /** Registered route definitions. */
-    private routes: Route[] = [];
+  /** Registered route definitions. */
+  private routes: IAcRoute[] = [];
 
-    /** Active listener callbacks. Uses `Set` for O(1) add/remove. */
-    private readonly listeners = new Set<(url: string) => void>();
+  /** Typed event emitter for route changes. */
+  readonly routeChange = new RouterEventEmitter<IAcRouteSnapshot>();
 
-    /**
-     * Private constructor — sets up `popstate` listener for browser
-     * back/forward button handling.
-     */
-    private constructor() {
-        window.addEventListener('popstate', () => {
-            this.notify(window.location.pathname);
-        });
+  /** Whether route processing is paused. */
+  private isPaused = false;
+
+  /** The last emitted route snapshot (for late subscribers). */
+  lastSnapshot?: IAcRouteSnapshot;
+
+  /**
+   * Private constructor — listens for `hashchange` to handle
+   * browser navigation (back/forward, hash link clicks).
+   */
+  private constructor() {
+    window.addEventListener('hashchange', () => this.handleHashChange());
+    window.addEventListener('load', () => this.handleHashChange());
+  }
+
+  /**
+   * Returns the singleton router instance, creating it on first call.
+   */
+  static getInstance(): AcRouter {
+    if (!this.instance) this.instance = new AcRouter();
+    return this.instance;
+  }
+
+  /** Temporarily pause route processing. */
+  pause(): void {
+    this.isPaused = true;
+  }
+
+  /** Resume route processing after a pause. */
+  resume(): void {
+    this.isPaused = false;
+  }
+
+  /**
+   * Register the application's route table and trigger the initial
+   * route resolution if the document is already loaded.
+   *
+   * @param routes - Array of route definitions.
+   */
+  registerRoutes(routes: IAcRoute[]): void {
+    this.routes = routes;
+    // Trigger initial check if already loaded
+    if (document.readyState === 'complete' && !this.isPaused) {
+      this.handleHashChange();
+    }
+  }
+
+  /**
+   * Programmatically navigate to a new hash path.
+   *
+   * @param path - The target path (e.g., `'/dashboard'`).
+   */
+  navigateTo(path: string): void {
+    window.location.hash = path;
+  }
+
+  /**
+   * Programmatically navigate using history API with hash.
+   *
+   * @param path - The target URL path (e.g., `'/dashboard'`).
+   */
+  navigate(path: string): void {
+    window.location.hash = path;
+  }
+
+  /**
+   * Subscribe to URL change notifications.
+   *
+   * @param callback - Invoked with the new URL path on each change.
+   * @returns An unsubscribe function.
+   */
+  subscribe(callback: (url: string) => void): () => void {
+    return this.routeChange.subscribe((snapshot) => {
+      callback(snapshot.path);
+    });
+  }
+
+  /**
+   * Find the first route whose `path` matches the given URL,
+   * supporting parameterized routes (`:id`) and wildcards (`**`).
+   *
+   * @param url - The URL path to match against.
+   * @returns The matched route, or `undefined` if none found.
+   */
+  match(url: string): IAcRoute | undefined {
+    // Try exact/parameterized match first
+    for (const route of this.routes) {
+      if (route.path === '**' || route.path === '*') continue;
+      const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
+      const regex = new RegExp(`^${regexPath}$`);
+      if (regex.test(url)) return route;
+    }
+    // Fallback to wildcard
+    return this.routes.find(r => r.path === '**' || r.path === '*');
+  }
+
+  /**
+   * Extract the current path from the URL hash.
+   * @returns The path portion of the hash (without query params).
+   */
+  private getCurrentPath(): string {
+    const hash = window.location.hash.slice(1) || '/';
+    const [path] = hash.split('?');
+    return path;
+  }
+
+  /**
+   * Handle a hash change event by matching the route and emitting snapshots.
+   */
+  private handleHashChange(): void {
+
+    const path = this.getCurrentPath();
+    console.log("Route Changed",path,this.isPaused);
+    if (this.isPaused) return;
+    this.matchRoute(path);
+  }
+
+  /**
+   * Match the given URL path against registered routes, extract parameters,
+   * handle redirects, and emit route snapshots.
+   *
+   * @param url - The URL path to match.
+   */
+  private matchRoute(url: string): void {
+    // Find all matching routes (supports multiple outlets)
+    let matchedRoutes = this.routes.filter(route => {
+      if (route.path === '**' || route.path === '*') return false;
+      const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
+      const regex = new RegExp(`^${regexPath}$`);
+      return regex.test(url);
+    });
+
+    // Fallback to wildcard if no match
+    if (matchedRoutes.length === 0) {
+      matchedRoutes = this.routes.filter(r => r.path === '**' || r.path === '*');
+      if (matchedRoutes.length === 0) {
+        console.warn(`[AcRouter] No route found for ${url}`);
+        return;
+      }
     }
 
-    /** Returns the singleton router instance, creating it on first call. */
-    static getInstance(): AcRouter {
-        if (!this.instance) this.instance = new AcRouter();
-        return this.instance;
+    // Handle redirects
+    const redirectRoute = matchedRoutes.find(r => r.redirectTo !== undefined);
+    if (redirectRoute) {
+      this.navigateTo(redirectRoute.redirectTo!);
+      return;
     }
 
-    /**
-     * Register the application's route table.
-     * Triggers an initial route resolution on the next microtask.
-     *
-     * @param routes - Array of {@link Route} definitions.
-     */
-    setRoutes(routes: Route[]): void {
-        this.routes = routes;
-        // Trigger initial route on next microtask so all elements are connected
-        setTimeout(() => this.notify(window.location.pathname), 0);
-    }
+    // Emit a snapshot for each matched route
+    for (const route of matchedRoutes) {
+      const params: Record<string, string> = {};
 
-    /**
-     * Navigate to a new URL path programmatically.
-     * Pushes a new browser history entry and notifies all subscribers.
-     *
-     * @param path - Target URL path (e.g., `'/dashboard'`).
-     */
-    navigate(path: string): void {
-        window.history.pushState({}, '', path);
-        this.notify(path);
-    }
+      if (route.path !== '**' && route.path !== '*') {
+        const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
+        const regex = new RegExp(`^${regexPath}$`);
+        const match = url.match(regex);
 
-    /**
-     * Subscribe to route change notifications.
-     *
-     * @param callback - Function called with the new URL path.
-     * @returns Unsubscribe function — call to remove the listener.
-     */
-    subscribe(callback: (url: string) => void): () => void {
-        this.listeners.add(callback);
-        return () => {
-            this.listeners.delete(callback);
-        };
-    }
-
-    /**
-     * Broadcast a URL change to all registered listeners.
-     * @param url - The new URL path.
-     */
-    private notify(url: string): void {
-        for (const listener of this.listeners) {
-            listener(url);
+        if (match) {
+          const paramNames = (route.path.match(/:([^/]+)/g) || []).map(s => s.slice(1));
+          paramNames.forEach((name, index) => {
+            params[name] = match[index + 1];
+          });
         }
-    }
+      }
 
-    /**
-     * Find the first route matching the given URL path.
-     * Falls back to a wildcard route (`'*'`) if no exact match is found.
-     *
-     * @param url - The URL path to match.
-     * @returns The matched route, or `undefined` if none found.
-     */
-    match(url: string): Route | undefined {
-        // Simple exact match for now, can be upgraded to regex
-        return this.routes.find(r => r.path === url)
-            || this.routes.find(r => r.path === '*');
+      const snapshot: IAcRouteSnapshot = {
+        path: url,
+        element: route.element,
+        params,
+        data: route.data || {},
+        outlet: route.outlet || 'primary',
+      };
+      this.lastSnapshot = snapshot;
+      this.routeChange.emit(snapshot);
     }
+  }
 }
 
-// ─── Router Outlet Component ─────────────────────────────────────────────────
+/** Pre-created singleton router instance. */
+export const acRouter = AcRouter.getInstance();
 
-/**
- * `<ac-router-outlet>` — Custom element that renders the component
- * matching the current URL.
- *
- * **Lifecycle:**
- * 1. `connectedCallback` — Subscribes to the {@link AcRouter} singleton.
- * 2. On each URL change, matches the route, runs the optional guard,
- *    and creates/replaces the active component element.
- * 3. `disconnectedCallback` — Unsubscribes to prevent memory leaks.
- *
- * Skips re-rendering if the same component tag is already mounted
- * (e.g., navigating to a different sub-path handled by the same component).
- */
-export class AcRouterOutlet extends HTMLElement {
-    /** Reference to the currently rendered child component. */
-    private currentComponent: HTMLElement | null = null;
-
-    /** Cleanup function from router subscription. */
-    private unsubscribe?: () => void;
-
-    /** Subscribe to route changes when connected to the DOM. */
-    connectedCallback(): void {
-        const router = AcRouter.getInstance();
-        this.unsubscribe = router.subscribe(async (url) => {
-            const route = router.match(url);
-            if (route) {
-                // Check guard before rendering
-                if (route.canActivate) {
-                    const can = await route.canActivate();
-                    if (!can) return;
-                }
-                this.renderComponent(route.component);
-            }
-        });
-    }
-
-    /** Unsubscribe from route changes when removed from the DOM. */
-    disconnectedCallback(): void {
-        this.unsubscribe?.();
-        this.unsubscribe = undefined;
-    }
-
-    /**
-     * Create and mount the component for the matched route.
-     * No-ops if the same component is already active.
-     *
-     * @param selector - The custom element tag name to create.
-     */
-    private renderComponent(selector: string): void {
-        if (this.currentComponent?.tagName.toLowerCase() === selector.toLowerCase()) {
-            return;
-        }
-
-        this.currentComponent?.remove();
-        this.currentComponent = document.createElement(selector);
-        this.appendChild(this.currentComponent);
-    }
-}
-
-// ─── Router Link Component ───────────────────────────────────────────────────
-
-/**
- * `<ac-router-link to="/path">` — Declarative navigation element.
- *
- * Prevents the default browser navigation (full page reload) and
- * instead uses the {@link AcRouter} to perform client-side navigation.
- *
- * Automatically manages its click listener lifecycle:
- * - Adds the listener on `connectedCallback`.
- * - Removes it on `disconnectedCallback` to prevent memory leaks.
- *
- * @example
- * ```html
- * <ac-router-link to="/settings">Settings</ac-router-link>
- * ```
- */
-export class AcRouterLink extends HTMLElement {
-    /** Bound click handler — stored as a class field for proper cleanup. */
-    private handleClick = (e: Event): void => {
-        e.preventDefault();
-        const to = this.getAttribute('to');
-        if (to) {
-            AcRouter.getInstance().navigate(to);
-        }
-    };
-
-    /** Register click handler and set cursor style. */
-    connectedCallback(): void {
-        this.style.cursor = 'pointer';
-        this.addEventListener('click', this.handleClick);
-    }
-
-    /** Remove click handler to prevent memory leaks. */
-    disconnectedCallback(): void {
-        this.removeEventListener('click', this.handleClick);
-    }
-}
-
-// ─── Bootstrap ───────────────────────────────────────────────────────────────
-
-/**
- * One-call bootstrap function for the AC router system.
- *
- * Registers `<ac-router-outlet>` and `<ac-router-link>` as custom
- * elements (idempotent) and sets the route table on the singleton router.
- *
- * @param routes - The application's route definitions.
- *
- * @example
- * ```ts
- * provideRouter([
- *   { path: '/', component: 'app-home' },
- *   { path: '/about', component: 'app-about' },
- *   { path: '*', component: 'app-not-found' },
- * ]);
- * ```
- */
-export function provideRouter(routes: Route[]): void {
-    if (!customElements.get('ac-router-outlet')) {
-        customElements.define('ac-router-outlet', AcRouterOutlet);
-    }
-    if (!customElements.get('ac-router-link')) {
-        customElements.define('ac-router-link', AcRouterLink);
-    }
-    AcRouter.getInstance().setRoutes(routes);
+// Register <ac-router> as a custom element (idempotent)
+if (!customElements.get('ac-router')) {
+  customElements.define('ac-router', AcRouterElement);
 }

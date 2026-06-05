@@ -25,6 +25,7 @@
     "paths": {
       "@autocode-ts/ac-browser": ["../../packages/browser/ac-browser/src/index.ts"],
       "@autocode-ts/ac-runtime": ["../../packages/browser/ac-runtime/src/index.ts"],
+      "@autocode-ts/ac-runtime-router": ["../../packages/browser/ac-runtime-router/src/index.ts"],
       "@autocode-ts/autocode": ["../../packages/core/autocode/src/index.ts"],
       "@autocode-ts/ac-data-dictionary-editor": ["../../packages/browser/ac-data-dictionary-editor/src/index.ts"],
       "@autocode-ts/ac-data-dictionary-components": ["../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts"]
