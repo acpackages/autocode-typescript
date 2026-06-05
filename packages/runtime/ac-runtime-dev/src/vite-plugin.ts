@@ -394,6 +394,10 @@ export function acRuntimePlugin(options?: { output?: 'ts' | 'js' }): Plugin {
             return await doTransform(code, id, false);
         },
         configureServer(server) {
+            const packagesDir = path.resolve(projectRoot, '../../packages');
+            if (fs.existsSync(packagesDir)) {
+                server.watcher.add(packagesDir);
+            }
             server.watcher.on('change', async (file) => {
                 const normalizedFile = normalizePath(file);
                 if (normalizedFile.includes('.ac-runtime-cache') || normalizedFile.includes('node_modules')) {
