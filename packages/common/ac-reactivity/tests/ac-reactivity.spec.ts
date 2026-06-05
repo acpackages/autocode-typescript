@@ -552,5 +552,601 @@ describe("AcReactivity", () => {
             newValue: 12
         });
     });
+
+    it("should emit getter setter changes when array object value changed on newly inserted item in array", () => {
+        const instance = {
+            list: [{ val: 1 }, { val: 2 }],
+            get total() {
+                return this.list.reduce((acc, item) => acc + item.val, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list", "total"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Push a new object into the array
+        reactive.list.push({ val: 3 });
+
+        // Clear initial changes from push
+        changes.length = 0;
+
+        // Modifying a value inside the newly inserted object
+        reactive.list[2].val = 10;
+
+        // Verify we got a change event for total
+        const totalChange = changes.find(c => c.property === "total");
+        expect(totalChange).toBeDefined();
+        expect(totalChange).toMatchObject({
+            property: "total",
+            newValue: 13
+        });
+    });
+
+    it("should emit getter setter changes when array object value changed on a proxy item pushed to array", () => {
+        const instance = {
+            list: [{ val: 1 }, { val: 2 }],
+            get total() {
+                return this.list.reduce((acc, item) => acc + item.val, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list", "total"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Create a reactive proxy for the new item
+        const newItemProxy = AcReactivity.makeReactive({
+            instance: { val: 3 },
+            properties: ["val"],
+            onChange: () => {}
+        });
+
+        // Push the proxy
+        reactive.list.push(newItemProxy);
+
+        // Clear initial changes
+        changes.length = 0;
+
+        // Modifying the value on the pushed proxy directly
+        newItemProxy.val = 10;
+
+        // Verify we got a change event for total
+        const totalChange = changes.find(c => c.property === "total");
+        expect(totalChange).toBeDefined();
+        expect(totalChange).toMatchObject({
+            property: "total",
+            newValue: 13
+        });
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // Deep Nesting Tests — Objects & Arrays at arbitrary depth
+    // ═══════════════════════════════════════════════════════════
+
+    it("should track changes 4 levels deep in nested objects", () => {
+        const instance = {
+            level1: {
+                level2: {
+                    level3: {
+                        level4: {
+                            value: "deep"
+                        }
+                    }
+                }
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["level1.level2.level3.level4.value"],
+            onChange: (c) => changes.push(c)
+        });
+
+        reactive.level1.level2.level3.level4.value = "modified";
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "level1.level2.level3.level4.value",
+            rootProperty: "level1",
+            oldValue: "deep",
+            newValue: "modified",
+            type: "primitive",
+            operation: "set"
+        });
+    });
+
+    it("should track replacing an object at depth 3 and then mutating the new object", () => {
+        const instance: any = {
+            a: {
+                b: {
+                    c: {
+                        name: "original"
+                    }
+                }
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["a.b.c.name"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Replace the entire nested object at depth 2
+        reactive.a.b = { c: { name: "replaced" } };
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "a.b",
+            rootProperty: "a",
+            type: "object",
+            operation: "set"
+        });
+
+        // Now mutate inside the NEW nested object
+        changes.length = 0;
+        reactive.a.b.c.name = "after-replace";
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "a.b.c.name",
+            rootProperty: "a",
+            oldValue: "replaced",
+            newValue: "after-replace",
+            type: "primitive",
+            operation: "set"
+        });
+    });
+
+    it("should track nested array inside nested object", () => {
+        const instance = {
+            config: {
+                settings: {
+                    tags: ["alpha", "beta"]
+                }
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["config.settings.tags"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Push into deeply nested array
+        reactive.config.settings.tags.push("gamma");
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "config.settings.tags",
+            rootProperty: "config",
+            type: "array",
+            operation: "push"
+        });
+
+        // Direct index set on deeply nested array
+        changes.length = 0;
+        reactive.config.settings.tags[0] = "ALPHA";
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "config.settings.tags.0",
+            rootProperty: "config",
+            oldValue: "alpha",
+            newValue: "ALPHA",
+            type: "array",
+            operation: "set"
+        });
+    });
+
+    it("should track objects inside a deeply nested array", () => {
+        const instance = {
+            data: {
+                rows: [
+                    { id: 1, info: { label: "first" } },
+                    { id: 2, info: { label: "second" } }
+                ]
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["data.rows"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Modify a property inside an object inside the nested array
+        reactive.data.rows[0].info.label = "FIRST";
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "data.rows.0.info.label",
+            rootProperty: "data",
+            oldValue: "first",
+            newValue: "FIRST",
+            type: "primitive",
+            operation: "set",
+            context: "object"
+        });
+    });
+
+    it("should track splice on a deeply nested array", () => {
+        const instance = {
+            app: {
+                state: {
+                    items: [10, 20, 30, 40]
+                }
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["app.state.items"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // splice: remove 2 elements at index 1, insert 1
+        reactive.app.state.items.splice(1, 2, 99);
+
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "app.state.items",
+            rootProperty: "app",
+            type: "array",
+            operation: "splice"
+        });
+        expect(reactive.app.state.items).toEqual([10, 99, 40]);
+    });
+
+    it("should track shift/unshift on a deeply nested array", () => {
+        const instance = {
+            queue: {
+                pending: [1, 2, 3]
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["queue.pending"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // shift
+        reactive.queue.pending.shift();
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "queue.pending",
+            type: "array",
+            operation: "shift"
+        });
+        expect(reactive.queue.pending).toEqual([2, 3]);
+
+        // unshift
+        changes.length = 0;
+        reactive.queue.pending.unshift(0);
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "queue.pending",
+            type: "array",
+            operation: "unshift"
+        });
+        expect(reactive.queue.pending).toEqual([0, 2, 3]);
+    });
+
+    it("should track sort and reverse on a deeply nested array", () => {
+        const instance = {
+            data: {
+                scores: [3, 1, 4, 1, 5]
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["data.scores"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // sort
+        reactive.data.scores.sort();
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "data.scores",
+            type: "array",
+            operation: "sort"
+        });
+        expect(reactive.data.scores).toEqual([1, 1, 3, 4, 5]);
+
+        // reverse
+        changes.length = 0;
+        reactive.data.scores.reverse();
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "data.scores",
+            type: "array",
+            operation: "reverse"
+        });
+        expect(reactive.data.scores).toEqual([5, 4, 3, 1, 1]);
+    });
+
+    it("should track pop on a deeply nested array", () => {
+        const instance = {
+            stack: {
+                frames: ["a", "b", "c"]
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["stack.frames"],
+            onChange: (c) => changes.push(c)
+        });
+
+        const popped = reactive.stack.frames.pop();
+        expect(popped).toBe("c");
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "stack.frames",
+            type: "array",
+            operation: "pop"
+        });
+        expect(reactive.stack.frames).toEqual(["a", "b"]);
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // Getter/Setter Dependency Tests — arrays & objects
+    // ═══════════════════════════════════════════════════════════
+
+    it("should emit getter change when getter depends on a deeply nested object property", () => {
+        const instance = {
+            config: {
+                theme: {
+                    primary: "#ff0000"
+                }
+            },
+            get themeColor() {
+                return this.config.theme.primary;
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["config.theme.primary", "themeColor"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Modify the deep dependency
+        reactive.config.theme.primary = "#00ff00";
+
+        // Should get a change for the direct property AND the getter
+        const directChange = changes.find(c => c.property === "config.theme.primary");
+        const getterChange = changes.find(c => c.property === "themeColor");
+
+        expect(directChange).toBeDefined();
+        expect(directChange).toMatchObject({
+            property: "config.theme.primary",
+            oldValue: "#ff0000",
+            newValue: "#00ff00"
+        });
+
+        expect(getterChange).toBeDefined();
+        expect(getterChange).toMatchObject({
+            property: "themeColor",
+            newValue: "#00ff00"
+        });
+    });
+
+    it("should emit getter change when getter depends on nested array of objects with reduce", () => {
+        const instance = {
+            orders: {
+                items: [
+                    { product: "A", qty: 2, price: 10 },
+                    { product: "B", qty: 1, price: 25 }
+                ]
+            },
+            get orderTotal() {
+                return this.orders.items.reduce((sum, item) => sum + item.qty * item.price, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["orders.items", "orderTotal"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Verify initial getter value
+        expect(reactive.orderTotal).toBe(45); // 2*10 + 1*25
+
+        // Modify qty of first item
+        reactive.orders.items[0].qty = 5;
+
+        const totalChange = changes.find(c => c.property === "orderTotal");
+        expect(totalChange).toBeDefined();
+        expect(totalChange).toMatchObject({
+            property: "orderTotal",
+            newValue: 75 // 5*10 + 1*25
+        });
+    });
+
+    it("should emit getter change when getter with setter depends on an array", () => {
+        const instance = {
+            tags: ["a", "b", "c"],
+            get tagCount() {
+                return this.tags.length;
+            },
+            set tagCount(_v: number) {
+                // setter exists but does nothing meaningful — tests that
+                // the dependency resolver handles get+set pairs
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["tags", "tagCount"],
+            onChange: (c) => changes.push(c)
+        });
+
+        expect(reactive.tagCount).toBe(3);
+
+        reactive.tags.push("d");
+
+        const tagCountChange = changes.find(c => c.property === "tagCount");
+        expect(tagCountChange).toBeDefined();
+        expect(tagCountChange).toMatchObject({
+            property: "tagCount",
+            newValue: 4
+        });
+    });
+
+    it("should emit getter change when getter depends on multiple nested paths", () => {
+        const instance = {
+            user: {
+                firstName: "John",
+                lastName: "Doe"
+            },
+            settings: {
+                format: "full"
+            },
+            get displayName() {
+                if (this.settings.format === "full") {
+                    return this.user.firstName + " " + this.user.lastName;
+                }
+                return this.user.firstName;
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["user.firstName", "user.lastName", "settings.format", "displayName"],
+            onChange: (c) => changes.push(c)
+        });
+
+        expect(reactive.displayName).toBe("John Doe");
+
+        // Change one dependency
+        reactive.user.firstName = "Jane";
+
+        const nameChange = changes.find(c => c.property === "displayName");
+        expect(nameChange).toBeDefined();
+        expect(nameChange).toMatchObject({
+            property: "displayName",
+            newValue: "Jane Doe"
+        });
+
+        // Change the other dependency
+        changes.length = 0;
+        reactive.settings.format = "short";
+
+        const formatChange = changes.find(c => c.property === "displayName");
+        expect(formatChange).toBeDefined();
+        expect(formatChange).toMatchObject({
+            property: "displayName",
+            newValue: "Jane"
+        });
+    });
+
+    it("should emit getter change when pushing objects into array and then modifying them", () => {
+        const instance = {
+            employees: [] as { name: string; salary: number }[],
+            get totalPayroll() {
+                return this.employees.reduce((sum, e) => sum + e.salary, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["employees", "totalPayroll"],
+            onChange: (c) => changes.push(c)
+        });
+
+        expect(reactive.totalPayroll).toBe(0);
+
+        // Push first employee
+        reactive.employees.push({ name: "Alice", salary: 50000 });
+        let payrollChange = changes.find(c => c.property === "totalPayroll");
+        expect(payrollChange).toBeDefined();
+        expect(payrollChange!.newValue).toBe(50000);
+
+        // Push second employee
+        changes.length = 0;
+        reactive.employees.push({ name: "Bob", salary: 60000 });
+        payrollChange = changes.find(c => c.property === "totalPayroll");
+        expect(payrollChange).toBeDefined();
+        expect(payrollChange!.newValue).toBe(110000);
+
+        // Modify salary of first employee
+        changes.length = 0;
+        reactive.employees[0].salary = 70000;
+        payrollChange = changes.find(c => c.property === "totalPayroll");
+        expect(payrollChange).toBeDefined();
+        expect(payrollChange!.newValue).toBe(130000);
+    });
+
+    it("should track all array mutating methods on deeply nested arrays with getter dependency", () => {
+        const instance = {
+            data: {
+                values: [5, 3, 8, 1]
+            },
+            get sum() {
+                return this.data.values.reduce((a, b) => a + b, 0);
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["data.values", "sum"],
+            onChange: (c) => changes.push(c)
+        });
+
+        expect(reactive.sum).toBe(17);
+
+        // pop (removes 1)
+        reactive.data.values.pop();
+        let sumChange = changes.find(c => c.property === "sum");
+        expect(sumChange).toBeDefined();
+        expect(sumChange!.newValue).toBe(16);
+
+        // shift (removes 5)
+        changes.length = 0;
+        reactive.data.values.shift();
+        sumChange = changes.find(c => c.property === "sum");
+        expect(sumChange).toBeDefined();
+        expect(sumChange!.newValue).toBe(11);
+
+        // unshift (adds 10)
+        changes.length = 0;
+        reactive.data.values.unshift(10);
+        sumChange = changes.find(c => c.property === "sum");
+        expect(sumChange).toBeDefined();
+        expect(sumChange!.newValue).toBe(21);
+
+        // splice (remove 1 at index 1, add 20) — removes 3, adds 20
+        changes.length = 0;
+        reactive.data.values.splice(1, 1, 20);
+        sumChange = changes.find(c => c.property === "sum");
+        expect(sumChange).toBeDefined();
+        expect(sumChange!.newValue).toBe(38); // 10 + 20 + 8
+    });
 });
 
