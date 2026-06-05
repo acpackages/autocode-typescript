@@ -36,6 +36,7 @@ export default defineConfig({
       '@autocode-ts/ac-runtime-router': path.resolve(__dirname, '../../packages/runtime/ac-runtime-router/src/index.ts'),
       '@autocode-ts/ac-runtime-dev': path.resolve(__dirname, '../../packages/runtime/ac-runtime-dev/src/index.ts'),
       '@autocode-ts/ac-runtime-compiler': path.resolve(__dirname, '../../packages/runtime/ac-runtime-compiler/src/index.ts'),
+      '@autocode-ts/ac-reactivity': path.resolve(__dirname, '../../packages/common/ac-reactivity/src/ac-reactivity.ts'),
     },
   },
   optimizeDeps: {

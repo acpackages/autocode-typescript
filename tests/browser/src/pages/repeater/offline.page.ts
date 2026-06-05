@@ -1,6 +1,6 @@
-import { acCreateRuntimeInstance, AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
+import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcRepeaterElement, IAcRepeaterRowRendererElementArgs } from "@autocode-ts/ac-browser";
-import { customersData } from "../../../../data/customers-data";
+import { customersData } from "../../data/customers-data";
 import { IAppMenuItem } from "src/shared/interfaces/app-menu-item.interface";
 import { RepeaterListItem } from "./repeater-list-item.element";
 

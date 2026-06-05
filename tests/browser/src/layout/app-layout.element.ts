@@ -8,7 +8,7 @@ import { AcElement } from "@autocode-ts/ac-runtime";
     </div>
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
       <div class="body flex-grow-1">
-          <ac-router-outlet></ac-router-outlet>
+          <ac-router></ac-router>
       </div>
     </div>
   `

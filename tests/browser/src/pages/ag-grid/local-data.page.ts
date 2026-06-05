@@ -3,7 +3,7 @@
 import { AcElement, acRouter, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowNumbersExtension, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowSelectionExtension } from '@autocode-ts/ac-browser';
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
-import { customersData } from './../../../../data/customers-data';
+import { customersData } from '../../data/customers-data';
 import { APP_ROUTES } from "../../shared/consts/app-routes.consts";
 import { AcDelayedCallback, Autocode } from "@autocode-ts/autocode";
 import { IAppMenuItem } from "src/_app.export";

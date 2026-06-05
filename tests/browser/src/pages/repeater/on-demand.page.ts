@@ -1,7 +1,7 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcRepeaterElement, IAcRepeaterRowRendererElementArgs } from "@autocode-ts/ac-browser";
 import { AcDataManager, IAcOnDemandRequestArgs } from "@autocode-ts/autocode";
-import { customersData } from "../../../../data/customers-data";
+import { customersData } from "../../data/customers-data";
 import { IAppMenuItem } from "src/_app.export";
 
 @AcElement({

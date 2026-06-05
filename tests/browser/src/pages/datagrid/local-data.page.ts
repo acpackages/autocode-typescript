@@ -1,6 +1,6 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcDatagridElement,AC_DATAGRID_EXTENSION_NAME,AC_DATAGRID_HOOK} from "@autocode-ts/ac-browser";
-import { customersData } from "../../../../data/customers-data";
+import { customersData } from "../../data/customers-data";
 import { IAppMenuItem } from "src/_app.export";
 
 @AcElement({

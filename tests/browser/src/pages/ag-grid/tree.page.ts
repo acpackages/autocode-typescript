@@ -1,6 +1,6 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import {
-  AcDatagridComponent,
+  AcDatagridElement,
   AC_DATAGRID_EXTENSION_NAME,
   AcDatagridTreeTableExtension,
   AcDatagridRowNumbersExtension,
@@ -26,7 +26,7 @@ import { IAppMenuItem } from "src/_app.export";
   `
 })
 export class AggridTreePage {
-  @AcViewChild('#datagrid') datagrid!: AcDatagridComponent;
+  @AcViewChild('#datagrid') datagrid!: AcDatagridElement;
 
   dropdownItems: IAppMenuItem[] = [
     { label: 'Display Options', isHeader: true },

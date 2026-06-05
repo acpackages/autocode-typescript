@@ -15,16 +15,16 @@ import { AcBrowserStorageDDEExtension } from '@autocode-ts/ac-dde-browser-storag
 import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDelayedCallback } from "@autocode-ts/autocode";
 
-import { dataDictionaryJson as accountea } from './../../../../data/accountea';
-import { dataDictionaryJson as accounteaPro } from './../../../../data/accountea-pro';
-import { dataDictionaryJson as accounteaProInternal } from './../../../../data/accountea-pro-internal';
-import { dataDictionaryJson as accounteaWeb } from './../../../../data/accountea-web';
-import { dataDictionaryJson as communityDataDictionary } from './../../../../data/sst-community';
-import { dataDictionaryJson as unifiDataDictionary } from './../../../../data/unifi-data-dictionary';
-import { dataDictionaryJson as ddeDataDictionary } from './../../../../data/dde-data-dictionary';
-import { dataDictionaryJson as autocodeSchema } from './../../../../data/autocode-schema';
-import { dataDictionaryJson as autocodeSync } from './../../../../data/autocode-sync';
-import { dataDictionaryJson as sagDataDictionary } from './../../../../data/scoresandgames';
+import { dataDictionaryJson as accountea } from './../../data/accountea';
+import { dataDictionaryJson as accounteaPro } from './../../data/accountea-pro';
+import { dataDictionaryJson as accounteaProInternal } from './../../data/accountea-pro-internal';
+import { dataDictionaryJson as accounteaWeb } from './../../data/accountea-web';
+import { dataDictionaryJson as communityDataDictionary } from './../../data/sst-community';
+import { dataDictionaryJson as unifiDataDictionary } from './../../data/unifi-data-dictionary';
+import { dataDictionaryJson as ddeDataDictionary } from './../../data/dde-data-dictionary';
+import { dataDictionaryJson as autocodeSchema } from './../../data/autocode-schema';
+import { dataDictionaryJson as autocodeSync } from './../../data/autocode-sync';
+import { dataDictionaryJson as sagDataDictionary } from './../../data/scoresandgames';
 import { IAppMenuItem } from "src/_app.export";
 
 import './../../../../../packages/browser/ac-data-dictionary-editor/src/lib/css/ac-data-dictionary-editor.css';
