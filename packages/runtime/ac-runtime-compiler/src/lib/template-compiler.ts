@@ -100,16 +100,21 @@ function extractExpressionIdentifiers(
         }
         const visitWithScope = (n: ts.Node) => {
           if (ts.isPropertyAccessExpression(n)) {
-            if (n.expression.kind === ts.SyntaxKind.ThisKeyword) {
-              const name = n.name.text;
-              if (!nestedLocalVars.has(name) && !GLOBAL_IDENTIFIERS.has(name)) {
-                if (isValidProperty(name)) {
-                  identifiers.add(name);
+            const fullPath = getExpressionPropertyPath(n);
+            if (fullPath) {
+              const rootVar = fullPath.split('.')[0];
+              if (!nestedLocalVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar)) {
+                if (isValidProperty(rootVar)) {
+                  const parts = fullPath.split('.');
+                  let current = '';
+                  for (const part of parts) {
+                    current = current ? `${current}.${part}` : part;
+                    identifiers.add(current);
+                  }
                 }
               }
-            } else {
-              visitWithScope(n.expression);
             }
+            visitWithScope(n.expression);
             return;
           }
           if (ts.isElementAccessExpression(n)) {
@@ -164,16 +169,21 @@ function extractExpressionIdentifiers(
       }
 
       if (ts.isPropertyAccessExpression(node)) {
-        if (node.expression.kind === ts.SyntaxKind.ThisKeyword) {
-          const name = node.name.text;
-          if (!localVars.has(name) && !GLOBAL_IDENTIFIERS.has(name)) {
-            if (isValidProperty(name)) {
-              identifiers.add(name);
+        const fullPath = getExpressionPropertyPath(node);
+        if (fullPath) {
+          const rootVar = fullPath.split('.')[0];
+          if (!localVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar)) {
+            if (isValidProperty(rootVar)) {
+              const parts = fullPath.split('.');
+              let current = '';
+              for (const part of parts) {
+                current = current ? `${current}.${part}` : part;
+                identifiers.add(current);
+              }
             }
           }
-        } else {
-          visit(node.expression);
         }
+        visit(node.expression);
         return;
       }
 

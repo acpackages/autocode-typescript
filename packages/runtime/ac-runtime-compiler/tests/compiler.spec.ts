@@ -1101,5 +1101,31 @@ describe('Compile-time event/model/pipe migration', () => {
       expect(classDisabledBinding.arrayItemProperties).toEqual(['item.disabledState']);
     });
   });
+
+  describe('nested properties', () => {
+    it('should extract full paths of objects in properties', () => {
+      const source = `
+        import { AcElement } from './decorators';
+
+        @AcElement({
+          selector: 'test-nested-props',
+          template: '<div><span>{{data.from_date}}</span><span>{{this.data.to_date}}</span></div>'
+        })
+        export class TestNestedProps {
+          data = { from_date: '2026-06-01', to_date: '2026-06-30' };
+        }
+      `;
+
+      const results = compiler.compile(source);
+      expect(results).toHaveLength(1);
+      const templateResultMatch = results[0].code.match(/const templateResult = ({.*?});/s);
+      expect(templateResultMatch).toBeTruthy();
+      const templateResult = JSON.parse(templateResultMatch![1]);
+
+      expect(templateResult.reactiveProperties['data']).toBeDefined();
+      expect(templateResult.reactiveProperties['data.from_date']).toBeDefined();
+      expect(templateResult.reactiveProperties['data.to_date']).toBeDefined();
+    });
+  });
 });
 
