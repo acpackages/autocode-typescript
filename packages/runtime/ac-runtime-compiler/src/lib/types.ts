@@ -114,6 +114,9 @@ export interface Binding {
 
   /** For `'viewChildren'`: the class property name decorated with `@AcViewChild`. Set after component member classification. */
   propertyName?: string;
+
+  /** Properties bound to an array item (e.g. `item.amount`, `item.name`) inside a loop */
+  arrayItemProperties?: string[];
 }
 
 /**

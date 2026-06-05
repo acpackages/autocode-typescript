@@ -246,6 +246,82 @@ function extractExpressionIdentifiers(
   return identifiers;
 }
 
+function extractArrayItemProperties(
+  expression: string,
+  activeLoopVars: Set<string>,
+  resolvedConstants?: Record<string, string>,
+): string[] {
+  const result = new Set<string>();
+  if (!expression || !expression.trim() || activeLoopVars.size === 0) return [];
+
+  if (expression.startsWith('`') && expression.endsWith('`')) {
+    const matches = expression.matchAll(/\$\{([^}]+)\}/g);
+    for (const match of matches) {
+      const innerProps = extractArrayItemProperties(match[1], activeLoopVars, resolvedConstants);
+      for (const prop of innerProps) {
+        result.add(prop);
+      }
+    }
+    return Array.from(result);
+  }
+
+  try {
+    const sourceFile = ts.createSourceFile('expr.ts', `(${expression})`, ts.ScriptTarget.Latest, true);
+
+    const getPropertyPathFromNode = (node: ts.Node): { rootVar: string; path: string } | null => {
+      if (ts.isIdentifier(node)) {
+        return { rootVar: node.text, path: '' };
+      }
+      if (ts.isPropertyAccessExpression(node)) {
+        const parent = getPropertyPathFromNode(node.expression);
+        if (parent) {
+          return {
+            rootVar: parent.rootVar,
+            path: parent.path ? `${parent.path}.${node.name.text}` : node.name.text
+          };
+        }
+      }
+      if (ts.isElementAccessExpression(node)) {
+        const parent = getPropertyPathFromNode(node.expression);
+        if (parent) {
+          let key: string | null = null;
+          if (ts.isStringLiteral(node.argumentExpression)) {
+            key = node.argumentExpression.text;
+          } else {
+            const argText = node.argumentExpression.getText(sourceFile);
+            if (resolvedConstants && resolvedConstants[argText]) {
+              key = resolvedConstants[argText];
+            }
+          }
+          if (key !== null) {
+            return {
+              rootVar: parent.rootVar,
+              path: parent.path ? `${parent.path}.${key}` : key
+            };
+          }
+        }
+      }
+      return null;
+    };
+
+    const visit = (node: ts.Node) => {
+      if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) {
+        const res = getPropertyPathFromNode(node);
+        if (res && activeLoopVars.has(res.rootVar) && res.path) {
+          result.add(`${res.rootVar}.${res.path}`);
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+
+    visit(sourceFile);
+  } catch {
+    // fallback or noop
+  }
+
+  return Array.from(result);
+}
+
 /**
  * Parses AC Runtime HTML templates and extracts reactive binding descriptors.
  *
@@ -278,6 +354,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): TemplateCompileResult {
     // Local state per compilation — makes the compiler reentrant
     const bindings: Binding[] = [];
@@ -285,15 +362,14 @@ export class TemplateCompiler {
     const reactiveProperties: Record<string, ReactivePropertyDef[]> = {};
     this.localRefIds = [];
 
-    // Parse HTML into a DOM tree
-    // lowerCaseAttributeNames: false preserves camelCase like [usePagination]
+    // Walk the tree, extracting bindings and producing clean HTML
     const handler = new DomHandler();
     const parser = new htmlparser2.Parser(handler, { lowerCaseAttributeNames: false });
     parser.write(template);
     parser.end();
 
     // Walk the tree, extracting bindings and producing clean HTML
-    const processedHtml = this.processNodes(handler.dom, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+    const processedHtml = this.processNodes(handler.dom, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
 
     const ownedElementIds = [...this.localRefIds];
 
@@ -344,10 +420,11 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     let html = '';
     for (const node of nodes) {
-      html += this.processNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      html += this.processNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
     return html;
   }
@@ -362,12 +439,13 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     if (node instanceof Text) {
-      return this.processTextNode(node, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processTextNode(node, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
     if (isTag(node)) {
-      return this.processElementNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processElementNode(node, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
     return '';
   }
@@ -388,6 +466,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     const text = node.data;
     // No interpolation markers → return as-is
@@ -410,15 +489,20 @@ export class TemplateCompiler {
         const inner = part.slice(2, -2).trim();
         const id = `${this.generateHexId()}`;
         const properties = Array.from(extractExpressionIdentifiers(inner, localVars, classProperties, topLevelVars, resolvedConstants));
+        const arrayItemProperties = extractArrayItemProperties(inner, activeLoopVars, resolvedConstants);
 
-        bindings.push({
+        const bindingObj: Binding = {
           bindingId: this.generateHexId(),
           type: 'text',
           expression: inner,
           targetId: id,
           properties,
           rootIds: [],
-        });
+        };
+        if (arrayItemProperties.length > 0) {
+          bindingObj.arrayItemProperties = arrayItemProperties;
+        }
+        bindings.push(bindingObj);
 
         const spanHtml = `<span ac-ref="${id}"></span>`;
         this.localRefIds.push(id);
@@ -473,6 +557,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     const isContainer = el.tagName === 'ac-container';
 
@@ -481,7 +566,7 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acFor = el.attribs['ac:for'];
     if (acFor) {
-      return this.processForDirective(el, acFor, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processForDirective(el, acFor, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -489,14 +574,14 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acIf = el.attribs['ac:if'];
     if (acIf) {
-      return this.processIfDirective(el, acIf, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processIfDirective(el, acIf, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // SPECIAL ELEMENT: <ac-template>
     // ═══════════════════════════════════════════════════════════════════
     if (el.tagName === 'ac-template') {
-      return this.processTemplateElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processTemplateElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -504,20 +589,20 @@ export class TemplateCompiler {
     // ═══════════════════════════════════════════════════════════════════
     const acTemplateOutlet = el.attribs['ac:template:outlet'];
     if (acTemplateOutlet) {
-      return this.processTemplateOutlet(el, acTemplateOutlet, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processTemplateOutlet(el, acTemplateOutlet, bindings, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // VIRTUAL CONTAINER: <ac-container> (renders children only)
     // ═══════════════════════════════════════════════════════════════════
     if (isContainer) {
-      return this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+      return this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
     // REGULAR ELEMENT: Process attribute bindings
     // ═══════════════════════════════════════════════════════════════════
-    return this.processRegularElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+    return this.processRegularElement(el, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
   }
 
   // ─── Structural Directive Handlers ─────────────────────────────────────────
@@ -539,6 +624,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     delete el.attribs['ac:for'];
 
@@ -572,12 +658,16 @@ export class TemplateCompiler {
     if (itemVar) newLocalVars.add(itemVar);
     if (indexVar) newLocalVars.add(indexVar);
 
+    const nextActiveLoopVars = new Set(activeLoopVars);
+    if (itemVar) nextActiveLoopVars.add(itemVar);
+
     const subResult = subCompiler.compile(
       isContainer ? htmlparser2.DomUtils.getInnerHTML(el) : this.elementToHtml(el),
       newLocalVars,
       classProperties,
       topLevelVars,
       resolvedConstants,
+      nextActiveLoopVars,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside for blocks
@@ -601,11 +691,12 @@ export class TemplateCompiler {
     }
 
     const properties = Array.from(extractExpressionIdentifiers(listExpr, localVars, classProperties, topLevelVars, resolvedConstants));
+    const arrayItemProperties = extractArrayItemProperties(listExpr, activeLoopVars, resolvedConstants);
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     this.localRefIds.push(placeholderId);
 
-    bindings.push({
+    const forBinding: Binding = {
       type: 'for',
       bindingId: this.generateHexId(),
       expression: listExpr,
@@ -619,7 +710,11 @@ export class TemplateCompiler {
       item: {
         ownedElementIds: subResult.ownedElementIds || []
       }
-    });
+    };
+    if (arrayItemProperties.length > 0) {
+      forBinding.arrayItemProperties = arrayItemProperties;
+    }
+    bindings.push(forBinding);
 
     this.addReactiveProperties({
       expression: listExpr,
@@ -654,6 +749,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     delete el.attribs['ac:if'];
 
@@ -667,6 +763,7 @@ export class TemplateCompiler {
       classProperties,
       topLevelVars,
       resolvedConstants,
+      activeLoopVars,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside if blocks
@@ -690,6 +787,7 @@ export class TemplateCompiler {
     }
 
     const properties = Array.from(extractExpressionIdentifiers(acIf, localVars, classProperties, topLevelVars, resolvedConstants));
+    const arrayItemProperties = extractArrayItemProperties(acIf, activeLoopVars, resolvedConstants);
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     this.localRefIds.push(placeholderId);
@@ -697,7 +795,7 @@ export class TemplateCompiler {
       this.localRefIds.push(...subResult.ownedElementIds);
     }
 
-    bindings.push({
+    const ifBinding: Binding = {
       type: 'if',
       bindingId: this.generateHexId(),
       expression: acIf,
@@ -707,7 +805,11 @@ export class TemplateCompiler {
       properties,
       rootIds: [],
       ownedElementIds: subResult.ownedElementIds || []
-    });
+    };
+    if (arrayItemProperties.length > 0) {
+      ifBinding.arrayItemProperties = arrayItemProperties;
+    }
+    bindings.push(ifBinding);
 
     this.addReactiveProperties({
       expression: acIf,
@@ -742,6 +844,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     const id = `${this.generateHexId()}`;
     let refName: string | undefined;
@@ -763,6 +866,7 @@ export class TemplateCompiler {
       classProperties,
       topLevelVars,
       resolvedConstants,
+      activeLoopVars,
     );
 
     // Propagate idMap so @AcViewChild can find refs inside template blocks
@@ -817,6 +921,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     // const id = `${this.generateHexId()}`;
     const placeholderId = `ac-template-outlet-${this.generateHexId()}`;
@@ -842,11 +947,20 @@ export class TemplateCompiler {
         }
       }
     }
+    const arrayItemProperties = extractArrayItemProperties(expression, activeLoopVars, resolvedConstants);
+    if (contextExpression) {
+      const contextArrayItemProps = extractArrayItemProperties(contextExpression, activeLoopVars, resolvedConstants);
+      for (const prop of contextArrayItemProps) {
+        if (!arrayItemProperties.includes(prop)) {
+          arrayItemProperties.push(prop);
+        }
+      }
+    }
     const finalHtml = `<!--${placeholderId}-start--><!--${placeholderId}-end-->`;
 
     this.localRefIds.push(placeholderId);
 
-    bindings.push({
+    const outletBinding: Binding = {
       type: 'template-outlet',
       bindingId: this.generateHexId(),
       expression,
@@ -855,7 +969,11 @@ export class TemplateCompiler {
       properties,
       rootIds: [],
       ownedElementIds: []
-    });
+    };
+    if (arrayItemProperties.length > 0) {
+      outletBinding.arrayItemProperties = arrayItemProperties;
+    }
+    bindings.push(outletBinding);
 
     this.addReactiveProperties({
       expression,
@@ -902,6 +1020,7 @@ export class TemplateCompiler {
     classProperties?: { instanceProps: Set<string>; staticProps: Set<string> },
     topLevelVars?: Set<string>,
     resolvedConstants?: Record<string, string>,
+    activeLoopVars: Set<string> = new Set(),
   ): string {
     const id = `${this.generateHexId()}`;
     let hasBinding = false, hasInputs = false;
@@ -913,14 +1032,15 @@ export class TemplateCompiler {
       if (name.startsWith('[') && name.endsWith(']')) {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
         if (prop.startsWith('class.')) {
-          bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
           pendingProperties.push({ expression: value, type: 'class' });
         } else if (prop.startsWith('style.')) {
-          bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: prop.slice(6), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
           pendingProperties.push({ expression: value, type: 'style' });
         } else {
-          bindings.push({ bindingId: this.generateHexId(), type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [] });
+          bindings.push({ bindingId: this.generateHexId(), type: 'property', expression: value, target: prop, targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
           hasInputs = true;
           pendingProperties.push({ expression: value, type: 'bind' });
         }
@@ -931,7 +1051,8 @@ export class TemplateCompiler {
       else if (name.startsWith('(') && name.endsWith(')')) {
         const prop = name.slice(1, -1);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'event', expression: value, target: name.slice(1, -1), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'event' });
         hasBinding = true;
         delete el.attribs[name];
@@ -940,7 +1061,8 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:class:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'class', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'class' });
         hasBinding = true;
         delete el.attribs[name];
@@ -949,7 +1071,8 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:style:')) {
         const prop = name.slice(9);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'style', expression: value, target: name.slice(9), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'style' });
         hasBinding = true;
         delete el.attribs[name];
@@ -962,7 +1085,8 @@ export class TemplateCompiler {
         const prop = (isCheckbox || isRadio) ? 'checked' : 'value';
         const event = (isCheckbox || isRadio || isSelect) ? 'change' : 'input';
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'model', expression: value, target: `${prop}:${event}`, targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'model' });
         hasBinding = true;
         delete el.attribs[name];
@@ -971,7 +1095,8 @@ export class TemplateCompiler {
       else if (name.startsWith('ac:bind:')) {
         const prop = name.slice(8);
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'attribute', expression: value, target: name.slice(8), targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];
@@ -979,7 +1104,8 @@ export class TemplateCompiler {
       // ── Template outlet: ac:template:outlet="expr" ──
       else if (name === 'ac:template:outlet') {
         const properties = Array.from(extractExpressionIdentifiers(value, localVars, classProperties, topLevelVars, resolvedConstants));
-        bindings.push({ bindingId: this.generateHexId(), type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [] });
+        const arrayItemProperties = extractArrayItemProperties(value, activeLoopVars, resolvedConstants);
+        bindings.push({ bindingId: this.generateHexId(), type: 'template-outlet', expression: value, targetId: id, properties, rootIds: [], ...(arrayItemProperties.length > 0 ? { arrayItemProperties } : {}) });
         pendingProperties.push({ expression: value, type: 'bind' });
         hasBinding = true;
         delete el.attribs[name];
@@ -1013,7 +1139,7 @@ export class TemplateCompiler {
     }
 
     // Process child nodes
-    const childrenHtml = this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants);
+    const childrenHtml = this.processNodes(el.children, bindings, idMap, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
 
     // Serialize the element back to HTML
     const attrs = Object.entries(el.attribs).map(([n, v]) => `${n}="${v}"`).join(' ');

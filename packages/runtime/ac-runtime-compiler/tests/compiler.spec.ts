@@ -1056,5 +1056,50 @@ describe('Compile-time event/model/pipe migration', () => {
       expect(code).toContain("this.createChildRenderer({");
     });
   });
+
+  describe('arrayItemProperties', () => {
+    it('should extract arrayItemProperties with resolved enums and class static values', () => {
+      const source = `
+        import { AcElement } from './decorators';
+        
+        export enum ConfigEnum {
+          ACTIVE = 'activeState'
+        }
+        
+        export class ConfigClass {
+          static DISABLED = 'disabledState';
+        }
+
+        @AcElement({
+          selector: 'test-array-item-props',
+          template: '<div ac:for="item of items"><span>{{item.amount}}</span><button [class.active]=\"item[ConfigEnum.ACTIVE]\" [class.disabled]=\"item[ConfigClass.DISABLED]\"></button></div>'
+        })
+        export class TestArrayItemProps {
+          items = [{ amount: 10 }];
+        }
+      `;
+
+      const results = compiler.compile(source);
+      expect(results).toHaveLength(1);
+      const templateResultMatch = results[0].code.match(/const templateResult = ({.*?});/s);
+      expect(templateResultMatch).toBeTruthy();
+      const templateResult = JSON.parse(templateResultMatch![1]);
+
+      const forBinding = templateResult.bindings.find((b: any) => b.type === 'for');
+      expect(forBinding).toBeDefined();
+      
+      const spanBinding = forBinding.childBindings.find((b: any) => b.type === 'text');
+      expect(spanBinding).toBeDefined();
+      expect(spanBinding.arrayItemProperties).toEqual(['item.amount']);
+
+      const classActiveBinding = forBinding.childBindings.find((b: any) => b.type === 'class' && b.target === 'active');
+      expect(classActiveBinding).toBeDefined();
+      expect(classActiveBinding.arrayItemProperties).toEqual(['item.activeState']);
+
+      const classDisabledBinding = forBinding.childBindings.find((b: any) => b.type === 'class' && b.target === 'disabled');
+      expect(classDisabledBinding).toBeDefined();
+      expect(classDisabledBinding.arrayItemProperties).toEqual(['item.disabledState']);
+    });
+  });
 });
 

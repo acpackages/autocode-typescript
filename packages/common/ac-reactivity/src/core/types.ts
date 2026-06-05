@@ -78,17 +78,30 @@ export interface IAcMakeReactiveOptions<T> {
     batch?: boolean;
 }
 
-// ─── Internal Metadata ────────────────────────────────────
+// ─── Proxy Subscription ──────────────────────────────────
 
 /**
- * Tracks one parent→child relationship in the object graph.
- * Used by findRoots() to walk upward from a nested object to all reactive roots.
- * key = -1 is a special sentinel for array items (the actual index is resolved at notification time).
+ * A direct-to-root subscription stored on a proxy's metadata.
+ *
+ * When a change occurs on the proxy, it iterates its subscriptions
+ * and emits directly to each root — no parent-chain traversal.
+ *
+ * Each subscription also tracks child unsubscribe functions for cascading cleanup.
+ * When a value is replaced, the parent calls the child's unsubscribe, which cascades
+ * downward through the subscription tree.
  */
-export interface IParentLink {
-    readonly parent: object;
-    readonly key: string | number;
+export interface IProxySubscription {
+    /** The reactive root instance (the object passed to makeReactive). */
+    readonly root: object;
+    /** Root metadata containing tracked properties, onChange, batch, etc. */
+    readonly rootMetadata: IRootMetadata;
+    /** The dot-separated path from root to THIS proxy's target (e.g. "user.address"). */
+    parentPath: string;
+    /** Unsubscribe functions for child proxies subscribed through THIS subscription. Key = child property key. */
+    childUnsubs: Map<string, () => void>;
 }
+
+// ─── Internal Metadata ────────────────────────────────────
 
 /**
  * Metadata stored on a reactive root instance (the object passed to makeReactive).
@@ -109,8 +122,8 @@ export interface IRootMetadata {
  * Every object that participates in reactivity (root, nested object, or array) gets one of these.
  */
 export interface IReactiveMetadata {
-    /** Links to parent objects that contain this object as a property value. */
-    parents: IParentLink[];
+    /** Direct-to-root subscriptions. Each subscriber is a root+path that cares about changes on this object. */
+    subscriptions: Set<IProxySubscription>;
     /** Present only on root instances — the instance passed to makeReactive(). */
     root?: IRootMetadata;
     /** Cached proxy for this object (ensures proxy identity stability). */

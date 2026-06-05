@@ -311,26 +311,8 @@ export class AcRuntimeElement extends HTMLElement {
             }
           }
         } else {
-          const segments = property.split('.');
-          const numericIdx = segments.findIndex(seg => /^\d+$/.test(seg));
-
-          if (numericIdx !== -1) {
-            const index = Number(segments[numericIdx]);
-            const arrayPath = segments.slice(0, numericIdx).join('.');
-            const key = segments[segments.length - 1];
-
-            object.handleArrayPropertyChange({
-              type: "arrayUpdate",
-              key,
-              path: arrayPath,
-              oldValue,
-              newValue,
-              index,
-              fullPath: property
-            });
-          } else {
-            object.handlePropertyChange({
-              key: segments[segments.length - 1],
+          object.handlePropertyChange({
+              key: property,
               rootKey: rootProperty,
               target,
               path: property,
@@ -338,7 +320,6 @@ export class AcRuntimeElement extends HTMLElement {
               oldValue,
               newValue
             });
-          }
         }
       }
     });

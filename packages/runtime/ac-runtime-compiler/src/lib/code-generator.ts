@@ -409,11 +409,13 @@ function generateBlockRenderers(
   }
       `;
 
-      subscriptionCode += `this.${updaterName}(true);`;
+      subscriptionCode += `this.${updaterName}(true);\n `;
       // initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
       for (const property of binding.properties || []) {
-        subscriptionCode += ` this.subscribe('${property}', () => this.${updaterName}());
-        `;
+        subscriptionCode += ` this.subscribe('${property}', () => this.${updaterName}());\n`;
+      }
+      for (const property of binding.arrayItemProperties || []) {
+        subscriptionCode += ` this.subscribeArrayItem('${property}', () => this.${updaterName}());\n`;
       }
     }
   }
@@ -691,7 +693,6 @@ code += `
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
-
 })();`;
   return code;
 }

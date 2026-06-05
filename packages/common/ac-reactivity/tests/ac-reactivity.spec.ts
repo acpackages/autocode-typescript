@@ -391,9 +391,9 @@ describe("AcReactivity", () => {
         reactive.child = { name: "New" };
 
         // The old rawChild is no longer reachable from the root
-        // Note: its parent link should be removed
+        // Note: its subscriptions should be cleaned up via cascading unsubscribe
         const meta = metadataStore.get(rawChild);
-        expect(meta?.parents.length).toBe(0);
+        expect(meta?.subscriptions.size).toBe(0);
     });
 
     it("should correctly handle path filtering and ignore untracked properties", () => {
@@ -1147,6 +1147,371 @@ describe("AcReactivity", () => {
         sumChange = changes.find(c => c.property === "sum");
         expect(sumChange).toBeDefined();
         expect(sumChange!.newValue).toBe(38); // 10 + 20 + 8
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // Newly inserted array item change detection
+    // ═══════════════════════════════════════════════════════════
+
+    it("should emit change when modifying a newly pushed object in a root-level array", () => {
+        const instance = {
+            items: [{ name: "existing" }] as { name: string }[]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["items"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Existing item works
+        reactive.items[0].name = "EXISTING";
+        expect(changes.length).toBe(1);
+        expect(changes[0].property).toBe("items.0.name");
+
+        // Push new item
+        changes.length = 0;
+        reactive.items.push({ name: "new" });
+        expect(changes.some(c => c.operation === "push")).toBe(true);
+
+        // Modify the newly pushed item
+        changes.length = 0;
+        reactive.items[1].name = "NEW_MODIFIED";
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "items.1.name",
+            rootProperty: "items",
+            oldValue: "new",
+            newValue: "NEW_MODIFIED",
+            type: "primitive",
+            operation: "set"
+        });
+    });
+
+    it("should emit change when modifying a newly pushed object in a nested array", () => {
+        const instance = {
+            data: {
+                rows: [{ id: 1, value: "a" }] as { id: number; value: string }[]
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["data.rows"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Existing item works
+        reactive.data.rows[0].value = "A";
+        expect(changes.length).toBe(1);
+        expect(changes[0].property).toBe("data.rows.0.value");
+
+        // Push new item
+        changes.length = 0;
+        reactive.data.rows.push({ id: 2, value: "b" });
+
+        // Modify the newly pushed item
+        changes.length = 0;
+        reactive.data.rows[1].value = "B";
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "data.rows.1.value",
+            rootProperty: "data",
+            oldValue: "b",
+            newValue: "B",
+            type: "primitive",
+            operation: "set"
+        });
+    });
+
+    it("should emit change when modifying deep properties inside a newly pushed object", () => {
+        const instance = {
+            users: [
+                { profile: { address: { city: "Boston" } } }
+            ] as any[]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["users"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Push new user with deep nesting
+        reactive.users.push({ profile: { address: { city: "NYC" } } });
+        changes.length = 0;
+
+        // Modify deep property on the newly pushed item
+        reactive.users[1].profile.address.city = "LA";
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "users.1.profile.address.city",
+            rootProperty: "users",
+            oldValue: "NYC",
+            newValue: "LA",
+            type: "primitive",
+            operation: "set"
+        });
+    });
+
+    it("should emit change when modifying items pushed via splice", () => {
+        const instance = {
+            list: [{ v: 1 }] as { v: number }[]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Insert via splice
+        reactive.list.splice(1, 0, { v: 2 }, { v: 3 });
+        changes.length = 0;
+
+        // Modify spliced-in item
+        reactive.list[1].v = 20;
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "list.1.v",
+            oldValue: 2,
+            newValue: 20
+        });
+
+        // Modify second spliced-in item
+        changes.length = 0;
+        reactive.list[2].v = 30;
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "list.2.v",
+            oldValue: 3,
+            newValue: 30
+        });
+    });
+
+    it("should emit change when modifying items pushed via unshift", () => {
+        const instance = {
+            list: [{ v: 10 }] as { v: number }[]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["list"],
+            onChange: (c) => changes.push(c)
+        });
+
+        // Insert at front via unshift
+        reactive.list.unshift({ v: 0 });
+        changes.length = 0;
+
+        // Modify the unshifted item (now at index 0)
+        reactive.list[0].v = 99;
+        expect(changes.length).toBe(1);
+        expect(changes[0]).toMatchObject({
+            property: "list.0.v",
+            oldValue: 0,
+            newValue: 99
+        });
+    });
+
+    // ═══════════════════════════════════════════════════════════
+    // Proxy Guarantee Tests — always proxy for objects/arrays,
+    // always raw for primitives
+    // ═══════════════════════════════════════════════════════════
+
+    it("should always return proxy from get traps for nested plain objects", () => {
+        const instance = {
+            user: {
+                name: "John",
+                address: {
+                    city: "Boston"
+                }
+            }
+        };
+
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["user.name"],
+            onChange: () => {}
+        });
+
+        // user is a plain object — must be proxied
+        const user = reactive.user;
+        expect((user as any)[RAW_TARGET]).toBeDefined();
+
+        // address is a plain object — must be proxied even though "user.address" is not tracked
+        const address = user.address;
+        expect((address as any)[RAW_TARGET]).toBeDefined();
+    });
+
+    it("should always return proxy from get traps for arrays", () => {
+        const instance = {
+            items: [{ name: "a" }, { name: "b" }]
+        };
+
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["items"],
+            onChange: () => {}
+        });
+
+        // items is an array — must be proxied
+        const items = reactive.items;
+        expect((items as any)[RAW_TARGET]).toBeDefined();
+
+        // Each element is a plain object — must be proxied
+        expect((items[0] as any)[RAW_TARGET]).toBeDefined();
+        expect((items[1] as any)[RAW_TARGET]).toBeDefined();
+    });
+
+    it("should return raw primitives from get traps, never proxy", () => {
+        const instance = {
+            count: 42,
+            name: "Alice",
+            active: true,
+            data: null as any
+        };
+
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["count", "name", "active", "data"],
+            onChange: () => {}
+        });
+
+        // Primitives must be returned as-is (no proxy wrapping)
+        expect(reactive.count).toBe(42);
+        expect(typeof reactive.count).toBe("number");
+        expect(reactive.name).toBe("Alice");
+        expect(typeof reactive.name).toBe("string");
+        expect(reactive.active).toBe(true);
+        expect(typeof reactive.active).toBe("boolean");
+        expect(reactive.data).toBeNull();
+    });
+
+    it("should emit proxied oldValue/newValue for object changes in change events", () => {
+        const instance: any = {
+            user: { name: "John" }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["user"],
+            onChange: (c) => changes.push(c)
+        });
+
+        const newUser = { name: "Jane" };
+        reactive.user = newUser;
+
+        expect(changes.length).toBe(1);
+        // newValue should be a proxy
+        expect((changes[0].newValue as any)[RAW_TARGET]).toBeDefined();
+        // oldValue should be a proxy
+        expect((changes[0].oldValue as any)[RAW_TARGET]).toBeDefined();
+    });
+
+    it("should emit proxied oldValue/newValue for array changes in change events", () => {
+        const instance: any = {
+            items: [1, 2, 3]
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["items"],
+            onChange: (c) => changes.push(c)
+        });
+
+        const newItems = [4, 5, 6];
+        reactive.items = newItems;
+
+        expect(changes.length).toBe(1);
+        // newValue should be a proxy (it's an array)
+        expect((changes[0].newValue as any)[RAW_TARGET]).toBeDefined();
+        // oldValue should be a proxy (it was an array)
+        expect((changes[0].oldValue as any)[RAW_TARGET]).toBeDefined();
+    });
+
+    it("should emit raw oldValue/newValue for primitive changes in change events", () => {
+        const instance = {
+            count: 10,
+            name: "John"
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["count", "name"],
+            onChange: (c) => changes.push(c)
+        });
+
+        reactive.count = 20;
+        reactive.name = "Jane";
+
+        expect(changes.length).toBe(2);
+        // Primitive values should be raw, not proxied
+        expect(changes[0].oldValue).toBe(10);
+        expect(changes[0].newValue).toBe(20);
+        expect(changes[1].oldValue).toBe("John");
+        expect(changes[1].newValue).toBe("Jane");
+    });
+
+    it("should emit proxied newValue for getter dependency changes on objects", () => {
+        const instance = {
+            data: { items: [1, 2, 3] },
+            get info() {
+                return this.data;
+            }
+        };
+
+        const changes: IAcReactiveChange[] = [];
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["data", "info"],
+            onChange: (c) => changes.push(c)
+        });
+
+        reactive.data = { items: [4, 5] };
+
+        // info is a getter that returns this.data (an object) — its newValue should be proxied
+        const infoChange = changes.find(c => c.property === "info");
+        expect(infoChange).toBeDefined();
+        if (infoChange && infoChange.newValue && typeof infoChange.newValue === "object") {
+            expect((infoChange.newValue as any)[RAW_TARGET]).toBeDefined();
+        }
+    });
+
+    it("should return proxy for untracked nested objects read through a tracked parent", () => {
+        const instance = {
+            config: {
+                theme: {
+                    primary: "#ff0000",
+                    extra: {
+                        shadow: "none"
+                    }
+                }
+            }
+        };
+
+        const reactive = AcReactivity.makeReactive({
+            instance,
+            properties: ["config.theme.primary"],
+            onChange: () => {}
+        });
+
+        // config is tracked — must be proxied
+        expect((reactive.config as any)[RAW_TARGET]).toBeDefined();
+
+        // theme is tracked — must be proxied
+        expect((reactive.config.theme as any)[RAW_TARGET]).toBeDefined();
+
+        // extra is NOT tracked but is a plain object read through a proxy — must still be proxied
+        expect((reactive.config.theme.extra as any)[RAW_TARGET]).toBeDefined();
     });
 });
 

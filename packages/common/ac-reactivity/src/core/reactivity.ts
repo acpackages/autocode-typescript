@@ -1,6 +1,6 @@
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // ac-reactivity — Core Reactivity Engine
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //
 // This file contains the ENTIRE reactivity implementation. Here is the flow:
 //
@@ -9,10 +9,9 @@
 //   3. The setter creates an AcSignal that detects value changes
 //   4. When a nested object/array is accessed, a Proxy is lazily created to intercept mutations
 //   5. When any change is detected (signal, proxy set, proxy delete, array method):
-//      a. Parent links are updated (for new object values)
-//      b. All reactive roots are found by walking parent links upward
-//      c. The property path is checked against tracked paths
-//      d. If tracked, onChange is called (directly or batched via microtask)
+//      a. The proxy iterates its subscriptions (direct-to-root references)
+//      b. For each subscription, fullPath = parentPath + "." + localKey
+//      c. If the path is tracked, emitChange is called directly on the root — no traversal
 //
 // ARCHITECTURE DIAGRAM:
 //
@@ -31,10 +30,10 @@
 //        Change Detected
 //             │
 //             ▼
-//        notifyRoots()  ← walks parent links upward to all reactive roots
+//        notifySubscribers()  ← iterates subscriptions, emits directly to each root
 //             │
 //             ▼
-//        onChange callback  ← or batched via microtask for coalesced delivery
+//        onChange callback
 //
 
 import {
@@ -42,6 +41,7 @@ import {
     IAcReactiveChange,
     IReactiveMetadata,
     IRootMetadata,
+    IProxySubscription,
     AcReactiveValueType,
     AcReactiveOperation,
 } from "./types";
@@ -71,7 +71,7 @@ export const metadataStore = new WeakMap<object, IReactiveMetadata>();
 function getOrCreateMetadata(target: object): IReactiveMetadata {
     let meta = metadataStore.get(target);
     if (!meta) {
-        meta = { parents: [] };
+        meta = { subscriptions: new Set() };
         metadataStore.set(target, meta);
     }
     return meta;
@@ -116,19 +116,13 @@ export function canBeReactive(value: unknown): boolean {
 // When a change is detected at a path like "user.address.city",
 // we check if it overlaps with any tracked property path.
 //
-// A path is considered tracked if:
-//   - It exactly matches a tracked path ("user.address.city" == "user.address.city")
-//   - It is a prefix of a tracked path ("user" is a prefix of "user.address.city")
-//   - A tracked path is a prefix of it ("user.address" tracks "user.address.city")
-//
 
 /**
  * Check if a change at the given path should be reported.
- * Returns true if any tracked property path overlaps with the given segments.
+ * Returns true if any tracked property path overlaps with the given path string.
  */
-function isTrackedPath(properties: string[], segments: (string | number)[]): boolean {
-    if (segments.length === 0) return true;
-    const pathStr = segments.join(".");
+function isTrackedPath(properties: string[], pathStr: string): boolean {
+    if (pathStr.length === 0) return true;
     return properties.some(p =>
         p === pathStr || pathStr.startsWith(p + ".") || p.startsWith(pathStr + ".")
     );
@@ -136,162 +130,89 @@ function isTrackedPath(properties: string[], segments: (string | number)[]): boo
 
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 4: Parent-Child Link Tracking
+// SECTION 4: Proxy Subscriptions
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //
-// When a nested object is assigned as a property value, we record a
-// "parent link" from child → parent. This creates an upward graph that
-// findRoots() traverses to propagate changes to all reactive roots.
+// Instead of parent links + findRoots() traversal, each proxy stores
+// direct-to-root subscriptions. When a change occurs, the proxy iterates
+// its subscriptions and emits directly to each root.
 //
-// Example: instance.user = { name: "John" }
-//   → The object { name: "John" } gets a parent link: { parent: instance, key: "user" }
+// Subscriptions are added when a nested object is accessed through a get trap.
+// Each subscription tracks its child unsubscribe functions for cascading cleanup.
 //
-// When instance.user is replaced with a new object, the old object's
-// parent link is removed (cleanup to prevent stale notifications).
-//
-
-/** Record that `target` is stored at `parent[key]`. */
-function addParentLink(target: object, parent: object, key: string | number): void {
-    const meta = getOrCreateMetadata(target);
-    const alreadyLinked = meta.parents.some(p => p.parent === parent && p.key === key);
-    if (!alreadyLinked) {
-        meta.parents.push({ parent, key });
-    }
-}
-
-/** Remove the record that `target` was stored at `parent[key]`. */
-function removeParentLink(target: object, parent: object, key: string | number): void {
-    const meta = metadataStore.get(target);
-    if (meta) {
-        meta.parents = meta.parents.filter(p => !(p.parent === parent && p.key === key));
-    }
-}
 
 /**
- * Update parent links when a property value changes.
- * Removes the link from the old value and adds a link to the new value.
- * Only applies to object/function values (primitives don't have parent links).
- */
-export function updateParentLink(
-    parent: object,
-    key: string | number,
-    oldValue: unknown,
-    newValue: unknown,
-): void {
-    if (oldValue === newValue) return;
-
-    if (oldValue && (typeof oldValue === "object" || typeof oldValue === "function")) {
-        const raw = (oldValue as any)[RAW_TARGET] || oldValue;
-        removeParentLink(raw, parent, key);
-    }
-
-    if (newValue && (typeof newValue === "object" || typeof newValue === "function")) {
-        const raw = (newValue as any)[RAW_TARGET] || newValue;
-        addParentLink(raw, parent, key);
-    }
-}
-
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 5: Root Discovery
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//
-// When a change occurs deep in the object tree, we need to find all
-// reactive roots that should be notified. We walk upward through
-// parent links until we find objects that have `root` metadata.
-//
-// Example object graph:
-//   rootA.user.address = sharedObj
-//   rootB.config.addr  = sharedObj  (same object, shared)
-//
-// A change to sharedObj.city should notify both rootA and rootB.
-//
-// The `visited` set prevents infinite loops from circular references
-// (e.g. instance.self = instance).
-//
-
-/** Result of walking parent links upward to a reactive root. */
-interface IRootPath {
-    /** The root object (the one passed to makeReactive). */
-    root: object;
-    /** Root metadata containing tracked properties, onChange, etc. */
-    rootMetadata: IRootMetadata;
-    /** Full path segments from root down to the changed property. */
-    segments: (string | number)[];
-    /** The first segment — the root-level property name. */
-    rootProperty: string;
-}
-
-/**
- * Walk parent links upward from `target` to find all reactive roots.
- * Builds the full property path as it traverses.
+ * Subscribe a proxy target to a root at a given path.
+ * Returns an unsubscribe function that cascades to all children.
  *
- * @param target - The object where the change occurred
- * @param currentPath - Path segments accumulated so far (built bottom-up, reversed at root)
- * @param visited - Prevents infinite loops from circular references
+ * @param target - The raw (unwrapped) object to subscribe
+ * @param root - The reactive root instance
+ * @param rootMetadata - Root's tracked properties, onChange, etc.
+ * @param parentPath - The dot-path from root to this target (e.g. "user.address")
  */
-export function findRoots(
+function subscribeProxy(
     target: object,
-    currentPath: (string | number)[] = [],
-    visited: Set<object> = new Set(),
-): IRootPath[] {
-    const results: IRootPath[] = [];
+    root: object,
+    rootMetadata: IRootMetadata,
+    parentPath: string,
+): () => void {
+    const meta = getOrCreateMetadata(target);
 
-    // Guard against circular references
-    if (visited.has(target)) return results;
-    visited.add(target);
-
-    const meta = metadataStore.get(target);
-    if (!meta) return results;
-
-    // If this object is itself a reactive root, record it
-    if (meta.root) {
-        const segments = currentPath.slice().reverse();
-        results.push({
-            root: target,
-            rootMetadata: meta.root,
-            segments,
-            rootProperty: String(segments[0] || ""),
-        });
-    }
-
-    // Walk upward through all parent links
-    for (const link of meta.parents) {
-        let key = link.key;
-        // For array items, the stored key is -1 (sentinel).
-        // Resolve to the actual index by searching the parent array.
-        if (key === -1 && Array.isArray(link.parent)) {
-            const index = link.parent.indexOf(target);
-            if (index !== -1) {
-                key = index;
-            }
+    // Dedup: don't add the same root+path subscription twice
+    for (const sub of meta.subscriptions) {
+        if (sub.root === root && sub.parentPath === parentPath) {
+            return sub.childUnsubs ? () => unsubscribeProxy(meta, sub) : () => {};
         }
-        currentPath.push(key);
-        results.push(...findRoots(link.parent, currentPath, visited));
-        currentPath.pop();
     }
 
-    visited.delete(target);
-    return results;
+    const sub: IProxySubscription = {
+        root,
+        rootMetadata,
+        parentPath,
+        childUnsubs: new Map(),
+    };
+    meta.subscriptions.add(sub);
+
+    // Return cascading unsubscribe
+    return () => unsubscribeProxy(meta, sub);
+}
+
+/**
+ * Unsubscribe a subscription and cascade to all its children.
+ */
+function unsubscribeProxy(meta: IReactiveMetadata, sub: IProxySubscription): void {
+    // Cascade: unsubscribe all children first
+    for (const unsub of sub.childUnsubs.values()) {
+        unsub();
+    }
+    sub.childUnsubs.clear();
+
+    // Remove this subscription
+    meta.subscriptions.delete(sub);
+}
+
+/**
+ * Find the subscription for a given root+parentPath on a target.
+ */
+function findSubscription(
+    target: object,
+    root: object,
+    parentPath: string,
+): IProxySubscription | undefined {
+    const meta = metadataStore.get(target);
+    if (!meta) return undefined;
+    for (const sub of meta.subscriptions) {
+        if (sub.root === root && sub.parentPath === parentPath) {
+            return sub;
+        }
+    }
+    return undefined;
 }
 
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 6: Change Notification & Batching
+// SECTION 5: Change Notification & Batching
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//
-// NOTIFICATION FLOW:
-//   1. A change is detected (signal, proxy trap, or array method)
-//   2. emitChange() is called with the root, metadata, and change details
-//   3. If batching is enabled:
-//      - The change is accumulated in pendingChanges (keyed by property path)
-//      - A microtask is scheduled (if not already scheduled)
-//      - When the microtask fires, all pending changes are flushed to onChange
-//   4. If batching is disabled:
-//      - onChange is called immediately
-//   5. After emitting, dependency-triggered changes are also emitted
-//      (e.g., if "list" changed and "count" getter depends on "list", emit "count" too)
-//
 
 // Batch scheduler state (module-level, shared across all roots)
 const pendingBatchRoots = new Set<object>();
@@ -311,7 +232,6 @@ function flushBatchedChanges(): void {
         meta.root.pendingChanges = undefined;
 
         for (const change of pending.values()) {
-            // Skip changes where the value didn't actually change (unless array mutation)
             if (change.type === "array" || change.newValue !== change.oldValue) {
                 meta.root.onChange(change);
             }
@@ -327,7 +247,6 @@ function scheduleBatchedChange(root: object, rootMetadata: IRootMetadata, change
 
     const existing = rootMetadata.pendingChanges.get(change.property);
     if (existing) {
-        // Update the existing pending change with the latest values
         existing.newValue = change.newValue;
         existing.timestamp = change.timestamp;
         existing.type = change.type;
@@ -359,8 +278,6 @@ function getValueAtPath(obj: any, path: string): any {
  *
  * After emitting, also checks if any computed properties (getters)
  * depend on the changed property, and recursively emits changes for those too.
- *
- * @param visited - Prevents infinite loops when dependencies form cycles
  */
 export function emitChange(
     root: object,
@@ -371,6 +288,13 @@ export function emitChange(
     if (visited.has(change.property)) return;
     visited.add(change.property);
 
+    // Ensure object/array values are always proxied, primitives stay raw
+    change = {
+        ...change,
+        oldValue: ensureProxy(change.oldValue),
+        newValue: ensureProxy(change.newValue),
+    };
+
     // Deliver the change (batched or immediate)
     if (rootMetadata.batch) {
         scheduleBatchedChange(root, rootMetadata, change);
@@ -379,8 +303,6 @@ export function emitChange(
     }
 
     // Emit derived changes for any getter/setter dependencies.
-    // For example, if "list" changed and a "count" getter reads from "this.list",
-    // we also emit a change for "count".
     if (rootMetadata.dependencies) {
         const changedProp = change.property;
         for (const [depKey, dependentProps] of rootMetadata.dependencies.entries()) {
@@ -410,30 +332,46 @@ export function emitChange(
 }
 
 /**
- * Notify all reactive roots about a change to a nested object or array.
+ * Notify all subscribers of a proxy about a change.
  *
  * This is the unified notification helper used by all proxy traps.
- * It encapsulates the repeated pattern of:
- *   1. Update parent links
- *   2. Find all roots via parent traversal
- *   3. Check if the path is tracked
- *   4. Emit change for each matching root
+ * It directly emits to each subscribed root — no parent traversal.
+ *
+ * @param target - The raw object where the change occurred
+ * @param localKey - The property key that changed (e.g. "city", "0", "")
+ * @param oldValue - Previous value
+ * @param newValue - New value
+ * @param operation - What caused the change
+ * @param context - Where in the tree the change occurred
+ * @param type - Optional override for value type classification
+ * @param skipRoot - Optional root to skip (used to avoid double-notification when
+ *                   the caller already emitted to this root via emitChange)
  */
-function notifyRoots(
+function notifySubscribers(
     target: object,
-    pathSegments: (string | number)[],
+    localKey: string,
     oldValue: unknown,
     newValue: unknown,
     operation: AcReactiveOperation,
     context: "root" | "object" | "array",
     type?: AcReactiveValueType,
+    skipRoot?: object,
 ): void {
-    const roots = findRoots(target, pathSegments.length > 0 ? [...pathSegments] : undefined);
-    for (const r of roots) {
-        if (isTrackedPath(r.rootMetadata.properties, r.segments)) {
-            emitChange(r.root, r.rootMetadata, {
-                property: r.segments.join("."),
-                rootProperty: r.rootProperty,
+    const meta = metadataStore.get(target);
+    if (!meta || meta.subscriptions.size === 0) return;
+
+    for (const sub of meta.subscriptions) {
+        // Skip if this subscription's root was already notified by the caller
+        if (skipRoot && sub.root === skipRoot) continue;
+
+        const fullPath = localKey
+            ? (sub.parentPath ? sub.parentPath + "." + localKey : localKey)
+            : sub.parentPath;
+
+        if (isTrackedPath(sub.rootMetadata.properties, fullPath)) {
+            emitChange(sub.root, sub.rootMetadata, {
+                property: fullPath,
+                rootProperty: fullPath.split(".")[0],
                 oldValue,
                 newValue,
                 target,
@@ -448,15 +386,8 @@ function notifyRoots(
 
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 7: Signal (Value Cell)
+// SECTION 6: Signal (Value Cell)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//
-// A Signal is a simple value container that detects changes.
-// It stores a single value and calls an onChange callback when the value changes.
-//
-// Signals are used for root-level properties to efficiently track
-// primitive values without needing a Proxy.
-//
 
 class AcSignal<T> {
     public _value: T;
@@ -482,18 +413,18 @@ class AcSignal<T> {
 
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 8: Proxy Creation
+// SECTION 7: Proxy Creation
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //
 // Proxies wrap nested objects and arrays to intercept mutations.
 // They are created lazily — only when a nested property is actually accessed.
 //
 // PROXY IDENTITY: Each raw object gets at most ONE proxy, cached in its metadata.
-// This ensures that `instance.user === instance.user` returns true (referential stability).
 //
-// TWO PROXY TYPES:
-//   1. Object proxy — intercepts get, set, deleteProperty
-//   2. Array proxy — same traps plus intercepts mutating methods (push, pop, splice, etc.)
+// SUBSCRIPTIONS: When a get trap returns a child proxy, it subscribes the child
+// for each of the parent's subscriptions. This ensures the child can emit directly
+// to all roots that care about it. The subscription's childUnsubs map tracks these
+// for cascading cleanup.
 //
 
 /** Array methods that mutate the array in place and should trigger change notifications. */
@@ -517,48 +448,95 @@ function getOrCreateProxy(target: object): object {
     return proxy;
 }
 
+/** Wrap a value in its cached proxy if it's reactive-eligible. Returns primitives unchanged. */
+function ensureProxy(value: unknown): unknown {
+    if (value && canBeReactive(value)) {
+        const raw = (value as any)[RAW_TARGET] || value;
+        return getOrCreateProxy(raw);
+    }
+    return value;
+}
+
+/**
+ * Subscribe a child object for each of the parent's subscriptions.
+ * Each parent subscription gets a childUnsubs entry for cascading cleanup.
+ *
+ * @param parentTarget - The raw parent object
+ * @param childTarget - The raw child object being accessed
+ * @param key - The property key on the parent (e.g. "address", "0")
+ */
+function subscribeChildForParent(
+    parentTarget: object,
+    childTarget: object,
+    key: string,
+): void {
+    const parentMeta = metadataStore.get(parentTarget);
+    if (!parentMeta) return;
+
+    for (const parentSub of parentMeta.subscriptions) {
+        // Skip if this subscription already has a child sub for this key
+        if (parentSub.childUnsubs.has(key)) continue;
+
+        const childPath = parentSub.parentPath
+            ? parentSub.parentPath + "." + key
+            : key;
+
+        const unsub = subscribeProxy(
+            childTarget,
+            parentSub.root,
+            parentSub.rootMetadata,
+            childPath,
+        );
+        parentSub.childUnsubs.set(key, unsub);
+    }
+}
+
+/**
+ * Cleanup child subscriptions for a key across all of the parent's subscriptions.
+ * Called when a property value is replaced or deleted.
+ */
+function cleanupChildSubscriptions(parentTarget: object, key: string): void {
+    const parentMeta = metadataStore.get(parentTarget);
+    if (!parentMeta) return;
+
+    for (const parentSub of parentMeta.subscriptions) {
+        const unsub = parentSub.childUnsubs.get(key);
+        if (unsub) {
+            unsub(); // Cascades to grandchildren
+            parentSub.childUnsubs.delete(key);
+        }
+    }
+}
+
 /**
  * Create a Proxy for a plain object.
  *
  * Traps:
- *   get  → returns RAW_TARGET, wraps nested reactive objects in proxies
- *   set  → detects value changes, notifies all roots
- *   deleteProperty → detects deletions, notifies all roots
+ *   get  → returns RAW_TARGET, wraps nested reactive objects in proxies,
+ *          subscribes children for each parent subscription
+ *   set  → detects value changes, cleans up old child subscriptions,
+ *          notifies all subscribers directly
+ *   deleteProperty → detects deletions, cleans up, notifies subscribers
  */
 function createObjectProxy(target: object): object {
     return new Proxy(target, {
-        // GET TRAP: Intercepts property reads.
-        // Why: To return RAW_TARGET for unwrapping, bind methods to the proxy,
-        //      and lazily wrap nested reactive objects in proxies.
         get(t, key, receiver) {
-            // Allow unwrapping the proxy back to the original object
             if (key === RAW_TARGET) return t;
 
             const value = Reflect.get(t, key, receiver);
             if (typeof key === "symbol") return value;
 
-            // Bind functions to the proxy so `this` works correctly inside methods
             if (typeof value === "function") return value.bind(receiver);
 
-            // If the value is a reactive-eligible object, wrap it in a proxy.
-            // Only wrap if the path from this object to a root is actually tracked.
             if (value && canBeReactive(value)) {
-                const roots = findRoots(t, [key]);
-                const isTracked = roots.some(r =>
-                    isTrackedPath(r.rootMetadata.properties, r.segments)
-                );
-                if (isTracked) {
-                    const rawVal = (value as any)[RAW_TARGET] || value;
-                    updateParentLink(t, key, null, rawVal);
-                    return getOrCreateProxy(rawVal);
-                }
+                const rawVal = (value as any)[RAW_TARGET] || value;
+                // Subscribe child for each of our subscriptions
+                subscribeChildForParent(t, rawVal, String(key));
+                return getOrCreateProxy(rawVal);
             }
             return value;
         },
 
-        // SET TRAP: Intercepts property assignments.
-        // Why: To detect value changes on nested objects and propagate
-        //      change notifications up to reactive roots.
         set(t, key, value, receiver) {
             if (typeof key === "symbol") return Reflect.set(t, key, value, receiver);
 
@@ -576,17 +554,15 @@ function createObjectProxy(target: object): object {
                 if (isRootProp) return true;
             }
 
-            // Update parent links and notify all roots
-            const rawOld = oldValue && (oldValue as any)[RAW_TARGET] || oldValue;
-            const rawNew = value && (value as any)[RAW_TARGET] || value;
-            updateParentLink(t, key, rawOld, rawNew);
-            notifyRoots(t, [key], oldValue, value, "set", "object");
+            // Cleanup old child subscriptions for this key (cascades)
+            cleanupChildSubscriptions(t, String(key));
+
+            // Notify all subscribers directly
+            notifySubscribers(t, String(key), ensureProxy(oldValue), ensureProxy(value), "set", "object");
 
             return true;
         },
 
-        // DELETE TRAP: Intercepts `delete obj.prop`.
-        // Why: To detect property removals and notify all roots.
         deleteProperty(t, key) {
             if (typeof key === "symbol") return Reflect.deleteProperty(t, key);
             if (!Reflect.has(t, key)) return true;
@@ -595,9 +571,10 @@ function createObjectProxy(target: object): object {
             const success = Reflect.deleteProperty(t, key);
             if (!success) return false;
 
-            const rawOld = oldValue && (oldValue as any)[RAW_TARGET] || oldValue;
-            updateParentLink(t, key, rawOld, null);
-            notifyRoots(t, [key], oldValue, undefined, "delete", "object");
+            // Cleanup old child subscriptions for this key (cascades)
+            cleanupChildSubscriptions(t, String(key));
+
+            notifySubscribers(t, String(key), ensureProxy(oldValue), undefined, "delete", "object");
 
             return true;
         },
@@ -613,9 +590,6 @@ function createObjectProxy(target: object): object {
  */
 function createArrayProxy(target: any[]): object {
     return new Proxy(target, {
-        // GET TRAP: Same as object proxy, plus intercepts mutating array methods.
-        // Why: Array methods like push() trigger multiple internal set/length operations.
-        //      We wrap them to emit a single notification with the method name as the operation.
         get(t, key, receiver) {
             if (key === RAW_TARGET) return t;
 
@@ -624,7 +598,7 @@ function createArrayProxy(target: any[]): object {
                 const originalMethod = (t as any)[key];
                 return function (this: any, ...args: any[]) {
                     const meta = getOrCreateMetadata(t);
-                    const snapshot = t.slice(); // Capture pre-mutation state
+                    const snapshot = [...receiver]; // Pre-mutation state via proxy
 
                     // Set the isMutating semaphore to suppress per-element set trap notifications
                     meta.isMutating = (meta.isMutating || 0) + 1;
@@ -633,20 +607,30 @@ function createArrayProxy(target: any[]): object {
                     } finally {
                         meta.isMutating!--;
                         if (meta.isMutating === 0) {
-                            // Rebuild parent links: remove old items, add new items
-                            for (const item of snapshot) {
-                                if (item && typeof item === "object") {
-                                    updateParentLink(t, -1, (item as any)[RAW_TARGET] || item, null);
+                            // Clear all numeric child subscriptions — indexes may have shifted
+                            for (const sub of meta.subscriptions) {
+                                for (const [subKey, unsub] of sub.childUnsubs) {
+                                    if (!isNaN(Number(subKey))) {
+                                        unsub();
+                                        sub.childUnsubs.delete(subKey);
+                                    }
                                 }
                             }
-                            for (const item of t) {
-                                if (item && typeof item === "object") {
-                                    updateParentLink(t, -1, null, (item as any)[RAW_TARGET] || item);
+
+                            // Eagerly subscribe all reactive items with correct indexes.
+                            // This ensures newly pushed/unshifted/spliced objects are
+                            // immediately subscribed to the parent root(s).
+                            for (let i = 0; i < t.length; i++) {
+                                const item = t[i];
+                                if (item && canBeReactive(item)) {
+                                    const rawItem = (item as any)[RAW_TARGET] || item;
+                                    subscribeChildForParent(t, rawItem, String(i));
                                 }
                             }
 
                             // Emit a single change notification with the method name as operation
-                            notifyRoots(t, [], snapshot, t, key as AcReactiveOperation, "array", "array");
+                            // localKey = "" means the array itself changed
+                            notifySubscribers(t, "", snapshot, receiver, key as AcReactiveOperation, "array", "array");
                         }
                     }
                 };
@@ -655,33 +639,20 @@ function createArrayProxy(target: any[]): object {
             const value = Reflect.get(t, key, receiver);
             if (typeof key === "symbol") return value;
 
-            // Wrap reactive-eligible array elements in proxies
             if (value && canBeReactive(value)) {
-                const indexKey = isNaN(Number(key)) ? key : Number(key);
-                const roots = findRoots(t, [indexKey]);
-                const isTracked = roots.some(r =>
-                    isTrackedPath(r.rootMetadata.properties, r.segments)
-                );
-                if (isTracked) {
-                    const rawVal = (value as any)[RAW_TARGET] || value;
-                    updateParentLink(t, -1, null, rawVal);
-                    return getOrCreateProxy(rawVal);
-                }
+                const rawVal = (value as any)[RAW_TARGET] || value;
+                subscribeChildForParent(t, rawVal, String(key));
+                return getOrCreateProxy(rawVal);
             }
             return value;
         },
 
-        // SET TRAP: Intercepts index assignment (arr[0] = x) and length changes.
-        // Why: Direct index writes and length truncation need change notifications.
-        //      During mutating methods (push, splice), per-element sets are suppressed
-        //      by the isMutating semaphore — the method wrapper handles notification.
         set(t, key, value, receiver) {
             if (typeof key === "symbol") return Reflect.set(t, key, value, receiver);
 
             const meta = getOrCreateMetadata(t);
 
             // Suppress notifications during mutating methods (push, splice, etc.)
-            // The method wrapper in the get trap handles notification after completion.
             if (meta.isMutating) return Reflect.set(t, key, value, receiver);
 
             const oldValue = Reflect.get(t, key, receiver);
@@ -692,22 +663,19 @@ function createArrayProxy(target: any[]): object {
 
             // Handle direct length assignment: arr.length = 1
             if (key === "length") {
-                notifyRoots(t, ["length"], oldValue, value, "length", "array", "array");
+                notifySubscribers(t, "length", oldValue, value, "length", "array", "array");
                 return true;
             }
 
+            // Cleanup old child subscriptions for this index
+            cleanupChildSubscriptions(t, String(key));
+
             // Handle direct index assignment: arr[0] = newValue
-            const indexKey = isNaN(Number(key)) ? key : Number(key);
-            const rawOld = oldValue && (oldValue as any)[RAW_TARGET] || oldValue;
-            const rawNew = value && (value as any)[RAW_TARGET] || value;
-            updateParentLink(t, -1, rawOld, rawNew);
-            notifyRoots(t, [indexKey], oldValue, value, "set", "array", "array");
+            notifySubscribers(t, String(key), ensureProxy(oldValue), ensureProxy(value), "set", "array", "array");
 
             return true;
         },
 
-        // DELETE TRAP: Intercepts `delete arr[index]`.
-        // Why: Element deletion needs change notification.
         deleteProperty(t, key) {
             if (typeof key === "symbol") return Reflect.deleteProperty(t, key);
 
@@ -720,10 +688,10 @@ function createArrayProxy(target: any[]): object {
             const success = Reflect.deleteProperty(t, key);
             if (!success) return false;
 
-            const indexKey = isNaN(Number(key)) ? key : Number(key);
-            const rawOld = oldValue && (oldValue as any)[RAW_TARGET] || oldValue;
-            updateParentLink(t, -1, rawOld, null);
-            notifyRoots(t, [indexKey], oldValue, undefined, "delete", "array", "array");
+            // Cleanup old child subscriptions for this index
+            cleanupChildSubscriptions(t, String(key));
+
+            notifySubscribers(t, String(key), ensureProxy(oldValue), undefined, "delete", "array", "array");
 
             return true;
         },
@@ -732,18 +700,8 @@ function createArrayProxy(target: any[]): object {
 
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// SECTION 9: AcReactivity — Public API
+// SECTION 8: AcReactivity — Public API
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//
-// The only public class. Has a single static method: makeReactive().
-//
-// LIFECYCLE:
-//   1. Resolve getter/setter dependencies (which properties does a getter read from?)
-//   2. Store root metadata (tracked properties, onChange, batch, dependencies)
-//   3. Install getter/setter on each root-level property via Object.defineProperty
-//   4. Each getter lazily wraps object/array values in reactive Proxies
-//   5. Each setter uses an AcSignal to detect and notify changes
-//
 
 export class AcReactivity {
     /**
@@ -771,10 +729,6 @@ export class AcReactivity {
         if (meta.root) return instance;
 
         // ─── Step 1: Resolve getter/setter dependencies ────────────
-        //
-        // For each tracked property that is a getter, find which other
-        // properties it references (e.g. `get count() { return this.list.length }` → depends on "list").
-        // These dependencies are stored so that when "list" changes, we also emit a change for "count".
 
         const allPropertiesSet = new Set<string>(properties);
         const dependenciesMap = new Map<string, Set<string>>();
@@ -786,7 +740,6 @@ export class AcReactivity {
             if (processed.has(currentProp)) continue;
             processed.add(currentProp);
 
-            // Navigate to the object that owns this property
             const segments = currentProp.split(".");
             let targetObj = rawInstance;
             let pathSegments: string[] = [];
@@ -795,7 +748,6 @@ export class AcReactivity {
                 if (targetObj) {
                     pathSegments.push(segments[i]);
                     targetObj = targetObj[segments[i]];
-                    // Stop if we hit an array or non-reactive object — can't resolve deeper
                     if (targetObj && (Array.isArray(targetObj) || !canBeReactive(targetObj))) {
                         stop = true;
                         break;
@@ -804,7 +756,6 @@ export class AcReactivity {
             }
 
             if (stop) {
-                // Truncate the path and register dependency from the truncated path to the full path
                 const truncatedPath = pathSegments.join(".");
                 if (!dependenciesMap.has(truncatedPath)) {
                     dependenciesMap.set(truncatedPath, new Set());
@@ -818,7 +769,6 @@ export class AcReactivity {
                 continue;
             }
 
-            // Check if this property is a getter/setter and find its dependencies
             const propKey = segments[segments.length - 1];
             if (targetObj && (typeof targetObj === "object" || typeof targetObj === "function")) {
                 const deps = findGetterSetterDependencies(targetObj, propKey);
@@ -854,8 +804,6 @@ export class AcReactivity {
         for (const path of meta.root.properties) {
             const rootKey = path.split(".")[0];
             if (rootKey) {
-                // Don't override getters/setters that have dependencies — their dependencies
-                // are tracked instead, and they are re-evaluated when dependencies change.
                 const hasDeps = Array.from(dependenciesMap.values()).some(set => set.has(rootKey));
                 if (!isGetterOrSetter(rawInstance, rootKey) || !hasDeps) {
                     rootKeys.add(rootKey);
@@ -877,11 +825,9 @@ export class AcReactivity {
  * This replaces the original property with a new getter/setter that:
  *   - Uses an AcSignal to detect value changes
  *   - Lazily wraps object/array values in reactive Proxies on read
+ *   - Subscribes the proxy to this root so changes emit directly
  *   - Emits change notifications on write
  *   - Preserves original getters/setters if the property was already an accessor
- *
- * @param instance - The raw (unwrapped) root instance
- * @param key - The property name to make reactive
  */
 function defineRootProperty(instance: any, key: string): void {
     // Walk prototype chain to find existing descriptor (if any)
@@ -900,21 +846,26 @@ function defineRootProperty(instance: any, key: string): void {
     if (descriptor) {
         originalGet = descriptor.get;
         originalSet = descriptor.set;
-        if (!descriptor.configurable) return; // Can't redefine non-configurable properties
+        if (!descriptor.configurable) return;
         if (!originalGet) initialValue = descriptor.value;
     }
 
-    // Create a signal to track the current value and detect changes.
-    // The signal's onChange fires whenever the value actually changes.
+    // Track the current subscription to the root-level proxy value.
+    // When the value changes, we unsubscribe from the old and subscribe to the new.
+    let currentUnsub: (() => void) | undefined;
+    let subscribedRaw: object | undefined;
+
     const signal = new AcSignal(
         originalGet ? undefined : initialValue,
         (newValue: any, oldValue: any) => {
-            // Update parent links when the value changes
-            const rawOld = oldValue && (oldValue as any)[RAW_TARGET] || oldValue;
-            const rawNew = newValue && (newValue as any)[RAW_TARGET] || newValue;
-            updateParentLink(instance, key, rawOld, rawNew);
+            // Unsubscribe from old value's proxy (cascades to all children)
+            if (currentUnsub) {
+                currentUnsub();
+                currentUnsub = undefined;
+                subscribedRaw = undefined;
+            }
 
-            // Emit change for this root
+            // Emit root-level change
             const meta = metadataStore.get(instance);
             if (meta?.root) {
                 emitChange(instance, meta.root, {
@@ -930,31 +881,23 @@ function defineRootProperty(instance: any, key: string): void {
                 });
             }
 
-            // Also notify any other roots that contain this instance as a nested object
-            const roots = findRoots(instance, [key]);
-            for (const r of roots) {
-                if (r.root === instance) continue; // Already handled above
-                if (isTrackedPath(r.rootMetadata.properties, r.segments)) {
-                    emitChange(r.root, r.rootMetadata, {
-                        property: r.segments.join("."),
-                        rootProperty: r.rootProperty,
-                        oldValue,
-                        newValue,
-                        target: instance,
-                        timestamp: Date.now(),
-                        type: getReactiveValueType(newValue),
-                        operation: "set",
-                        context: r.segments.length > 1 ? "object" : "root",
-                    });
-                }
-            }
+            // Also notify external subscriptions on this instance.
+            // Handles the cross-root case: when this instance is independently reactive
+            // but also nested in another reactive tree (e.g. a makeReactive'd object
+            // pushed into a tracked array), external subscribers need to be notified.
+            // Skip this instance's own root to avoid double-notification (circular refs).
+            notifySubscribers(instance, key, oldValue, newValue, "set", "object", undefined, instance);
         },
     );
 
-    // If the initial value is an object, establish parent link right away
-    if (initialValue && typeof initialValue === "object") {
+    // If the initial value is a reactive object, subscribe right away
+    if (initialValue && canBeReactive(initialValue)) {
         const rawInit = initialValue[RAW_TARGET] || initialValue;
-        updateParentLink(instance, key, null, rawInit);
+        const meta = metadataStore.get(instance);
+        if (meta?.root) {
+            currentUnsub = subscribeProxy(rawInit, instance, meta.root, key);
+            subscribedRaw = rawInit;
+        }
     }
 
     // Replace the property with a reactive getter/setter
@@ -965,7 +908,6 @@ function defineRootProperty(instance: any, key: string): void {
         get() {
             let currentVal: any;
             if (originalGet) {
-                // Preserve original getter — call it and sync the signal
                 currentVal = originalGet.call(this);
                 signal._value = currentVal;
             } else {
@@ -975,16 +917,31 @@ function defineRootProperty(instance: any, key: string): void {
             // Lazily wrap object/array values in a reactive Proxy
             if (currentVal && canBeReactive(currentVal)) {
                 const rawVal = currentVal[RAW_TARGET] || currentVal;
-                updateParentLink(this, key, null, rawVal);
+
+                // Subscribe to the proxy (re-subscribe only if raw value changed)
+                if (rawVal !== subscribedRaw) {
+                    if (currentUnsub) currentUnsub();
+                    const meta = metadataStore.get(instance);
+                    if (meta?.root) {
+                        currentUnsub = subscribeProxy(rawVal, instance, meta.root, key);
+                    }
+                    subscribedRaw = rawVal;
+                }
+
                 return getOrCreateProxy(rawVal);
             }
 
+            // Value became primitive — unsubscribe from old proxy
+            if (currentUnsub) {
+                currentUnsub();
+                currentUnsub = undefined;
+                subscribedRaw = undefined;
+            }
             return currentVal;
         },
 
         set(value) {
             if (originalSet) {
-                // Preserve original setter — call it, then sync signal with actual value
                 const oldValue = originalGet ? originalGet.call(this) : undefined;
                 originalSet.call(this, value);
                 const syncedVal = originalGet ? originalGet.call(this) : value;
