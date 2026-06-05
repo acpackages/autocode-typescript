@@ -251,7 +251,7 @@ export class DevServer {
     }
 
     const scripts = Array.from(scriptNames)
-      .map(name => `<script src="/${name}"></script>`)
+      .map(name => `<script type="module" src="/${name}"></script>`)
       .join('\n    ');
 
     const devScript = `
