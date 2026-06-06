@@ -233,7 +233,7 @@ function generateBlockRenderers(
     switch (binding.type) {
       case 'text':
         updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
-          this.${getElementPropertyName({ targetId })}.textContent = String(newValue);\n
+          this.${getElementPropertyName({ targetId })}.textContent = String(newValue ?? '');\n
         }\n`;
         break;
       case 'property':
@@ -617,6 +617,8 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
       this.elementRenderer = new ${getRendererClassName({ className, suffix: 'Root' })}({ targetId: 'root', rootElement: this, html: '', context: {} });
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
+      this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
+
       `;
   for (const changeDetails of templateResult.subscribeChanges || []) {
     code += `this.registerChangeSubscriptionMethodCallback({callback:async ({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any})=>{
@@ -652,12 +654,14 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         }
       }
     }
+
     `;
   }
   code += `
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
+
 
 })();`;
   return code;

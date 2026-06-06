@@ -24,33 +24,15 @@ export class AcRuntimeElement extends HTMLElement {
   changeMethodCallbacks: Record<string, any[]> = {};
   elementId: string = '';
 
-  subscribePath(path: string, callback: () => void): () => void {
-    if (!this.pathSubscriptions[path]) {
-      this.pathSubscriptions[path] = new Set();
-    }
-    this.pathSubscriptions[path].add(callback);
-    return () => {
-      if (this.pathSubscriptions[path]) {
-        this.pathSubscriptions[path].delete(callback);
-        if (this.pathSubscriptions[path].size === 0) {
-          delete this.pathSubscriptions[path];
-        }
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (oldValue === newValue) return;
+    if (this.acRuntimeInstance && this.instanceInputs) {
+      const matchingInput = this.instanceInputs.find(
+        (inputName) => inputName.toLowerCase() === name.toLowerCase()
+      );
+      if (matchingInput) {
+        this.acRuntimeInstance[matchingInput] = newValue;
       }
-    };
-  }
-
-  scheduleUpdate(callback: () => void) {
-    this.pendingUpdates.add(callback);
-    if (!this.isBatchScheduled) {
-      this.isBatchScheduled = true;
-      queueMicrotask(() => {
-        this.isBatchScheduled = false;
-        const updates = Array.from(this.pendingUpdates);
-        this.pendingUpdates.clear();
-        for (const update of updates) {
-          update();
-        }
-      });
     }
   }
 
@@ -88,6 +70,12 @@ export class AcRuntimeElement extends HTMLElement {
       if ((this as any)[key] != undefined) {
         this.acRuntimeInstance[key] = (this as any)[key];
       }
+    }
+    for (const eventName of this.instanceOutputs as string[]) {
+      (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
+        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
+        this.dispatchEvent(event);
+      });
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
@@ -171,11 +159,11 @@ export class AcRuntimeElement extends HTMLElement {
       }
 
       if (this.acRuntimeInstance.acOnChange) {
-        this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
+        this.acRuntimeInstance.acOnChange({ key:rootKey, property, oldValue, newValue });
       }
       if (this.isInitialized && this.changeMethodCallbacks[property]) {
         for (const callback of this.changeMethodCallbacks[property]) {
-          callback({ key: path || key, oldValue, newValue });
+          callback({ key:rootKey, property, oldValue, newValue });
         }
       }
     }
@@ -334,15 +322,33 @@ export class AcRuntimeElement extends HTMLElement {
     });
   }
 
-  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
-    if (oldValue === newValue) return;
-    if (this.acRuntimeInstance && this.instanceInputs) {
-      const matchingInput = this.instanceInputs.find(
-        (inputName) => inputName.toLowerCase() === name.toLowerCase()
-      );
-      if (matchingInput) {
-        this.acRuntimeInstance[matchingInput] = newValue;
+  subscribePath(path: string, callback: () => void): () => void {
+    if (!this.pathSubscriptions[path]) {
+      this.pathSubscriptions[path] = new Set();
+    }
+    this.pathSubscriptions[path].add(callback);
+    return () => {
+      if (this.pathSubscriptions[path]) {
+        this.pathSubscriptions[path].delete(callback);
+        if (this.pathSubscriptions[path].size === 0) {
+          delete this.pathSubscriptions[path];
+        }
       }
+    };
+  }
+
+  scheduleUpdate(callback: () => void) {
+    this.pendingUpdates.add(callback);
+    if (!this.isBatchScheduled) {
+      this.isBatchScheduled = true;
+      queueMicrotask(() => {
+        this.isBatchScheduled = false;
+        const updates = Array.from(this.pendingUpdates);
+        this.pendingUpdates.clear();
+        for (const update of updates) {
+          update();
+        }
+      });
     }
   }
 
