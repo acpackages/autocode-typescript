@@ -82,7 +82,6 @@ function extractExpressionIdentifiers(
     if (['true', 'false', 'null', 'undefined'].includes(name)) return false;
     if (topLevelVars && topLevelVars.has(name)) return false;
     if (classProperties && classProperties.staticProps.has(name)) return false;
-    if (classProperties && !classProperties.instanceProps.has(name)) return false;
     return true;
   };
 
@@ -129,15 +128,19 @@ function extractExpressionIdentifiers(
               const argText = n.argumentExpression.getText(sourceFile);
               const resolvedVal = resolved ? resolved[argText] : undefined;
               const basePath = getExpressionPropertyPath(n.expression);
+              let resolvedSuccess = false;
               if (basePath && resolvedVal) {
                 const rootVar = basePath.split('.')[0];
                 if (!nestedLocalVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar) && isValidProperty(rootVar)) {
                   identifiers.add(basePath);
                   identifiers.add(`${basePath}.${resolvedVal}`);
+                  resolvedSuccess = true;
                 }
               }
               visitWithScope(n.expression);
-              visitWithScope(n.argumentExpression);
+              if (!resolvedSuccess) {
+                visitWithScope(n.argumentExpression);
+              }
             }
             return;
           }
@@ -199,15 +202,19 @@ function extractExpressionIdentifiers(
           const argText = node.argumentExpression.getText(sourceFile);
           const resolvedVal = resolved ? resolved[argText] : undefined;
           const basePath = getExpressionPropertyPath(node.expression);
+          let resolvedSuccess = false;
           if (basePath && resolvedVal) {
             const rootVar = basePath.split('.')[0];
             if (!localVars.has(rootVar) && !GLOBAL_IDENTIFIERS.has(rootVar) && isValidProperty(rootVar)) {
               identifiers.add(basePath);
               identifiers.add(`${basePath}.${resolvedVal}`);
+              resolvedSuccess = true;
             }
           }
           visit(node.expression);
-          visit(node.argumentExpression);
+          if (!resolvedSuccess) {
+            visit(node.argumentExpression);
+          }
         }
         return;
       }

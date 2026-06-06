@@ -99,6 +99,12 @@ export class ComponentCompiler {
       true, // setParentNodes — needed for getText() calls
     );
 
+    // Cache the root source file to make sure recursive lookups find the in-memory version
+    if (filePath) {
+      const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
+      sourceFileCache.set(normalizedPath, sourceFile);
+    }
+
     // ── Step 2: Categorize all top-level statements ──
     const importStatements: string[] = [];
     const orderedStatements: { text: string; isComponent: boolean; selector?: string; compiled?: any }[] = [];
@@ -686,101 +692,108 @@ export class ComponentCompiler {
   ): Record<string, string> {
     const constants: Record<string, string> = {};
 
-    const processSourceFile = (sf: ts.SourceFile) => {
-      for (const stmt of sf.statements) {
-        // Enum declarations: enum Foo { Bar = 'baz' } → 'Foo.Bar' → 'baz'
-        if (ts.isEnumDeclaration(stmt)) {
-          const enumName = stmt.name.text;
-          for (const member of stmt.members) {
-            if (member.name && ts.isIdentifier(member.name)) {
-              const memberName = member.name.text;
-              const key = `${enumName}.${memberName}`;
-              if (member.initializer && ts.isStringLiteral(member.initializer)) {
-                constants[key] = member.initializer.text;
-              } else {
-                // Enum member without string initializer — use the member name itself
-                constants[key] = memberName;
-              }
+    // Helper to add constants from a class or enum declaration under a prefix (e.g. "ActVwSaleInvoices")
+    const addClassOrEnumConstants = (prefix: string, decl: ts.Declaration) => {
+      if (ts.isClassDeclaration(decl)) {
+        for (const member of decl.members) {
+          if (
+            ts.isPropertyDeclaration(member) &&
+            member.name &&
+            ts.isIdentifier(member.name)
+          ) {
+            const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
+            const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
+            if (isStatic && member.initializer && ts.isStringLiteral(member.initializer)) {
+              constants[`${prefix}.${member.name.text}`] = member.initializer.text;
             }
           }
         }
-
-        // Static class properties: class Foo { static Bar = 'baz' } → 'Foo.Bar' → 'baz'
-        if (ts.isClassDeclaration(stmt) && stmt.name) {
-          const className = stmt.name.text;
-          for (const member of stmt.members) {
-            if (
-              ts.isPropertyDeclaration(member) &&
-              member.name &&
-              ts.isIdentifier(member.name)
-            ) {
-              const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
-              const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
-              if (isStatic && member.initializer && ts.isStringLiteral(member.initializer)) {
-                constants[`${className}.${member.name.text}`] = member.initializer.text;
-              }
-            }
-          }
-        }
-
-        // Top-level const variables: const FOO = 'bar' → 'FOO' → 'bar'
-        if (ts.isVariableStatement(stmt)) {
-          const isConst = (stmt.declarationList.flags & ts.NodeFlags.Const) !== 0;
-          if (isConst) {
-            for (const decl of stmt.declarationList.declarations) {
-              if (
-                ts.isIdentifier(decl.name) &&
-                decl.initializer &&
-                ts.isStringLiteral(decl.initializer)
-              ) {
-                constants[decl.name.text] = decl.initializer.text;
-              }
+      } else if (ts.isEnumDeclaration(decl)) {
+        for (const member of decl.members) {
+          if (member.name && ts.isIdentifier(member.name)) {
+            const memberName = member.name.text;
+            if (member.initializer && ts.isStringLiteral(member.initializer)) {
+              constants[`${prefix}.${memberName}`] = member.initializer.text;
+            } else {
+              constants[`${prefix}.${memberName}`] = memberName;
             }
           }
         }
       }
     };
 
-    // Process the current source file
-    processSourceFile(sourceFile);
+    // Helper to add constants from a variable declaration
+    const addVariableConstant = (name: string, decl: ts.Declaration) => {
+      if (ts.isVariableDeclaration(decl)) {
+        if (decl.initializer && ts.isStringLiteral(decl.initializer)) {
+          constants[name] = decl.initializer.text;
+        }
+      }
+    };
 
-    // Also resolve imported enums/classes/consts from local imports
-    if (filePath) {
-      for (const stmt of sourceFile.statements) {
-        if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
-        if (!stmt.moduleSpecifier || !ts.isStringLiteral(stmt.moduleSpecifier)) continue;
-        const moduleSpec = stmt.moduleSpecifier.text;
-        if (!moduleSpec.startsWith('.')) continue;
-
-        // Collect imported names to know what to look for
-        const importedNames = new Set<string>();
-        const namedBindings = stmt.importClause.namedBindings;
-        if (namedBindings && ts.isNamedImports(namedBindings)) {
-          for (const specifier of namedBindings.elements) {
-            importedNames.add(specifier.name.text);
+    // 1. Process all local declarations in the current sourceFile
+    for (const stmt of sourceFile.statements) {
+      if (ts.isClassDeclaration(stmt) && stmt.name) {
+        addClassOrEnumConstants(stmt.name.text, stmt);
+      } else if (ts.isEnumDeclaration(stmt)) {
+        addClassOrEnumConstants(stmt.name.text, stmt);
+      } else if (ts.isVariableStatement(stmt)) {
+        for (const decl of stmt.declarationList.declarations) {
+          if (ts.isIdentifier(decl.name)) {
+            addVariableConstant(decl.name.text, decl);
           }
         }
-        if (stmt.importClause.name) {
-          importedNames.add(stmt.importClause.name.text);
-        }
-        if (importedNames.size === 0) continue;
+      }
+    }
 
-        // Resolve the import path
-        const dir = path.dirname(filePath);
-        let absolutePath = path.resolve(dir, moduleSpec);
-        if (!fs.existsSync(absolutePath) && !path.extname(absolutePath)) {
-          absolutePath = absolutePath + '.ts';
-        }
-        if (!fs.existsSync(absolutePath)) continue;
+    // 2. Process all imports
+    if (filePath) {
+      for (const stmt of sourceFile.statements) {
+        if (ts.isImportDeclaration(stmt) && stmt.importClause) {
+          const specifier = stmt.moduleSpecifier;
+          if (ts.isStringLiteral(specifier)) {
+            const modulePath = specifier.text;
 
-        try {
-          const externalSource = fs.readFileSync(absolutePath, 'utf8');
-          const externalSF = ts.createSourceFile(
-            absolutePath, externalSource, ts.ScriptTarget.Latest, true,
-          );
-          processSourceFile(externalSF);
-        } catch {
-          // skip unreadable files
+            // Named imports
+            const namedBindings = stmt.importClause.namedBindings;
+            if (namedBindings && ts.isNamedImports(namedBindings)) {
+              for (const element of namedBindings.elements) {
+                const localName = element.name.text;
+                // Resolve the symbol
+                const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport);
+                if (resolved) {
+                  addClassOrEnumConstants(localName, resolved.node);
+                  addVariableConstant(localName, resolved.node);
+                }
+              }
+            }
+
+            // Default import
+            if (stmt.importClause.name) {
+              const localName = stmt.importClause.name.text;
+              const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport);
+              if (resolved) {
+                addClassOrEnumConstants(localName, resolved.node);
+                addVariableConstant(localName, resolved.node);
+              }
+            }
+
+            // Namespace import: import * as Dict from './module'
+            if (namedBindings && ts.isNamespaceImport(namedBindings)) {
+              const namespaceName = namedBindings.name.text;
+              const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
+              if (resolvedModulePath) {
+                const importedSF = getSourceFile(resolvedModulePath);
+                if (importedSF) {
+                  const subExports = getModuleExports(importedSF, resolvedModulePath, resolveImport);
+                  for (const [exportName, exportedSymbol] of subExports.entries()) {
+                    addClassOrEnumConstants(`${namespaceName}.${exportName}`, exportedSymbol.node);
+                    addVariableConstant(`${namespaceName}.${exportName}`, exportedSymbol.node);
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -832,30 +845,381 @@ export class ComponentCompiler {
   }
 }
 
-function searchInSourceFile(objName: string, propName: string, sourceFile: ts.SourceFile): string | null {
+const sourceFileCache = new Map<string, ts.SourceFile>();
+
+function findFileWithExtensions(basePath: string): string | null {
+  if (fs.existsSync(basePath) && fs.statSync(basePath).isFile()) {
+    return basePath;
+  }
+  for (const ext of ['.ts', '.tsx', '.d.ts', '.js', '.jsx']) {
+    const p = basePath + ext;
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) {
+      return p;
+    }
+  }
+  return null;
+}
+
+function resolveModuleSpecifier(
+  moduleSpecifier: string,
+  containingFilePath: string,
+  resolveImport?: (originalPath: string, importerPath: string) => string
+): string | null {
+  let resolvedPath = moduleSpecifier;
+  if (resolveImport) {
+    try {
+      resolvedPath = resolveImport(moduleSpecifier, containingFilePath);
+    } catch (e) {
+      // fallback
+    }
+  }
+
+  if (path.isAbsolute(resolvedPath)) {
+    return findFileWithExtensions(resolvedPath);
+  }
+
+  if (resolvedPath.startsWith('.')) {
+    const absPath = path.resolve(path.dirname(containingFilePath), resolvedPath);
+    return findFileWithExtensions(absPath);
+  }
+
+  const absPath = path.resolve(path.dirname(containingFilePath), resolvedPath);
+  return findFileWithExtensions(absPath);
+}
+
+function getSourceFile(
+  filePath: string,
+  sourceCode?: string
+): ts.SourceFile | null {
+  const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
+  if (sourceFileCache.has(normalizedPath)) {
+    return sourceFileCache.get(normalizedPath)!;
+  }
+
+  let code = sourceCode;
+  if (code === undefined) {
+    if (!fs.existsSync(normalizedPath)) {
+      return null;
+    }
+    try {
+      code = fs.readFileSync(normalizedPath, 'utf8');
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const sf = ts.createSourceFile(
+    normalizedPath,
+    code,
+    ts.ScriptTarget.Latest,
+    true
+  );
+  sourceFileCache.set(normalizedPath, sf);
+  return sf;
+}
+
+interface ResolvedSymbol {
+  node: ts.Declaration;
+  sourceFile: ts.SourceFile;
+}
+
+function findLocalDeclaration(name: string, sourceFile: ts.SourceFile): ts.Declaration | null {
   for (const stmt of sourceFile.statements) {
-    if (ts.isClassDeclaration(stmt) && stmt.name?.text === objName) {
-      for (const member of stmt.members) {
-        if (ts.isPropertyDeclaration(member) && member.name && ts.isIdentifier(member.name) && member.name.text === propName) {
-          const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
-          const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
-          if (isStatic && member.initializer && ts.isStringLiteral(member.initializer)) {
-            return member.initializer.text;
-          }
+    if (ts.isClassDeclaration(stmt)) {
+      if (name === 'default' && stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        return stmt;
+      }
+      if (stmt.name && stmt.name.text === name) {
+        return stmt;
+      }
+    }
+
+    if (ts.isEnumDeclaration(stmt)) {
+      if (name === 'default' && stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        return stmt;
+      }
+      if (stmt.name && stmt.name.text === name) {
+        return stmt;
+      }
+    }
+
+    if (ts.isVariableStatement(stmt)) {
+      for (const decl of stmt.declarationList.declarations) {
+        if (ts.isIdentifier(decl.name) && decl.name.text === name) {
+          return decl;
         }
       }
     }
-    if (ts.isEnumDeclaration(stmt) && stmt.name.text === objName) {
-      for (const member of stmt.members) {
-        if (member.name && ts.isIdentifier(member.name) && member.name.text === propName) {
-          if (member.initializer && ts.isStringLiteral(member.initializer)) {
-            return member.initializer.text;
+
+    if (ts.isFunctionDeclaration(stmt)) {
+      if (name === 'default' && stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        return stmt;
+      }
+      if (stmt.name && stmt.name.text === name) {
+        return stmt;
+      }
+    }
+
+    if (ts.isInterfaceDeclaration(stmt) && stmt.name && stmt.name.text === name) {
+      return stmt;
+    }
+    if (ts.isTypeAliasDeclaration(stmt) && stmt.name && stmt.name.text === name) {
+      return stmt;
+    }
+    if (ts.isExportAssignment(stmt) && name === 'default') {
+      return stmt as unknown as ts.Declaration;
+    }
+  }
+
+  return null;
+}
+
+function resolveSymbol(
+  name: string,
+  sourceFile: ts.SourceFile,
+  filePath: string,
+  resolveImport?: (originalPath: string, importerPath: string) => string,
+  visitedFiles = new Set<string>()
+): ResolvedSymbol | null {
+  const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
+  if (visitedFiles.has(normalizedPath)) {
+    return null;
+  }
+  visitedFiles.add(normalizedPath);
+
+  const localDecl = findLocalDeclaration(name, sourceFile);
+  if (localDecl) {
+    return { node: localDecl, sourceFile };
+  }
+
+  for (const stmt of sourceFile.statements) {
+    if (ts.isImportDeclaration(stmt) && stmt.importClause) {
+      const specifier = stmt.moduleSpecifier;
+      if (ts.isStringLiteral(specifier)) {
+        const modulePath = specifier.text;
+        const namedBindings = stmt.importClause.namedBindings;
+        
+        if (namedBindings && ts.isNamedImports(namedBindings)) {
+          for (const element of namedBindings.elements) {
+            if (element.name.text === name) {
+              const importName = element.propertyName ? element.propertyName.text : element.name.text;
+              const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
+              if (resolvedModulePath) {
+                const importedSF = getSourceFile(resolvedModulePath);
+                if (importedSF) {
+                  const nextVisited = new Set(visitedFiles);
+                  const resolved = resolveSymbol(importName, importedSF, resolvedModulePath, resolveImport, nextVisited);
+                  if (resolved) return resolved;
+                }
+              }
+            }
           }
-          return member.name.text;
+        }
+        
+        if (stmt.importClause.name && stmt.importClause.name.text === name) {
+          const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
+          if (resolvedModulePath) {
+            const importedSF = getSourceFile(resolvedModulePath);
+            if (importedSF) {
+              const nextVisited = new Set(visitedFiles);
+              const resolved = resolveSymbol('default', importedSF, resolvedModulePath, resolveImport, nextVisited);
+              if (resolved) return resolved;
+            }
+          }
+        }
+
+        if (namedBindings && ts.isNamespaceImport(namedBindings) && namedBindings.name.text === name) {
+          return { node: namedBindings, sourceFile };
         }
       }
     }
   }
+
+  for (const stmt of sourceFile.statements) {
+    if (ts.isExportDeclaration(stmt)) {
+      const specifier = stmt.moduleSpecifier;
+      if (specifier && ts.isStringLiteral(specifier)) {
+        const modulePath = specifier.text;
+        const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
+        if (!resolvedModulePath) continue;
+        const importedSF = getSourceFile(resolvedModulePath);
+        if (!importedSF) continue;
+
+        if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+          for (const element of stmt.exportClause.elements) {
+            if (element.name.text === name) {
+              const exportName = element.propertyName ? element.propertyName.text : element.name.text;
+              const nextVisited = new Set(visitedFiles);
+              const resolved = resolveSymbol(exportName, importedSF, resolvedModulePath, resolveImport, nextVisited);
+              if (resolved) return resolved;
+            }
+          }
+        } else if (!stmt.exportClause) {
+          const nextVisited = new Set(visitedFiles);
+          const resolved = resolveSymbol(name, importedSF, resolvedModulePath, resolveImport, nextVisited);
+          if (resolved) return resolved;
+        }
+      } else if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+        for (const element of stmt.exportClause.elements) {
+          if (element.name.text === name) {
+            const localName = element.propertyName ? element.propertyName.text : element.name.text;
+            const nextVisited = new Set(visitedFiles);
+            const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, nextVisited);
+            if (resolved) return resolved;
+          }
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+interface ExportedSymbol {
+  name: string;
+  node: ts.Declaration;
+  sourceFile: ts.SourceFile;
+}
+
+function getModuleExports(
+  sourceFile: ts.SourceFile,
+  filePath: string,
+  resolveImport?: (originalPath: string, importerPath: string) => string,
+  visitedFiles = new Set<string>()
+): Map<string, ExportedSymbol> {
+  const exportsMap = new Map<string, ExportedSymbol>();
+  const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
+  if (visitedFiles.has(normalizedPath)) {
+    return exportsMap;
+  }
+  visitedFiles.add(normalizedPath);
+
+  const addIfExported = (name: string, decl: ts.Declaration) => {
+    const hasExport = decl.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+    if (hasExport) {
+      exportsMap.set(name, { name, node: decl, sourceFile });
+    }
+  };
+
+  for (const stmt of sourceFile.statements) {
+    if (ts.isClassDeclaration(stmt)) {
+      if (stmt.name) {
+        addIfExported(stmt.name.text, stmt);
+      }
+      if (stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        exportsMap.set('default', { name: 'default', node: stmt, sourceFile });
+      }
+    } else if (ts.isEnumDeclaration(stmt)) {
+      if (stmt.name) {
+        addIfExported(stmt.name.text, stmt);
+      }
+      if (stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        exportsMap.set('default', { name: 'default', node: stmt, sourceFile });
+      }
+    } else if (ts.isVariableStatement(stmt)) {
+      const hasExport = stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+      if (hasExport) {
+        for (const decl of stmt.declarationList.declarations) {
+          if (ts.isIdentifier(decl.name)) {
+            exportsMap.set(decl.name.text, { name: decl.name.text, node: decl, sourceFile });
+          }
+        }
+      }
+    } else if (ts.isFunctionDeclaration(stmt)) {
+      if (stmt.name) {
+        addIfExported(stmt.name.text, stmt);
+      }
+      if (stmt.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword)) {
+        exportsMap.set('default', { name: 'default', node: stmt, sourceFile });
+      }
+    } else if (ts.isInterfaceDeclaration(stmt) && stmt.name) {
+      addIfExported(stmt.name.text, stmt);
+    } else if (ts.isTypeAliasDeclaration(stmt) && stmt.name) {
+      addIfExported(stmt.name.text, stmt);
+    } else if (ts.isExportDeclaration(stmt)) {
+      const specifier = stmt.moduleSpecifier;
+      if (specifier && ts.isStringLiteral(specifier)) {
+        const modulePath = specifier.text;
+        const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
+        if (resolvedModulePath) {
+          const importedSF = getSourceFile(resolvedModulePath);
+          if (importedSF) {
+            if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+              for (const element of stmt.exportClause.elements) {
+                const exportedName = element.name.text;
+                const localName = element.propertyName ? element.propertyName.text : element.name.text;
+                const nextVisited = new Set(visitedFiles);
+                const resolved = resolveSymbol(localName, importedSF, resolvedModulePath, resolveImport, nextVisited);
+                if (resolved) {
+                  exportsMap.set(exportedName, { name: exportedName, node: resolved.node, sourceFile: resolved.sourceFile });
+                }
+              }
+            } else if (!stmt.exportClause) {
+              const nextVisited = new Set(visitedFiles);
+              const subExports = getModuleExports(importedSF, resolvedModulePath, resolveImport, nextVisited);
+              for (const [key, val] of subExports.entries()) {
+                if (key !== 'default') {
+                  exportsMap.set(key, val);
+                }
+              }
+            }
+          }
+        }
+      } else if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
+        for (const element of stmt.exportClause.elements) {
+          const exportedName = element.name.text;
+          const localName = element.propertyName ? element.propertyName.text : element.name.text;
+          const nextVisited = new Set(visitedFiles);
+          const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, nextVisited);
+          if (resolved) {
+            exportsMap.set(exportedName, { name: exportedName, node: resolved.node, sourceFile: resolved.sourceFile });
+          }
+        }
+      }
+    }
+  }
+
+  return exportsMap;
+}
+
+function getConstantValueFromDeclaration(decl: ts.Declaration): string | null {
+  if (ts.isVariableDeclaration(decl)) {
+    if (decl.initializer && ts.isStringLiteral(decl.initializer)) {
+      return decl.initializer.text;
+    }
+  }
+  return null;
+}
+
+function getStaticOrEnumMemberValue(decl: ts.Declaration, propName: string): string | null {
+  if (ts.isClassDeclaration(decl)) {
+    for (const member of decl.members) {
+      if (
+        ts.isPropertyDeclaration(member) &&
+        member.name &&
+        ts.isIdentifier(member.name) &&
+        member.name.text === propName
+      ) {
+        const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
+        const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
+        if (isStatic && member.initializer && ts.isStringLiteral(member.initializer)) {
+          return member.initializer.text;
+        }
+      }
+    }
+  }
+
+  if (ts.isEnumDeclaration(decl)) {
+    for (const member of decl.members) {
+      if (member.name && ts.isIdentifier(member.name) && member.name.text === propName) {
+        if (member.initializer && ts.isStringLiteral(member.initializer)) {
+          return member.initializer.text;
+        }
+        return member.name.text;
+      }
+    }
+  }
+
   return null;
 }
 
@@ -866,61 +1230,38 @@ function findStaticOrEnumValue(
   filePath?: string,
   resolveImport?: (originalPath: string, importerPath: string) => string
 ): string | null {
-  const value = searchInSourceFile(objName, propName, sourceFile);
-  if (value !== null) return value;
-
-  if (!filePath) return null;
-  let moduleSpecifierText: string | null = null;
-
-  for (const stmt of sourceFile.statements) {
-    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
-    const namedBindings = stmt.importClause.namedBindings;
-    if (namedBindings && ts.isNamedImports(namedBindings)) {
-      for (const specifier of namedBindings.elements) {
-        if (specifier.name.text === objName) {
-          moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
-          break;
-        }
-      }
+  if (!filePath) {
+    const localDecl = findLocalDeclaration(objName, sourceFile);
+    if (localDecl) {
+      return getStaticOrEnumMemberValue(localDecl, propName);
     }
-    if (!moduleSpecifierText && stmt.importClause.name?.text === objName) {
-      moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
-    }
-    if (moduleSpecifierText) break;
-  }
-
-  if (!moduleSpecifierText || !moduleSpecifierText.startsWith('.')) return null;
-
-  const dir = path.dirname(filePath);
-  let absolutePath = path.resolve(dir, moduleSpecifierText);
-  if (!fs.existsSync(absolutePath) && !path.extname(absolutePath)) {
-    absolutePath = absolutePath + '.ts';
-  }
-  if (!fs.existsSync(absolutePath)) return null;
-
-  try {
-    const externalSource = fs.readFileSync(absolutePath, 'utf8');
-    const externalSourceFile = ts.createSourceFile(
-      absolutePath, externalSource, ts.ScriptTarget.Latest, true
-    );
-    return searchInSourceFile(objName, propName, externalSourceFile);
-  } catch (e) {
     return null;
   }
-}
 
-function searchVarInSourceFile(name: string, sourceFile: ts.SourceFile): string | null {
-  for (const stmt of sourceFile.statements) {
-    if (ts.isVariableStatement(stmt)) {
-      for (const decl of stmt.declarationList.declarations) {
-        if (ts.isIdentifier(decl.name) && decl.name.text === name) {
-          if (decl.initializer && ts.isStringLiteral(decl.initializer)) {
-            return decl.initializer.text;
+  const resolved = resolveSymbol(objName, sourceFile, filePath, resolveImport);
+  if (!resolved) return null;
+
+  const value = getStaticOrEnumMemberValue(resolved.node, propName);
+  if (value !== null) return value;
+
+  if (ts.isNamespaceImport(resolved.node)) {
+    const importDecl = resolved.node.parent.parent as ts.ImportDeclaration;
+    if (importDecl && importDecl.moduleSpecifier && ts.isStringLiteral(importDecl.moduleSpecifier)) {
+      const modulePath = importDecl.moduleSpecifier.text;
+      const resolvedModulePath = resolveModuleSpecifier(modulePath, resolved.sourceFile.fileName, resolveImport);
+      if (resolvedModulePath) {
+        const importedSF = getSourceFile(resolvedModulePath);
+        if (importedSF) {
+          const propResolved = resolveSymbol(propName, importedSF, resolvedModulePath, resolveImport);
+          if (propResolved) {
+            const val = getConstantValueFromDeclaration(propResolved.node);
+            if (val !== null) return val;
           }
         }
       }
     }
   }
+
   return null;
 }
 
@@ -930,47 +1271,62 @@ function findVariableOrConstantValue(
   filePath?: string,
   resolveImport?: (originalPath: string, importerPath: string) => string
 ): string | null {
-  const value = searchVarInSourceFile(name, sourceFile);
-  if (value !== null) return value;
+  if (!filePath) {
+    const localDecl = findLocalDeclaration(name, sourceFile);
+    if (localDecl) {
+      return getConstantValueFromDeclaration(localDecl);
+    }
+    return null;
+  }
 
-  if (!filePath) return null;
-  let moduleSpecifierText: string | null = null;
+  const resolved = resolveSymbol(name, sourceFile, filePath, resolveImport);
+  if (!resolved) return null;
 
-  for (const stmt of sourceFile.statements) {
-    if (!ts.isImportDeclaration(stmt) || !stmt.importClause) continue;
-    const namedBindings = stmt.importClause.namedBindings;
-    if (namedBindings && ts.isNamedImports(namedBindings)) {
-      for (const specifier of namedBindings.elements) {
-        if (specifier.name.text === name) {
-          moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
-          break;
+  return getConstantValueFromDeclaration(resolved.node);
+}
+
+function resolvePropertyAccessValue(
+  node: ts.PropertyAccessExpression,
+  sourceFile: ts.SourceFile,
+  filePath?: string,
+  resolveImport?: (originalPath: string, importerPath: string) => string
+): string | null {
+  const parts: string[] = [];
+  let curr: ts.Expression = node;
+  while (ts.isPropertyAccessExpression(curr)) {
+    parts.unshift(curr.name.text);
+    curr = curr.expression;
+  }
+  if (ts.isIdentifier(curr)) {
+    parts.unshift(curr.text);
+  } else {
+    return null;
+  }
+
+  if (parts.length === 2) {
+    return findStaticOrEnumValue(parts[0], parts[1], sourceFile, filePath, resolveImport);
+  }
+  if (parts.length === 3) {
+    if (!filePath) return null;
+    const resolved = resolveSymbol(parts[0], sourceFile, filePath, resolveImport);
+    if (resolved && ts.isNamespaceImport(resolved.node)) {
+      const importDecl = resolved.node.parent.parent as ts.ImportDeclaration;
+      if (importDecl && importDecl.moduleSpecifier && ts.isStringLiteral(importDecl.moduleSpecifier)) {
+        const modulePath = importDecl.moduleSpecifier.text;
+        const resolvedModulePath = resolveModuleSpecifier(modulePath, resolved.sourceFile.fileName, resolveImport);
+        if (resolvedModulePath) {
+          const importedSF = getSourceFile(resolvedModulePath);
+          if (importedSF) {
+            const classResolved = resolveSymbol(parts[1], importedSF, resolvedModulePath, resolveImport);
+            if (classResolved) {
+              return getStaticOrEnumMemberValue(classResolved.node, parts[2]);
+            }
+          }
         }
       }
     }
-    if (!moduleSpecifierText && stmt.importClause.name?.text === name) {
-      moduleSpecifierText = (stmt.moduleSpecifier as ts.StringLiteral).text;
-    }
-    if (moduleSpecifierText) break;
   }
-
-  if (!moduleSpecifierText || !moduleSpecifierText.startsWith('.')) return null;
-
-  const dir = path.dirname(filePath);
-  let absolutePath = path.resolve(dir, moduleSpecifierText);
-  if (!fs.existsSync(absolutePath) && !path.extname(absolutePath)) {
-    absolutePath = absolutePath + '.ts';
-  }
-  if (!fs.existsSync(absolutePath)) return null;
-
-  try {
-    const externalSource = fs.readFileSync(absolutePath, 'utf8');
-    const externalSourceFile = ts.createSourceFile(
-      absolutePath, externalSource, ts.ScriptTarget.Latest, true
-    );
-    return searchVarInSourceFile(name, externalSourceFile);
-  } catch (e) {
-    return null;
-  }
+  return null;
 }
 
 function resolveExpressionValue(
@@ -995,12 +1351,8 @@ function resolveExpressionValue(
     if (value) return [value];
   }
   if (ts.isPropertyAccessExpression(node)) {
-    if (ts.isIdentifier(node.expression)) {
-      const objName = node.expression.text;
-      const propName = ts.isIdentifier(node.name) ? node.name.text : node.name.getText(sourceFile);
-      const value = findStaticOrEnumValue(objName, propName, sourceFile, filePath, resolveImport);
-      if (value) return [value];
-    }
+    const value = resolvePropertyAccessValue(node, sourceFile, filePath, resolveImport);
+    if (value) return [value];
   }
   return [];
 }

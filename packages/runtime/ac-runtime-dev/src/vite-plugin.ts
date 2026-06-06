@@ -60,13 +60,13 @@ interface AppConfig {
  * @returns A Vite plugin with `configResolved`, `buildStart`,
  *          `transform`, `transformIndexHtml`, and `configureServer` hooks.
  */
-export function acRuntimePlugin(options?: { output?: 'ts' | 'js' }): Plugin {
+export function acRuntimePlugin({output = 'ts'}: { output?: 'ts' | 'js' } = {output:'ts'}): Plugin {
     // Resolve output format (default is 'ts')
     let outputFormat: 'ts' | 'js' = 'ts';
-    
+
     // 1. Check options argument
-    if (options?.output === 'ts' || options?.output === 'js') {
-        outputFormat = options.output;
+    if (output === 'ts' || output === 'js') {
+        outputFormat = output;
     } else {
         // 2. Check process.env.OUTPUT or process.env.output
         const envVal = process.env.OUTPUT || process.env.output;
@@ -118,14 +118,14 @@ export function acRuntimePlugin(options?: { output?: 'ts' | 'js' }): Plugin {
         if (normalizedAbs.startsWith(normalizedRoot)) {
             return path.join(projectRoot, '.ac-runtime-cache', path.relative(projectRoot, targetPath));
         }
-        
+
         // Handle files outside project root (e.g. workspace packages)
         // Map them to .ac-runtime-cache/packages/... for consistency
         if (normalizedAbs.includes('/packages/')) {
             const parts = normalizePath(targetPath).split('/packages/');
             return path.join(projectRoot, '.ac-runtime-cache', 'packages', parts[parts.length - 1]);
         }
-        
+
         const safePath = normalizePath(targetPath).replace(/[:\/]/g, '_');
         return path.join(projectRoot, '.ac-runtime-cache', 'ext', safePath);
     };

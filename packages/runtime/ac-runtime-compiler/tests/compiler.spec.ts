@@ -21,6 +21,7 @@
  * - Non-component file passthrough
  */
 import { describe, it, expect } from 'vitest';
+import * as path from 'path';
 import { ComponentCompiler } from '../src/lib/component-compiler.js';
 import { TemplateCompiler } from '../src/lib/template-compiler.js';
 
@@ -1125,6 +1126,106 @@ describe('Compile-time event/model/pipe migration', () => {
       expect(templateResult.reactiveProperties['data']).toBeDefined();
       expect(templateResult.reactiveProperties['data.from_date']).toBeDefined();
       expect(templateResult.reactiveProperties['data.to_date']).toBeDefined();
+    });
+  });
+
+  describe('Regression Tests - Recursive Constant Resolution & Dependency Extraction', () => {
+    it('should resolve static class property, enum, and const through re-export chains', () => {
+      const source = `
+        import { ActVwSaleInvoices, InvoiceStatusEnum, CONST_NAME } from './app';
+        import { AcElement } from './decorators';
+
+        @AcElement({
+          selector: 'test-constant-resolve',
+          template: '<div [class.finalized]="_record[ActVwSaleInvoices.IsFinalized]">Status: {{statusEnum[InvoiceStatusEnum.PAID]}}, Const: {{CONST_NAME}}</div>'
+        })
+        export class TestConstantResolve {
+          _record = { is_finalized: true };
+          statusEnum = { paid_status: 'paid' };
+        }
+      `;
+
+      const filePath = path.resolve(__dirname, 'mocks/component.ts');
+      const results = compiler.compile(source, filePath);
+      expect(results).toHaveLength(1);
+      const code = results[0].code;
+
+      const templateResultMatch = code.match(/const templateResult = ({.*?});/s);
+      expect(templateResultMatch).toBeTruthy();
+      const templateResult = JSON.parse(templateResultMatch![1]);
+
+      // Check class binding properties
+      const classBinding = templateResult.bindings.find((b: any) => b.type === 'class');
+      expect(classBinding).toBeDefined();
+      expect(classBinding.properties).toEqual(['_record', '_record.is_finalized']);
+      // Should not contain ActVwSaleInvoices as a runtime dependency
+      expect(classBinding.properties).not.toContain('ActVwSaleInvoices');
+      expect(classBinding.properties).not.toContain('ActVwSaleInvoices.IsFinalized');
+
+      // Check text binding properties
+      const textBinding = templateResult.bindings.find((b: any) => b.type === 'text');
+      expect(textBinding).toBeDefined();
+      expect(textBinding.properties).toContain('statusEnum');
+      expect(textBinding.properties).toContain('statusEnum.paid_status');
+      expect(textBinding.properties).not.toContain('InvoiceStatusEnum');
+      expect(textBinding.properties).not.toContain('InvoiceStatusEnum.PAID');
+      expect(textBinding.properties).not.toContain('CONST_NAME');
+    });
+
+    it('should prevent infinite recursion on circular dependencies and resolve symbols correctly', () => {
+      const source = `
+        import { ClassA } from './circular_a';
+        import { AcElement } from './decorators';
+
+        @AcElement({
+          selector: 'test-circular',
+          template: '<div [class.active]="activeState == ClassA.VAL">Circular Test</div>'
+        })
+        export class TestCircular {
+          activeState = 'val_a';
+        }
+      `;
+
+      const filePath = path.resolve(__dirname, 'mocks/component_circular.ts');
+      const results = compiler.compile(source, filePath);
+      expect(results).toHaveLength(1);
+      const code = results[0].code;
+
+      const templateResultMatch = code.match(/const templateResult = ({.*?});/s);
+      expect(templateResultMatch).toBeTruthy();
+      const templateResult = JSON.parse(templateResultMatch![1]);
+
+      // ClassA.VAL should resolve to 'val_a'
+      expect(templateResult.reactiveProperties['activeState']).toBeDefined();
+    });
+
+    it('should correctly extract free variables like _record, invoice, row, item as dependencies', () => {
+      const source = `
+        import { AcElement } from './decorators';
+
+        @AcElement({
+          selector: 'test-free-vars',
+          template: '<div>{{_record.name}} - {{invoice.number}} - {{row.index}} - {{item.id}}</div>'
+        })
+        export class TestFreeVars {}
+      `;
+
+      const results = compiler.compile(source);
+      expect(results).toHaveLength(1);
+      const code = results[0].code;
+
+      const templateResultMatch = code.match(/const templateResult = ({.*?});/s);
+      expect(templateResultMatch).toBeTruthy();
+      const templateResult = JSON.parse(templateResultMatch![1]);
+
+      expect(templateResult.reactiveProperties['_record']).toBeDefined();
+      expect(templateResult.reactiveProperties['_record.name']).toBeDefined();
+      expect(templateResult.reactiveProperties['invoice']).toBeDefined();
+      expect(templateResult.reactiveProperties['invoice.number']).toBeDefined();
+      expect(templateResult.reactiveProperties['row']).toBeDefined();
+      expect(templateResult.reactiveProperties['row.index']).toBeDefined();
+      expect(templateResult.reactiveProperties['item']).toBeDefined();
+      expect(templateResult.reactiveProperties['item.id']).toBeDefined();
     });
   });
 });
