@@ -18,8 +18,6 @@ export class AcElementRenderer {
   protected targetId?: string = '';
   ownedTargetIds: string[] = [];
   childRendererClass?: any;
-  protected rendererEndComment?: Node;
-  protected rendererStartComment?: Node;
   private subscriptions: (() => void)[] = [];
 
   constructor({ targetId, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
@@ -77,12 +75,15 @@ export class AcElementRenderer {
   }
 
   createNodesFromHtml(html: string): Node[] {
-    const template = document.createElement('template');
+    let template = document.createElement('template');
     template.innerHTML = html.trim();
-    return Array.from(template.content.childNodes);
+    const result = template.content.childNodes;
+    (template as any) = null;
+    return Array.from(result);
   }
 
   destroy(): void {
+    this.removeNodesBetweenComments({startComment:this.rendererStartCommentText,endComment:this.rendererEndCommentText});
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
     }
@@ -174,9 +175,9 @@ export class AcElementRenderer {
     );
 
     let current = walker.nextNode();
-    if(this.isRendered && this.rendererStartComment){
-      // current = this.rendererStartComment;
-    }
+    // if(this.isRendered && this.rendererStartComment){
+    //   // current = this.rendererStartComment;
+    // }
     let childFound: boolean = this.startComment == undefined || this.isRoot == true;
 
     while (current) {
@@ -440,8 +441,6 @@ export class AcElementRenderer {
     // this.executeChangeListener({ targetIds: this.ownedTargetIds, force });
   }
 
-
-
 }
 
 
@@ -576,6 +575,9 @@ export class AcElementArrayRenderer extends AcElementRenderer {
   }
 
   refreshLoop({ items }: { items: any[] }) {
+    for(const key of Object.keys(this.childRenderers)){
+      this.destroyChildRenderer(key);
+    }
     this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
     this.childRenderers = {};
     this.loopItemRendererMap = {};

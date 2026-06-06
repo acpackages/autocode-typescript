@@ -7,7 +7,6 @@ export class AcRuntimeElement extends HTMLElement {
   acRuntimeInstance: any;
   arrayPropertyChangeListeners: Record<string, Record<string, (args: any) => void>> = {};
   changeSubscribers: any[] = [];
-  elementHtml!: string;
   instanceInputs: any[] = [];
   instanceOutputs: any[] = [];
   instanceViewChildren: any = {};
@@ -19,14 +18,11 @@ export class AcRuntimeElement extends HTMLElement {
   private pendingUpdates = new Set<() => void>();
   private isBatchScheduled = false;
 
-  viewChildren:any = {};
+  viewChildren: any = {};
   protected elementRenderer!: AcElementRenderer;
   private isInitialized: boolean = false;
   changeMethodCallbacks: Record<string, any[]> = {};
-  propertyListeners: any = {};
   elementId: string = '';
-  excludeLogProperty: any[] = ['time', 'animation', 'speed', 'showLoader', 'lottieJson', 'isHostSet', 'appCheckStatus', 'container', 'adContainer'];
-  includeLogProperty: any[] = ['summaryData'];
 
   subscribePath(path: string, callback: () => void): () => void {
     if (!this.pathSubscriptions[path]) {
@@ -89,15 +85,9 @@ export class AcRuntimeElement extends HTMLElement {
   init() {
     this.setInputValuesFromAttributes();
     for (const key of this.instanceInputs) {
-          if ((this as any)[key] != undefined) {
-            this.acRuntimeInstance[key] = (this as any)[key];
-          }
-        }
-    for (const eventName of this.instanceOutputs as string[]) {
-      (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
-        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
-        this.dispatchEvent(event);
-      });
+      if ((this as any)[key] != undefined) {
+        this.acRuntimeInstance[key] = (this as any)[key];
+      }
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
@@ -134,9 +124,6 @@ export class AcRuntimeElement extends HTMLElement {
   }): Promise<void> {
     if (this.elementRenderer) {
       const property = path;
-      if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
-      console.log(`[AcRuntimeElement] handlePropertyChange for ${key}`,newValue,oldValue,type,rootKey,path,target);
-    }
       if (this.arrayPropertyChangeListeners[property]) {
         for (const callKey of Object.keys(this.arrayPropertyChangeListeners[property])) {
           this.arrayPropertyChangeListeners[property][callKey]({ key, oldValue, newValue, type, target, path, index, fullPath });
@@ -173,22 +160,19 @@ export class AcRuntimeElement extends HTMLElement {
     oldValue: any;
     newValue: any;
   }): Promise<void> {
-    if (!this.excludeLogProperty.includes(key) && !this.excludeLogProperty.includes(rootKey)) {
-      console.log(`[AcRuntimeElement] handlePropertyChange for ${key}`,newValue,oldValue,type,rootKey,path,target);
-    }
     if (this.elementRenderer) {
       const property = path;
 
       const cbs = this.pathSubscriptions[property];
-          if (cbs) {
-            for (const cb of cbs) {
-              this.scheduleUpdate(cb);
-            }
-          }
+      if (cbs) {
+        for (const cb of cbs) {
+          this.scheduleUpdate(cb);
+        }
+      }
 
       if (this.acRuntimeInstance.acOnChange) {
-          this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
-        }
+        this.acRuntimeInstance.acOnChange({ key: property, oldValue, newValue });
+      }
       if (this.isInitialized && this.changeMethodCallbacks[property]) {
         for (const callback of this.changeMethodCallbacks[property]) {
           callback({ key: path || key, oldValue, newValue });
@@ -205,14 +189,10 @@ export class AcRuntimeElement extends HTMLElement {
       properties,
       onChange: (change) => {
         const { property, rootProperty, oldValue, newValue, type, operation, target, context } = change;
-        if(!this.excludeLogProperty.includes(property)){
-          console.log(`[AcRuntimeElement] Change`,change);
-        }
-
         if (context === "array") {
           const segments = property.split('.');
           const isArrayLength = segments[segments.length - 1] === "length" || operation === "length";
-          console.log(`[AcRuntimeElement] IsArrayLength`,isArrayLength);
+          console.log(`[AcRuntimeElement] IsArrayLength`, isArrayLength);
           if (isArrayLength) {
             object.handlePropertyChange({
               key: "length",
@@ -312,14 +292,14 @@ export class AcRuntimeElement extends HTMLElement {
           }
         } else {
           object.handlePropertyChange({
-              key: property,
-              rootKey: rootProperty,
-              target,
-              path: property,
-              type: operation === "delete" ? "delete" : "set",
-              oldValue,
-              newValue
-            });
+            key: property,
+            rootKey: rootProperty,
+            target,
+            path: property,
+            type: operation === "delete" ? "delete" : "set",
+            oldValue,
+            newValue
+          });
         }
       }
     });

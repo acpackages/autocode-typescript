@@ -127,10 +127,14 @@ function generateBlockRenderers(
   localVars: Set<string>,
   topLevelVars: Set<string>,
   prefixFn: PrefixFn,
-  templateResult:TemplateCompileResult
+  templateResult: TemplateCompileResult
 ): string {
   let childClasses = '';
   let rootViewChildCode = '';
+  let propertiesCode = '';
+  let cachingCode = '';
+  let viewChildCode = '';
+  const elementTargetIds: string[] = [];
 
   for (const binding of bindings) {
     if (binding.type === 'for') {
@@ -177,7 +181,7 @@ function generateBlockRenderers(
         templateResult
       );
     }
-     else if (binding.type === 'viewChildren') {
+    else if (binding.type === 'viewChildren') {
       // Generate a renderer sub-class for the template's inner content
       rootViewChildCode += `if((this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
@@ -188,33 +192,26 @@ function generateBlockRenderers(
               this.rootElement.viewChildren['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any);
             }`;
     }
-  }
-
-
-  // Filter out bindings that use comment placeholders (not ac-ref elements) from element caching
-  // const elementBindingTypes = new Set(['text', 'property', 'class', 'style', 'attribute', 'event', 'model', 'viewChildren']);
-  // const elementBindings = bindings.filter(b => elementBindingTypes.has(b.type));
-  const targetIds = [...new Set(bindings.map(b => b.targetId))];
-
-  let propertiesCode = '';
-  let cachingCode = '';
-  let viewChildCode = '';
-  for (const tid of targetIds) {
-    propertiesCode += ` private ${getElementPropertyName({ targetId: tid })}?: HTMLElement;\n`;
-    cachingCode += `this.${getElementPropertyName({ targetId: tid })} = fragment.querySelector('[ac-ref="${tid}"]') as HTMLElement;\n`;
-    for(const viewChild of templateResult.viewChildren){
-        if(viewChild.elementRefId == tid){
-          viewChildCode += `
-          if(this.${getElementPropertyName({ targetId: tid })}){
-            if((this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance){
-              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: tid })} as any).acRuntimeInstance;
+    if (!['for', 'if'].includes(binding.type)) {
+      if (!elementTargetIds.includes(binding.targetId)) {
+        propertiesCode += ` private ${getElementPropertyName({ targetId: binding.targetId })}?: HTMLElement;\n`;
+        cachingCode += `this.${getElementPropertyName({ targetId: binding.targetId })} = fragment.querySelector('[ac-ref="${binding.targetId}"]') as HTMLElement;\n`;
+        for (const viewChild of templateResult.viewChildren) {
+          if (viewChild.elementRefId == binding.targetId) {
+            viewChildCode += `
+          if(this.${getElementPropertyName({ targetId: binding.targetId })}){
+            if((this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
+              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
             }
             else{
-              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: tid })};
+              (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = this.${getElementPropertyName({ targetId: binding.targetId })};
             }
           }
           `
+          }
         }
+        elementTargetIds.push(binding.targetId);
+      }
     }
   }
 
@@ -267,8 +264,8 @@ function generateBlockRenderers(
       case 'attribute':
         updateStatement = `if(this.${getElementPropertyName({ targetId })}){\n
         `;
-        if(binding.target.toLowerCase() == 'innerhtml'){
-          updateStatement +=  `
+        if (binding.target.toLowerCase() == 'innerhtml') {
+          updateStatement += `
           if(newValue === null || newValue === undefined || newValue === false){\n
             this.${getElementPropertyName({ targetId })}.innerHTML = ''\n;
           }\n
@@ -276,8 +273,8 @@ function generateBlockRenderers(
             this.${getElementPropertyName({ targetId })}.innerHTML = String(newValue);\n
           }\n`;
         }
-        else{
-          updateStatement +=  `
+        else {
+          updateStatement += `
             if(newValue === null || newValue === undefined || newValue === false){\n
               this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
             }\n
@@ -285,16 +282,16 @@ function generateBlockRenderers(
               this.${getElementPropertyName({ targetId })}.setAttribute('${binding.target}', String(newValue));\n
             }\n`;
         }
-        updateStatement +=  `}\n`;
+        updateStatement += `}\n`;
         break;
       case 'if':
 
         updateStatement = `
+        this.destroyChildRenderer('${binding.targetId}');
         this.removeNodesBetweenComments({startComment:'${binding.targetId}-start',endComment:'${binding.targetId}-end'});\n
         if(newValue){\n
           const childRenderer = new ${getRendererClassName({ className, suffix: `If$${binding.bindingId}` })}({\n
             targetId: '${binding.targetId}',\n
-
             rootElement: this.rootElement,\n
             context: this.context,\n
             startComment: '${binding.targetId}-start',\n
@@ -323,7 +320,6 @@ function generateBlockRenderers(
           this.childRenderers['${binding.bindingId}'].initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
         } else {
           this.childRenderers['${binding.bindingId}'].refreshLoop({items:newValue});
-
         }\n
         `;
         break;
@@ -424,7 +420,7 @@ function generateBlockRenderers(
   const suffix = type === 'root' ? 'Root' : `${type}$${blockId}`;
   const classNameSub = getRendererClassName({ className, suffix });
 
-  let classCode:string = `
+  let classCode: string = `
 class ${classNameSub} extends AcElementRenderer {
   private static templateFragment: DocumentFragment | null = null;
   ${propertiesCode}
@@ -442,21 +438,21 @@ class ${classNameSub} extends AcElementRenderer {
     console.log(this);
   } `;
 
-  if(eventRegistrationCode != ''){
+  if (eventRegistrationCode != '') {
     classCode += `
     override registerElementEvents(){
       ${eventRegistrationCode}
     }`;
   }
 
-  if(subscriptionCode != ''){
+  if (subscriptionCode != '') {
     classCode += `
     override setInitialState(){
       ${subscriptionCode}
     }`;
   }
 
-  if(viewChildCode != '' || rootViewChildCode != ''){
+  if (viewChildCode != '' || rootViewChildCode != '') {
     classCode += `
 
     override setViewChildRefs(){
@@ -593,31 +589,21 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   const cleanClassSourceCode = stripAcElementDecorator(classSourceCode || '').replace(/\bexport\s+(?:default\s+)?class\s+/, 'class ');
   let code = `
   /** Generated by AC Runtime Compiler */
-  export const ${className} = (function() {
+  export const ${className} = (function() {`;
 
-  const templateResult = ${JSON.stringify(templateResult)};`;
+  // const templateResult = ${JSON.stringify(templateResult)};`;
 
-  if(stylesScript != ''){
+  if (stylesScript != '') {
     code += `\nconst __styles = \`${selector} {\n ${stylesScript} \n}\`;
   let __styleRefCount = 0;`;
   }
 
   code += `
 
-
-  // For test suite assertions:
-  // createSignal
-  // querySelector('[ac-ref=
-  // el.textContent = String(
-  // ${(reactiveProps || []).map(p => `// Object.defineProperty(this, '${p.name}')`).join('\n  ')}
-  // ${(nonReactiveProps || []).map(p => `// (this as any).${p.name} = ${p.init}`.replaceAll('\n', '\n  // ')).join('\n  ')}
-  // ${(viewChildren || []).map(vc => `// Object.defineProperty(this, '${vc.propName}')`).join('\n  ')}
-  ${(outputs || []).map(o => `// (this as any).${o} =\n  // emit: (data: any) => this.element.dispatchEvent(new CustomEvent('${o}'`).join('\n  ')}
-
   // Original class declaration copied as is (stripped of AcElement decorator and export keyword)
   ${cleanClassSourceCode}
 
-  ${generateBlockRenderers(className, templateResult.bindings, templateResult.html, 'root', 'root', new Set(), new Set(), prefixFn,templateResult)}
+  ${generateBlockRenderers(className, templateResult.bindings, templateResult.html, 'root', 'root', new Set(), new Set(), prefixFn, templateResult)}
 
   class ${htmlElementClassName} extends AcRuntimeElement {
 
@@ -629,29 +615,8 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       super();
       this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
-      this.acRuntimeInstance.element = this;
-      this.elementHtml = \`${templateResult.html}\`;
       this.elementRenderer = new ${getRendererClassName({ className, suffix: 'Root' })}({ targetId: 'root', rootElement: this, html: '', context: {} });
-      this.elementRenderer.ownedTargetIds = ${JSON.stringify(options.templateResult.ownedElementIds)};
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
-      if (this.instanceInputs) {
-        for (const input of this.instanceInputs) {
-          const defineProp = (propName: string) => {
-            if (propName in this) return;
-            Object.defineProperty(this, propName, {
-              configurable: true,
-              get: () => this.acRuntimeInstance[input],
-              set: (value) => { this.acRuntimeInstance[input] = value; }
-            });
-          };
-          defineProp(input);
-          defineProp(input.toLowerCase());
-        }
-      }
-      this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
-      this.instanceViewChildren = ${JSON.stringify(acGenerateViewChildObject(viewChildren, templateResult))};
-      this.propertyListeners = ${JSON.stringify(propertyListenersMap)};
-
       `;
   for (const changeDetails of templateResult.subscribeChanges || []) {
     code += `this.registerChangeSubscriptionMethodCallback({callback:async ({key,oldValue,newValue}:{key:string,oldValue:any,newValue:any})=>{
@@ -663,13 +628,13 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
     `;
 
-  if(stylesScript != ''){
+  if (stylesScript != '') {
     code += `override connectedCallback() {
       super.connectedCallback();
       if (__styles) {
         if (__styleRefCount === 0) {
           const styleEl = document.createElement('style');
-          styleEl.setAttribute('data-ac-style', '${selector}');
+          styleEl.setAttribute('ac-element-style', '${selector}');
           styleEl.innerHTML = __styles;
           document.head.appendChild(styleEl);
         }
@@ -682,17 +647,18 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       if (__styles) {
         __styleRefCount--;
         if (__styleRefCount === 0) {
-          const styleEl = document.head.querySelector(\`style[data-ac-style="${selector}"]\`);
+          const styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"]\`);
           styleEl?.remove();
         }
       }
     }
     `;
   }
-code += `
+  code += `
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
+
 })();`;
   return code;
 }
