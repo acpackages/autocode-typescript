@@ -398,6 +398,50 @@ export function acRuntimePlugin({output = 'ts'}: { output?: 'ts' | 'js' } = {out
             if (fs.existsSync(packagesDir)) {
                 server.watcher.add(packagesDir);
             }
+
+            /**
+             * Invalidate Vite module graph entries for compiled cache files.
+             * Without this, Vite serves stale compiled modules from its
+             * in-memory cache even after `doTransform` writes updated
+             * files to disk.
+             *
+             * @param changedSourceFile - The source `.ts` file that changed.
+             *   When provided, we do targeted invalidation of its cache file.
+             *   We also do a broad sweep of all cache modules to catch
+             *   transitive dependents.
+             */
+            const invalidateCacheModules = (changedSourceFile?: string): void => {
+                const normalizedCacheDir = normalizePath(path.join(projectRoot, '.ac-runtime-cache'));
+                // Prefer Vite 7 Environment API; fall back to legacy compat
+                const moduleGraph = (server.environments?.client?.moduleGraph)
+                    ?? (server as any).moduleGraph;
+                if (!moduleGraph) return;
+
+                // 1. Targeted invalidation: invalidate the specific cache file
+                if (changedSourceFile) {
+                    const cachePath = getCachePath(changedSourceFile);
+                    const mods = moduleGraph.getModulesByFile(normalizePath(cachePath));
+                    if (mods) {
+                        for (const mod of mods) {
+                            moduleGraph.invalidateModule(mod);
+                        }
+                    }
+                }
+
+                // 2. Broad invalidation: sweep all tracked modules and
+                //    invalidate anything from the cache directory.
+                //    This catches importers that may have inlined the old
+                //    module and ensures a clean full-reload.
+                if (moduleGraph.idToModuleMap) {
+                    for (const mod of moduleGraph.idToModuleMap.values()) {
+                        const modFile = mod.file ? normalizePath(mod.file) : '';
+                        if (modFile.startsWith(normalizedCacheDir)) {
+                            moduleGraph.invalidateModule(mod);
+                        }
+                    }
+                }
+            };
+
             server.watcher.on('change', async (file) => {
                 const normalizedFile = normalizePath(file);
                 if (normalizedFile.includes('.ac-runtime-cache') || normalizedFile.includes('node_modules')) {
@@ -412,6 +456,7 @@ export function acRuntimePlugin({output = 'ts'}: { output?: 'ts' | 'js' } = {out
                     } catch (err) {
                         console.error(`[AC Compiler] Error reading changed file: ${path.basename(file)}`, err);
                     }
+                    invalidateCacheModules(file);
                     server.ws.send({ type: 'full-reload' });
                 } else if (file.endsWith('.html') || file.endsWith('.css')) {
                     console.log(`[AC Compiler] Asset changed, reloading: ${path.basename(file)}`);
@@ -425,6 +470,7 @@ export function acRuntimePlugin({output = 'ts'}: { output?: 'ts' | 'js' } = {out
                             console.error(`[AC Compiler] Error re-compiling component owner: ${path.basename(tsFile)}`, err);
                         }
                     }
+                    invalidateCacheModules(tsFile);
                     server.ws.send({ type: 'full-reload' });
                 }
             });

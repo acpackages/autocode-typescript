@@ -426,6 +426,27 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain('super();');
   });
 
+  it('should include parent class fields in reactive properties when used in template', () => {
+    const source = `
+      import { BaseComponent } from './base';
+      @AcElement({
+        selector: 'test-child',
+        template: '<div>{{count}}</div><span>{{isActive}}</span>'
+      })
+      export class TestChild extends BaseComponent {
+        extra = 'child-only';
+      }
+    `;
+
+    const filePath = path.resolve(__dirname, 'mocks/component.ts');
+    const results = compiler.compile(source, filePath);
+    // Parent class fields used in template should be in propertyToListenForChanges
+    expect(results[0].code).toContain('"count"');
+    expect(results[0].code).toContain('"isActive"');
+    // Parent's label field is NOT used in template, should not be in propertyToListenForChanges
+    expect(results[0].code).not.toMatch(/propertyToListenForChanges.*"label"/);
+  });
+
   it('should preserve non-component code as-is', () => {
     const source = `
       const GLOBAL_CONST = 42;

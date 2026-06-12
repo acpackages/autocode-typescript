@@ -435,7 +435,6 @@ class ${classNameSub} extends AcElementRenderer {
     const fragment = ${classNameSub}.templateFragment.cloneNode(true) as DocumentFragment;
     this.nodes = Array.from(fragment.childNodes);
     ${cachingCode}
-    console.log(this);
   } `;
 
   if (eventRegistrationCode != '') {
@@ -661,8 +660,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
-
-
 })();`;
   return code;
 }

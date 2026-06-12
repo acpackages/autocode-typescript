@@ -238,7 +238,7 @@ export class ComponentCompiler {
     const { reactiveProps, nonReactiveProps, inputs, outputs, viewChildren, subscribeChanges, listenChanges, membersCode } =
       this.classifyMembers(node, usedInTemplate, filePath, resolveImport);
 
-    // ── Merge base class decorated members ──
+    // ── Merge base class decorated members and properties ──
     if (baseClassName && filePath) {
       const baseMembers = this.resolveBaseClassMembers(
         baseClassName, node.getSourceFile(), filePath,
@@ -252,6 +252,22 @@ export class ComponentCompiler {
         }
         for (const vc of baseMembers.viewChildren) {
           if (!viewChildren.some(v => v.propName === vc.propName)) viewChildren.push(vc);
+        }
+        // Merge parent class properties into reactive/nonReactive
+        const childPropNames = new Set([
+          ...reactiveProps.map(p => p.name),
+          ...nonReactiveProps.map(p => p.name),
+          ...outputs,
+          ...viewChildren.map(v => v.propName),
+        ]);
+        for (const baseProp of baseMembers.properties) {
+          if (childPropNames.has(baseProp.name) || baseProp.name === 'element') continue;
+          const memberIndex = reactiveProps.length + nonReactiveProps.length;
+          if (inputs.includes(baseProp.name) || usedInTemplate.has(baseProp.name)) {
+            reactiveProps.push({ name: baseProp.name, init: baseProp.init, sourceIndex: memberIndex });
+          } else {
+            nonReactiveProps.push({ name: baseProp.name, init: baseProp.init, sourceIndex: memberIndex });
+          }
         }
       }
     }
@@ -505,7 +521,7 @@ export class ComponentCompiler {
     baseClassName: string,
     sourceFile: ts.SourceFile,
     filePath: string,
-  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[] } | null {
+  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[]; properties: { name: string; init: string }[] } | null {
     // ── Find the import that brings in the base class ──
     let moduleSpecifierText: string | null = null;
     for (const stmt of sourceFile.statements) {
@@ -533,9 +549,12 @@ export class ComponentCompiler {
     const dir = path.dirname(filePath);
     let baseFilePath = path.resolve(dir, moduleSpecifierText);
 
-    // Try adding .ts extension if the path has no extension
-    if (!fs.existsSync(baseFilePath) && !path.extname(baseFilePath)) {
-      baseFilePath = baseFilePath + '.ts';
+    // Try adding .ts extension if the file doesn't exist
+    if (!fs.existsSync(baseFilePath)) {
+      const withTs = baseFilePath + '.ts';
+      if (fs.existsSync(withTs)) {
+        baseFilePath = withTs;
+      }
     }
     if (!fs.existsSync(baseFilePath)) return null;
 
@@ -552,21 +571,45 @@ export class ComponentCompiler {
       const inputs: string[] = [];
       const outputs: string[] = [];
       const viewChildren: ViewChildEntry[] = [];
+      const properties: { name: string; init: string }[] = [];
 
-      // Scan members for @AcInput, @AcOutput, @AcViewChild decorators
+      // Scan members for decorators and collect all property/accessor declarations
+      const collectedPropNames = new Set<string>();
       for (const member of stmt.members) {
-        if (!ts.isPropertyDeclaration(member) || !ts.isIdentifier(member.name)) continue;
+        if (!member.name || !ts.isIdentifier(member.name)) continue;
         const propName = member.name.text;
-        const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
-        if (!decorators) continue;
 
-        for (const d of decorators) {
-          if (isDecorator(d, 'AcInput')) inputs.push(propName);
-          if (isDecorator(d, 'AcOutput')) outputs.push(propName);
-          if (isDecorator(d, 'AcViewChild')) {
-            const call = d.expression as ts.CallExpression;
-            const viewChildSelector = (call.arguments[0] as ts.StringLiteral).text;
-            viewChildren.push({ propName, selector: viewChildSelector });
+        // Check decorators on properties and accessors
+        if (
+          ts.isPropertyDeclaration(member) ||
+          ts.isGetAccessorDeclaration(member) ||
+          ts.isSetAccessorDeclaration(member)
+        ) {
+          const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
+
+          if (decorators) {
+            for (const d of decorators) {
+              if (isDecorator(d, 'AcInput')) inputs.push(propName);
+              if (isDecorator(d, 'AcOutput')) outputs.push(propName);
+              if (isDecorator(d, 'AcViewChild')) {
+                const call = d.expression as ts.CallExpression;
+                const viewChildSelector = (call.arguments[0] as ts.StringLiteral).text;
+                viewChildren.push({ propName, selector: viewChildSelector });
+              }
+            }
+          }
+
+          // Collect the property/accessor (with initializer) regardless of decorators
+          if (!collectedPropNames.has(propName)) {
+            const modifiers = ts.canHaveModifiers(member) ? ts.getModifiers(member) : undefined;
+            const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
+            if (!isStatic) {
+              const init = (ts.isPropertyDeclaration(member) && member.initializer)
+                ? member.initializer.getText(baseSourceFile)
+                : 'undefined';
+              properties.push({ name: propName, init });
+              collectedPropNames.add(propName);
+            }
           }
         }
       }
@@ -584,10 +627,11 @@ export class ComponentCompiler {
           inputs.push(...grandBaseMembers.inputs);
           outputs.push(...grandBaseMembers.outputs);
           viewChildren.push(...grandBaseMembers.viewChildren);
+          properties.push(...grandBaseMembers.properties);
         }
       }
 
-      return { inputs, outputs, viewChildren };
+      return { inputs, outputs, viewChildren, properties };
     }
 
     return null;
@@ -641,8 +685,11 @@ export class ComponentCompiler {
 
       const dir = path.dirname(currentPath);
       let baseFilePath = path.resolve(dir, moduleSpecifierText);
-      if (!fs.existsSync(baseFilePath) && !path.extname(baseFilePath)) {
-        baseFilePath = baseFilePath + '.ts';
+      if (!fs.existsSync(baseFilePath)) {
+        const withTs = baseFilePath + '.ts';
+        if (fs.existsSync(withTs)) {
+          baseFilePath = withTs;
+        }
       }
       if (!fs.existsSync(baseFilePath)) return;
 
