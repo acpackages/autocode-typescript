@@ -5,6 +5,7 @@ export const AC_DATAGRID_EXTENSION_NAME = {
   ColumnDragging : 'COLUMN_DRAGGING',
   ColumnsCustomizer : 'COLUMNS_CUSTOMIZER',
   DataExportXlsx : 'DATA_EXPORT_XLSX',
+  FixedEditor : 'FIXED_EDITOR',
   KeyboardActions : 'KEYBOARD_ACTIONS',
   RowNumbers : 'ROW_NUMBERS',
   RowDragging : 'ROW_DRAGGING',

@@ -141,36 +141,38 @@ export class AcInputBase extends AcElementBase {
   }
 
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
-    if (oldValue === newValue) return;
-    switch (name) {
-      case 'value':
-        this.setValue(newValue);
-        break;
-      case 'placeholder':
-        this.placeholder = newValue;
-        break;
-      case 'disabled':
-        this.disabled = newValue == 'true';
-        break;
-      case 'class':
-        this.className = newValue;
-        this.inputElement.className = newValue;
-        break;
-      case 'readonly':
-        this.readonly = newValue == 'true';
-        break;
-      case 'required':
-        this.required = newValue == 'true';
-        break;
-      case 'name':
-        this.name = newValue;
-        break;
-      case 'type':
-        this.inputElement.setAttribute('type', newValue);
-        break;
-    }
-    if (this.inputReflectedAttributes.includes(name)) {
-      this.refreshReflectedAttributes({ attribute: name });
+    if (!this.isDestroyed) {
+      if (oldValue === newValue) return;
+      switch (name) {
+        case 'value':
+          this.setValue(newValue);
+          break;
+        case 'placeholder':
+          this.placeholder = newValue;
+          break;
+        case 'disabled':
+          this.disabled = newValue == 'true';
+          break;
+        case 'class':
+          this.className = newValue;
+          this.inputElement.className = newValue;
+          break;
+        case 'readonly':
+          this.readonly = newValue == 'true';
+          break;
+        case 'required':
+          this.required = newValue == 'true';
+          break;
+        case 'name':
+          this.name = newValue;
+          break;
+        case 'type':
+          this.inputElement.setAttribute('type', newValue);
+          break;
+      }
+      if (this.inputReflectedAttributes.includes(name)) {
+        this.refreshReflectedAttributes({ attribute: name });
+      }
     }
   }
 
@@ -195,7 +197,7 @@ export class AcInputBase extends AcElementBase {
     this.innerHTML = '';
     this.inputElement.removeEventListener('input', this.handleInput);
     this.inputElement.removeEventListener('change', this.handleChange);
-    if(this.eventListenerRemover ){
+    if (this.eventListenerRemover) {
       this.eventListenerRemover();
     }
     super.disconnectedCallback();
@@ -314,25 +316,29 @@ export class AcInputBase extends AcElementBase {
   reportValidity() { return this.elementInternals.reportValidity(); }
 
   setValue(value: any) {
-    const oldValue: any = this._value;
-    if (oldValue != value) {
-      this._value = value;
-      const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
-      if(value == undefined){
-        inputElement.value = null;
+    if (!this.isDestroyed) {
+      const oldValue: any = this._value;
+      if (oldValue != value) {
+        this._value = value;
+        if (this.inputElement) {
+          const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
+          if (value == undefined) {
+            inputElement.value = null;
+          }
+          else {
+            inputElement.value = value;
+          }
+        }
+        if (this.reflectValueAttribute) {
+          this.setAttribute('value', value);
+        }
+        this.elementInternals.setFormValue(this._value);
+        if (this.dispatchEvent) {
+          this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+        }
+        this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+        this.validate();
       }
-      else{
-        inputElement.value = value;
-      }
-      if (this.reflectValueAttribute) {
-        this.setAttribute('value', value);
-      }
-      this.elementInternals.setFormValue(this._value);
-      if (this.dispatchEvent) {
-        this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-      }
-      this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
-      this.validate();
     }
   }
 
@@ -343,7 +349,9 @@ export class AcInputBase extends AcElementBase {
       },
 
       set(value) {
-        this.setValue(value);
+        if(!this.isDestroyed){
+          this.setValue(value);
+        }
       },
       enumerable: true,
       configurable: true
@@ -351,7 +359,7 @@ export class AcInputBase extends AcElementBase {
   }
 
   validate() {
-    if (this.elementInternals) {
+    if (!this.isDestroyed && this.elementInternals) {
       const validityState = this.validityStateFlags;
       if (validityState) {
         this.elementInternals.setValidity(

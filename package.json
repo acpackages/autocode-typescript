@@ -14,6 +14,7 @@
     "build:ac-data-dictionary-components": "nx run ac-data-dictionary-components:build",
     "build:ac-data-dictionary-editor": "nx run ac-data-dictionary-editor:build",
     "build:ac-datagrid-on-ag-grid": "nx run ac-datagrid-on-ag-grid:build",
+    "build:ac-datagrid-floating-editor": "nx run ac-datagrid-floating-editor:build",
     "build:ac-dd-builder-elements": "nx run ac-dd-builder-elements:build",
     "build:ac-extensions": "nx run ac-extensions:build",
     "build:ac-icons": "nx run ac-icons:build",

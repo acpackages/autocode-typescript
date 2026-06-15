@@ -4,7 +4,6 @@ import { AcElement, acRouter, AcViewChild } from "@autocode-ts/ac-runtime";
 import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowNumbersExtension, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowSelectionExtension } from '@autocode-ts/ac-browser';
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { customersData } from '../../data/customers-data';
-import { APP_ROUTES } from "../../shared/consts/app-routes.consts";
 import { AcDelayedCallback, Autocode } from "@autocode-ts/autocode";
 import { IAppMenuItem } from "src/_app.export";
 
@@ -36,7 +35,7 @@ export class AggridLocalPage {
 
   delayedCallback: AcDelayedCallback = new AcDelayedCallback();
   dropdownItems: IAppMenuItem[] = [
-    { label: 'Row Numbers',isHeader:true },
+    { label: 'Row Numbers', isHeader: true },
     {
       label: 'Show Row Numbers', callback: () => {
         this.rowNumbersExtension.showRowNumbers = true;
@@ -48,19 +47,19 @@ export class AggridLocalPage {
         console.log(this.datagridApi);
       }
     },
-    { label: 'Customization',isHeader:true },
+    { label: 'Customization', isHeader: true },
     {
       label: 'Toggle Columns Customizer', callback: () => {
         this.columnsCustomizerExtension.toggleColumnsCustomizer();
       }
     },
-    { label: 'Export',isHeader:true },
+    { label: 'Export', isHeader: true },
     {
       label: 'Export XLSX', callback: () => {
         this.dataExportXlsxExtension.exportData({ fileName: 'Customer Data.xlsx' });
       }
     },
-    { label: 'Selection and Focus',isHeader:true },
+    { label: 'Selection and Focus', isHeader: true },
     {
       label: 'Goto First Row', callback: () => {
         this.datagridApi.focusFirstRow({ highlightCells: true });
@@ -91,7 +90,7 @@ export class AggridLocalPage {
         console.log(this.rowSelectionExtension.getSelectedRowsData());
       }
     },
-    { label: 'Miscellenous',isHeader:true },
+    { label: 'Miscellenous', isHeader: true },
     {
       label: 'Auto Add New Row',
       callback: () => {
@@ -133,17 +132,50 @@ export class AggridLocalPage {
 
       this.datagridApi.columnDefinitions = [
         // { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65,pinnedOn:'LEFT' },
-        { field: 'customer_id', title: "Id", visible: true },
-        { field: 'first_name', title: "First Name", allowEdit: true },
-        { field: 'last_name', title: "Last Name", allowEdit: true },
-        { field: 'company', title: "Company", allowEdit: true },
-        { field: 'city', title: "City", allowEdit: true },
-        { field: 'country', title: "Country", allowEdit: true },
-        { field: 'phone_1', title: "Phone 1" },
-        { field: 'phone_2', title: "Phone 2" },
-        { field: 'email', title: "Email" },
-        { field: 'subscription_date', title: "Subscription Date" },
-        { field: 'website', title: "Website" },
+        { field: 'customer_id', title: "Id", visible: true, allowEdit: true ,useCellEditorForRenderer:true},
+        {
+          field: 'first_name', title: "First Name", allowEdit: true,useCellEditorForRenderer:true,
+          extensionData: {
+            fixedEditor1: {
+              inputElementFunction: () => {
+                const input = document.createElement('input');
+                input.value = 'Test Name';
+                return input;
+              }
+            }
+          }
+        },
+        {
+          field: 'last_name', title: "Last Name", allowEdit: true,useCellEditorForRenderer:true,
+          extensionData: {
+            fixedEditor1: {
+              inputElementFunction: () => {
+                const input = document.createElement('input');
+                input.value = 'Last Name';
+                return input;
+              }
+            }
+          }
+        },
+        {
+          field: 'company', title: "Company", allowEdit: true,useCellEditorForRenderer:true,
+          extensionData: {
+            fixedEditor1: {
+              inputElementFunction: () => {
+                const input = document.createElement('input');
+                input.value = 'Company';
+                return input;
+              }
+            }
+          }
+        },
+        { field: 'city', title: "City", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'country', title: "Country", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'phone_1', title: "Phone 1", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'phone_2', title: "Phone 2", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'email', title: "Email", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'subscription_date', title: "Subscription Date", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'website', title: "Website", allowEdit: true,useCellEditorForRenderer:true },
 
       ];
 

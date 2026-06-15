@@ -20,6 +20,7 @@ import { acGetColDefFromAcDataGridColumn } from '../helpers/col-def-helper';
 import { AcDatagridOnAgGridCellRenderer } from '../elements/ac-datagrid-on-ag-grid-cell-renderer.element';
 import { AcDatagridOnAgGridCellEditor } from '../elements/ac-datagrid-on-ag-grid-cell-editor.element';
 import { IAcDatagriOnAgGridDataChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-data-set-hook-args.interface';
+import { AcDatagridOnAgGridFixedEditorInput } from '../elements/ac-datagrid-on-ag-grid-fixed-editor-input.element';
 
 export function initAgGrid() {
   ModuleRegistry.registerModules([
@@ -35,7 +36,7 @@ export function initAgGrid() {
 }
 
 export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
-  agGridElement:HTMLElement;
+  agGridElement: HTMLElement;
   allowColumnDragging: boolean = false;
   colDefs: ColDef[] = [];
   gridApi?: GridApi;
@@ -519,7 +520,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
               this.delayedCallback.add({
                 callback: () => {
                   handleEnsureRow();
-                }, duration: 10,key:'handleEnsureRow'
+                }, duration: 10, key: 'handleEnsureRow'
               });
             }
           }
@@ -673,12 +674,14 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     });
     if (rowNode) {
       if (this.isClientSideData) {
-        rowNode.setData(data);
+        //
       }
       else {
         this.gridApi.applyServerSideTransaction({ update: [data] });
-        rowNode.setData(data);
       }
+      // rowNode.setData(data);
+      this.syncRowData(rowNode,data);
+      // rowNode.syn(data);
       if (args.forceRefresh) {
         this.gridApi.refreshCells({ rowNodes: [rowNode], force: true });
       }
@@ -688,6 +691,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         });
       }
     }
+    // this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.AfterRowUpdate, args: hookArgs });
   }
 
   private handleUsePaginationChange() {
@@ -704,7 +708,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     const datagrid = this.datagridApi.datagrid;
     this.agGridElement = datagrid.ownerDocument.createElement('div');
     this.agGridElement.style.display = 'contents';
-    this.agGridElement.setAttribute('ag-grid-ext-el','true');
+    this.agGridElement.setAttribute('ag-grid-ext-el', 'true');
     datagrid.afterRowsContainer.setAttribute('style', "position:absolute;bottom:0px;height:0px;");
     this.datagridApi.dataManager.assignUniqueIdToData = true;
     this.rowKey = this.datagridApi.dataManager.uniqueIdKey;
@@ -944,26 +948,44 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
           };
         }
 
+        if (column.columnDefinition.extensionData) {
+          if (column.columnDefinition.extensionData['fixedEditor']) {
+            colDef.floatingFilter = true;
+            colDef.suppressFloatingFilterButton = true;
+            colDef.floatingFilterComponent = AcDatagridOnAgGridFixedEditorInput;
+            colDef.floatingFilterComponentParams = {
+              agGridExtension: this,
+              datagridColumn: column,
+              datagridApi: this.datagridApi,
+            };
+          }
+
+        }
+
         if (column.columnDefinition.allowEdit) {
           if (column.columnDefinition.useCellEditorForRenderer) {
             colDef.editable = false;
-            if (column.columnDefinition.cellEditorFunction) {
-              colDef.cellRenderer = (params: any) => {
-                if (this.datagridApi) {
-                  const datagridColumn = params.datagridColumn;
-                  const datagridCell = this.datagridApi?.getCell({ rowId: params.data[this.rowKey], column: datagridColumn }) as any;
-                  const args: IAcDatagridCellElementArgs = {
-                    datagridApi: this.datagridApi!,
-                    datagridCell: datagridCell
-                  }
-                  return column.columnDefinition.cellEditorFunction(args);
-                }
-                return '';
-              };
-            }
-            else {
-              colDef.cellRenderer = AcDatagridOnAgGridCellEditor;
-            }
+            // if (column.columnDefinition.cellEditorFunction) {
+            //   colDef.cellRenderer = (params: any) => {
+            //     if (this.datagridApi) {
+            //       const datagridColumn:IAcDatagridColumn = params.datagridColumn;
+            //       const datagridCell = this.datagridApi?.getCell({ rowId: params.data[this.rowKey], column: datagridColumn }) as any;
+            //       const args: IAcDatagridCellElementArgs = {
+            //         datagridApi: this.datagridApi!,
+            //         datagridCell: datagridCell
+            //       }
+            //       const el = column.columnDefinition.cellEditorFunction(args);
+            //       el.value = params.data[datagridColumn.columnKey];
+            //       el.setAttribute('tabindex','0');
+            //       return el;
+            //     }
+            //     return '';
+            //   };
+            // }
+            // else {
+            //   colDef.cellRenderer = AcDatagridOnAgGridCellEditor;
+            // }
+            colDef.cellRenderer = AcDatagridOnAgGridCellEditor;
             colDef.cellRendererParams = {
               agGridExtension: this,
               datagridColumn: column,
@@ -1099,6 +1121,33 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     if (this.datagridApi && this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.TreeTable]) {
       this.treeTableExtension = this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.TreeTable] as AcDatagridTreeTableExtension;
     }
+  }
+
+  syncRowData(rowNode: IRowNode, newData: any) {
+    const currentData = rowNode.data;
+
+    const keys = new Set([
+      ...Object.keys(currentData),
+      ...Object.keys(newData),
+    ]);
+
+    const refreshCells:string[] = [];
+    for (const key of keys) {
+      if (!(key in newData)) {
+        rowNode.setDataValue(key, undefined);
+        delete currentData[key];
+        refreshCells.push(key);
+      } else if (!Object.is(currentData[key], newData[key])) {
+        rowNode.setDataValue(key, newData[key]);
+        refreshCells.push(key);
+      }
+    }
+    // console.log(rowNode,currentData,newData);
+    this.gridApi.refreshCells({
+      rowNodes: [rowNode],
+      columns: refreshCells,
+      force: true
+    });
   }
 }
 export const AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME = 'agGridOnAcDatagrid';

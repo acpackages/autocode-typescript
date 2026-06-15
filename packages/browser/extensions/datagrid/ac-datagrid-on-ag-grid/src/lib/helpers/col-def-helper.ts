@@ -40,6 +40,7 @@ export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridCo
     hide: datagridColDef.visible == false,
     flex: datagridColDef.flexSize,
     columnDefinition:datagridColDef,
+    suppressNavigable : datagridColDef.suppressFocus == true
   };
   if(datagridColDef.pinnedOn){
     colDef.pinned = datagridColDef.pinnedOn.toLowerCase();

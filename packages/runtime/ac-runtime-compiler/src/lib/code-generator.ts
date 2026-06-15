@@ -660,6 +660,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   }
   if (!customElements.get('${selector}')) customElements.define('${selector}', ${htmlElementClassName});
   return ${className};
+
 })();`;
   return code;
 }

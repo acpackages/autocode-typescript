@@ -63,6 +63,12 @@ export interface IAcDatagridColumnDefinition {
   }) */
   field: string,
   flexSize?:number;
+
+  floatingFilterInput?:any;
+  floatingFilterInputAttrs?:any;
+  floatingFilterInputFunction?:any;
+  floatingFilterInputParams?:any;
+
   headerCellClass?:string;
   index?:number;
 
@@ -77,6 +83,7 @@ export interface IAcDatagridColumnDefinition {
   minWidth?: number;
 
   pinnedOn?:'LEFT'|'RIGHT';
+  suppressFocus?:boolean;
 
   /* AcDoc({
     "description": "The title of the column. If not provided, field value will be used"

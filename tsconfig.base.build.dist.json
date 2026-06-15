@@ -33,6 +33,7 @@
       "@autocode-ts/ac-data-dictionary-editor": ["dist/packages/browser/ac-data-dictionary-editor"],
       "@autocode-ts/ac-datagrid": ["dist/packages/browser/ac-datagrid"],
       "@autocode-ts/ac-datagrid-on-ag-grid": ["dist/packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid"],
+      "@autocode-ts/ac-datagrid-floating-editor": ["dist/packages/browser/extensions/datagrid/ac-datagrid-floating-editor"],
       "@autocode-ts/ac-dd-builder-elements": ["dist/packages/browser/extensions/builder/ac-dd-builder-elements"],
       "@autocode-ts/ac-dde-browser-storage": ["dist/packages/browser/extensions/data-dictionary-editor/ac-dde-browser-storage"],
       "@autocode-ts/ac-dde-code-generator": ["dist/packages/browser/extensions/data-dictionary-editor/ac-dde-code-generator"],

@@ -60,6 +60,9 @@
       "@autocode-ts/ac-datagrid-on-ag-grid": [
         "packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid/src/ac-datagrid-on-ag-grid.ts"
       ],
+      "@autocode-ts/ac-datagrid-floating-editor": [
+        "packages/browser/extensions/datagrid/ac-datagrid-floating-editor/src/ac-datagrid-floating-editor.ts"
+      ],
       "@autocode-ts/ac-dd-builder-elements": [
         "packages/browser/extensions/builder/ac-dd-builder-elements/src/index.ts"
       ],

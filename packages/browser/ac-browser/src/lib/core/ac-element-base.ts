@@ -9,6 +9,7 @@ export class AcElementBase extends HTMLElement {
   events: AcEvents = new AcEvents();
   acId:string = Autocode.uuid();
   protected delayedCallback:AcDelayedCallback = new AcDelayedCallback();
+  isDestroyed:boolean = false;
 
   constructor(){
     super();
@@ -32,6 +33,7 @@ export class AcElementBase extends HTMLElement {
   }
 
   destroy(){
+    this.isDestroyed = true;
     this.events.destroy();
     this.delayedCallback.destroy();
     acClearElement({element:this});

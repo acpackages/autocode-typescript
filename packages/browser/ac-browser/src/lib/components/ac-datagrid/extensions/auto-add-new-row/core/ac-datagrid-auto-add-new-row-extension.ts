@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { stringEqualsIgnoreCase } from "@autocode-ts/ac-extensions";
-import { IAcDatagridCell, IAcDatagridRow, AC_DATAGRID_HOOK } from "../../../_ac-datagrid.export";
-import { AcDatagridExtension } from "../../../core/ac-datagrid-extension";
-import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extension-name.const";
-import { IAcDatagridExtension } from "../../../interfaces/ac-datagrid-extension.interface";
-import { AcEnumDatagridAutoAddNewRowHook } from "../enums/ac-enum-datagrid-auto-add-new-row-hook.enum";
-import { IAcDatagridAutoAddNewRowHookArgs } from "../interfaces/ac-datagrid-auto-add-new-row-hook-args.interface";
+// import { IAcDatagridCell, IAcDatagridRow, AC_DATAGRID_HOOK, AC_DATAGRID_EXTENSION_NAME, AcDatagridExtension, AcEnumDatagridAutoAddNewRowHook, IAcDatagridAutoAddNewRowHookArgs, IAcDatagridExtension } from "@autocode-ts/ac-browser";
 import { AcDelayedCallback } from "@autocode-ts/autocode";
+import { AcDatagridExtension } from "../../../core/ac-datagrid-extension";
+import { IAcDatagridAutoAddNewRowHookArgs } from "../interfaces/ac-datagrid-auto-add-new-row-hook-args.interface";
+import { AcEnumDatagridAutoAddNewRowHook } from "../enums/ac-enum-datagrid-auto-add-new-row-hook.enum";
+import { AC_DATAGRID_HOOK } from "../../../consts/ac-datagrid-hook.const";
+import { IAcDatagridCell } from "../../../interfaces/ac-datagrid-cell.interface";
+import { IAcDatagridRow } from "../../../interfaces/ac-datagrid-row.interface";
+import { IAcDatagridExtension } from "../../../interfaces/ac-datagrid-extension.interface";
+import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extension-name.const";
 
 export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
   private _autoAddNewRow: boolean = false;
@@ -29,9 +32,13 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
   private delayedCallback: AcDelayedCallback = new AcDelayedCallback();
 
   private addRow() {
-    if(this.autoAddNewRow){
-      const lastRow = this.datagridApi.addRow({ data: { ...this.autoAddNewRowData},rowId:'___auto_add_row___' });
-      this.lastAutoAddRowId = lastRow.rowId;
+    if (this.autoAddNewRow) {
+      this.delayedCallback.add({
+        callback: () => {
+          const lastRow = this.datagridApi.addRow({ data: { ...this.autoAddNewRowData }, rowId: '___auto_add_row___' });
+          this.lastAutoAddRowId = lastRow.rowId;
+        }, duration: 10,key:'addRow'
+      });
     }
   }
 
@@ -52,12 +59,18 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
           this.addRow();
         }
       }
+      else if (this.datagridApi && stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.RowUpdate)) {
+        const datagridRow: IAcDatagridRow = args.datagridRow;
+        if (datagridRow.index == this.datagridApi.dataManager.totalRows - 1) {
+          this.addRow();
+        }
+      }
       else if (this.datagridApi && stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.BeforeDatagridRowCreate)) {
-        if(args.rowId!="___auto_add_row___"){
+        if (args.rowId != "___auto_add_row___") {
           args.rowId = this.lastAutoAddRowId;
           this.addRow();
         }
-        else{
+        else {
           args.rowId = undefined;
         }
       }
