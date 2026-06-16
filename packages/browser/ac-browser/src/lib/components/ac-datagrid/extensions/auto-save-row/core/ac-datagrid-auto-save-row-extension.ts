@@ -5,7 +5,7 @@ import { IAcDatagridCell, IAcDatagridRow, AC_DATAGRID_HOOK } from "../../../_ac-
 import { AcDatagridExtension } from "../../../core/ac-datagrid-extension";
 import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extension-name.const";
 import { IAcDatagridExtension } from "../../../interfaces/ac-datagrid-extension.interface";
-import { AC_DATAGRID_AUTO_SAVE_HOOK_NAME } from "../_auto-save-row.export";
+import { AC_DATAGRID_AUTO_SAVE_EVENT_NAME, AC_DATAGRID_AUTO_SAVE_HOOK_NAME } from "../_auto-save-row.export";
 import { AC_DATA_MANAGER_HOOK, AcDelayedCallback, acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { IAcDatagridAutoSaveRowData } from "../interfaces/ac-datagrid-auto-save-row-data.interface";
 import { IAcDatagridAutoSaveRequestArgs } from "../interfaces/ac-datagrid-auto-save-request-args.interface";
@@ -28,7 +28,7 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
   }
 
   private _autoSaveFunction?: (args: IAcDatagridAutoSaveRequestArgs) => void;
-  get autoSaveFunction(): ((args: IAcDatagridAutoSaveRequestArgs) => void)|undefined {
+  get autoSaveFunction(): ((args: IAcDatagridAutoSaveRequestArgs) => void) | undefined {
     return this._autoSaveFunction;
   }
   set autoSaveFunction(value: (args: IAcDatagridAutoSaveRequestArgs) => void) {
@@ -61,7 +61,7 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
 
   override destroy(): void {
     this.delayedCallback.destroy();
-    acNullifyInstanceProperties({instance:this});
+    acNullifyInstanceProperties({ instance: this });
   }
 
   override handleHook({ hook, args }: { hook: string; args: any; }): void {
@@ -72,6 +72,12 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
           status: "NOT_CHANGED",
         };
         datagridRow.extensionData['autoSaveRow'] = extensionData;
+        this.datagridApi.events.execute({
+          event: AC_DATAGRID_AUTO_SAVE_EVENT_NAME.AutoSaveRowStatusChange, args: {
+            datagridApi: this.datagridApi,
+            datagridRow
+          }
+        });
       }
       else if (stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.CellValueChange)) {
         if (this.autoSaveRow) {
@@ -81,6 +87,12 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
           const extensionData: IAcDatagridAutoSaveRowData = datagridRow.extensionData['autoSaveRow'];
           extensionData.lastChangeTime = new Date();
           extensionData.status = "CHANGED";
+          this.datagridApi.events.execute({
+            event: AC_DATAGRID_AUTO_SAVE_EVENT_NAME.AutoSaveRowStatusChange, args: {
+              datagridApi: this.datagridApi,
+              datagridRow
+            }
+          });
           this.delayedCallback.add({
             callback: () => {
               this.saveRow({ datagridRow })
@@ -117,6 +129,12 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
     if (this.datagridApi) {
       const extensionData: IAcDatagridAutoSaveRowData = datagridRow.extensionData['autoSaveRow'];
       extensionData.status = 'SAVING';
+      this.datagridApi.events.execute({
+        event: AC_DATAGRID_AUTO_SAVE_EVENT_NAME.AutoSaveRowStatusChange, args: {
+          datagridApi: this.datagridApi,
+          datagridRow
+        }
+      });
       const rowId = datagridRow.rowId;
       if (this.autoSaveFunction) {
         await new Promise<any>(
@@ -126,11 +144,23 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
               datagridApi: this.datagridApi!,
               successCallback: (responseArgs: IAcDatagridAutoSaveResponseArgs) => {
                 extensionData.status = 'SAVED';
+                this.datagridApi.events.execute({
+                  event: AC_DATAGRID_AUTO_SAVE_EVENT_NAME.AutoSaveRowStatusChange, args: {
+                    datagridApi: this.datagridApi,
+                    datagridRow
+                  }
+                });
                 this.datagridApi!.updateRow({ data: responseArgs.savedData, rowId });
                 resolve(null);
               },
               errorCallback: () => {
                 extensionData.status = 'ERROR';
+                this.datagridApi.events.execute({
+                  event: AC_DATAGRID_AUTO_SAVE_EVENT_NAME.AutoSaveRowStatusChange, args: {
+                    datagridApi: this.datagridApi,
+                    datagridRow
+                  }
+                });
                 resolve(null);
               }
             };

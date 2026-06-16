@@ -1,0 +1,3 @@
+export const AC_DATAGRID_AUTO_SAVE_EVENT_NAME = {
+  AutoSaveRowStatusChange: 'AUTO_SAVE_ROW_STATUS_CHANGE'
+}

@@ -1131,23 +1131,34 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       ...Object.keys(newData),
     ]);
 
-    const refreshCells:string[] = [];
+
+    const renderedColumns:string[] = [];
+    const rowEls = this.agGridElement.querySelectorAll(
+      `.ag-row[row-id="${rowNode.id}"]`
+    );
+    for(const rowEl of Array.from(rowEls)){
+       const cells = rowEl?.querySelectorAll('.ag-cell');
+      cells?.forEach(cell => {
+        if(cell.hasAttribute('col-id')){
+          renderedColumns.push(cell.getAttribute('col-id'));
+        }
+      });
+    }
+
     for (const key of keys) {
       if (!(key in newData)) {
         rowNode.setDataValue(key, undefined);
         delete currentData[key];
-        refreshCells.push(key);
+        if(renderedColumns.includes(key)){
+          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
+        }
       } else if (!Object.is(currentData[key], newData[key])) {
         rowNode.setDataValue(key, newData[key]);
-        refreshCells.push(key);
+        if(renderedColumns.includes(key)){
+          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
+        }
       }
     }
-    // console.log(rowNode,currentData,newData);
-    this.gridApi.refreshCells({
-      rowNodes: [rowNode],
-      columns: refreshCells,
-      force: true
-    });
   }
 }
 export const AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME = 'agGridOnAcDatagrid';
