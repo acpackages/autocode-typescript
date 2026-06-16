@@ -241,7 +241,7 @@ export class ComponentCompiler {
     // ── Merge base class decorated members and properties ──
     if (baseClassName && filePath) {
       const baseMembers = this.resolveBaseClassMembers(
-        baseClassName, node.getSourceFile(), filePath,
+        baseClassName, node.getSourceFile(), filePath, resolveImport,
       );
       if (baseMembers) {
         for (const input of baseMembers.inputs) {
@@ -252,6 +252,16 @@ export class ComponentCompiler {
         }
         for (const vc of baseMembers.viewChildren) {
           if (!viewChildren.some(v => v.propName === vc.propName)) viewChildren.push(vc);
+        }
+        // Merge parent @AcSubscribeChange entries
+        for (const sc of baseMembers.subscribeChanges) {
+          if (!subscribeChanges.some(s => s.methodName === sc.methodName)) {
+            subscribeChanges.push(sc);
+          }
+        }
+        // Merge parent @AcListenChanges keys
+        for (const key of baseMembers.listenChanges) {
+          if (!listenChanges.includes(key)) listenChanges.push(key);
         }
         // Merge parent class properties into reactive/nonReactive
         const childPropNames = new Set([
@@ -508,12 +518,15 @@ export class ComponentCompiler {
   // ─── Base Class Member Resolution ───────────────────────────────────────────
 
   /**
-   * Resolve decorated members (@AcInput, @AcOutput, @AcViewChild) from a base
-   * class by locating its source file, parsing it, and scanning its members.
+   * Resolve decorated members (@AcInput, @AcOutput, @AcViewChild, @AcSubscribeChange, @AcListenChanges)
+   * from a base class by locating its source file, parsing it, and scanning its members.
    *
-   * Only resolves relative imports (e.g., `./base-class`). Package imports
-   * (e.g., `@autocode-ts/ac-runtime`) are skipped — their members are assumed
-   * to be framework-internal and not user-level inputs/outputs.
+   * Handles two cases:
+   * 1. Base class declared in the SAME source file (no import needed — e.g. a local mixin class).
+   * 2. Base class imported from a relative file (e.g. `./base-class`).
+   *
+   * Package imports (e.g. `@autocode-ts/ac-runtime`) are skipped — their members are
+   * assumed to be framework-internal and not user-level inputs/outputs.
    *
    * Recurses if the base class itself extends another class.
    */
@@ -521,7 +534,8 @@ export class ComponentCompiler {
     baseClassName: string,
     sourceFile: ts.SourceFile,
     filePath: string,
-  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[]; properties: { name: string; init: string }[] } | null {
+    resolveImport?: (originalPath: string, importerPath: string) => string,
+  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[]; subscribeChanges: { methodName: string; keys: string[] }[]; listenChanges: string[]; properties: { name: string; init: string }[] } | null {
     // ── Find the import that brings in the base class ──
     let moduleSpecifierText: string | null = null;
     for (const stmt of sourceFile.statements) {
@@ -542,8 +556,13 @@ export class ComponentCompiler {
       if (moduleSpecifierText) break;
     }
 
-    // Only resolve relative imports
-    if (!moduleSpecifierText || !moduleSpecifierText.startsWith('.')) return null;
+    // ── If no import found, the base class may be declared in the same source file ──
+    if (!moduleSpecifierText) {
+      return this.scanClassDeclaration(baseClassName, sourceFile, filePath, resolveImport);
+    }
+
+    // Only resolve relative imports (skip package imports like '@autocode-ts/ac-runtime')
+    if (!moduleSpecifierText.startsWith('.')) return null;
 
     // ── Resolve the absolute file path ──
     const dir = path.dirname(filePath);
@@ -558,26 +577,58 @@ export class ComponentCompiler {
     }
     if (!fs.existsSync(baseFilePath)) return null;
 
-    // ── Parse the base class source file ──
+    // ── Parse the external source file and scan it ──
     const baseSource = fs.readFileSync(baseFilePath, 'utf8');
     const baseSourceFile = ts.createSourceFile(
       baseFilePath, baseSource, ts.ScriptTarget.Latest, true,
     );
 
-    // ── Find the class declaration matching baseClassName ──
-    for (const stmt of baseSourceFile.statements) {
-      if (!ts.isClassDeclaration(stmt) || stmt.name?.text !== baseClassName) continue;
+    return this.scanClassDeclaration(baseClassName, baseSourceFile, baseFilePath, resolveImport);
+  }
+
+  /**
+   * Scan a parsed source file for a class declaration matching `className` and
+   * collect all decorated members plus instance property initializers.
+   * Recurses into the class's own base class chain via resolveBaseClassMembers.
+   */
+  private scanClassDeclaration(
+    className: string,
+    sourceFile: ts.SourceFile,
+    filePath: string,
+    resolveImport?: (originalPath: string, importerPath: string) => string,
+  ): { inputs: string[]; outputs: string[]; viewChildren: ViewChildEntry[]; subscribeChanges: { methodName: string; keys: string[] }[]; listenChanges: string[]; properties: { name: string; init: string }[] } | null {
+    for (const stmt of sourceFile.statements) {
+      if (!ts.isClassDeclaration(stmt) || stmt.name?.text !== className) continue;
 
       const inputs: string[] = [];
       const outputs: string[] = [];
       const viewChildren: ViewChildEntry[] = [];
+      const subscribeChanges: { methodName: string; keys: string[] }[] = [];
+      const listenChanges: string[] = [];
       const properties: { name: string; init: string }[] = [];
 
-      // Scan members for decorators and collect all property/accessor declarations
       const collectedPropNames = new Set<string>();
       for (const member of stmt.members) {
         if (!member.name || !ts.isIdentifier(member.name)) continue;
         const propName = member.name.text;
+
+        // Check @AcSubscribeChange on method declarations
+        if (ts.isMethodDeclaration(member)) {
+          const decorators = ts.canHaveDecorators(member) ? ts.getDecorators(member) : undefined;
+          if (decorators) {
+            for (const d of decorators) {
+              if (isDecorator(d, 'AcSubscribeChange')) {
+                const call = d.expression as ts.CallExpression;
+                const arg = call.arguments[0];
+                const keys: string[] = [];
+                if (arg) {
+                  keys.push(...resolveExpressionValue(arg, sourceFile, filePath, resolveImport));
+                }
+                subscribeChanges.push({ methodName: propName, keys });
+              }
+            }
+          }
+        }
 
         // Check decorators on properties and accessors
         if (
@@ -596,6 +647,19 @@ export class ComponentCompiler {
                 const viewChildSelector = (call.arguments[0] as ts.StringLiteral).text;
                 viewChildren.push({ propName, selector: viewChildSelector });
               }
+              // Check @AcListenChanges on property/accessor declarations
+              if (isDecorator(d, 'AcListenChanges')) {
+                const call = d.expression as ts.CallExpression;
+                const arg = call.arguments[0];
+                const keys: string[] = [];
+                if (arg) {
+                  keys.push(...resolveExpressionValue(arg, sourceFile, filePath, resolveImport));
+                }
+                if (keys.length === 0) {
+                  keys.push(propName);
+                }
+                listenChanges.push(...keys);
+              }
             }
           }
 
@@ -605,7 +669,7 @@ export class ComponentCompiler {
             const isStatic = modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword) || false;
             if (!isStatic) {
               const init = (ts.isPropertyDeclaration(member) && member.initializer)
-                ? member.initializer.getText(baseSourceFile)
+                ? member.initializer.getText(sourceFile)
                 : 'undefined';
               properties.push({ name: propName, init });
               collectedPropNames.add(propName);
@@ -619,19 +683,27 @@ export class ComponentCompiler {
         h => h.token === ts.SyntaxKind.ExtendsKeyword,
       );
       if (extendsClause) {
-        const grandBaseClassName = extendsClause.types[0].expression.getText(baseSourceFile);
+        const grandBaseClassName = extendsClause.types[0].expression.getText(sourceFile);
         const grandBaseMembers = this.resolveBaseClassMembers(
-          grandBaseClassName, baseSourceFile, baseFilePath,
+          grandBaseClassName, sourceFile, filePath, resolveImport,
         );
         if (grandBaseMembers) {
           inputs.push(...grandBaseMembers.inputs);
           outputs.push(...grandBaseMembers.outputs);
           viewChildren.push(...grandBaseMembers.viewChildren);
+          for (const sc of grandBaseMembers.subscribeChanges) {
+            if (!subscribeChanges.some(s => s.methodName === sc.methodName)) {
+              subscribeChanges.push(sc);
+            }
+          }
+          for (const key of grandBaseMembers.listenChanges) {
+            if (!listenChanges.includes(key)) listenChanges.push(key);
+          }
           properties.push(...grandBaseMembers.properties);
         }
       }
 
-      return { inputs, outputs, viewChildren, properties };
+      return { inputs, outputs, viewChildren, subscribeChanges, listenChanges, properties };
     }
 
     return null;

@@ -180,7 +180,6 @@ export class AcRuntimeElement extends HTMLElement {
         if (context === "array") {
           const segments = property.split('.');
           const isArrayLength = segments[segments.length - 1] === "length" || operation === "length";
-          console.log(`[AcRuntimeElement] IsArrayLength`, isArrayLength);
           if (isArrayLength) {
             object.handlePropertyChange({
               key: "length",
