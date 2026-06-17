@@ -1,0 +1,14 @@
+{
+  "name": "@autocode-ts/ac-runtime-cli",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/cli.ts",
+  "bin": {
+    "acr": "./src/cli.ts"
+  },
+  "dependencies": {
+    "@autocode-ts/ac-runtime-compiler": "workspace:*",
+    "vite": "^7.0.0"
+  }
+}

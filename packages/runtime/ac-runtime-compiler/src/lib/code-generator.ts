@@ -241,8 +241,8 @@ function generateBlockRenderers(
           if((this.${getElementPropertyName({ targetId })} as any).acRuntimeInstance){\n
             (this.${getElementPropertyName({ targetId })} as any).acRuntimeInstance['${binding.target}'] = newValue;\n
           }\n
-          else{\n
-            this.${getElementPropertyName({ targetId })}['${binding.target}'] = newValue;\n
+          else{
+            (this.${getElementPropertyName({ targetId })} as any)['${binding.target}'] = newValue;
           }\n
         }\n`;
         break;
@@ -266,7 +266,7 @@ function generateBlockRenderers(
         `;
         if (binding.target.toLowerCase() == 'innerhtml') {
           updateStatement += `
-          if(newValue === null || newValue === undefined || newValue === false){\n
+          if(newValue === null || newValue === undefined || (newValue as any) === false){\n
             this.${getElementPropertyName({ targetId })}.innerHTML = ''\n;
           }\n
           else{\n
@@ -275,7 +275,7 @@ function generateBlockRenderers(
         }
         else {
           updateStatement += `
-            if(newValue === null || newValue === undefined || newValue === false){\n
+            if(newValue === null || newValue === undefined || (newValue as any) === false){\n
               this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
             }\n
             else{\n
@@ -316,10 +316,10 @@ function generateBlockRenderers(
             rootElement: this.rootElement,
             childRendererClass: ${getRendererClassName({ className, suffix: `ForItem$${binding.bindingId}` })}
           });
-          this.childRenderers['${binding.bindingId}'].ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
-          this.childRenderers['${binding.bindingId}'].initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
+          (this.childRenderers['${binding.bindingId}'] as any).ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
+          (this.childRenderers['${binding.bindingId}'] as any).initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
         } else {
-          this.childRenderers['${binding.bindingId}'].refreshLoop({items:newValue});
+          (this.childRenderers['${binding.bindingId}'] as any).refreshLoop({items:newValue});
         }\n
         `;
         break;
@@ -393,7 +393,7 @@ function generateBlockRenderers(
     if (updateStatement) {
       const updaterName = `update$${binding.bindingId}`;
       updaterMethods += `
-  private async ${updaterName}(force = false): void {
+  private async ${updaterName}(force = false): Promise<void> {
     const acRuntimeInstance = this.rootElement.acRuntimeInstance;
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
     const newValue = ${expression};
@@ -620,7 +620,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       super();
       this.propertyToListenForChanges = ${JSON.stringify(changeListenerProperties)};
       this.acRuntimeInstance = this.makeReactive(new ${className}(${constructorArgs}));
-      this.elementRenderer = new ${getRendererClassName({ className, suffix: 'Root' })}({ targetId: 'root', rootElement: this, html: '', context: {} });
+      this.elementRenderer = new ${getRendererClassName({ className, suffix: 'Root' })}({ targetId: 'root', rootElement: this, context: {} });
       this.instanceInputs = ${JSON.stringify(options.templateResult.inputs)};
       this.instanceOutputs = ${JSON.stringify(options.templateResult.outputs)};
 

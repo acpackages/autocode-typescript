@@ -126,6 +126,9 @@
       "@autocode-ts/ac-runtime-dev": [
         "packages/runtime/ac-runtime-dev/src/index.ts"
       ],
+      "@autocode-ts/ac-runtime-cli": [
+        "packages/runtime/ac-runtime-cli/src/index.ts"
+      ],
       "@autocode-ts/ac-runtime-router": [
         "packages/runtime/ac-runtime-router/src/index.ts"
       ],

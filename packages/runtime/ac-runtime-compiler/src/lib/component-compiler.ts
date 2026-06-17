@@ -156,7 +156,16 @@ export class ComponentCompiler {
     const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent,AcElementRenderer,AcElementArrayRenderer } from '@autocode-ts/ac-runtime';`;
 
     const bodyCode = orderedStatements.map(s => s.text).join('\n\n');
-    const combinedCode = `${pipeImport}\n${acElementImport}\n${importsCode}\n\n${bodyCode}`;
+    let cleanedImportsCode = importsCode;
+    cleanedImportsCode = cleanedImportsCode.replace(/import\s+\{([^}]+)\}\s+from\s+['"]@autocode-ts\/ac-runtime['"]/g, (match, importsStr) => {
+      let parts = importsStr.split(',').map((p: string) => p.trim());
+      parts = parts.filter((p: string) => p !== 'AcRuntimeElement' && p !== 'AcRuntimeElementEvent' && p !== 'AcElementRenderer' && p !== 'AcElementArrayRenderer' && p !== '');
+      if (parts.length === 0) {
+        return '';
+      }
+      return `import { ${parts.join(', ')} } from '@autocode-ts/ac-runtime';`;
+    });
+    const combinedCode = `${pipeImport}\n${acElementImport}\n${cleanedImportsCode}\n\n${bodyCode}`;
 
     const componentOutputs = orderedStatements.filter(s => s.isComponent);
 
