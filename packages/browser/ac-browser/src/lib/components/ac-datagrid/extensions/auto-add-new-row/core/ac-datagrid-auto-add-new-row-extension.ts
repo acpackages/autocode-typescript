@@ -33,6 +33,7 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
 
   private addRow() {
     if (this.autoAddNewRow) {
+      // console.trace();
       this.delayedCallback.add({
         callback: () => {
           const lastRow = this.datagridApi.addRow({ data: { ...this.autoAddNewRowData }, rowId: '___auto_add_row___' });
@@ -55,12 +56,6 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
       else if (this.datagridApi && stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.CellValueChange)) {
         const datagridCell: IAcDatagridCell = args.datagridCell;
         const datagridRow: IAcDatagridRow = datagridCell.datagridRow;
-        if (datagridRow.index == this.datagridApi.dataManager.totalRows - 1) {
-          this.addRow();
-        }
-      }
-      else if (this.datagridApi && stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.RowUpdate)) {
-        const datagridRow: IAcDatagridRow = args.datagridRow;
         if (datagridRow.index == this.datagridApi.dataManager.totalRows - 1) {
           this.addRow();
         }

@@ -1145,20 +1145,29 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       });
     }
 
+    const refreshColumns:string[] = [];
     for (const key of keys) {
       if (!(key in newData)) {
         rowNode.setDataValue(key, undefined);
         delete currentData[key];
+        refreshColumns.push(key);
         if(renderedColumns.includes(key)){
           this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
         }
       } else if (!Object.is(currentData[key], newData[key])) {
         rowNode.setDataValue(key, newData[key]);
+        refreshColumns.push(key);
         if(renderedColumns.includes(key)){
           this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
         }
       }
     }
+
+    this.gridApi.refreshCells({
+      columns:refreshColumns,
+      force:true,
+      rowNodes:[rowNode]
+    })
   }
 }
 export const AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME = 'agGridOnAcDatagrid';

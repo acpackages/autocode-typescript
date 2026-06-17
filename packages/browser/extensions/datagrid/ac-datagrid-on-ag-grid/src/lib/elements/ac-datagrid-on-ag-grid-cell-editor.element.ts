@@ -42,8 +42,8 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
                 this.isValueChanged = false;
                 this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
                 this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridCell! });
-                // console.log("[AcDatagridOnAgGridCellEditor] Emit cell value change");
-                this.refresh(this.params);
+                // console.log("[AcDatagridOnAgGridCellEditor] Emit cell value change",previousValue,currentValue);
+                this.previousValue = currentValue;
               }
               else{
                 // console.log(`[AcDatagridOnAgGridCellEditor] Value is not changed or old or current value not same | Value Changed : ${this.isValueChanged}, New Value : ${currentValue} | Old Value : ${previousValue}`);
@@ -332,8 +332,8 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
       if (value != '' && value != undefined && value != null && this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Number) {
         value = Number(value);
       }
-      this.element.value = value;
     }
+    this.element.value = value;
     this.previousValue = value;
     return true;
   }
