@@ -222,10 +222,10 @@ function generateBlockRenderers(
     const hasPipe = binding.expression.replaceAll('||', '').includes('|');
     let expression = binding.expression;
     if (hasPipe) {
-      expression = `await this.evaluateExpression({expression:\`${expression}\`,context:{ctx:ctx}});`;
+      expression = `await this.evaluateExpression({expression:\`${expression}\`,context:{ctx:acRuntimeInstance}});`;
     }
     else {
-      expression = prefixFn(expression, localVars, topLevelVars).replaceAll('this.', 'ctx.');
+      expression = prefixFn(expression, localVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
     }
     const targetId = binding.targetId;
 
@@ -327,11 +327,11 @@ function generateBlockRenderers(
         // Compile event handler expression to direct code at build time
         const eventLocalVars = new Set(localVars);
         eventLocalVars.add('$event');
-        const eventExpr = prefixFn(binding.expression, eventLocalVars, topLevelVars).replaceAll('this.', 'ctx.');
+        const eventExpr = prefixFn(binding.expression, eventLocalVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
         eventRegistrationCode += `
         if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
       this.${getElementPropertyName({ targetId })}.addEventListener('${binding.target?.toLowerCase()}', (event: any) => {\n
-        const ctx = this.rootElement.acRuntimeInstance;\n
+        const acRuntimeInstance = this.rootElement.acRuntimeInstance;\n
         ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
         const $event = event instanceof AcRuntimeElementEvent ? event.args : event;\n
         ${eventExpr};\n
@@ -344,11 +344,11 @@ function generateBlockRenderers(
       }
       case 'model': {
         // Compile model write-back to direct assignment at build time
-        const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replaceAll('this.', 'ctx.');
+        const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
         updateStatement = `if (this.${getElementPropertyName({ targetId })}) (this.${getElementPropertyName({ targetId })} as any).value = newValue;\n`;
         eventRegistrationCode += `
     if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
-      const ctx = this.rootElement.acRuntimeInstance;\n
+      const acRuntimeInstance = this.rootElement.acRuntimeInstance;\n
       ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
       const el = this.${getElementPropertyName({ targetId })} as any;\n
       const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
@@ -394,7 +394,7 @@ function generateBlockRenderers(
       const updaterName = `update$${binding.bindingId}`;
       updaterMethods += `
   private async ${updaterName}(force = false): void {
-    const ctx = this.rootElement.acRuntimeInstance;
+    const acRuntimeInstance = this.rootElement.acRuntimeInstance;
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
     const newValue = ${expression};
     const oldValue = this.currentBindingValues['${binding.bindingId}'];
