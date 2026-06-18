@@ -8,7 +8,7 @@ import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir:
-    '../../../../../node_modules/.vite/packages/browser/extensions/report-engine/ac-number-to-words-pipe',
+    '../../../../node_modules/.vite/packages/common/pipes/ac-bwipjs-pipe',
   plugins: [
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -25,7 +25,7 @@ export default defineConfig(() => ({
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
     outDir:
-      '../../../../../dist/packages/browser/extensions/report-engine/ac-number-to-words-pipe',
+      '../../../../dist/packages/common/pipes/ac-bwipjs-pipe',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
@@ -33,26 +33,28 @@ export default defineConfig(() => ({
     },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/ac-number-to-words-pipe.ts',
-      name: 'acNumberToWordsPipe',
+      entry: 'src/ac-bwipjs-pipe.ts',
+      name: 'acBwipjsPipe',
       fileName: (format) => {
-        if (format === 'es') return 'ac-number-to-words-pipe.js';
-        if (format === 'cjs') return 'ac-number-to-words-pipe.cjs';
-        if (format === 'umd') return 'ac-number-to-words-pipe.umd.js';
-        return 'ac-number-to-words-pipe.js';
-      },
-      formats: ['es' as const, 'cjs' as const, 'umd' as const],
+          if (format === 'es') return 'ac-bwipjs-pipe.js';
+          if (format === 'cjs') return 'ac-bwipjs-pipe.cjs';
+          if (format === 'umd') return 'ac-bwipjs-pipe.umd.js';
+          return 'ac-bwipjs-pipe.js';
+        },
+        formats: ['es' as const, 'cjs' as const, 'umd' as const],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: [
-        "@autocode-ts/ac-report-engine"
+        "@autocode-ts/ac-pipes",
+        "bwip-js"
       ],
-      output: {
-        globals: {
-          "@autocode-ts/ac-report-engine": "acReportEngine"
+      output:{
+        globals:{
+          "@autocode-ts/ac-pipes":"acPipes",
+          "bwip-js":"bwipjs"
         }
-      },
+      }
     },
   },
 }));

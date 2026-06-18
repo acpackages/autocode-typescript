@@ -24,7 +24,7 @@
       "@autocode-ts/ac-bootstrap-builder-elements": ["dist/packages/browser/extensions/builder/ac-bootstrap-builder-elements"],
       "@autocode-ts/ac-browser": ["dist/packages/browser/ac-browser"],
       "@autocode-ts/ac-builder": ["dist/packages/browser/ac-builder"],
-      "@autocode-ts/ac-bwipjs-pipe": ["dist/packages/browser/extensions/report-engine/ac-bwipjs-pipe"],
+      "@autocode-ts/ac-bwipjs-pipe": ["dist/packages/common/pipes/ac-bwipjs-pipe"],
       "@autocode-ts/ac-data-bridge": ["dist/packages/common/ac-data-bridge"],
       "@autocode-ts/ac-data-bridge-ui": ["dist/packages/browser/ac-data-bridge-ui"],
       "@autocode-ts/ac-data-dictionary": ["dist/packages/common/ac-data-dictionary"],

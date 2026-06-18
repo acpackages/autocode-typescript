@@ -1,0 +1,22 @@
+{
+  "name": "browser-test",
+  "version": "1.0.0",
+  "type": "app",
+  "entryFile": "src/main.ts",
+  "buildDirectory": "dist/app",
+  "cacheDirectory": ".ac-runtime-cache",
+  "assets": [
+    {
+      "directory": "public/assets",
+      "url": "/assets"
+    }
+  ],
+  "staticResources": [
+    { "path": "node_modules/@autocode-ts/ac-bwipjs-pipe/ac-bwipjs-pipe.umd.js", "buildPath": "assets/third-party/ac-bwipjs-pipe/ac-bwipjs-pipe.umd.js" },
+    { "path": "node_modules/@autocode-ts/ac-extensions/ac-extensions.umd.js", "buildPath": "assets/third-party/ac-extensions/ac-extensions.umd.js" },
+    { "path": "node_modules/@autocode-ts/ac-pipes/ac-pipes.umd.js", "buildPath": "assets/third-party/ac-pipes/ac-pipes.umd.js" },
+    { "path": "node_modules/@autocode-ts/ac-report-engine/ac-report-engine.umd.js", "buildPath": "assets/third-party/ac-report-engine/ac-report-engine.umd.js" },
+    { "path": "node_modules/@autocode-ts/autocode/autocode.umd.js", "buildPath": "assets/third-party/autocode/autocode.umd.js" },
+    { "path": "node_modules/bwip-js/dist/bwip-js.js", "buildPath": "assets/third-party/bwip-js/bwip-js.js" }
+  ]
+}

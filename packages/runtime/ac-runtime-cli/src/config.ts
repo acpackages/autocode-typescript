@@ -14,6 +14,13 @@ export type AssetMapping = {
   url: string;
 };
 
+export type StaticResourceMapping = {
+  /** Source file or directory path relative to project root or node_modules. */
+  path: string;
+  /** Target build output path relative to build directory (e.g. assets/third-party/foo). */
+  buildPath: string;
+};
+
 export type AcRuntimeConfig = {
   /** Absolute path to the directory containing ac-runtime.json. */
   projectRoot: string;
@@ -33,6 +40,8 @@ export type AcRuntimeConfig = {
   cacheDirectory: string;
   /** Asset directory mappings. Default: []. */
   assets: AssetMapping[];
+  /** Static copy/serve resource mappings. Default: []. */
+  staticResources: StaticResourceMapping[];
 };
 
 /**
@@ -151,6 +160,23 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     }
   }
 
+  // --- Static resources validation ---
+  const staticResources: StaticResourceMapping[] = [];
+  if (raw.staticResources && Array.isArray(raw.staticResources)) {
+    for (let i = 0; i < raw.staticResources.length; i++) {
+      const entry = raw.staticResources[i];
+      if (!entry.path || typeof entry.path !== 'string') {
+        console.error(`ERROR: ac-runtime.json: staticResources[${i}].path is required`);
+        process.exit(1);
+      }
+      if (!entry.buildPath || typeof entry.buildPath !== 'string') {
+        console.error(`ERROR: ac-runtime.json: staticResources[${i}].buildPath is required`);
+        process.exit(1);
+      }
+      staticResources.push({ path: entry.path, buildPath: entry.buildPath });
+    }
+  }
+
   return {
     projectRoot,
     name: raw.name,
@@ -161,6 +187,7 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     buildDirectory,
     cacheDirectory,
     assets,
+    staticResources,
   };
 }
 

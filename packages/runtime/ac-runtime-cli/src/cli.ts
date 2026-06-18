@@ -18,6 +18,9 @@ function getFlag(name: string): boolean {
 }
 
 function getOption(name: string, defaultValue: string): string {
+    const prefix = `--${name}=`;
+    const arg = args.find(a => a.startsWith(prefix));
+    if (arg) return arg.substring(prefix.length);
     const idx = args.indexOf(`--${name}`);
     if (idx >= 0 && idx + 1 < args.length) return args[idx + 1];
     return defaultValue;

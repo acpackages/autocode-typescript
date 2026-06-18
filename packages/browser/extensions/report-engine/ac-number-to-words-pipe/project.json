@@ -1,9 +1,0 @@
-{
-  "name": "ac-number-to-words-pipe",
-  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/browser/extensions/report-engine/ac-number-to-words-pipe/src",
-  "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project ac-number-to-words-pipe --web",
-  "targets": {}
-}

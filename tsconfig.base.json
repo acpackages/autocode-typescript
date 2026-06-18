@@ -34,7 +34,7 @@
         "packages/browser/ac-builder/src/index.ts"
       ],
       "@autocode-ts/ac-bwipjs-pipe": [
-        "packages/browser/extensions/report-engine/ac-bwipjs-pipe/src/ac-bwipjs-pipe.ts"
+        "packages/common/pipes/ac-bwipjs-pipe/src/ac-bwipjs-pipe.ts"
       ],
       "@autocode-ts/ac-data-bridge": [
         "packages/common/ac-data-bridge/src/ac-data-bridge.ts"
@@ -130,7 +130,7 @@
         "packages/runtime/ac-runtime-cli/src/index.ts"
       ],
       "@autocode-ts/ac-runtime-router": [
-        "packages/runtime/ac-runtime-router/src/index.ts"
+        "packages/runtime/ac-runtime-router/src/ac-runtime-router.ts"
       ],
       "@autocode-ts/ac-sql": [
         "packages/common/ac-sql/src/ac-sql.ts"

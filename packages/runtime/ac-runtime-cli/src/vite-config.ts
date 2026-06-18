@@ -80,10 +80,12 @@ export function createViteConfig(
         plugins.push(assetServingPlugin(projectRoot, assetMiddleware, mode, outDir));
     }
 
-    // --- Static copy for UMD third-party bundles ---
-    // Check if vite-plugin-static-copy is available for build mode
+    // --- Static copy / serve for configured resources ---
+    if (mode === 'serve') {
+        plugins.push(staticResourcesServingPlugin(config));
+    }
     if (mode === 'build') {
-        const staticCopyTargets = getStaticCopyTargets(projectRoot);
+        const staticCopyTargets = getStaticCopyTargets(config);
         if (staticCopyTargets.length > 0) {
             plugins.push(staticCopyPlugin(staticCopyTargets));
         }
@@ -195,19 +197,11 @@ export function createViteConfig(
     return viteConfig;
 }
 
-// --- Helpers ---
-
-/**
- * Read tsconfig.json compilerOptions.paths and convert to Vite resolve.alias.
- * Single source of truth — no more hardcoded aliases.
- */
-function readTsconfigAliases(projectRoot: string): Record<string, string> {
-    const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
+function readTsconfigPaths(tsconfigPath: string): Record<string, string> {
     if (!fs.existsSync(tsconfigPath)) return {};
 
     let tsconfig: any;
     try {
-        // Strip comments from tsconfig (JSON with comments)
         const raw = fs.readFileSync(tsconfigPath, 'utf8');
         const stripped = raw.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
         tsconfig = JSON.parse(stripped);
@@ -215,17 +209,34 @@ function readTsconfigAliases(projectRoot: string): Record<string, string> {
         return {};
     }
 
-    const paths = tsconfig?.compilerOptions?.paths;
-    if (!paths) return {};
-
     const aliases: Record<string, string> = {};
-    for (const [key, values] of Object.entries(paths)) {
-        if (!Array.isArray(values) || values.length === 0) continue;
-        const cleanKey = key.replace(/\/\*$/, '');
-        const target = (values[0] as string).replace(/\/\*$/, '');
-        aliases[cleanKey] = path.resolve(projectRoot, target);
+    const tsconfigDir = path.dirname(tsconfigPath);
+
+    if (tsconfig.extends) {
+        const parentPath = path.resolve(tsconfigDir, tsconfig.extends);
+        Object.assign(aliases, readTsconfigPaths(parentPath));
     }
+
+    const paths = tsconfig?.compilerOptions?.paths;
+    if (paths) {
+        for (const [key, values] of Object.entries(paths)) {
+            if (!Array.isArray(values) || values.length === 0) continue;
+            const cleanKey = key.replace(/\/\*$/, '');
+            const target = (values[0] as string).replace(/\/\*$/, '');
+            aliases[cleanKey] = path.resolve(tsconfigDir, target);
+        }
+    }
+
     return aliases;
+}
+
+/**
+ * Read tsconfig.json compilerOptions.paths and convert to Vite resolve.alias.
+ * Single source of truth — no more hardcoded aliases.
+ */
+function readTsconfigAliases(projectRoot: string): Record<string, string> {
+    const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
+    return readTsconfigPaths(tsconfigPath);
 }
 
 /**
@@ -317,38 +328,115 @@ function staticCopyPlugin(targets: { src: string; dest: string }[]): Plugin {
             const outDir = options.dir || 'dist';
             for (const target of targets) {
                 if (fs.existsSync(target.src)) {
-                    const destPath = path.join(outDir, target.dest, path.basename(target.src));
-                    fs.mkdirSync(path.dirname(destPath), { recursive: true });
-                    fs.copyFileSync(target.src, destPath);
+                    const stat = fs.statSync(target.src);
+                    if (stat.isDirectory()) {
+                        const destDir = path.join(outDir, target.dest);
+                        copyDirRecursive(target.src, destDir);
+                    } else {
+                        let destPath = path.join(outDir, target.dest);
+                        if (target.dest.endsWith('/') || target.dest.endsWith('\\') || (fs.existsSync(destPath) && fs.statSync(destPath).isDirectory())) {
+                            destPath = path.join(destPath, path.basename(target.src));
+                        }
+                        fs.mkdirSync(path.dirname(destPath), { recursive: true });
+                        fs.copyFileSync(target.src, destPath);
+                    }
                 }
             }
         },
     };
 }
 
-/**
- * Detect UMD third-party bundles that need to be copied to build output.
- * Reads from a known pattern in the project's node_modules.
- */
-function getStaticCopyTargets(projectRoot: string): { src: string; dest: string }[] {
-    const targets: { src: string; dest: string }[] = [];
-    const umdPatterns = [
-        { pkg: '@autocode-ts/ac-bwipjs-pipe', file: 'ac-bwipjs-pipe.umd.js', dest: 'assets/third-party/ac-bwipjs-pipe' },
-        { pkg: '@autocode-ts/ac-extensions', file: 'ac-extensions.umd.js', dest: 'assets/third-party/ac-extensions' },
-        { pkg: '@autocode-ts/ac-pipes', file: 'ac-pipes.umd.js', dest: 'assets/third-party/ac-pipes' },
-        { pkg: '@autocode-ts/ac-report-engine', file: 'ac-report-engine.umd.js', dest: 'assets/third-party/ac-report-engine' },
-        { pkg: '@autocode-ts/autocode', file: 'autocode.umd.js', dest: 'assets/third-party/autocode' },
-        { pkg: 'bwip-js', file: 'dist/bwip-js.js', dest: 'assets/third-party/bwip-js' },
-    ];
-
-    for (const pattern of umdPatterns) {
-        const src = path.join(projectRoot, 'node_modules', pattern.pkg, pattern.file);
-        if (fs.existsSync(src)) {
-            targets.push({ src, dest: pattern.dest });
+/** Resolve node_modules path robustly, walking up to support monorepo roots. */
+function resolveResourcePath(projectRoot: string, filePath: string): string {
+    if (filePath.startsWith('node_modules/') || filePath.startsWith('node_modules\\')) {
+        const relativePart = filePath.substring(13); // strip 'node_modules/'
+        let dir = projectRoot;
+        while (true) {
+            const candidate = path.join(dir, 'node_modules', relativePart);
+            if (fs.existsSync(candidate)) return candidate;
+            const parent = path.dirname(dir);
+            if (parent === dir) break;
+            dir = parent;
         }
     }
+    return path.resolve(projectRoot, filePath);
+}
 
+/** Get static copy targets from the configuration staticResources. */
+function getStaticCopyTargets(config: AcRuntimeConfig): { src: string; dest: string }[] {
+    const targets: { src: string; dest: string }[] = [];
+    if (!config.staticResources) return targets;
+    
+    for (const resource of config.staticResources) {
+        const resolvedSrc = resolveResourcePath(config.projectRoot, resource.path);
+        if (fs.existsSync(resolvedSrc)) {
+            targets.push({ src: resolvedSrc, dest: resource.buildPath });
+        } else {
+            console.warn(`[acr] Warning: staticResource path does not exist: ${resource.path} (resolved: ${resolvedSrc})`);
+        }
+    }
     return targets;
+}
+
+/** Lightweight Vite plugin that serves staticResources during dev/serve mode. */
+function staticResourcesServingPlugin(config: AcRuntimeConfig): Plugin {
+    return {
+        name: 'ac-static-resources-serving',
+        configureServer(server) {
+            server.middlewares.use((req, res, next) => {
+                if (!req.url) return next();
+                
+                const cleanUrl = req.url.split('?')[0];
+                
+                for (const resource of config.staticResources || []) {
+                    const urlPrefix = resource.buildPath.startsWith('/') ? resource.buildPath : '/' + resource.buildPath;
+                    const resolvedSrc = resolveResourcePath(config.projectRoot, resource.path);
+                    if (!fs.existsSync(resolvedSrc)) continue;
+                    
+                    const stat = fs.statSync(resolvedSrc);
+                    if (stat.isDirectory()) {
+                        const prefixWithSlash = urlPrefix.endsWith('/') ? urlPrefix : urlPrefix + '/';
+                        if (cleanUrl.startsWith(prefixWithSlash)) {
+                            const relativeFilePath = cleanUrl.slice(prefixWithSlash.length);
+                            const fullFilePath = path.join(resolvedSrc, relativeFilePath);
+                            if (fs.existsSync(fullFilePath) && fs.statSync(fullFilePath).isFile()) {
+                                serveFile(res, fullFilePath);
+                                return;
+                            }
+                        }
+                    } else {
+                        if (cleanUrl === urlPrefix) {
+                            serveFile(res, resolvedSrc);
+                            return;
+                        }
+                    }
+                }
+                next();
+            });
+        }
+    };
+}
+
+function serveFile(res: any, filePath: string) {
+    const ext = path.extname(filePath).toLowerCase();
+    const mimeMap: Record<string, string> = {
+        '.svg': 'image/svg+xml',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.js': 'application/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.html': 'text/html',
+        '.txt': 'text/plain',
+    };
+    const contentType = mimeMap[ext] || 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'no-cache');
+    const stream = fs.createReadStream(filePath);
+    stream.pipe(res);
 }
 
 /** Recursively copy a directory. */

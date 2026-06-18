@@ -67,59 +67,6 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
         return absolutePath;
     };
 
-    /**
-     * Import resolver for the ComponentCompiler.
-     * Rewrites relative imports to point to cache directory.
-     */
-    const resolveImport = (originalPath: string, importerPath: string): string => {
-        let absolutePath = '';
-
-        // Extract query parameters (e.g. ?worker, ?raw) to resolve the physical file
-        const queryIdx = originalPath.indexOf('?');
-        const query = queryIdx !== -1 ? originalPath.slice(queryIdx) : '';
-        const cleanOriginalPath = queryIdx !== -1 ? originalPath.slice(0, queryIdx) : originalPath;
-
-        if (cleanOriginalPath.startsWith('.')) {
-            absolutePath = path.resolve(path.dirname(importerPath), cleanOriginalPath);
-        } else if (cleanOriginalPath.startsWith('src/')) {
-            absolutePath = path.resolve(projectRoot, cleanOriginalPath);
-        }
-
-        if (!absolutePath) return originalPath;
-
-        const resolvedPath = resolveTypescriptFile(absolutePath);
-        const normalizedResolved = normalizePath(resolvedPath);
-
-        const isInternal = normalizedResolved.startsWith(normalizedRoot);
-        const isPackage = normalizedResolved.includes('/packages/');
-
-        if (normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
-            const targetCachePath = getCachePath(resolvedPath);
-            const importerCachePath = getCachePath(importerPath);
-            let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
-            if (!relativePath.startsWith('.')) {
-                relativePath = './' + relativePath;
-            }
-            return relativePath + query;
-        }
-
-        // Copy non-TS assets/files referenced by components to the cache directory so they can be resolved
-        if (!normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
-            const targetCachePath = getCachePath(resolvedPath);
-            fs.mkdirSync(path.dirname(targetCachePath), { recursive: true });
-            fs.copyFileSync(resolvedPath, targetCachePath);
-            
-            const importerCachePath = getCachePath(importerPath);
-            let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
-            if (!relativePath.startsWith('.')) {
-                relativePath = './' + relativePath;
-            }
-            return relativePath + query;
-        }
-
-        return originalPath;
-    };
-
     // --- Core transform ---
 
     /**
@@ -135,6 +82,76 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
             return code;
         }
         if (!id.endsWith('.ts') || id.includes('node_modules')) return null;
+
+        /**
+         * Import resolver for the ComponentCompiler.
+         * Rewrites relative imports to point to cache directory (if writeToCache is true)
+         * or points to original source locations (if writeToCache is false).
+         */
+        const resolveImport = (originalPath: string, importerPath: string): string => {
+            let absolutePath = '';
+
+            // Extract query parameters (e.g. ?worker, ?raw) to resolve the physical file
+            const queryIdx = originalPath.indexOf('?');
+            const query = queryIdx !== -1 ? originalPath.slice(queryIdx) : '';
+            const cleanOriginalPath = queryIdx !== -1 ? originalPath.slice(0, queryIdx) : originalPath;
+
+            if (cleanOriginalPath.startsWith('.')) {
+                absolutePath = path.resolve(path.dirname(importerPath), cleanOriginalPath);
+            } else if (cleanOriginalPath.startsWith('src/')) {
+                absolutePath = path.resolve(projectRoot, cleanOriginalPath);
+            }
+
+            if (!absolutePath) return originalPath;
+
+            const resolvedPath = resolveTypescriptFile(absolutePath);
+            const normalizedResolved = normalizePath(resolvedPath);
+
+            const isInternal = normalizedResolved.startsWith(normalizedRoot);
+            const isPackage = normalizedResolved.includes('/packages/');
+
+            if (normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
+                if (writeToCache) {
+                    const targetCachePath = getCachePath(resolvedPath);
+                    const importerCachePath = getCachePath(importerPath);
+                    let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
+                    if (!relativePath.startsWith('.')) {
+                        relativePath = './' + relativePath;
+                    }
+                    return relativePath + query;
+                } else {
+                    let relativePath = path.relative(path.dirname(importerPath), resolvedPath).replace(/\\/g, '/');
+                    if (!relativePath.startsWith('.')) {
+                        relativePath = './' + relativePath;
+                    }
+                    return relativePath + query;
+                }
+            }
+
+            // Copy non-TS assets/files referenced by components to the cache directory so they can be resolved
+            if (!normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
+                if (writeToCache) {
+                    const targetCachePath = getCachePath(resolvedPath);
+                    fs.mkdirSync(path.dirname(targetCachePath), { recursive: true });
+                    fs.copyFileSync(resolvedPath, targetCachePath);
+                    
+                    const importerCachePath = getCachePath(importerPath);
+                    let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
+                    if (!relativePath.startsWith('.')) {
+                        relativePath = './' + relativePath;
+                    }
+                    return relativePath + query;
+                } else {
+                    let relativePath = path.relative(path.dirname(importerPath), resolvedPath).replace(/\\/g, '/');
+                    if (!relativePath.startsWith('.')) {
+                        relativePath = './' + relativePath;
+                    }
+                    return relativePath + query;
+                }
+            }
+
+            return originalPath;
+        };
 
         try {
             const cachePath = getCachePath(id);
@@ -158,14 +175,18 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
 
             let compiledCode = results[0].code;
 
-            // Rewrite CSS/SCSS imports to root-relative so Vite can resolve them
+            // Rewrite CSS/SCSS imports to be relative to the file's final location so Vite can resolve them
             const sourceDir = path.dirname(id);
             compiledCode = compiledCode.replace(
                 /import\s+['"](\.[^'"]*?\.(css|scss))['"];?/g,
                 (_match, importPath: string) => {
                     const absoluteCssPath = path.resolve(sourceDir, importPath);
-                    const rootRelative = '/' + path.relative(projectRoot, absoluteCssPath).replace(/\\/g, '/');
-                    return `import '${rootRelative}'`;
+                    const baseDir = writeToCache ? path.dirname(cachePath) : path.dirname(id);
+                    let relativeToDest = path.relative(baseDir, absoluteCssPath).replace(/\\/g, '/');
+                    if (!relativeToDest.startsWith('.')) {
+                        relativeToDest = './' + relativeToDest;
+                    }
+                    return `import '${relativeToDest}'`;
                 },
             );
 

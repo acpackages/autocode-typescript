@@ -1,11 +1,22 @@
 {
   "name": "@autocode-ts/ac-runtime-router",
   "version": "0.0.1",
+  "description": "Router for ac-runtime.",
+  "private": true,
   "type": "module",
+  "main": "./ac-runtime-router.js",
+  "module": "./ac-runtime-router.js",
+  "types": "./ac-runtime-router.d.ts",
+  "keywords": [
+    "autocode"
+  ],
   "exports": {
-    ".": "./src/index.js"
+    ".":{
+      "import": "./ac-runtime-router.js",
+      "require": "./ac-runtime-router.cjs"
+    }
   },
-  "dependencies": {
-    "@ac-runtime/core": "workspace:*"
-  }
+  "files": [
+    "lib"
+  ]
 }

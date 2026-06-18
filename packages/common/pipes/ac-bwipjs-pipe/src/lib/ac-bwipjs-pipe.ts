@@ -29,7 +29,6 @@ const bwipjsPipe: IAcPipe = {
       [key: string]: any;
     }> = {}
   ): Promise<string> => {
-    console.log("BwipoJS Pipe",value);
     const text = value == null || value === '' ? '' : String(value).trim();
     if (!text) {
       return PLACEHOLDER_SVG;
@@ -51,8 +50,8 @@ const bwipjsPipe: IAcPipe = {
     } catch (err) {
       console.error(`QR code generation failed for "${text}"`, err);
       return `
-        <svg width="150" height="80" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg">
-          <rect width="150" height="80" fill="#ffeeee"/>
+        <svg width="${bwipOptions.width}" height="${bwipOptions.height}" viewBox="0 0 150 ${bwipOptions.height}" xmlns="http://www.w3.org/2000/svg">
+          <rect width="${bwipOptions.width}" height="${bwipOptions.height}" fill="#ffeeee"/>
           <text x="75" y="40" font-family="sans-serif" font-size="12" fill="#990000" text-anchor="middle" dominant-baseline="middle">
             Error
           </text>

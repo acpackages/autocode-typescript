@@ -6,6 +6,13 @@
   "tags": [],
   "targets": {
     "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx ../../packages/runtime/ac-runtime-cli/src/cli.ts serve --open --port 3000",
+        "cwd": "tests/browser"
+      }
+    },
+    "serve-t": {
       "executor": "@nx/vite:dev-server",
       "options": {
         "buildTarget": "test-browser:build"
@@ -28,7 +35,8 @@
     "dev-server": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx tsx packages/runtime/ac-runtime-dev/src/cli.ts tests/browser/src"
+        "command": "npx tsx ../../packages/runtime/ac-runtime-cli/src/cli.ts serve --open --port 3000",
+        "cwd": "tests/browser"
       }
     }
   }
