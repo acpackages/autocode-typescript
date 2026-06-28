@@ -1,6 +1,69 @@
-import { parsePipeChain } from './ac-pipe-evaluator';
+import { evaluateAcPipeExpression, parsePipeChain } from './ac-pipe-evaluator';
+import { acPipeRegistry } from './ac-pipe';
 
 describe('ac-pipe-evaluator', () => {
+  beforeAll(() => {
+    acPipeRegistry.register({
+      name: 'greet',
+      transform: (value: any, greeting: string, options?: any) => {
+        const prefix = greeting || 'Hello';
+        const suffix = options?.suffix || '';
+        return `${prefix} ${value}${suffix}`;
+      }
+    });
+  });
+
+  describe('evaluateAcPipeExpression', () => {
+    const context = {
+      user: { name: 'Alice' },
+      myGreeting: 'Hi',
+      myOptions: { suffix: '!' },
+      mySuffix: '!!!'
+    };
+
+    const evaluateFunction = ({ expression, context }: { expression: string; context: any }) => {
+      return new Function(...Object.keys(context), `return (${expression});`)(
+        ...Object.values(context)
+      );
+    };
+
+    it('should evaluate pipe with literal arguments', async () => {
+      const result = await evaluateAcPipeExpression({
+        expression: "user.name | greet:'Hello',{suffix: '?'}",
+        context,
+        evaluateFunction
+      });
+      expect(result).toBe('Hello Alice?');
+    });
+
+    it('should evaluate pipe with variable reference argument', async () => {
+      const result = await evaluateAcPipeExpression({
+        expression: "user.name | greet:myGreeting",
+        context,
+        evaluateFunction
+      });
+      expect(result).toBe('Hi Alice');
+    });
+
+    it('should evaluate pipe with variable reference nested inside object literal', async () => {
+      const result = await evaluateAcPipeExpression({
+        expression: "user.name | greet:myGreeting,{suffix: mySuffix}",
+        context,
+        evaluateFunction
+      });
+      expect(result).toBe('Hi Alice!!!');
+    });
+
+    it('should evaluate pipe with whole object variable reference', async () => {
+      const result = await evaluateAcPipeExpression({
+        expression: "user.name | greet:myGreeting,myOptions",
+        context,
+        evaluateFunction
+      });
+      expect(result).toBe('Hi Alice!');
+    });
+  });
+
   describe('parsePipeChain', () => {
     it('should split pipes normally', () => {
       const result = parsePipeChain('data | uppercase');

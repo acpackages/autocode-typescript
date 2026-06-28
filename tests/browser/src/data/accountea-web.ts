@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Web",
-  "version": 1,
+  "version": 3,
   "tables": {
     "accountees": {
       "tableName": "accountees",
@@ -508,6 +508,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Is Linux Supported"
             }
           }
+        },
+        "extension_tags": {
+          "columnName": "extension_tags",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tags"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -522,6 +532,165 @@ export const dataDictionaryJson = {
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
           "propertyValue": "vw_extensions"
+        }
+      }
+    },
+    "label_formats": {
+      "tableName": "label_formats",
+      "tableColumns": {
+        "label_format_id": {
+          "columnName": "label_format_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Label Format Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "label_format_identifier": {
+          "columnName": "label_format_identifier",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Label Format Identifier"
+            },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
+              "propertyValue": true
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "label_format_name": {
+          "columnName": "label_format_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Label Format Name"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Version"
+            }
+          }
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Version Number"
+            }
+          }
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Updated On"
+            }
+          }
+        },
+        "label_format_json": {
+          "columnName": "label_format_json",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Label Format Json"
+            }
+          }
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Developer"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "label_format_type": {
+          "columnName": "label_format_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Label Format Type"
+            }
+          }
+        },
+        "full_description": {
+          "columnName": "full_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Full Description"
+            }
+          }
+        },
+        "quick_description": {
+          "columnName": "quick_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quick Description"
+            }
+          }
+        },
+        "label_format_tags": {
+          "columnName": "label_format_tags",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tags"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "label_formats"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "label_format"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_label_formats"
         }
       }
     },
@@ -754,13 +923,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "print_format_name": {
-          "columnName": "print_format_name",
+        "print_format_identifier": {
+          "columnName": "print_format_identifier",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Print Format Name"
+              "propertyValue": "Print Format Identifier"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -772,13 +941,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "print_format_label": {
-          "columnName": "print_format_label",
+        "print_format_name": {
+          "columnName": "print_format_name",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Print Format Label"
+              "propertyValue": "Print Format Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -818,7 +987,7 @@ export const dataDictionaryJson = {
         },
         "print_format_json": {
           "columnName": "print_format_json",
-          "columnType": "STRING",
+          "columnType": "JSON",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
@@ -847,6 +1016,36 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "PrintFormat Type"
+            }
+          }
+        },
+        "full_description": {
+          "columnName": "full_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Full Description"
+            }
+          }
+        },
+        "quick_description": {
+          "columnName": "quick_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quick Description"
+            }
+          }
+        },
+        "print_format_tags": {
+          "columnName": "print_format_tags",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tags"
             }
           }
         }
@@ -1279,6 +1478,44 @@ export const dataDictionaryJson = {
     }
   },
   "views": {
+    "vw_accountees": {
+      "viewName": "vw_accountees",
+      "viewColumns": {
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_id"
+        },
+        "accountee_name": {
+          "columnName": "accountee_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_name"
+        },
+        "accountee_profile_image_media_id": {
+          "columnName": "accountee_profile_image_media_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_profile_image_media_id"
+        },
+        "accountee_type": {
+          "columnName": "accountee_type",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "accountees",
+          "columnSourceOriginalColumn": "accountee_type"
+        }
+      },
+      "viewQuery": "SELECT * FROM accountees"
+    },
     "vw_developers": {
       "viewName": "vw_developers",
       "viewColumns": {
@@ -1339,6 +1576,7 @@ export const dataDictionaryJson = {
         "extension_id": {
           "columnName": "extension_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_id"
@@ -1346,6 +1584,7 @@ export const dataDictionaryJson = {
         "extension_name": {
           "columnName": "extension_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_name"
@@ -1353,6 +1592,7 @@ export const dataDictionaryJson = {
         "extension_identifier": {
           "columnName": "extension_identifier",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_identifier"
@@ -1360,6 +1600,7 @@ export const dataDictionaryJson = {
         "extension_type": {
           "columnName": "extension_type",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_type"
@@ -1367,6 +1608,7 @@ export const dataDictionaryJson = {
         "developer_id": {
           "columnName": "developer_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "developer_id"
@@ -1374,6 +1616,7 @@ export const dataDictionaryJson = {
         "current_version_number": {
           "columnName": "current_version_number",
           "columnType": "INTEGER",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "current_version_number"
@@ -1381,6 +1624,7 @@ export const dataDictionaryJson = {
         "current_version_label": {
           "columnName": "current_version_label",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "current_version_label"
@@ -1388,6 +1632,7 @@ export const dataDictionaryJson = {
         "extension_archive_url": {
           "columnName": "extension_archive_url",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_archive_url"
@@ -1395,6 +1640,7 @@ export const dataDictionaryJson = {
         "last_updated_on": {
           "columnName": "last_updated_on",
           "columnType": "DATETIME",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "last_updated_on"
@@ -1402,6 +1648,7 @@ export const dataDictionaryJson = {
         "extension_image_media_id": {
           "columnName": "extension_image_media_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "extension_image_media_id"
@@ -1409,6 +1656,7 @@ export const dataDictionaryJson = {
         "quick_description": {
           "columnName": "quick_description",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "quick_description"
@@ -1416,6 +1664,7 @@ export const dataDictionaryJson = {
         "full_description": {
           "columnName": "full_description",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "full_description"
@@ -1423,6 +1672,7 @@ export const dataDictionaryJson = {
         "is_android_supported": {
           "columnName": "is_android_supported",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_android_supported"
@@ -1430,6 +1680,7 @@ export const dataDictionaryJson = {
         "is_ios_supported": {
           "columnName": "is_ios_supported",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_ios_supported"
@@ -1437,6 +1688,7 @@ export const dataDictionaryJson = {
         "is_windows_supported": {
           "columnName": "is_windows_supported",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_windows_supported"
@@ -1444,6 +1696,7 @@ export const dataDictionaryJson = {
         "is_macos_supported": {
           "columnName": "is_macos_supported",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_macos_supported"
@@ -1451,6 +1704,7 @@ export const dataDictionaryJson = {
         "is_linux_supported": {
           "columnName": "is_linux_supported",
           "columnType": "YES_NO",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_linux_supported"
@@ -1458,6 +1712,7 @@ export const dataDictionaryJson = {
         "developer_name": {
           "columnName": "developer_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_name"
@@ -1465,6 +1720,7 @@ export const dataDictionaryJson = {
         "developer_profile_image_media_path": {
           "columnName": "developer_profile_image_media_path",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_profile_image_media_path"
@@ -1472,75 +1728,109 @@ export const dataDictionaryJson = {
       },
       "viewQuery": "SELECT extensions.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM extensions \nLEFT JOIN vw_developers ON extensions.developer_id = vw_developers.developer_id"
     },
-    "vw_print_formats": {
-      "viewName": "vw_print_formats",
+    "vw_label_formats": {
+      "viewName": "vw_label_formats",
       "viewColumns": {
-        "print_format_id": {
-          "columnName": "print_format_id",
+        "label_format_id": {
+          "columnName": "label_format_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
-          "columnSourceOriginalColumn": "print_format_id"
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_id"
         },
-        "print_format_name": {
-          "columnName": "print_format_name",
+        "label_format_identifier": {
+          "columnName": "label_format_identifier",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
-          "columnSourceOriginalColumn": "print_format_name"
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_identifier"
         },
-        "print_format_label": {
-          "columnName": "print_format_label",
+        "label_format_name": {
+          "columnName": "label_format_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
-          "columnSourceOriginalColumn": "print_format_label"
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_name"
         },
         "current_version_label": {
           "columnName": "current_version_label",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
+          "columnSourceName": "label_formats",
           "columnSourceOriginalColumn": "current_version_label"
         },
         "current_version_number": {
           "columnName": "current_version_number",
           "columnType": "INTEGER",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
+          "columnSourceName": "label_formats",
           "columnSourceOriginalColumn": "current_version_number"
         },
         "last_updated_on": {
           "columnName": "last_updated_on",
           "columnType": "DATETIME",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
+          "columnSourceName": "label_formats",
           "columnSourceOriginalColumn": "last_updated_on"
         },
-        "print_format_json": {
-          "columnName": "print_format_json",
-          "columnType": "STRING",
+        "label_format_json": {
+          "columnName": "label_format_json",
+          "columnType": "JSON",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
-          "columnSourceOriginalColumn": "print_format_json"
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_json"
         },
         "developer_id": {
           "columnName": "developer_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
+          "columnSourceName": "label_formats",
           "columnSourceOriginalColumn": "developer_id"
         },
-        "print_format_type": {
-          "columnName": "print_format_type",
+        "label_format_type": {
+          "columnName": "label_format_type",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
-          "columnSourceName": "print_formats",
-          "columnSourceOriginalColumn": "print_format_type"
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_type"
+        },
+        "full_description": {
+          "columnName": "full_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "full_description"
+        },
+        "quick_description": {
+          "columnName": "quick_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "quick_description"
+        },
+        "label_format_tags": {
+          "columnName": "label_format_tags",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "label_format_tags"
         },
         "developer_name": {
           "columnName": "developer_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_name"
@@ -1548,6 +1838,125 @@ export const dataDictionaryJson = {
         "developer_profile_image_media_path": {
           "columnName": "developer_profile_image_media_path",
           "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_profile_image_media_path"
+        }
+      },
+      "viewQuery": "SELECT label_formats.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM label_formats \nLEFT JOIN vw_developers ON label_formats.developer_id = vw_developers.developer_id"
+    },
+    "vw_print_formats": {
+      "viewName": "vw_print_formats",
+      "viewColumns": {
+        "print_format_id": {
+          "columnName": "print_format_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_id"
+        },
+        "print_format_identifier": {
+          "columnName": "print_format_identifier",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_identifier"
+        },
+        "print_format_name": {
+          "columnName": "print_format_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_name"
+        },
+        "current_version_label": {
+          "columnName": "current_version_label",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "current_version_label"
+        },
+        "current_version_number": {
+          "columnName": "current_version_number",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "current_version_number"
+        },
+        "last_updated_on": {
+          "columnName": "last_updated_on",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "last_updated_on"
+        },
+        "print_format_json": {
+          "columnName": "print_format_json",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_json"
+        },
+        "developer_id": {
+          "columnName": "developer_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "developer_id"
+        },
+        "print_format_type": {
+          "columnName": "print_format_type",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_type"
+        },
+        "full_description": {
+          "columnName": "full_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "full_description"
+        },
+        "quick_description": {
+          "columnName": "quick_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "quick_description"
+        },
+        "print_format_tags": {
+          "columnName": "print_format_tags",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "print_format_tags"
+        },
+        "developer_name": {
+          "columnName": "developer_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "vw_developers",
+          "columnSourceOriginalColumn": "developer_name"
+        },
+        "developer_profile_image_media_path": {
+          "columnName": "developer_profile_image_media_path",
+          "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_profile_image_media_path"
@@ -1561,6 +1970,7 @@ export const dataDictionaryJson = {
         "report_id": {
           "columnName": "report_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "report_id"
@@ -1568,6 +1978,7 @@ export const dataDictionaryJson = {
         "report_name": {
           "columnName": "report_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "report_name"
@@ -1575,6 +1986,7 @@ export const dataDictionaryJson = {
         "report_label": {
           "columnName": "report_label",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "report_label"
@@ -1582,6 +1994,7 @@ export const dataDictionaryJson = {
         "report_script": {
           "columnName": "report_script",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "report_script"
@@ -1589,6 +2002,7 @@ export const dataDictionaryJson = {
         "last_updated_on": {
           "columnName": "last_updated_on",
           "columnType": "DATETIME",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "last_updated_on"
@@ -1596,6 +2010,7 @@ export const dataDictionaryJson = {
         "current_version_number": {
           "columnName": "current_version_number",
           "columnType": "INTEGER",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "current_version_number"
@@ -1603,6 +2018,7 @@ export const dataDictionaryJson = {
         "current_version_label": {
           "columnName": "current_version_label",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "current_version_label"
@@ -1610,6 +2026,7 @@ export const dataDictionaryJson = {
         "developer_id": {
           "columnName": "developer_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "developer_id"
@@ -1617,6 +2034,7 @@ export const dataDictionaryJson = {
         "developer_name": {
           "columnName": "developer_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_name"
@@ -1624,50 +2042,13 @@ export const dataDictionaryJson = {
         "developer_profile_image_media_path": {
           "columnName": "developer_profile_image_media_path",
           "columnType": "TEXT",
+          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "vw_developers",
           "columnSourceOriginalColumn": "developer_profile_image_media_path"
         }
       },
       "viewQuery": "SELECT reports.*,vw_developers.developer_name,vw_developers.developer_profile_image_media_path FROM reports \nLEFT JOIN vw_developers ON reports.developer_id = vw_developers.developer_id"
-    },
-    "vw_accountees": {
-      "viewName": "vw_accountees",
-      "viewColumns": {
-        "accountee_id": {
-          "columnName": "accountee_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "accountees",
-          "columnSourceOriginalColumn": "accountee_id"
-        },
-        "accountee_name": {
-          "columnName": "accountee_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "accountees",
-          "columnSourceOriginalColumn": "accountee_name"
-        },
-        "accountee_profile_image_media_id": {
-          "columnName": "accountee_profile_image_media_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "accountees",
-          "columnSourceOriginalColumn": "accountee_profile_image_media_id"
-        },
-        "accountee_type": {
-          "columnName": "accountee_type",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "accountees",
-          "columnSourceOriginalColumn": "accountee_type"
-        }
-      },
-      "viewQuery": "SELECT * FROM accountees"
     }
   },
   "relationships": [
@@ -1765,6 +2146,12 @@ export const dataDictionaryJson = {
     {
       "destinationColumn": "developer_id",
       "destinationTable": "reports",
+      "sourceColumn": "developer_id",
+      "sourceTable": "developers"
+    },
+    {
+      "destinationColumn": "developer_id",
+      "destinationTable": "label_formats",
       "sourceColumn": "developer_id",
       "sourceTable": "developers"
     }

@@ -116,6 +116,7 @@ export interface AcGenerateCustomElementOptions {
   constructorParams: ConstructorParam[];
   prefixFn: PrefixFn;
   classSourceCode: string;
+  formAssociated?: boolean;
 }
 
 function generateBlockRenderers(
@@ -270,7 +271,7 @@ function generateBlockRenderers(
             this.${getElementPropertyName({ targetId })}.innerHTML = ''\n;
           }\n
           else{\n
-            this.${getElementPropertyName({ targetId })}.innerHTML = String(newValue);\n
+            this.${getElementPropertyName({ targetId })}.innerHTML = newValue;\n
           }\n`;
         }
         else {
@@ -345,15 +346,27 @@ function generateBlockRenderers(
       case 'model': {
         // Compile model write-back to direct assignment at build time
         const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
-        updateStatement = `if (this.${getElementPropertyName({ targetId })}) (this.${getElementPropertyName({ targetId })} as any).value = newValue;\n`;
+        updateStatement = `
+        if (this.${getElementPropertyName({ targetId })}) {
+          const el = this.${getElementPropertyName({ targetId })} as any;
+          if (typeof el.writeValue === 'function') {
+            el.writeValue(newValue);
+          } else {
+            el.value = newValue;
+          }
+        }\n`;
         eventRegistrationCode += `
     if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
       const acRuntimeInstance = this.rootElement.acRuntimeInstance;\n
       ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
       const el = this.${getElementPropertyName({ targetId })} as any;\n
-      const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
-      el.addEventListener('input', __modelUpdate);\n
-      el.addEventListener('change', __modelUpdate);\n
+      if (typeof el.registerOnChange === 'function') {
+        el.registerOnChange((val: any) => { ${modelPrefixed} = val; });
+      } else {
+        const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
+        el.addEventListener('input', __modelUpdate);\n
+        el.addEventListener('change', __modelUpdate);\n
+      }
       el.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
             `;
@@ -586,7 +599,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
   // Build constructor argument string at compile time
   const constructorArgs = (options.constructorParams || []).map(p => {
-    if (p.typeName === 'AcRuntimeElement') return 'this';
+    if (p.typeName === 'AcRuntimeElement' || p.typeName === 'AcRuntimeInputElement') return 'this';
     return 'undefined';
   }).join(', ');
 
@@ -610,7 +623,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
   ${generateBlockRenderers(className, templateResult.bindings, templateResult.html, 'root', 'root', new Set(), new Set(), prefixFn, templateResult)}
 
-  class ${htmlElementClassName} extends AcRuntimeElement {
+  class ${htmlElementClassName} extends ${options.formAssociated ? 'AcRuntimeInputElement' : 'AcRuntimeElement'} {
 
     static get observedAttributes() {
       return ${JSON.stringify((options.templateResult.inputs || []).map(i => i.toLowerCase()))};

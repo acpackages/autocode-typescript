@@ -19,7 +19,7 @@ export class AcReport {
   pageWidth: number = 0;
   pageHeightMM: number = 0;
   pageWidthMM: number = 0;
-  mmConversionValue:number = 1;
+  mmConversionValue: number = 1;
   pages: AcReportPage[] = [];
   evets: AcEvents = new AcEvents();
   hooks: AcHooks = new AcHooks();
@@ -31,29 +31,7 @@ export class AcReport {
     AcReportEngine.init();
     this.reportElClone = element.cloneNode(true) as HTMLElement;
     this.element = element;
-
-    if (this.reportElClone.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`)) {
-      this.pageElClone = (this.reportElClone.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`) as HTMLElement).cloneNode(true) as HTMLElement;
-      if (this.pageElClone.hasAttribute(AC_REPORT_ATTRIBUTE.pageSize)) {
-        const size = this.pageElClone.getAttribute(AC_REPORT_ATTRIBUTE.pageSize)!.toUpperCase();
-        if (AC_PAGE_SIZES[size]) {
-          this.pageSize = AC_PAGE_SIZES[size];
-        }
-      }
-      if (this.pageElClone.hasAttribute(AC_REPORT_ATTRIBUTE.pageOrientation)) {
-        const orientation: any = this.pageElClone.getAttribute(AC_REPORT_ATTRIBUTE.pageOrientation)!.toUpperCase();
-        if (Object.values(AcEnumPageOrientation).includes(orientation)) {
-          this.pageOrientation = orientation;
-        }
-      }
-      this.setPageHeightWidth();
-      this.element.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`)?.remove();
-    }
-    else {
-      const page = new AcReportPage({ element: this.element, index: this.pages.length, report: this });
-      this.pages.push(page);
-      this.activePage = page;
-    }
+    this.init();
   }
 
   addPage() {
@@ -68,7 +46,7 @@ export class AcReport {
       for (const reportFooter of reportFootererEls) {
         reportFooter.remove();
       }
-      const page = new AcReportPage({ element: cloneEl, index: this.pages.length, report: this, isFixedHeight:this.pageSize.isRoll != true });
+      const page = new AcReportPage({ element: cloneEl, index: this.pages.length, report: this, isFixedHeight: this.pageSize.isRoll != true });
       this.pages.push(page);
       this.activePage = page;
       this.element.append(cloneEl);
@@ -97,7 +75,7 @@ export class AcReport {
       }
     }
     else {
-      const page = new AcReportPage({ element: this.pageElClone!.cloneNode(true) as HTMLElement, index: this.pages.length, report: this, isFixedHeight:this.pageSize.isRoll != true });
+      const page = new AcReportPage({ element: this.pageElClone!.cloneNode(true) as HTMLElement, index: this.pages.length, report: this, isFixedHeight: this.pageSize.isRoll != true });
       const reportFooterEls = Array.from(page.element.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportFooter}]`)) as HTMLElement[];
       for (const reportFooter of reportFooterEls) {
         reportFooter.setAttribute('ac-temp-style-display', reportFooter.style.display);
@@ -109,6 +87,17 @@ export class AcReport {
     }
     return this.activePage;
   }
+
+  clear(){
+    const element = this.reportElClone.cloneNode(true) as HTMLElement;
+    this.element.replaceWith(element);
+    this.element = element;
+    this.pages = [];
+    this.activePage = undefined;
+    this.init();
+  }
+
+
 
   private clearTempIdsFromElement({ element }: { element: HTMLElement }) {
     element.removeAttribute(AC_REPORT_ATTRIBUTE.tempId);
@@ -124,7 +113,7 @@ export class AcReport {
       reportFooter.style.display = reportFooter.getAttribute('ac-temp-style-display')!;
     }
     for (const page of Array.from(this.element.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.page}]`)) as HTMLElement[]) {
-      if(this.pageSize.isRoll != true){
+      if (this.pageSize.isRoll != true) {
         page.style.maxHeight = `${this.pageHeight}px`;
         page.style.minHeight = `${this.pageHeight}px`;
         page.style.height = `${this.pageHeight}px`;
@@ -165,6 +154,51 @@ export class AcReport {
       this.addPage();
     }
     return this.activePage;
+  }
+
+  private init(){
+    if (this.reportElClone.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`)) {
+      this.pageElClone = (this.reportElClone.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`) as HTMLElement).cloneNode(true) as HTMLElement;
+      if (this.pageElClone.hasAttribute(AC_REPORT_ATTRIBUTE.pageSize)) {
+        const size = this.pageElClone.getAttribute(AC_REPORT_ATTRIBUTE.pageSize)!.toUpperCase();
+        if (AC_PAGE_SIZES[size]) {
+          this.pageSize = AC_PAGE_SIZES[size];
+        }
+      }
+      if (this.pageElClone.hasAttribute(AC_REPORT_ATTRIBUTE.pageOrientation)) {
+        const orientation: any = this.pageElClone.getAttribute(AC_REPORT_ATTRIBUTE.pageOrientation)!.toUpperCase();
+        if (Object.values(AcEnumPageOrientation).includes(orientation)) {
+          this.pageOrientation = orientation;
+        }
+      }
+      this.setPageHeightWidth();
+      this.element.querySelector(`[${AC_REPORT_ATTRIBUTE.page}]`)?.remove();
+    }
+    else {
+      const page = new AcReportPage({ element: this.element, index: this.pages.length, report: this });
+      this.pages.push(page);
+      this.activePage = page;
+    }
+  }
+
+  async processAndAppendElement({ context, element, parentSelector }: { context: any, element: HTMLElement, parentSelector: string }) {
+    if(!this.activePage){
+       if (this.pageElClone) {
+        this.addPage();
+      }
+    }
+    const processor = new AcTemplateProcessor({ context, element, page: this.activePage! });
+    await processor.process();
+    this.activePage!.element.querySelector(parentSelector)!.append(element);
+    if (this.activePage!.isFixedHeight && this.activePage!.isContentOverflow) {
+      element.remove();
+      const newPage = this.getNextPage();
+      if (newPage) {
+        this.activePage = newPage;
+        this.activePage!.element.querySelector(parentSelector)!.innerHTML = '';
+        this.activePage!.element.querySelector(parentSelector)!.append(element);
+      }
+    }
   }
 
   async processPageReportDataBindings(node: Node, page: AcReportPage) {
@@ -245,7 +279,7 @@ export class AcReport {
       const measureElement = this.pageElClone.cloneNode(true) as HTMLElement;
       measureElement.style.visibility = 'none';
       if (this.pageOrientation == AcEnumPageOrientation.Portrait) {
-        if(this.pageSize.isRoll != true){
+        if (this.pageSize.isRoll != true) {
           measureElement.style.maxHeight = `${this.pageSize.heightMm}mm`;
           measureElement.style.minHeight = `${this.pageSize.heightMm}mm`;
           measureElement.style.height = `${this.pageSize.heightMm}mm`;
@@ -257,7 +291,7 @@ export class AcReport {
         this.pageWidthMM = this.pageSize.widthMm;
       }
       else {
-        if(this.pageSize.isRoll != true){
+        if (this.pageSize.isRoll != true) {
           measureElement.style.maxHeight = `${this.pageSize.widthMm}mm`;
           measureElement.style.minHeight = `${this.pageSize.widthMm}mm`;
           measureElement.style.height = `${this.pageSize.widthMm}mm`;

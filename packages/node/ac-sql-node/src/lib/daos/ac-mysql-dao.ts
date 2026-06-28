@@ -196,6 +196,9 @@ export class AcMysqlDao extends AcBaseSqlDao {
             }
           }
         }
+        else if (value instanceof Date) {
+          value = value.toISOString();
+        }
         if (formats.includes(AcEnumDDColumnFormat.HideColumn)) {
           delete formattedRow[key];
         } else {

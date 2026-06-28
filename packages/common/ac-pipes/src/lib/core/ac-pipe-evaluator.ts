@@ -32,6 +32,20 @@ export async function evaluateAcPipeExpression({
       }
       const evaluatedArgs = await Promise.all(
         args.map(async (arg: any) => {
+          if (arg && typeof arg === 'object' && arg.__isExpression) {
+            const expr = arg.expression;
+            try {
+              if (expr.startsWith('{{') && expr.endsWith('}}')) {
+                const innerExpr = expr.slice(2, -2).trim();
+                return await evaluateAcPipeExpression({ expression: innerExpr, context, evaluateFunction });
+              }
+              const res = evaluateFunction({ expression: expr, context });
+              return res instanceof Promise ? await res : res;
+            } catch (err) {
+              console.warn(`Failed to evaluate expression argument: ${expr}`, err);
+              return undefined;
+            }
+          }
           if (typeof arg === 'string' && arg.startsWith('{{') && arg.endsWith('}}')) {
             const innerExpr = arg.slice(2, -2).trim();
             return await evaluateAcPipeExpression({ expression: innerExpr, context,evaluateFunction });
@@ -256,19 +270,18 @@ export function parsePipeChain(
           try {
             return JSON.parse(fixed);
           } catch (e) {
-            console.warn("Failed to parse object:", s, e);
-            return null;
+            return { __isExpression: true, expression: s };
           }
         }
       }
 
       // 5. Nested expression / Angular interpolation / pipe chain
       if (s.includes('|') || (s.startsWith('{{') && s.endsWith('}}'))) {
-        return s;
+        return { __isExpression: true, expression: s };
       }
 
       // 6. Otherwise: treat as identifier / path / raw string
-      return s;
+      return { __isExpression: true, expression: s };
     });
 
     return {

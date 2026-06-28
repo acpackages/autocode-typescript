@@ -4,16 +4,5 @@
   "sourceRoot": "packages/runtime/ac-runtime-router/src",
   "projectType": "library",
   "tags": [],
-  "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/packages/runtime/ac-runtime-router",
-        "main": "packages/runtime/ac-runtime-router/src/index.ts",
-        "tsConfig": "packages/runtime/ac-runtime-router/tsconfig.json",
-        "assets": []
-      }
-    }
-  }
+  "targets": {}
 }

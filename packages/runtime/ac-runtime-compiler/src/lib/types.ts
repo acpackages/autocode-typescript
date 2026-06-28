@@ -210,6 +210,8 @@ export interface ComponentMetadata {
 
   /** Relative paths to external style files (from `styleUrls:`). */
   styleUrls?: string | string[];
+
+  formAssociated?: boolean;
 }
 
 /**

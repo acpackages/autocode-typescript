@@ -29,3 +29,4 @@ export * from './ac-on-destroy.interface';
 export * from './ac-on-disconnected.interface';
 export * from './ac-on-init.interface';
 export * from './ac-on-property-change.interface';
+export * from './ac-value-accessor.interface';

@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 11,
+  "version": 13,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -5620,6 +5620,93 @@ export const dataDictionaryJson = {
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "inventory_trackings"
+        }
+      }
+    },
+    "act_label_templates": {
+      "tableName": "act_label_templates",
+      "tableColumns": {
+        "label_template_id": {
+          "columnName": "label_template_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Template Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "label_template_name": {
+          "columnName": "label_template_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Template Name"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "label_format_name": {
+          "columnName": "label_format_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Format Name"
+            }
+          }
+        },
+        "label_format_config": {
+          "columnName": "label_format_config",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Format Config"
+            }
+          }
+        },
+        "label_template_settings": {
+          "columnName": "label_template_settings",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Template Settings"
+            }
+          }
+        },
+        "label_template_for": {
+          "columnName": "label_template_for",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Template For"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "label_templates"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "label_template"
         }
       }
     },

@@ -13,7 +13,7 @@
  * 4. On dev server, watches for .ts/.html/.css changes and
  *    triggers recompile + full reload.
  */
-import type { Plugin } from 'vite';
+import type { Plugin, ModuleNode } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ComponentCompiler } from '../../ac-runtime-compiler/src/index.js';
@@ -307,7 +307,12 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
         if (moduleGraph.idToModuleMap) {
             for (const mod of moduleGraph.idToModuleMap.values()) {
                 const modFile = mod.file ? normalizePath(mod.file) : '';
-                if (modFile.startsWith(normalizedCacheDir)) {
+                const modId = mod.id ? normalizePath(mod.id) : '';
+                if (
+                    modFile.startsWith(normalizedCacheDir) ||
+                    modId.startsWith(normalizedCacheDir) ||
+                    modId.includes('/' + runtimeConfig.cacheDirectory + '/')
+                ) {
                     moduleGraph.invalidateModule(mod);
                 }
             }
@@ -373,6 +378,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
                 } catch (err) {
                     console.error(`[acr] Error recompiling ${path.basename(file)}:`, err);
                 }
+
                 invalidateCacheModules(server, file);
                 server.ws.send({ type: 'full-reload' });
                 return [];
@@ -380,16 +386,20 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
 
             if (file.endsWith('.html') || file.endsWith('.css')) {
                 console.log(`[acr] Asset changed: ${path.basename(file)}`);
-                // Recompile co-located .ts file
-                const tsFile = file.replace(/\.(html|css)$/, '.ts');
-                if (fs.existsSync(tsFile)) {
-                    try {
+                try {
+                    // Await read to ensure the updated asset contents are fully written to disk and loaded by Vite
+                    await read();
+
+                    const tsFile = file.replace(/\.(html|css)$/, '.ts');
+                    if (fs.existsSync(tsFile)) {
                         const code = fs.readFileSync(tsFile, 'utf8');
                         await doTransform(code, tsFile, true);
-                    } catch (err) {
-                        console.error(`[acr] Error recompiling ${path.basename(tsFile)}:`, err);
                     }
+                } catch (err) {
+                    console.error(`[acr] Error recompiling for asset ${path.basename(file)}:`, err);
                 }
+
+                const tsFile = file.replace(/\.(html|css)$/, '.ts');
                 invalidateCacheModules(server, tsFile);
                 server.ws.send({ type: 'full-reload' });
                 return [];

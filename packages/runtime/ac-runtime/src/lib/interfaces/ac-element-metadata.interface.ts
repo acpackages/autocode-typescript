@@ -45,4 +45,10 @@ export interface IAcElementMetadata {
    * Resolved relative to the component's `.ts` file at compile time.
    */
   styleUrls?: string[];
+
+  /**
+   * When set to true, the custom element will be registered as a
+   * Form-Associated Custom Element and extend AcRuntimeInputElement.
+   */
+  formAssociated?: boolean;
 }

@@ -105,7 +105,14 @@ export function getComponentMetadata(node: ts.ClassDeclaration): ComponentMetada
           .filter((el): el is ts.StringLiteral | ts.NoSubstitutionTemplateLiteral =>
             ts.isStringLiteral(el) || ts.isNoSubstitutionTemplateLiteral(el))
           // Extract the raw text content of each string
-          .map(el => el.text);
+          .map(el => el.text) as any;
+      }
+      // ── Boolean value: `formAssociated: true` ──
+      else if (prop.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+        metadata[prop.name.text] = true as any;
+      }
+      else if (prop.initializer.kind === ts.SyntaxKind.FalseKeyword) {
+        metadata[prop.name.text] = false as any;
       }
     }
   }

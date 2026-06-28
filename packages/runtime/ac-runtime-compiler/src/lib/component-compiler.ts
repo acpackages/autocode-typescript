@@ -47,6 +47,7 @@ import type {
   ConstructorParam,
   ReactiveProperty,
   ViewChildEntry,
+  ComponentMetadata,
 } from './types.js';
 
 // Re-export types for backward compatibility
@@ -153,7 +154,7 @@ export class ComponentCompiler {
     // ── Step 3: Compile and assemble code ──
     const importsCode = importStatements.join('\n');
     const pipeImport = `import { acPipeRegistry,evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';`;
-    const acElementImport = `import { AcRuntimeElement,AcRuntimeElementEvent,AcElementRenderer,AcElementArrayRenderer } from '@autocode-ts/ac-runtime';`;
+    const acElementImport = `import { AcRuntimeElement,AcRuntimeInputElement,AcRuntimeElementEvent,AcElementRenderer,AcElementArrayRenderer } from '@autocode-ts/ac-runtime';`;
 
     const bodyCode = orderedStatements.map(s => s.text).join('\n\n');
     let cleanedImportsCode = importsCode;
@@ -199,7 +200,7 @@ export class ComponentCompiler {
    */
   private compileComponent(
     node: ts.ClassDeclaration,
-    metadata: { selector: string; template?: string; templateUrl?: string; styles?: string | string[]; styleUrls?: string | string[] },
+    metadata: ComponentMetadata,
     sourceCode: string,
     topLevelVars: Set<string>,
     filePath?: string,
@@ -340,7 +341,8 @@ export class ComponentCompiler {
       baseClassName,
       prefixFn: prefixIdentifiers,
       classSourceCode,
-      constructorParams
+      constructorParams,
+      formAssociated: metadata.formAssociated
     });
 
     return { selector, code, subscribeChanges, listenChanges };
@@ -1126,7 +1128,7 @@ function resolveSymbol(
       if (ts.isStringLiteral(specifier)) {
         const modulePath = specifier.text;
         const namedBindings = stmt.importClause.namedBindings;
-        
+
         if (namedBindings && ts.isNamedImports(namedBindings)) {
           for (const element of namedBindings.elements) {
             if (element.name.text === name) {
@@ -1143,7 +1145,7 @@ function resolveSymbol(
             }
           }
         }
-        
+
         if (stmt.importClause.name && stmt.importClause.name.text === name) {
           const resolvedModulePath = resolveModuleSpecifier(modulePath, filePath, resolveImport);
           if (resolvedModulePath) {

@@ -480,7 +480,7 @@ export class AcSqlDbTable extends AcSqlDbBase {
 
       if ([AcEnumDDColumnType.Json].includes(column.columnType as any)) {
         formats.push(AcEnumDDColumnFormat.Json);
-      } else if (column.columnType === AcEnumDDColumnType.Date) {
+      } else if (column.columnType === AcEnumDDColumnType.Date || column.columnType === AcEnumDDColumnType.Datetime || column.columnType === AcEnumDDColumnType.Timestamp) {
         formats.push(AcEnumDDColumnFormat.Date);
       } else if (column.columnType === AcEnumDDColumnType.Password && !getPasswordColumns) {
         formats.push(AcEnumDDColumnFormat.HideColumn);

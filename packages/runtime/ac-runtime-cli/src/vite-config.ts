@@ -122,6 +122,7 @@ export function createViteConfig(
 
         resolve: {
             alias: aliases,
+            preserveSymlinks: true,
         },
 
         optimizeDeps: {
