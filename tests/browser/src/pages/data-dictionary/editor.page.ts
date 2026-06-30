@@ -75,9 +75,9 @@ export class DataDictionaryEditorPage {
     // Load initial dictionary
     // accountea
     // api.setDataDictionaryJson({ dataDictionaryJson: accountea });
-    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
+    api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProInternal });
-    api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSchema });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSync });
     // api.setDataDictionaryJson({ dataDictionaryJson: sagDataDictionary });

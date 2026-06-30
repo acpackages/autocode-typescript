@@ -7,11 +7,10 @@ export function AcWebRoute({ path, method }: { path: string; method?: string }) 
       path,
       method: method || 'get',
     };
-    
+
     // Check if being executed as a TS 5.0 Standard Decorator
     const isStandardDecorator = typeof propertyKey === 'object' && propertyKey !== null && 'kind' in propertyKey;
-    console.log(`[AcWebRoute Debug] path: ${path}, method: ${method}, isStandardDecorator: ${isStandardDecorator}, propertyKey type: ${typeof propertyKey}, actualPropertyKey: ${isStandardDecorator ? propertyKey.name : propertyKey}`);
-    
+
     if (isStandardDecorator) {
       const context = propertyKey as any;
       if (context.kind === 'class') {

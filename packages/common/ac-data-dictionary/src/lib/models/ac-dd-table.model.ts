@@ -54,7 +54,7 @@ export class AcDDTable {
       result.fromJson({ jsonData: acDataDictionary.tables[tableName] });
     }
     else{
-      console.warn(`Table ${tableName} dows not exist for data dictionary ${dataDictionaryName}`);
+      console.warn(`Table ${tableName} does not exist for data dictionary ${dataDictionaryName}`);
     }
     return result;
   }

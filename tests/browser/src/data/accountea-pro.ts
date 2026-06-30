@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 13,
+  "version": 14,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -12535,6 +12535,40 @@ export const dataDictionaryJson = {
               ]
             }
           }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
+            }
+          }
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Type"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "IN_STORE"
+            }
+          }
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Name"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -13722,6 +13756,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Address"
             }
           }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -14878,6 +14922,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Services"
+            }
+          }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
             }
           }
         }
@@ -16819,6 +16873,40 @@ export const dataDictionaryJson = {
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
               "propertyValue": false
+            }
+          }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
+            }
+          }
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Type"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "IN_STORE"
+            }
+          }
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Name"
             }
           }
         }
@@ -19381,6 +19469,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Received By"
             }
           }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -20508,6 +20606,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Chargeable Services"
+            }
+          }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
             }
           }
         }
@@ -22498,6 +22606,16 @@ export const dataDictionaryJson = {
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
               "propertyValue": "0"
+            }
+          }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
             }
           }
         }
@@ -33083,7 +33201,6 @@ export const dataDictionaryJson = {
         "supplier_type": {
           "columnName": "supplier_type",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "supplier_type"
@@ -33091,7 +33208,6 @@ export const dataDictionaryJson = {
         "party_id": {
           "columnName": "party_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "party_id"
@@ -33099,12 +33215,6 @@ export const dataDictionaryJson = {
         "party_name": {
           "columnName": "party_name",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "party_name"
@@ -33112,12 +33222,6 @@ export const dataDictionaryJson = {
         "legal_identifier": {
           "columnName": "legal_identifier",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "legal_identifier"
@@ -33125,7 +33229,6 @@ export const dataDictionaryJson = {
         "address_line_1": {
           "columnName": "address_line_1",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_1"
@@ -33133,7 +33236,6 @@ export const dataDictionaryJson = {
         "address_line_2": {
           "columnName": "address_line_2",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_2"
@@ -33141,7 +33243,6 @@ export const dataDictionaryJson = {
         "landmark": {
           "columnName": "landmark",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "landmark"
@@ -33149,7 +33250,6 @@ export const dataDictionaryJson = {
         "latitude": {
           "columnName": "latitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "latitude"
@@ -33157,7 +33257,6 @@ export const dataDictionaryJson = {
         "longitude": {
           "columnName": "longitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "longitude"
@@ -33165,7 +33264,6 @@ export const dataDictionaryJson = {
         "city_name": {
           "columnName": "city_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "city_name"
@@ -33173,7 +33271,6 @@ export const dataDictionaryJson = {
         "postal_code": {
           "columnName": "postal_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "postal_code"
@@ -33181,7 +33278,6 @@ export const dataDictionaryJson = {
         "state_name": {
           "columnName": "state_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "state_name"
@@ -33189,7 +33285,6 @@ export const dataDictionaryJson = {
         "country_name": {
           "columnName": "country_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "country_name"
@@ -33197,7 +33292,6 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "accountee_id"
@@ -33205,7 +33299,6 @@ export const dataDictionaryJson = {
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "currency_code"
@@ -33213,7 +33306,6 @@ export const dataDictionaryJson = {
         "device_id": {
           "columnName": "device_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "device_id"
@@ -33221,7 +33313,6 @@ export const dataDictionaryJson = {
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "exchange_rate"
@@ -33229,7 +33320,6 @@ export const dataDictionaryJson = {
         "is_draft": {
           "columnName": "is_draft",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "is_draft"
@@ -33237,7 +33327,6 @@ export const dataDictionaryJson = {
         "profit_margin_percentage": {
           "columnName": "profit_margin_percentage",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "profit_margin_percentage"
@@ -33245,7 +33334,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_amount": {
           "columnName": "purchase_invoice_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_amount"
@@ -33253,7 +33341,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_datetime": {
           "columnName": "purchase_invoice_datetime",
           "columnType": "DATETIME",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_datetime"
@@ -33261,7 +33348,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_id": {
           "columnName": "purchase_invoice_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_id"
@@ -33269,12 +33355,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_number": {
           "columnName": "purchase_invoice_number",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_number"
@@ -33282,7 +33362,6 @@ export const dataDictionaryJson = {
         "purchase_term_id": {
           "columnName": "purchase_term_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_term_id"
@@ -33290,7 +33369,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_remarks": {
           "columnName": "purchase_invoice_remarks",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_remarks"
@@ -33298,7 +33376,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_status": {
           "columnName": "purchase_invoice_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_status"
@@ -33306,7 +33383,6 @@ export const dataDictionaryJson = {
         "supplier_id": {
           "columnName": "supplier_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "supplier_id"
@@ -33314,7 +33390,6 @@ export const dataDictionaryJson = {
         "taxing_scheme_id": {
           "columnName": "taxing_scheme_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "taxing_scheme_id"
@@ -33322,7 +33397,6 @@ export const dataDictionaryJson = {
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "transaction_id"
@@ -33330,7 +33404,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_type": {
           "columnName": "purchase_invoice_type",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_type"
@@ -33338,7 +33411,6 @@ export const dataDictionaryJson = {
         "user_id": {
           "columnName": "user_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "user_id"
@@ -33346,7 +33418,6 @@ export const dataDictionaryJson = {
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "products_count"
@@ -33354,7 +33425,6 @@ export const dataDictionaryJson = {
         "paid_amount": {
           "columnName": "paid_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "paid_amount"
@@ -33362,7 +33432,6 @@ export const dataDictionaryJson = {
         "chargeable_services_count": {
           "columnName": "chargeable_services_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "chargeable_services_count"
@@ -33370,7 +33439,6 @@ export const dataDictionaryJson = {
         "supply_mode": {
           "columnName": "supply_mode",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "supply_mode"
@@ -33378,7 +33446,6 @@ export const dataDictionaryJson = {
         "is_finalized": {
           "columnName": "is_finalized",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "is_finalized"
@@ -33386,7 +33453,6 @@ export const dataDictionaryJson = {
         "address_id": {
           "columnName": "address_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "address_id"
@@ -33394,7 +33460,6 @@ export const dataDictionaryJson = {
         "purchase_invoice_details": {
           "columnName": "purchase_invoice_details",
           "columnType": "JSON",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "purchase_invoice_details"
@@ -33402,10 +33467,30 @@ export const dataDictionaryJson = {
         "payment_status": {
           "columnName": "payment_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoices",
           "columnSourceOriginalColumn": "payment_status"
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoices",
+          "columnSourceOriginalColumn": "vehicle_number"
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoices",
+          "columnSourceOriginalColumn": "channel_type"
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoices",
+          "columnSourceOriginalColumn": "channel_name"
         }
       },
       "viewQuery": "SELECT act_vw_suppliers.supplier_type,act_vw_suppliers.party_id,act_vw_suppliers.party_name,act_vw_suppliers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_purchase_invoices.* FROM act_purchase_invoices \nLEFT JOIN act_vw_suppliers ON act_purchase_invoices.supplier_id = act_vw_suppliers.supplier_id\nLEFT JOIN act_addresses ON act_purchase_invoices.address_id= act_addresses.address_id"
@@ -34038,7 +34123,6 @@ export const dataDictionaryJson = {
         "supplier_type": {
           "columnName": "supplier_type",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "supplier_type"
@@ -34046,7 +34130,6 @@ export const dataDictionaryJson = {
         "party_id": {
           "columnName": "party_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "party_id"
@@ -34054,7 +34137,6 @@ export const dataDictionaryJson = {
         "party_name": {
           "columnName": "party_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "party_name"
@@ -34062,7 +34144,6 @@ export const dataDictionaryJson = {
         "legal_identifier": {
           "columnName": "legal_identifier",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_suppliers",
           "columnSourceOriginalColumn": "legal_identifier"
@@ -34070,7 +34151,6 @@ export const dataDictionaryJson = {
         "address_line_1": {
           "columnName": "address_line_1",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_1"
@@ -34078,7 +34158,6 @@ export const dataDictionaryJson = {
         "address_line_2": {
           "columnName": "address_line_2",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_2"
@@ -34086,7 +34165,6 @@ export const dataDictionaryJson = {
         "landmark": {
           "columnName": "landmark",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "landmark"
@@ -34094,7 +34172,6 @@ export const dataDictionaryJson = {
         "latitude": {
           "columnName": "latitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "latitude"
@@ -34102,7 +34179,6 @@ export const dataDictionaryJson = {
         "longitude": {
           "columnName": "longitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "longitude"
@@ -34110,7 +34186,6 @@ export const dataDictionaryJson = {
         "city_name": {
           "columnName": "city_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "city_name"
@@ -34118,7 +34193,6 @@ export const dataDictionaryJson = {
         "postal_code": {
           "columnName": "postal_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "postal_code"
@@ -34126,7 +34200,6 @@ export const dataDictionaryJson = {
         "state_name": {
           "columnName": "state_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "state_name"
@@ -34134,7 +34207,6 @@ export const dataDictionaryJson = {
         "country_name": {
           "columnName": "country_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "country_name"
@@ -34142,7 +34214,6 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "accountee_id"
@@ -34150,7 +34221,6 @@ export const dataDictionaryJson = {
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "currency_code"
@@ -34158,7 +34228,6 @@ export const dataDictionaryJson = {
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "exchange_rate"
@@ -34166,7 +34235,6 @@ export const dataDictionaryJson = {
         "is_draft": {
           "columnName": "is_draft",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "is_draft"
@@ -34174,7 +34242,6 @@ export const dataDictionaryJson = {
         "purchase_order_amount": {
           "columnName": "purchase_order_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_amount"
@@ -34182,7 +34249,6 @@ export const dataDictionaryJson = {
         "purchase_order_datetime": {
           "columnName": "purchase_order_datetime",
           "columnType": "DATETIME",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_datetime"
@@ -34190,7 +34256,6 @@ export const dataDictionaryJson = {
         "purchase_order_id": {
           "columnName": "purchase_order_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_id"
@@ -34198,7 +34263,6 @@ export const dataDictionaryJson = {
         "purchase_order_number": {
           "columnName": "purchase_order_number",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_number"
@@ -34206,7 +34270,6 @@ export const dataDictionaryJson = {
         "purchase_term_id": {
           "columnName": "purchase_term_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_term_id"
@@ -34214,7 +34277,6 @@ export const dataDictionaryJson = {
         "purchase_order_remarks": {
           "columnName": "purchase_order_remarks",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_remarks"
@@ -34222,7 +34284,6 @@ export const dataDictionaryJson = {
         "supplier_id": {
           "columnName": "supplier_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "supplier_id"
@@ -34230,7 +34291,6 @@ export const dataDictionaryJson = {
         "taxing_scheme_id": {
           "columnName": "taxing_scheme_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "taxing_scheme_id"
@@ -34238,7 +34298,6 @@ export const dataDictionaryJson = {
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "transaction_id"
@@ -34246,7 +34305,6 @@ export const dataDictionaryJson = {
         "purchase_order_status": {
           "columnName": "purchase_order_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "purchase_order_status"
@@ -34254,7 +34312,6 @@ export const dataDictionaryJson = {
         "is_finalized": {
           "columnName": "is_finalized",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "is_finalized"
@@ -34262,7 +34319,6 @@ export const dataDictionaryJson = {
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "products_count"
@@ -34270,7 +34326,6 @@ export const dataDictionaryJson = {
         "chargeable_services_count": {
           "columnName": "chargeable_services_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "chargeable_services_count"
@@ -34278,10 +34333,16 @@ export const dataDictionaryJson = {
         "address_id": {
           "columnName": "address_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_orders",
           "columnSourceOriginalColumn": "address_id"
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_orders",
+          "columnSourceOriginalColumn": "vehicle_number"
         }
       },
       "viewQuery": "SELECT act_vw_suppliers.supplier_type,act_vw_suppliers.party_id,act_vw_suppliers.party_name,act_vw_suppliers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_purchase_orders.* FROM act_purchase_orders \nLEFT JOIN act_vw_suppliers ON act_purchase_orders.supplier_id = act_vw_suppliers.supplier_id\nLEFT JOIN act_addresses ON act_purchase_orders.address_id= act_addresses.address_id"
@@ -36086,7 +36147,6 @@ export const dataDictionaryJson = {
         "customer_category": {
           "columnName": "customer_category",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "customer_category"
@@ -36094,12 +36154,6 @@ export const dataDictionaryJson = {
         "party_name": {
           "columnName": "party_name",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "party_name"
@@ -36107,7 +36161,6 @@ export const dataDictionaryJson = {
         "party_id": {
           "columnName": "party_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "party_id"
@@ -36115,12 +36168,6 @@ export const dataDictionaryJson = {
         "legal_identifier": {
           "columnName": "legal_identifier",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "legal_identifier"
@@ -36128,7 +36175,6 @@ export const dataDictionaryJson = {
         "address_line_1": {
           "columnName": "address_line_1",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_1"
@@ -36136,7 +36182,6 @@ export const dataDictionaryJson = {
         "address_line_2": {
           "columnName": "address_line_2",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_2"
@@ -36144,7 +36189,6 @@ export const dataDictionaryJson = {
         "landmark": {
           "columnName": "landmark",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "landmark"
@@ -36152,7 +36196,6 @@ export const dataDictionaryJson = {
         "latitude": {
           "columnName": "latitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "latitude"
@@ -36160,7 +36203,6 @@ export const dataDictionaryJson = {
         "longitude": {
           "columnName": "longitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "longitude"
@@ -36168,7 +36210,6 @@ export const dataDictionaryJson = {
         "city_name": {
           "columnName": "city_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "city_name"
@@ -36176,7 +36217,6 @@ export const dataDictionaryJson = {
         "postal_code": {
           "columnName": "postal_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "postal_code"
@@ -36184,7 +36224,6 @@ export const dataDictionaryJson = {
         "state_name": {
           "columnName": "state_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "state_name"
@@ -36192,7 +36231,6 @@ export const dataDictionaryJson = {
         "country_name": {
           "columnName": "country_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "country_name"
@@ -36200,7 +36238,6 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "accountee_id"
@@ -36208,7 +36245,6 @@ export const dataDictionaryJson = {
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "currency_code"
@@ -36216,7 +36252,6 @@ export const dataDictionaryJson = {
         "customer_id": {
           "columnName": "customer_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "customer_id"
@@ -36224,7 +36259,6 @@ export const dataDictionaryJson = {
         "device_id": {
           "columnName": "device_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "device_id"
@@ -36232,7 +36266,6 @@ export const dataDictionaryJson = {
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "exchange_rate"
@@ -36240,7 +36273,6 @@ export const dataDictionaryJson = {
         "is_draft": {
           "columnName": "is_draft",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "is_draft"
@@ -36248,7 +36280,6 @@ export const dataDictionaryJson = {
         "sale_invoice_remarks": {
           "columnName": "sale_invoice_remarks",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_remarks"
@@ -36256,7 +36287,6 @@ export const dataDictionaryJson = {
         "sale_invoice_amount": {
           "columnName": "sale_invoice_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_amount"
@@ -36264,7 +36294,6 @@ export const dataDictionaryJson = {
         "sale_invoice_datetime": {
           "columnName": "sale_invoice_datetime",
           "columnType": "DATETIME",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_datetime"
@@ -36272,7 +36301,6 @@ export const dataDictionaryJson = {
         "sale_invoice_id": {
           "columnName": "sale_invoice_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_id"
@@ -36280,12 +36308,6 @@ export const dataDictionaryJson = {
         "sale_invoice_number": {
           "columnName": "sale_invoice_number",
           "columnType": "STRING",
-          "columnProperties": {
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": true
-            }
-          },
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_number"
@@ -36293,7 +36315,6 @@ export const dataDictionaryJson = {
         "sale_term_id": {
           "columnName": "sale_term_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_term_id"
@@ -36301,7 +36322,6 @@ export const dataDictionaryJson = {
         "sale_invoice_status": {
           "columnName": "sale_invoice_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_status"
@@ -36309,7 +36329,6 @@ export const dataDictionaryJson = {
         "taxing_scheme_id": {
           "columnName": "taxing_scheme_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "taxing_scheme_id"
@@ -36317,7 +36336,6 @@ export const dataDictionaryJson = {
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "transaction_id"
@@ -36325,7 +36343,6 @@ export const dataDictionaryJson = {
         "sale_invoice_type": {
           "columnName": "sale_invoice_type",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_type"
@@ -36333,7 +36350,6 @@ export const dataDictionaryJson = {
         "user_id": {
           "columnName": "user_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "user_id"
@@ -36341,7 +36357,6 @@ export const dataDictionaryJson = {
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "products_count"
@@ -36349,7 +36364,6 @@ export const dataDictionaryJson = {
         "received_amount": {
           "columnName": "received_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "received_amount"
@@ -36357,7 +36371,6 @@ export const dataDictionaryJson = {
         "chargeable_services_count": {
           "columnName": "chargeable_services_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "chargeable_services_count"
@@ -36365,7 +36378,6 @@ export const dataDictionaryJson = {
         "received_by": {
           "columnName": "received_by",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "received_by"
@@ -36373,7 +36385,6 @@ export const dataDictionaryJson = {
         "sale_invoice_details": {
           "columnName": "sale_invoice_details",
           "columnType": "JSON",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "sale_invoice_details"
@@ -36381,7 +36392,6 @@ export const dataDictionaryJson = {
         "supply_mode": {
           "columnName": "supply_mode",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "supply_mode"
@@ -36389,7 +36399,6 @@ export const dataDictionaryJson = {
         "is_finalized": {
           "columnName": "is_finalized",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "is_finalized"
@@ -36397,7 +36406,6 @@ export const dataDictionaryJson = {
         "payment_status": {
           "columnName": "payment_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "payment_status"
@@ -36405,7 +36413,6 @@ export const dataDictionaryJson = {
         "address_id": {
           "columnName": "address_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "address_id"
@@ -36413,10 +36420,30 @@ export const dataDictionaryJson = {
         "is_credit": {
           "columnName": "is_credit",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoices",
           "columnSourceOriginalColumn": "is_credit"
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoices",
+          "columnSourceOriginalColumn": "vehicle_number"
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoices",
+          "columnSourceOriginalColumn": "channel_type"
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoices",
+          "columnSourceOriginalColumn": "channel_name"
         }
       },
       "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_invoices.* \nFROM act_sale_invoices \nLEFT JOIN act_vw_customers ON act_sale_invoices.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_invoices.address_id = act_addresses.address_id"
@@ -37065,7 +37092,6 @@ export const dataDictionaryJson = {
         "customer_category": {
           "columnName": "customer_category",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "customer_category"
@@ -37073,7 +37099,6 @@ export const dataDictionaryJson = {
         "party_name": {
           "columnName": "party_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "party_name"
@@ -37081,7 +37106,6 @@ export const dataDictionaryJson = {
         "party_id": {
           "columnName": "party_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "party_id"
@@ -37089,7 +37113,6 @@ export const dataDictionaryJson = {
         "legal_identifier": {
           "columnName": "legal_identifier",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "view",
           "columnSourceName": "act_vw_customers",
           "columnSourceOriginalColumn": "legal_identifier"
@@ -37097,7 +37120,6 @@ export const dataDictionaryJson = {
         "address_line_1": {
           "columnName": "address_line_1",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_1"
@@ -37105,7 +37127,6 @@ export const dataDictionaryJson = {
         "address_line_2": {
           "columnName": "address_line_2",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "address_line_2"
@@ -37113,7 +37134,6 @@ export const dataDictionaryJson = {
         "landmark": {
           "columnName": "landmark",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "landmark"
@@ -37121,7 +37141,6 @@ export const dataDictionaryJson = {
         "latitude": {
           "columnName": "latitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "latitude"
@@ -37129,7 +37148,6 @@ export const dataDictionaryJson = {
         "longitude": {
           "columnName": "longitude",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "longitude"
@@ -37137,7 +37155,6 @@ export const dataDictionaryJson = {
         "city_name": {
           "columnName": "city_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "city_name"
@@ -37145,7 +37162,6 @@ export const dataDictionaryJson = {
         "postal_code": {
           "columnName": "postal_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "postal_code"
@@ -37153,7 +37169,6 @@ export const dataDictionaryJson = {
         "state_name": {
           "columnName": "state_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "state_name"
@@ -37161,7 +37176,6 @@ export const dataDictionaryJson = {
         "country_name": {
           "columnName": "country_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_addresses",
           "columnSourceOriginalColumn": "country_name"
@@ -37169,7 +37183,6 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "accountee_id"
@@ -37177,7 +37190,6 @@ export const dataDictionaryJson = {
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "currency_code"
@@ -37185,7 +37197,6 @@ export const dataDictionaryJson = {
         "customer_id": {
           "columnName": "customer_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "customer_id"
@@ -37193,7 +37204,6 @@ export const dataDictionaryJson = {
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "exchange_rate"
@@ -37201,7 +37211,6 @@ export const dataDictionaryJson = {
         "display_index": {
           "columnName": "display_index",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "display_index"
@@ -37209,7 +37218,6 @@ export const dataDictionaryJson = {
         "is_draft": {
           "columnName": "is_draft",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "is_draft"
@@ -37217,7 +37225,6 @@ export const dataDictionaryJson = {
         "sale_quotation_remarks": {
           "columnName": "sale_quotation_remarks",
           "columnType": "TEXT",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_remarks"
@@ -37225,7 +37232,6 @@ export const dataDictionaryJson = {
         "sale_quotation_amount": {
           "columnName": "sale_quotation_amount",
           "columnType": "DOUBLE",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_amount"
@@ -37233,7 +37239,6 @@ export const dataDictionaryJson = {
         "sale_quotation_datetime": {
           "columnName": "sale_quotation_datetime",
           "columnType": "DATETIME",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_datetime"
@@ -37241,7 +37246,6 @@ export const dataDictionaryJson = {
         "sale_quotation_id": {
           "columnName": "sale_quotation_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_id"
@@ -37249,7 +37253,6 @@ export const dataDictionaryJson = {
         "sale_quotation_number": {
           "columnName": "sale_quotation_number",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_number"
@@ -37257,7 +37260,6 @@ export const dataDictionaryJson = {
         "sale_term_id": {
           "columnName": "sale_term_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_term_id"
@@ -37265,7 +37267,6 @@ export const dataDictionaryJson = {
         "sale_quotation_status": {
           "columnName": "sale_quotation_status",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_status"
@@ -37273,7 +37274,6 @@ export const dataDictionaryJson = {
         "taxing_scheme_id": {
           "columnName": "taxing_scheme_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "taxing_scheme_id"
@@ -37281,7 +37281,6 @@ export const dataDictionaryJson = {
         "sale_quotation_type": {
           "columnName": "sale_quotation_type",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "sale_quotation_type"
@@ -37289,7 +37288,6 @@ export const dataDictionaryJson = {
         "user_id": {
           "columnName": "user_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "user_id"
@@ -37297,7 +37295,6 @@ export const dataDictionaryJson = {
         "is_finalized": {
           "columnName": "is_finalized",
           "columnType": "YES_NO",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "is_finalized"
@@ -37305,7 +37302,6 @@ export const dataDictionaryJson = {
         "address_id": {
           "columnName": "address_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "address_id"
@@ -37313,7 +37309,6 @@ export const dataDictionaryJson = {
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "products_count"
@@ -37321,7 +37316,6 @@ export const dataDictionaryJson = {
         "chargeable_services_count": {
           "columnName": "chargeable_services_count",
           "columnType": "INTEGER",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "chargeable_services_count"
@@ -37329,10 +37323,16 @@ export const dataDictionaryJson = {
         "received_by": {
           "columnName": "received_by",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotations",
           "columnSourceOriginalColumn": "received_by"
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotations",
+          "columnSourceOriginalColumn": "vehicle_number"
         }
       },
       "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_quotations.* \nFROM act_sale_quotations\nLEFT JOIN act_vw_customers ON act_sale_quotations.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_quotations.address_id = act_addresses.address_id"

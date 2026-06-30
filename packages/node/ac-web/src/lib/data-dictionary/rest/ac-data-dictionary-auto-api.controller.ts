@@ -19,7 +19,7 @@ export class AcDataDictionaryAutoApi {
   includeTables: Record<string, Record<string, boolean>> = {};
   urlPrefix: string = '';
   acDataDictionary: AcDataDictionary;
-  logger: AcLogger = new AcLogger({ logType: AcEnumLogType.Console, logMessages: true });
+  logger: AcLogger = new AcLogger({ logType: AcEnumLogType.Console, logMessages: false });
 
   getAcSqlDbTable: (args: { request: AcWebRequest, acDDTable: AcDDTable }) => Promise<AcResult> = async ({ acDDTable }) => {
     const result = new AcResult();

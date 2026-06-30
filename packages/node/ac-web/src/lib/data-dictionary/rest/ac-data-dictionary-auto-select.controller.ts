@@ -293,8 +293,6 @@ export class AcDataDictionaryAutoSelect {
   postHandler(): (args: IAcWebRequestHandlerArgs) => Promise<AcWebResponse> {
     return async (args: IAcWebRequestHandlerArgs) => {
       const logger = args.logger;
-      logger.logMessages = true;
-      logger.logType = AcEnumLogType.Console;
       const acWebRequest = args.request;
       const response = new AcWebApiResponse();
       try {
@@ -397,7 +395,6 @@ export class AcDataDictionaryAutoSelect {
             acDDSelectStatement.orderBy = acWebRequest.post[AcDataDictionaryAutoApiConfig.selectParameterOrderByKey];
           }
           logger.log(['Getting response from database for sql statement', acDDSelectStatement]);
-          console.log(acDDSelectStatement.getSqlStatement());
           const getResponse = await acSqlDbTable.getRowsFromAcDDStatement({ acDDSelectStatement });
           logger.log(['Response : ', getResponse]);
           response.setFromSqlDaoResult({ result: getResponse });

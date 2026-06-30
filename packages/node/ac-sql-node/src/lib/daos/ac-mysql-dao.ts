@@ -372,7 +372,7 @@ export class AcMysqlDao extends AcBaseSqlDao {
       }
       result.setSuccess();
     } catch (ex: any) {
-      console.error(updatedStatement,ex);
+      console.error(updatedStatement,parameters,ex);
       result.setException({ exception: ex, stackTrace: ex.stack });
       result.value = updatedStatement;
     } finally {

@@ -13,7 +13,7 @@ export class AcBaseSqlDao {
   sqlConnection: AcSqlConnection;
 
   constructor() {
-    this.logger = new AcLogger({ logType: AcEnumLogType.Print, logMessages: false });
+    this.logger = new AcLogger({ logType: AcEnumLogType.Print, logMessages: true });
     this.sqlConnection = new AcSqlConnection();
   }
 
@@ -234,10 +234,12 @@ export class AcBaseSqlDao {
           this.logger.log(`Parameter Index: ${parameterIndex}`);
           this.logger.log(`Values Before: ${JSON.stringify(statementParametersList)}`);
           if (Array.isArray(value)) {
+            this.logger.log(`Value is array`);
             const replacement = new Array(value.length).fill('?').join(',');
             statement = statement.replace(new RegExp(this._escapeRegExp(key)), replacement);
             statementParametersList!.splice(parameterIndex, 0, ...value);
           } else {
+            this.logger.log(`Value is not array`);
             statement = statement.replace(new RegExp(this._escapeRegExp(key)), '?');
             statementParametersList!.splice(parameterIndex, 0, value);
           }
@@ -251,8 +253,23 @@ export class AcBaseSqlDao {
           index++;
           parameterKey = `parameter${index}`;
         }
-        statement = statement.replace(key, `:${parameterKey}`);
-        statementParametersMap![parameterKey] = value;
+        if (Array.isArray(value)) {
+          this.logger.log(`Value is not array`);
+          const placeholders: string[] = [];
+          index--;
+          for (const v of value) {
+            index++;
+            parameterKey = `parameter${index}`;
+            placeholders.push(`:${parameterKey}`);
+            statementParametersMap![parameterKey] = v;
+          }
+          statement = statement.replace(key, placeholders.join(","));
+        } else {
+          this.logger.log(`Value is not array`);
+          statement = statement.replace(key, `:${parameterKey}`);
+          statementParametersMap![parameterKey] = value;
+        }
+
       }
     }
 

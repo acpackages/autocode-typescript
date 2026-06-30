@@ -32,7 +32,7 @@ export class AcSqlDbBase {
     }
 
     this.useDataDictionary({ dataDictionaryName });
-    this.logger = new AcLogger({ logType: AcEnumLogType.Console, logMessages: true });
+    this.logger = new AcLogger({ logType: AcEnumLogType.Console, logMessages: false });
   }
 
   useDataDictionary({ dataDictionaryName = 'default' }: { dataDictionaryName?: string }) {

@@ -39,7 +39,6 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
     try {
       // Skip excluded paths
       const path = `/${(request.url || '').split('?')[0]}`.replace(/\/\//g, '/');
-      console.log(`[AcWebJwtInterceptor] onRequest path: ${path}`);
       for (const excluded of this.excludePaths) {
         const cleanExcluded = excluded.startsWith('/') ? excluded : `/${excluded}`;
         if (path === cleanExcluded || path.startsWith(cleanExcluded)) {
@@ -47,31 +46,25 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
         }
       }
 
-      console.log(`[AcWebJwtInterceptor] Extracting header: ${this.headerKey}`);
       const authHeader = this._getHeader(request, this.headerKey);
       if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
-        console.log(`[AcWebJwtInterceptor] Missing or invalid bearer header`);
         return this._unauthorized('Missing or invalid Authorization header');
       }
 
       const token = authHeader.substring(7).trim();
-      console.log(`[AcWebJwtInterceptor] Token extracted, length: ${token.length}`);
       if (!token) {
         return this._unauthorized('Empty token');
       }
 
       let claims: Record<string, any> | null = null;
 
-      console.log(`[AcWebJwtInterceptor] Verifying token. verifyToken: ${typeof this.verifyToken}, secretKey: ${!!this.secretKey}`);
       if (this.verifyToken) {
         claims = await this.verifyToken(token);
       } else if (this.secretKey) {
         claims = AcEncryption.verifyToken({ token, secret: this.secretKey });
       }
-      console.log(`[AcWebJwtInterceptor] Claims result: ${!!claims}`);
 
       if (!claims) {
-        console.log(`[AcWebJwtInterceptor] Token invalid or expired for token: ${token ? token.substring(0, 10) + '...' : 'null'}`);
         return this._unauthorized('Token is invalid or expired');
       }
 

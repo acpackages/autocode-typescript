@@ -7,6 +7,7 @@ import { AcEnumPageOrientation } from '../enums/ac-enum-page-orientations.enum';
 import { AcTemplateProcessor } from '../core/ac-template-processor';
 import { AcReportEngine } from '../core/ac-report-engine';
 import { AcExpression } from '../core/ac-expression';
+import { AC_REPORT_ENGINE_EVENTS } from '../consts/ac-report-engine-events.const';
 
 export class AcReport {
   reportElClone!: HTMLElement;
@@ -21,7 +22,7 @@ export class AcReport {
   pageWidthMM: number = 0;
   mmConversionValue: number = 1;
   pages: AcReportPage[] = [];
-  evets: AcEvents = new AcEvents();
+  events: AcEvents = new AcEvents();
   hooks: AcHooks = new AcHooks();
   logger: AcLogger = new AcLogger();
   activeLoopElementIds: string[] = [];
@@ -73,6 +74,7 @@ export class AcReport {
           }
         }
       }
+      this.events.execute({event:AC_REPORT_ENGINE_EVENTS.pageAdd,args:{page}});
     }
     else {
       const page = new AcReportPage({ element: this.pageElClone!.cloneNode(true) as HTMLElement, index: this.pages.length, report: this, isFixedHeight: this.pageSize.isRoll != true });
@@ -84,6 +86,7 @@ export class AcReport {
       this.element.append(page.element);
       this.pages.push(page);
       this.activePage = page;
+      this.events.execute({event:AC_REPORT_ENGINE_EVENTS.pageAdd,args:{page}});
     }
     return this.activePage;
   }
@@ -95,9 +98,8 @@ export class AcReport {
     this.pages = [];
     this.activePage = undefined;
     this.init();
+    this.events.execute({event:AC_REPORT_ENGINE_EVENTS.clear});
   }
-
-
 
   private clearTempIdsFromElement({ element }: { element: HTMLElement }) {
     element.removeAttribute(AC_REPORT_ATTRIBUTE.tempId);
@@ -181,6 +183,14 @@ export class AcReport {
     }
   }
 
+  off({subscriptionId,subscriptionIds,event,callback}:{subscriptionId?:string,subscriptionIds?:string[],callback?:any,event?:string}){
+    this.events.unsubscribe({subscriptionId,subscriptionIds,callback,event});
+  }
+
+  on({event,callback}:{event:string,callback:Function}):string{
+    return this.events.subscribe({event,callback});
+  }
+
   async processAndAppendElement({ context, element, parentSelector }: { context: any, element: HTMLElement, parentSelector: string }) {
     if(!this.activePage){
        if (this.pageElClone) {
@@ -199,6 +209,7 @@ export class AcReport {
         this.activePage!.element.querySelector(parentSelector)!.append(element);
       }
     }
+    this.events.execute({event:AC_REPORT_ENGINE_EVENTS.processElement,args:{element,context,parentSelector}});
   }
 
   async processPageReportDataBindings(node: Node, page: AcReportPage) {
@@ -280,8 +291,7 @@ export class AcReport {
       measureElement.style.visibility = 'none';
       if (this.pageOrientation == AcEnumPageOrientation.Portrait) {
         if (this.pageSize.isRoll != true) {
-          measureElement.style.maxHeight = `${this.pageSize.heightMm}mm`;
-          measureElement.style.minHeight = `${this.pageSize.heightMm}mm`;
+          measureElement.style.minHeight = `max-content`;
           measureElement.style.height = `${this.pageSize.heightMm}mm`;
         }
         measureElement.style.maxWidth = `${this.pageSize.widthMm}mm`;
