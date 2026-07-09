@@ -231,7 +231,7 @@ export class AcWebSocket {
           delete this._pendingAcks[ackId];
           resolve(null);
         }
-      }, 30000);
+      }, 300000);
     });
 
     this._send({

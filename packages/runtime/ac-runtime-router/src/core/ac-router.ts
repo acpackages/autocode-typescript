@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcRouterOutletElement } from "../elements/ac-router-outlet.element";
 import { IAcRouteSnapshot } from "../interfaces/ac-route-snapshot.interface";
 import { IAcRoute } from "../interfaces/ac-route.interface";
@@ -34,6 +35,7 @@ export class AcRouter {
 
   /** The last emitted route snapshot (for late subscribers). */
   lastSnapshot?: IAcRouteSnapshot;
+  basePath:string = '';
 
   get currentRoute():any{
     return this.lastSnapshot;
@@ -45,7 +47,17 @@ export class AcRouter {
    */
   private constructor() {
     window.addEventListener('hashchange', () => this.handleHashChange());
-    window.addEventListener('load', () => this.handleHashChange());
+    window.addEventListener('load', () => {
+      if(!this.basePath){
+        this.basePath = window.location.origin;
+      }
+      let hash = window.location.href.substring(this.basePath.length);
+      if(window.location.hash.length > 0){
+        hash = window.location.hash;
+      }
+      window.history.replaceState({},'',`${this.basePath}/#`);
+        this.navigateTo({path:hash});
+    });
   }
 
   /**
@@ -72,7 +84,7 @@ export class AcRouter {
    *
    * @param routes - Array of route definitions.
    */
-  registerRoutes(routes: IAcRoute[]): void {
+  registerRoutes({routes}:{routes: IAcRoute[]}): void {
     this.routes = routes;
     // Trigger initial check if already loaded
     if (document.readyState === 'complete' && !this.isPaused) {
@@ -85,17 +97,12 @@ export class AcRouter {
    *
    * @param path - The target path (e.g., `'/dashboard'`).
    */
-  navigateTo(path: string): void {
-    window.location.hash = path;
-  }
-
-  /**
-   * Programmatically navigate using history API with hash.
-   *
-   * @param path - The target URL path (e.g., `'/dashboard'`).
-   */
-  navigate(path: string): void {
-    window.location.hash = path;
+  navigateTo({path}:{path: string}): void {
+    let hash:string = path;
+    if(!path.startsWith("/")){
+      hash = "/"+hash;
+    }
+    window.location.hash = hash;
   }
 
   /**
@@ -104,7 +111,7 @@ export class AcRouter {
    * @param callback - Invoked with the new URL path on each change.
    * @returns An unsubscribe function.
    */
-  subscribe(callback: (url: string) => void): () => void {
+  subscribe({callback}:{callback: (url: string) => void}): () => void {
     return this.routeChange.subscribe((snapshot) => {
       callback(snapshot.path);
     });
@@ -177,7 +184,7 @@ export class AcRouter {
     // Handle redirects
     const redirectRoute = matchedRoutes.find(r => r.redirectTo !== undefined);
     if (redirectRoute) {
-      this.navigateTo(redirectRoute.redirectTo!);
+      this.navigateTo({path:redirectRoute.redirectTo!});
       return;
     }
 

@@ -31,6 +31,7 @@
       "@autocode-ts/ac-data-dictionary-browser": ["dist/packages/browser/ac-data-dictionary-browser"],
       "@autocode-ts/ac-data-dictionary-components": ["dist/packages/browser/ac-data-dictionary-components"],
       "@autocode-ts/ac-data-dictionary-editor": ["dist/packages/browser/ac-data-dictionary-editor"],
+      "@autocode-ts/ac-data-manager-export": ["dist/packages/common/ac-data-manager-export"],
       "@autocode-ts/ac-datagrid": ["dist/packages/browser/ac-datagrid"],
       "@autocode-ts/ac-datagrid-on-ag-grid": ["dist/packages/browser/extensions/datagrid/ac-datagrid-on-ag-grid"],
       "@autocode-ts/ac-datagrid-floating-editor": ["dist/packages/browser/extensions/datagrid/ac-datagrid-floating-editor"],

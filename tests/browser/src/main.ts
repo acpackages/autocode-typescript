@@ -53,7 +53,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize Router
     const routes: IAcRoute[] = [
-        { path: '/', element:{selector: 'dashboard-page' }},
+        { path: '*', redirectTo:APP_ROUTES.dashboard},
         { path: APP_ROUTES.dashboard, element:{selector: 'dashboard-page' }},
         { path: APP_ROUTES.agGrid.local, element:{selector: 'aggrid-local-page' }},
         { path: APP_ROUTES.agGrid.onDemand, element:{selector: 'aggrid-on-demand-page' }},
@@ -89,7 +89,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     ];
 
     console.log(routes);
-     acRouter.registerRoutes(routes);
+     acRouter.registerRoutes({routes});
     // Set up the main layout
     const appRoot = document.getElementById('app');
     if (appRoot) {

@@ -206,6 +206,7 @@ export class AcDatagridOnAgGridEventHandler {
 
     const datagridColumn = this.agGridExtension!.getDatagridColumnFromEvent({ event });
     if (datagridColumn && this.datagridApi) {
+      datagridColumn.visible = event.visible;
       this.datagridApi.eventHandler.handleColumnVisibilityChange({ datagridColumn });
     }
   };

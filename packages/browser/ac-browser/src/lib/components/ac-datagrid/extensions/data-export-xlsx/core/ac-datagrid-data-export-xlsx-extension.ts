@@ -4,8 +4,10 @@ import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extensio
 import { IAcDatagridExtension } from "../../../interfaces/ac-datagrid-extension.interface";
 import { AcEnumDatagridDataExportXlsxHook } from "../enums/ac-enum-datagrid-data-export-xlsx-hook.enum";
 import { IAcDatagridDataExportXlsxExportCallArgs } from "../interfaces/ac-datagrid-data-export-xlsx-export-call-args.interface";
-import { IAcDatagridDataExportXlsxExportCallHookArgs } from "../interfaces/ac-datagrid-data-export-xlsx-export-call-hook-args.interface";
 import { IAcDatagridDataExportXlsxHookArgs } from "../interfaces/ac-datagrid-data-export-xlsx-hook-args.interface";
+import { IAcDataRow } from "@autocode-ts/autocode";
+import { AcEnumDatagridColumnDataType } from "../../../enums/ac-enum-datagrid-column-data-type.enum";
+import { AcDataManagerExport, AcDataManagerExportFormat, AcExportDataType } from '@autocode-ts/ac-data-manager-export';
 
 export class AcDatagridDataExportXlsxExtension extends AcDatagridExtension {
   private _allowXlsxExport: boolean = false;
@@ -24,14 +26,46 @@ export class AcDatagridDataExportXlsxExtension extends AcDatagridExtension {
     }
   }
 
-  exportData(args: IAcDatagridDataExportXlsxExportCallArgs) {
+  fileName:string = "export";
+
+  async exportData() {
     if (this.datagridApi) {
-      const hookArgs: IAcDatagridDataExportXlsxExportCallHookArgs = {
-        datagridApi: this.datagridApi,
-        datagridDataExportXlsxExtension: this,
-        args: args
-      };
-      this.datagridApi.hooks.execute({ hook: AcEnumDatagridDataExportXlsxHook.ExportData, args: hookArgs });
+    const columns = this.datagridApi.datagridColumns
+      .filter(col => col.visible)
+      .map(col => {
+        let exportType: AcExportDataType | undefined;
+        switch (col.dataType) {
+          case AcEnumDatagridColumnDataType.Boolean:
+            exportType = AcExportDataType.Boolean;
+            break;
+          case AcEnumDatagridColumnDataType.Date:
+            exportType = AcExportDataType.Date;
+            break;
+          case AcEnumDatagridColumnDataType.Datetime:
+            exportType = AcExportDataType.DateTime;
+            break;
+          case AcEnumDatagridColumnDataType.Number:
+            exportType = AcExportDataType.Number;
+            break;
+          case AcEnumDatagridColumnDataType.String:
+            exportType = AcExportDataType.Text;
+            break;
+        }
+
+        return {
+          title: col.title,
+          field: col.columnKey,
+          type: exportType,
+          format: col.columnDefinition.format
+        };
+      });
+
+    new AcDataManagerExport({dataManager:this.datagridApi.dataManager}).export({
+      columns,
+      fileName: this.fileName,
+      sheetName:this.fileName,
+      format: AcDataManagerExportFormat.Xlsx
+    });
     }
   }
 }

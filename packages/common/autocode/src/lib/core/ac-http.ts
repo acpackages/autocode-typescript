@@ -24,12 +24,12 @@ export interface IAcHttpResponse {
 }
 
 export class AcHttp {
-  static baseUrl: string = '';
-  static requestInterceptor?: ( request: IAcHttpRequest) => IAcHttpRequest;
+  baseUrl: string = '';
+  requestInterceptor?: ( request: IAcHttpRequest) => IAcHttpRequest;
 
-  private static axiosInstance = axios.create();
+  private axiosInstance = axios.create();
 
-  static convertObjectToFormData({
+  convertObjectToFormData({
     formData,
     data,
     parentKey,
@@ -55,7 +55,7 @@ export class AcHttp {
     }
   }
 
-  private static async doAxios({
+  private async doAxios({
     request,
     method,
   }: {
@@ -89,7 +89,7 @@ export class AcHttp {
   }
 
   // ========= Observable wrappers =========
-  static requestObservable({
+  requestObservable({
     request,
     method = AcEnumHttpMethod.Get,
   }: {
@@ -99,24 +99,24 @@ export class AcHttp {
     return from(this.doAxios({ request, method }));
   }
 
-  static getObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
+  getObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
     return this.requestObservable({ request, method: AcEnumHttpMethod.Get });
   }
 
-  static postObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
+  postObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
     return this.requestObservable({ request, method: AcEnumHttpMethod.Post });
   }
 
-  static putObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
+  putObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
     return this.requestObservable({ request, method: AcEnumHttpMethod.Put });
   }
 
-  static deleteObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
+  deleteObservable( request: IAcHttpRequest): Observable<IAcHttpResponse> {
     return this.requestObservable({ request, method: AcEnumHttpMethod.Delete });
   }
 
   // ========= Promise wrappers =========
-  static requestPromise({
+  requestPromise({
     request,
     method = AcEnumHttpMethod.Get,
   }: {
@@ -126,24 +126,24 @@ export class AcHttp {
     return this.doAxios({ request, method });
   }
 
-  static getPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
+  getPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
     return this.requestPromise({ request, method: AcEnumHttpMethod.Get });
   }
 
-  static postPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
+  postPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
     return this.requestPromise({ request, method: AcEnumHttpMethod.Post });
   }
 
-  static putPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
+  putPromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
     return this.requestPromise({ request, method: AcEnumHttpMethod.Put });
   }
 
-  static deletePromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
+  deletePromise( request: IAcHttpRequest): Promise<IAcHttpResponse> {
     return this.requestPromise({ request, method: AcEnumHttpMethod.Delete });
   }
 
   // ========= Utilities =========
-  private static processRequestParams( request: IAcHttpRequest): IAcHttpRequest {
+  private processRequestParams( request: IAcHttpRequest): IAcHttpRequest {
     const params: IAcHttpRequest = { ...request };
 
     // Query params
@@ -179,7 +179,7 @@ export class AcHttp {
     return params;
   }
 
-  static async getFileContentAsBase64FromUrl({ url }: { url: string }) {
+  async getFileContentAsBase64FromUrl({ url }: { url: string }) {
     try {
       const response = await this.axiosInstance.get(url, {
         responseType: 'blob',

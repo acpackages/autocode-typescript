@@ -8,6 +8,7 @@
   "types": "./ac-browser.d.ts",
   "dependencies": {
     "@autocode-ts/autocode": "^0.0.1",
+    "@autocode-ts/ac-data-manager-export": "0.0.1",
     "@autocode-ts/ac-extensions": "^0.0.1",
     "@autocode-ts/ac-icons": "^0.0.1",
     "@popperjs/core": "^2.11.8"

@@ -39,6 +39,9 @@
       "@autocode-ts/ac-data-bridge": [
         "packages/common/ac-data-bridge/src/ac-data-bridge.ts"
       ],
+      "@autocode-ts/ac-data-manager-export": [
+        "packages/common/ac-data-manager-export/src/ac-data-manager-export.ts"
+      ],
       "@autocode-ts/ac-data-bridge-ui": [
         "packages/browser/ac-data-bridge-ui/src/ac-data-bridge-ui.ts"
       ],

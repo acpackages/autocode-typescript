@@ -1,0 +1,27 @@
+{
+  "name": "@autocode/ac-data-manager-export",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./ac-data-manager-export.js",
+  "module": "./ac-data-manager-export.js",
+  "types": "./ac-data-manager-export.d.ts",
+  "dependencies": {
+    "xlsx": "^0.18.5",
+    "@ac-data-manager-export-ts/ac-data-manager-export": "0.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".":{
+      "types": "./ac-data-manager-export.d.ts",
+      "import": "./ac-data-manager-export.js",
+      "require": "./ac-data-manager-export.cjs"
+    }
+  },
+  "files": [
+    "ac-data-manager-export.js",
+    "ac-data-manager-export.cjs",
+    "ac-data-manager-export.d.ts"
+  ]
+}

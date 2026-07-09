@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement } from '@autocode-ts/ac-browser';
+import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType } from '@autocode-ts/ac-browser';
 import { ColDef, createGrid, ModuleRegistry, AllCommunityModule, GridApi, GetRowIdParams, GridOptions, IRowNode, IServerSideGetRowsParams, IServerSideDatasource, SuppressKeyboardEventParams, ClientSideRowModelModule, IServerSideGetRowsRequest, TextFilterModule, NumberFilterModule, DateFilterModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 import { AcDatagridRowSelectionExtensionOnAgGrid } from './ac-datagrid-row-selection-extension-on-ag-grid';
@@ -12,7 +12,7 @@ import { AcDatagridTreeTableExtensionOnAgGrid } from './ac-datagrid-tree-table-e
 import { AcDatagridRowDraggingExtensionOnAgGrid } from './ac-datagrid-row-dragging-extension-on-ag-grid';
 import { IAcDatagriOnAgGridRowAddHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-row-add-hook-args.interface';
 import { IAcDatagriOnAgGridRowUpdateHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-row-update-hook-args.interface';
-import { AcEnumConditionOperator, AC_DATA_MANAGER_HOOK, AcEnumLogicalOperator, AcFilterGroup, AcLogger, AcSortOrder, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs, acNullifyInstanceProperties, AcDelayedCallback } from '@autocode-ts/autocode';
+import { AcEnumConditionOperator, AC_DATA_MANAGER_HOOK, AcEnumLogicalOperator, AcFilterGroup, AcLogger, AcSortOrder, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs, acNullifyInstanceProperties, AcDelayedCallback, IAcDataRow } from '@autocode-ts/autocode';
 import { AcDatagridOnAgGridEventHandler } from './ac-datagrid-on-ag-grid-event-handler';
 import { stringEqualsIgnoreCase } from '@autocode-ts/ac-extensions';
 import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS } from '../const/ac-datagrid-aggrid-default-options.const';
@@ -412,26 +412,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     }
   }
 
-  private handleDataExportXlsx(args: IAcDatagridDataExportXlsxExportCallHookArgs) {
-    if (!this.gridApi) return;
-
-    if (this.isClientSideData) {
-      this.gridApi.exportDataAsExcel({ fileName: args.args.fileName });
-    }
-    else {
-      const getAllDataArgs: any = { ...(this.lastOnDemandParams ?? {}) };
-      getAllDataArgs.successCallback = (response: IAcOnDemandResponseArgs) => {
-        if (!this.gridApi) return;
-        if (!Array.isArray(response.data)) {
-          response.data = [];
-        }
-        this.gridApi.applyServerSideRowData({ successParams: { rowData: response.data, rowCount: response.totalCount } });
-      };
-      if (this.datagridApi?.dataManager.onDemandFunction) {
-        this.datagridApi.dataManager.onDemandFunction(getAllDataArgs);
-      }
-      this.gridApi.exportDataAsExcel({ fileName: args.args.fileName });
-    }
+  private handleDataExportXlsx() {
+    this.dataExportXlsxExtension.exportData();
   }
 
   private handleDataSourceTypeChange(args: IAcDatagridDataSourceTypeChangeHookArgs) {
@@ -584,7 +566,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.setColumnDragging();
     }
     else if (stringEqualsIgnoreCase(hook, AcEnumDatagridDataExportXlsxHook.ExportData)) {
-      this.handleDataExportXlsx(args);
+      this.handleDataExportXlsx();
     }
 
   }
@@ -725,8 +707,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     acClearElement({ element: this.downloadButtonContainer });
     this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn btn-ac-datagrid-download"><i class="fa fa-download"></i></button>`;
     (this.downloadButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
-      this.isColumnsCustomizerOpen = !this.isColumnsCustomizerOpen;
-      this.gridApi?.exportDataAsExcel();
+      this.handleDataExportXlsx();
     });
 
     this.columnsCustomizerButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
@@ -764,6 +745,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     });
 
     this.setDataSourceType();
+    this.setDataExportXlsxExtension();
     this.setAfterRowsFooterExtension();
     this.setColumnsCustomizerExtension();
     this.setColumnDraggingExtension();

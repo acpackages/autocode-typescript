@@ -10,6 +10,7 @@
     "build:ac-bwipjs-pipe": "nx run ac-bwipjs-pipe:build",
     "build:ac-data-bridge": "nx run ac-data-bridge:build",
     "build:ac-data-bridge-ui": "nx run ac-data-bridge-ui:build",
+    "build:ac-data-manager-export": "nx run ac-data-manager-export:build",
     "build:ac-data-dictionary": "nx run ac-data-dictionary:build",
     "build:ac-data-dictionary-components": "nx run ac-data-dictionary-components:build",
     "build:ac-data-dictionary-editor": "nx run ac-data-dictionary-editor:build",
