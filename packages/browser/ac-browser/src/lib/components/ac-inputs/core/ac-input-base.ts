@@ -31,7 +31,7 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  get form() { return this.elementInternals.form; }
+  get form() { return this.elementInternals ? this.elementInternals.form:null; }
 
   get name(): string | null {
     return this.getAttribute('name');
@@ -121,7 +121,7 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  get validationMessage() { return this.elementInternals.validationMessage; }
+  get validationMessage() { return this.elementInternals ? this.elementInternals.validationMessage : ''; }
 
   protected _value: any;
 
@@ -191,7 +191,7 @@ export class AcInputBase extends AcElementBase {
     });
   }
 
-  checkValidity() { return this.elementInternals.checkValidity(); }
+  checkValidity() { return this.elementInternals ? this.elementInternals.checkValidity() : false; }
 
   disconnectedCallback(): void {
     this.innerHTML = '';
@@ -279,7 +279,7 @@ export class AcInputBase extends AcElementBase {
     if (this.hasAttribute('readonly')) {
       this.readonly = true;
     }
-    if (this.elementInternals.form) {
+    if (this.elementInternals && this.elementInternals.form) {
       this.elementInternals.form.addEventListener('submit', () => {
         this.validate();
       });
@@ -313,7 +313,7 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  reportValidity() { return this.elementInternals.reportValidity(); }
+  reportValidity() { return this.elementInternals ? this.elementInternals.reportValidity():false; }
 
   setValue(value: any) {
     if (!this.isDestroyed) {
@@ -332,7 +332,9 @@ export class AcInputBase extends AcElementBase {
         if (this.reflectValueAttribute) {
           this.setAttribute('value', value);
         }
-        this.elementInternals.setFormValue(this._value);
+        if(this.elementInternals){
+          this.elementInternals.setFormValue(this._value);
+        }
         if (this.dispatchEvent) {
           this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         }
