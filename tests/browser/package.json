@@ -14,6 +14,7 @@
     "@autocode-ts/ac-runtime": "workspace:*",
     "@autocode-ts/autocode": "workspace:*",
     "@autocode-ts/ac-datagrid-on-ag-grid": "workspace:*",
+    "@autocode-ts/ac-datetime-picker": "workspace:*",
     "@autocode-ts/ac-dde-code-generator": "workspace:*",
     "@autocode-ts/ac-dde-browser-storage": "workspace:*",
     "@autocode-ts/ac-sqlite-dao-browser": "workspace:*",

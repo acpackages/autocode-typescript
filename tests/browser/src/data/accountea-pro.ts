@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 16,
+  "version": 18,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -12135,6 +12135,26 @@ export const dataDictionaryJson = {
               "propertyValue": "Batch Code"
             }
           }
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mfg"
+            }
+          }
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expiry"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -14672,6 +14692,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -16511,6 +16541,36 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expiry"
+            }
+          }
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mfg"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -16967,16 +17027,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Channel Name"
-            }
-          }
-        },
-        "product_batch_code": {
-          "columnName": "product_batch_code",
-          "columnType": "STRING",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Batch Code"
             }
           }
         }
@@ -20401,6 +20451,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -21172,6 +21232,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -21360,6 +21430,16 @@ export const dataDictionaryJson = {
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
               "propertyValue": "0"
+            }
+          }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
             }
           }
         }
@@ -21661,6 +21741,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Remarks"
+            }
+          }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
             }
           }
         }
@@ -22370,6 +22460,16 @@ export const dataDictionaryJson = {
               ]
             }
           }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -23003,6 +23103,36 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Gross Price"
+            }
+          }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mfg"
+            }
+          }
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expiry"
             }
           }
         }
@@ -32866,6 +32996,20 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoice_products",
           "columnSourceOriginalColumn": "product_batch_code"
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_products",
+          "columnSourceOriginalColumn": "manufacturing_time"
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_products",
+          "columnSourceOriginalColumn": "expiry_time"
         }
       },
       "viewQuery": "SELECT\nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(pip.product_quantity, 0) *\n        COALESCE(pip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(pip.product_quantity, 0) *\n            COALESCE(pip.product_price_gross, 0)\n        ) * (COALESCE(pip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(pip.product_quantity, 0) *\n                COALESCE(pip.product_price_gross, 0)\n            ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    pip.*\n\nFROM act_purchase_invoice_products pip\nLEFT JOIN act_vw_products\n    ON pip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON pip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON pip.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON pip.tax_rate_id = act_tax_rates.tax_rate_id;"
@@ -33287,7 +33431,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "tax_rate_percentage"
         }
       },
-      "viewQuery": "SELECT act_vw_purchase_invoices.*,\nact_vw_purchase_invoice_products.tax_rate_id,\nact_vw_purchase_invoice_products.tax_rate_name,\nact_vw_purchase_invoice_products.tax_rate_percentage,\nSUM(act_vw_purchase_invoice_products.taxable_amount) AS taxable_amount,\n(act_vw_purchase_invoice_products.tax_amount) AS tax_amount,\nSUM(act_vw_purchase_invoice_products.product_amount) AS total_amount \nFROM act_vw_purchase_invoices \nLEFT JOIN act_vw_purchase_invoice_products ON act_vw_purchase_invoices.purchase_invoice_id = act_vw_purchase_invoice_products.purchase_invoice_id\nGROUP BY act_vw_purchase_invoices.purchase_invoice_id,act_vw_purchase_invoice_products.tax_rate_name"
+      "viewQuery": "SELECT act_vw_purchase_invoices.*,\nact_vw_purchase_invoice_products.tax_rate_id,\nact_vw_purchase_invoice_products.tax_rate_name,\nact_vw_purchase_invoice_products.tax_rate_percentage,\nSUM(act_vw_purchase_invoice_products.taxable_amount) AS taxable_amount,\nSUM(act_vw_purchase_invoice_products.tax_amount) AS tax_amount,\nSUM(act_vw_purchase_invoice_products.product_amount) AS total_amount \nFROM act_vw_purchase_invoices \nLEFT JOIN act_vw_purchase_invoice_products ON act_vw_purchase_invoices.purchase_invoice_id = act_vw_purchase_invoice_products.purchase_invoice_id\nGROUP BY act_vw_purchase_invoices.purchase_invoice_id,act_vw_purchase_invoice_products.tax_rate_name"
     },
     "act_vw_purchase_invoices": {
       "viewName": "act_vw_purchase_invoices",
@@ -35862,6 +36006,27 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_invoice_products",
           "columnSourceOriginalColumn": "sale_invoice_product_remarks"
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_products",
+          "columnSourceOriginalColumn": "product_batch_code"
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_products",
+          "columnSourceOriginalColumn": "expiry_time"
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_products",
+          "columnSourceOriginalColumn": "manufacturing_time"
         }
       },
       "viewQuery": "SELECT\nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(sip.product_quantity, 0) *\n        COALESCE(sip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sip.product_quantity, 0) *\n            COALESCE(sip.product_price_gross, 0)\n        ) * (COALESCE(sip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sip.product_quantity, 0) *\n                COALESCE(sip.product_price_gross, 0)\n            ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sip.*\n\nFROM act_sale_invoice_products sip\nLEFT JOIN act_vw_products\n    ON sip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON sip.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON sip.tax_rate_id = act_tax_rates.tax_rate_id;"
@@ -36291,7 +36456,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "tax_rate_percentage"
         }
       },
-      "viewQuery": "SELECT act_vw_sale_invoices.*,\nact_vw_sale_invoice_products.tax_rate_id,\nact_vw_sale_invoice_products.tax_rate_name,\nact_vw_sale_invoice_products.tax_rate_percentage,\nSUM(act_vw_sale_invoice_products.taxable_amount) AS taxable_amount,\n(act_vw_sale_invoice_products.tax_amount) AS tax_amount,\nSUM(act_vw_sale_invoice_products.product_amount) AS total_amount \nFROM act_vw_sale_invoices \nLEFT JOIN act_vw_sale_invoice_products ON act_vw_sale_invoices.sale_invoice_id = act_vw_sale_invoice_products.sale_invoice_id\nGROUP BY act_vw_sale_invoices.sale_invoice_id,act_vw_sale_invoice_products.tax_rate_name"
+      "viewQuery": "SELECT act_vw_sale_invoices.*,\nact_vw_sale_invoice_products.tax_rate_id,\nact_vw_sale_invoice_products.tax_rate_name,\nact_vw_sale_invoice_products.tax_rate_percentage,\nSUM(act_vw_sale_invoice_products.taxable_amount) AS taxable_amount,\nSUM(act_vw_sale_invoice_products.tax_amount) AS tax_amount,\nSUM(act_vw_sale_invoice_products.product_amount) AS total_amount \nFROM act_vw_sale_invoices \nLEFT JOIN act_vw_sale_invoice_products ON act_vw_sale_invoices.sale_invoice_id = act_vw_sale_invoice_products.sale_invoice_id\nGROUP BY act_vw_sale_invoices.sale_invoice_id,act_vw_sale_invoice_products.tax_rate_name"
     },
     "act_vw_sale_invoices": {
       "viewName": "act_vw_sale_invoices",

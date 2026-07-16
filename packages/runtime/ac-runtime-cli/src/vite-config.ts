@@ -55,8 +55,19 @@ export function createViteConfig(
     const { projectRoot } = config;
     const plugins: PluginOption[] = [acRuntimePlugin(config)];
 
+    const globals = getExternalGlobals(projectRoot, config.externalGlobals);
+
     // --- Resolve aliases from tsconfig.json ---
     const aliases = readTsconfigAliases(projectRoot);
+    if (mode === 'build') {
+        for (const dep of Object.keys(globals)) {
+            delete aliases[dep];
+        }
+    }
+
+    if (mode === 'build' && config.type === 'app') {
+        plugins.push(acExternalGlobalsPlugin(globals));
+    }
 
     // --- Determine publicDir ---
     // If there's an asset mapping with url "/", use its directory as publicDir.
@@ -77,7 +88,7 @@ export function createViteConfig(
     if (assetMiddleware.length > 0) {
         const buildOpts = (options || {}) as BuildOptions;
         const outDir = buildOpts.outDir || config.buildDirectory;
-        plugins.push(assetServingPlugin(projectRoot, assetMiddleware, mode, outDir));
+        plugins.push(assetServingPlugin(config, assetMiddleware, mode, outDir));
     }
 
     // --- Static copy / serve for configured resources ---
@@ -87,7 +98,7 @@ export function createViteConfig(
     if (mode === 'build') {
         const staticCopyTargets = getStaticCopyTargets(config);
         if (staticCopyTargets.length > 0) {
-            plugins.push(staticCopyPlugin(staticCopyTargets));
+            plugins.push(staticCopyPlugin(staticCopyTargets, config));
         }
     }
 
@@ -156,16 +167,56 @@ export function createViteConfig(
         const buildOpts = (options || {}) as BuildOptions;
         const outDir = buildOpts.outDir || config.buildDirectory;
 
+        const externals: string[] = [];
+        externals.push(...Object.keys(globals));
+
+        if (config.type === 'library') {
+            const packageJsonPath = path.join(projectRoot, 'package.json');
+            if (fs.existsSync(packageJsonPath)) {
+                try {
+                    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+                    if (pkg.dependencies) {
+                        for (const dep of Object.keys(pkg.dependencies)) {
+                            if (!externals.includes(dep)) externals.push(dep);
+                        }
+                    }
+                    if (pkg.peerDependencies) {
+                        for (const dep of Object.keys(pkg.peerDependencies)) {
+                            if (!externals.includes(dep)) externals.push(dep);
+                        }
+                    }
+                } catch {
+                    // Ignore
+                }
+            }
+        }
+
+        const isApp = config.type === 'app';
+
         viteConfig.build = {
             outDir: path.resolve(projectRoot, outDir),
             emptyOutDir: true,
             target: 'es2022',
-            minify: 'esbuild',
+            minify: isApp ? 'terser' : 'esbuild',
             sourcemap: false,
-            cssCodeSplit: true,
+            cssCodeSplit: isApp,
             assetsDir: 'assets',
             chunkSizeWarningLimit: 3000,
-            terserOptions: {
+            terserOptions: isApp ? {
+                compress: {
+                    drop_console: false,
+                    drop_debugger: true,
+                    passes: 3,
+                    unused: true,
+                    dead_code: true,
+                    toplevel: true,
+                    keep_classnames: false,
+                    keep_fnames: false,
+                },
+                format: {
+                    comments: false,
+                },
+            } : {
                 compress: {
                     drop_console: false,
                     drop_debugger: true,
@@ -176,10 +227,63 @@ export function createViteConfig(
                 },
             },
             rollupOptions: {
+                external: (id) => externals.some(dep => id === dep || id.startsWith(dep + '/')),
+                treeshake: isApp ? {
+                    preset: 'recommended',
+                    moduleSideEffects: 'no-external',
+                } : undefined,
                 onwarn(warning, warn) {
                     if (warning.code === 'EVAL') return;
                     warn(warning);
                 },
+            },
+        };
+
+        if (config.type === 'library') {
+            const entryInCache = path.resolve(
+                projectRoot,
+                config.cacheDirectory,
+                path.relative(projectRoot, config.entryFile)
+            );
+            const buildFile = config.buildFile || 'index.js';
+            const fileDir = path.dirname(buildFile);
+            const ext = path.extname(buildFile);
+            const base = path.basename(buildFile, ext);
+            viteConfig.build.outDir = path.resolve(projectRoot, outDir, fileDir);
+
+            const libraryGlobals: Record<string, string> = {};
+            for (const dep of externals) {
+                libraryGlobals[dep] = globals[dep] || getGlobalName(dep);
+            }
+
+            let libName = config.name;
+            if (libName.startsWith('@autocode-ts/')) {
+                libName = libName.substring('@autocode-ts/'.length);
+            } else if (libName.startsWith('@')) {
+                const parts = libName.split('/');
+                libName = parts.length > 1 ? parts[1] : parts[0].replace('@', '');
+            }
+            const cleanLibName = libName.replace(/[-_/]([a-z])/g, (_, g) => g.toUpperCase()).replace(/[-_/]/g, '');
+
+            viteConfig.build.lib = {
+                entry: entryInCache,
+                name: cleanLibName,
+                fileName: (format) => {
+                    if (format === 'es') return `${base}${ext}`;
+                    return `${base}.${format}${ext}`;
+                },
+                formats: config.buildFormats || ['es'],
+            };
+
+            viteConfig.build.rollupOptions = {
+                ...viteConfig.build.rollupOptions,
+                output: {
+                    globals: libraryGlobals,
+                },
+            };
+        } else {
+            viteConfig.build.rollupOptions = {
+                ...viteConfig.build.rollupOptions,
                 output: {
                     entryFileNames: 'assets/[name]-[hash].js',
                     chunkFileNames: 'assets/[name]-[hash].js',
@@ -191,8 +295,8 @@ export function createViteConfig(
                         }
                     },
                 },
-            },
-        };
+            };
+        }
     }
 
     return viteConfig;
@@ -245,11 +349,12 @@ function readTsconfigAliases(projectRoot: string): Record<string, string> {
  * as static middleware in dev and copies them during build.
  */
 function assetServingPlugin(
-    projectRoot: string,
+    config: AcRuntimeConfig,
     assets: { directory: string; url: string }[],
     mode: 'serve' | 'build',
     outDir?: string,
 ): Plugin {
+    const projectRoot = config.projectRoot;
     return {
         name: 'ac-asset-serving',
 
@@ -309,12 +414,19 @@ function assetServingPlugin(
 
             // Copy asset directories to build output (using config outDir)
             const resolvedOutDir = outDir || 'dist';
+            const prune = config.type === 'app';
+            const bundleText = prune ? getBundleTextContents(path.resolve(projectRoot, resolvedOutDir)) : '';
+
             for (const asset of assets) {
                 const srcDir = path.resolve(projectRoot, asset.directory);
                 // The url prefix determines the output subdirectory inside outputDirectory
                 const destDir = path.join(projectRoot, resolvedOutDir, asset.url.slice(1));
                 if (fs.existsSync(srcDir)) {
-                    copyDirRecursive(srcDir, destDir);
+                    if (prune) {
+                        copyDirSelective(srcDir, destDir, bundleText);
+                    } else {
+                        copyDirRecursive(srcDir, destDir);
+                    }
                 }
             }
         },
@@ -322,13 +434,21 @@ function assetServingPlugin(
 }
 
 /** Simple static file copy plugin for UMD third-party bundles. */
-function staticCopyPlugin(targets: { src: string; dest: string }[]): Plugin {
+function staticCopyPlugin(targets: { src: string; dest: string }[], config: AcRuntimeConfig): Plugin {
     return {
         name: 'ac-static-copy',
         async writeBundle(options) {
             const outDir = options.dir || 'dist';
+            const prune = config.type === 'app';
+            const bundleText = prune ? getBundleTextContents(outDir) : '';
+
             for (const target of targets) {
                 if (fs.existsSync(target.src)) {
+                    const filename = path.basename(target.src);
+                    if (prune && !bundleText.includes(filename) && !bundleText.includes(target.dest)) {
+                        continue; // Skip copying unused static resource
+                    }
+
                     const stat = fs.statSync(target.src);
                     if (stat.isDirectory()) {
                         const destDir = path.join(outDir, target.dest);
@@ -336,7 +456,7 @@ function staticCopyPlugin(targets: { src: string; dest: string }[]): Plugin {
                     } else {
                         let destPath = path.join(outDir, target.dest);
                         if (target.dest.endsWith('/') || target.dest.endsWith('\\') || (fs.existsSync(destPath) && fs.statSync(destPath).isDirectory())) {
-                            destPath = path.join(destPath, path.basename(target.src));
+                            destPath = path.join(destPath, filename);
                         }
                         fs.mkdirSync(path.dirname(destPath), { recursive: true });
                         fs.copyFileSync(target.src, destPath);
@@ -450,6 +570,136 @@ function copyDirRecursive(src: string, dest: string): void {
             copyDirRecursive(srcPath, destPath);
         } else {
             fs.copyFileSync(srcPath, destPath);
+        }
+    }
+}
+
+function getGlobalName(dep: string): string {
+    let name = dep;
+    if (dep.startsWith('@autocode-ts/')) {
+        name = dep.substring('@autocode-ts/'.length);
+    } else if (dep.startsWith('@')) {
+        const parts = dep.split('/');
+        name = parts.length > 1 ? parts[1] : parts[0].replace('@', '');
+    }
+    return name.replace(/[-_/]([a-z])/g, (_, g) => g.toUpperCase()).replace(/[-_/]/g, '');
+}
+
+function getExternalGlobals(projectRoot: string, userGlobals?: Record<string, string>): Record<string, string> {
+    return userGlobals || {};
+}
+
+function acExternalGlobalsPlugin(globals: Record<string, string>): Plugin {
+    return {
+        name: 'ac-external-globals',
+        transform(code, id) {
+            if (id.includes('node_modules')) return null;
+            if (!id.endsWith('.ts') && !id.endsWith('.js') && !id.endsWith('.mjs')) return null;
+
+            let newCode = code;
+            let modified = false;
+
+            for (const [dep, globalVar] of Object.entries(globals)) {
+                const importRegex = new RegExp(`import\\s+([^;]*?)\\s+from\\s+['"]${dep}['"];?`, 'g');
+                if (importRegex.test(newCode)) {
+                    newCode = newCode.replace(importRegex, (match, importsStr) => {
+                        const trimmed = importsStr.trim();
+                        if (trimmed.startsWith('* as ')) {
+                            const name = trimmed.substring(5).trim();
+                            return `const ${name} = typeof window !== 'undefined' ? window.${globalVar} : globalThis.${globalVar};`;
+                        }
+
+                        let defaultVar = '';
+                        let namedVars = '';
+                        const braceIdx = trimmed.indexOf('{');
+                        if (braceIdx !== -1) {
+                            const beforeBrace = trimmed.substring(0, braceIdx).trim();
+                            if (beforeBrace.endsWith(',')) {
+                                defaultVar = beforeBrace.slice(0, -1).trim();
+                            } else if (beforeBrace) {
+                                defaultVar = beforeBrace.trim();
+                            }
+
+                            const closeBraceIdx = trimmed.lastIndexOf('}');
+                            if (closeBraceIdx !== -1) {
+                                namedVars = trimmed.substring(braceIdx + 1, closeBraceIdx).trim();
+                            }
+                        } else {
+                            defaultVar = trimmed;
+                        }
+
+                        let replacement = '';
+                        if (defaultVar) {
+                            replacement += `const ${defaultVar} = typeof window !== 'undefined' ? window.${globalVar} : globalThis.${globalVar}; `;
+                        }
+                        if (namedVars) {
+                            const destructuring = namedVars.split(',').map(v => {
+                                const part = v.trim();
+                                if (part.includes(' as ')) {
+                                    const parts = part.split(/\s+as\s+/);
+                                    return `${parts[0].trim()}: ${parts[1].trim()}`;
+                                }
+                                return part;
+                            }).filter(Boolean).join(', ');
+
+                            replacement += `const { ${destructuring} } = typeof window !== 'undefined' ? window.${globalVar} : globalThis.${globalVar};`;
+                        }
+                        return replacement;
+                    });
+                    modified = true;
+                }
+
+                const sideEffectRegex = new RegExp(`import\\s+['"]${dep}['"];?`, 'g');
+                if (sideEffectRegex.test(newCode)) {
+                    newCode = newCode.replace(sideEffectRegex, '');
+                    modified = true;
+                }
+            }
+
+            if (modified) {
+                return {
+                    code: newCode,
+                    map: null
+                };
+            }
+            return null;
+        }
+    };
+}
+
+function getBundleTextContents(outDir: string): string {
+    let text = '';
+    const walk = (dir: string) => {
+        if (!fs.existsSync(dir)) return;
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                if (entry.name === 'third-party' || entry.name === 'vendor') continue;
+                walk(fullPath);
+            } else if (entry.isFile() && /\.(html|js|css)$/.test(entry.name)) {
+                try {
+                    text += '\n' + fs.readFileSync(fullPath, 'utf8');
+                } catch {
+                    // Ignore
+                }
+            }
+        }
+    };
+    walk(outDir);
+    return text;
+}
+
+function copyDirSelective(src: string, dest: string, bundleText: string): void {
+    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+        if (entry.isDirectory()) {
+            copyDirSelective(srcPath, destPath, bundleText);
+        } else {
+            if (bundleText.includes(entry.name)) {
+                fs.mkdirSync(dest, { recursive: true });
+                fs.copyFileSync(srcPath, destPath);
+            }
         }
     }
 }

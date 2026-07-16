@@ -9,13 +9,14 @@ export default defineConfig(({ command }) => {
   const tsconfig = command === 'build' ? 'tsconfig.lib.build.json' : 'tsconfig.lib.json';
   return {
     root: __dirname,
-    cacheDir: '../../../node_modules/.vite/packages/browser/ac-icons',
+    cacheDir:
+      '../../../node_modules/.vite/packages/browser/ac-icons',
     plugins: [
       nxViteTsPaths(),
       nxCopyAssetsPlugin(['*.md']),
       dts({
         entryRoot: 'src',
-        tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+        tsconfigPath: path.join(__dirname, tsconfig),
       }),
     ],
     // Uncomment this if you are using workers.
@@ -35,15 +36,22 @@ export default defineConfig(({ command }) => {
         // Could also be a dictionary or array of multiple entry points.
         entry: 'src/ac-icons.ts',
         name: 'acIcons',
-        fileName: 'ac-icons',
-        // Change this to the formats you want to support.
-        // Don't forget to update your package.json as well.
-        formats: ['es' as const],
+        fileName: (format) => {
+          if (format === 'es') return 'ac-icons.js';
+          if (format === 'cjs') return 'ac-icons.cjs';
+          if (format === 'umd') return 'ac-icons.umd.js';
+          return 'ac-icons.js';
+        },
+        formats: ['es' as const, 'cjs' as const, 'umd' as const],
       },
       rollupOptions: {
         // External packages that should not be bundled into your library.
         external: [],
+        output: {
+          globals: {}
+        }
       },
     },
   };
 });
+

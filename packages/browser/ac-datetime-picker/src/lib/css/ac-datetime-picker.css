@@ -1,0 +1,556 @@
+/* ============================================================
+   ac-datetime-picker — CSS
+   All values driven by CSS variables for full theming support.
+   Light mode defaults. Dark mode via [data-theme="dark"] or .dark.
+   ============================================================ */
+
+/* ── Variables ─────────────────────────────────────────────── */
+:root {
+  --ac-dtp-font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ac-dtp-font-size: 13px;
+
+  /* Colours */
+  --ac-dtp-bg: #ffffff;
+  --ac-dtp-bg-alt: #f9fafb;
+  --ac-dtp-border: #e5e7eb;
+  --ac-dtp-border-focus: #6366f1;
+  --ac-dtp-text: #111827;
+  --ac-dtp-text-muted: #6b7280;
+  --ac-dtp-text-inverse: #ffffff;
+
+  /* Accent */
+  --ac-dtp-accent: #050505;
+  --ac-dtp-accent-hover: #111111;
+  --ac-dtp-accent-light: #eef2ff;
+
+  /* Range highlight */
+  --ac-dtp-range-bg: #bebebe;
+  --ac-dtp-range-text: #161616;
+
+  /* Sidebar */
+  --ac-dtp-sidebar-bg: #f3f4f6;
+  --ac-dtp-sidebar-hover: #e5e7eb;
+  --ac-dtp-sidebar-active-bg: #171717;
+  --ac-dtp-sidebar-active-text: #ffffff;
+  --ac-dtp-sidebar-width: 160px;
+
+  /* Header */
+  --ac-dtp-header-bg: #f9fafb;
+  --ac-dtp-header-border: #e5e7eb;
+
+  /* Footer */
+  --ac-dtp-footer-bg: #f9fafb;
+  --ac-dtp-footer-border: #e5e7eb;
+
+  /* Input trigger */
+  --ac-dtp-input-bg: #ffffff;
+  --ac-dtp-input-border: #d1d5db;
+  --ac-dtp-input-border-focus: #080808;
+  --ac-dtp-input-text: #111827;
+  --ac-dtp-input-placeholder: #9ca3af;
+  --ac-dtp-input-radius: 6px;
+  --ac-dtp-input-height: 36px;
+  --ac-dtp-input-padding: 0 10px;
+
+  /* Popup */
+  --ac-dtp-popup-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+  --ac-dtp-popup-radius: 10px;
+  --ac-dtp-popup-z: 9999;
+  --ac-dtp-popup-max-height: 480px;
+
+  /* Buttons */
+  --ac-dtp-btn-radius: 6px;
+  --ac-dtp-btn-height: 32px;
+  --ac-dtp-btn-padding: 0 16px;
+  --ac-dtp-btn-font-size: 13px;
+
+  /* Transitions */
+  --ac-dtp-transition: 150ms ease;
+}
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+[data-theme='dark'] ac-datetime-picker,
+.dark ac-datetime-picker,
+ac-datetime-picker[data-theme='dark'] {
+  --ac-dtp-bg: #1f2937;
+  --ac-dtp-bg-alt: #111827;
+  --ac-dtp-border: #374151;
+  --ac-dtp-border-focus: #818cf8;
+  --ac-dtp-text: #f9fafb;
+  --ac-dtp-text-muted: #9ca3af;
+  --ac-dtp-text-inverse: #111827;
+  --ac-dtp-accent: #0f0f0f;
+  --ac-dtp-accent-hover: #1c1c1c;
+  --ac-dtp-accent-light: #1e1b4b;
+  --ac-dtp-range-bg: #1e1b4b;
+  --ac-dtp-range-text: #a5b4fc;
+  --ac-dtp-sidebar-bg: #111827;
+  --ac-dtp-sidebar-hover: #1f2937;
+  --ac-dtp-sidebar-active-bg: #0a0a0a;
+  --ac-dtp-sidebar-active-text: #ffffff;
+  --ac-dtp-header-bg: #111827;
+  --ac-dtp-header-border: #374151;
+  --ac-dtp-footer-bg: #111827;
+  --ac-dtp-footer-border: #374151;
+  --ac-dtp-input-bg: #1f2937;
+  --ac-dtp-input-border: #374151;
+  --ac-dtp-input-border-focus: #0a0a0a;
+  --ac-dtp-input-text: #f9fafb;
+  --ac-dtp-input-placeholder: #6b7280;
+  --ac-dtp-popup-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Host element ──────────────────────────────────────────── */
+ac-datetime-picker {
+  font-family: var(--ac-dtp-font);
+  font-size: var(--ac-dtp-font-size);
+  display: contents;
+}
+
+/* ── Root wrapper ──────────────────────────────────────────── */
+.ac-dtp {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+  font-family: var(--ac-dtp-font);
+  font-size: var(--ac-dtp-font-size);
+  color: var(--ac-dtp-text);
+  width: 100%;
+}
+
+.air-datepicker-cell{
+  min-width:32px;
+}
+
+/* ── Input trigger ─────────────────────────────────────────── */
+.ac-dtp__input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--ac-dtp-input-bg);
+  border: 1px solid var(--ac-dtp-input-border);
+  border-radius: var(--ac-dtp-input-radius);
+  height: var(--ac-dtp-input-height);
+  padding: var(--ac-dtp-input-padding);
+  cursor: pointer;
+  transition: border-color var(--ac-dtp-transition), box-shadow var(--ac-dtp-transition);
+  gap: 6px;
+}
+
+.ac-dtp__input-wrap:focus-within,
+.ac-dtp__input-wrap:hover {
+  border-color: var(--ac-dtp-input-border-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ac-dtp-accent) 15%, transparent);
+}
+
+.ac-dtp__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ac-dtp-input-text);
+  font-family: var(--ac-dtp-font);
+  font-size: var(--ac-dtp-font-size);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.ac-dtp__input::placeholder {
+  color: var(--ac-dtp-input-placeholder);
+}
+
+.ac-dtp__icon {
+  color: var(--ac-dtp-text-muted);
+  font-size: 15px;
+  flex-shrink: 0;
+  line-height: 1;
+  user-select: none;
+  transition: color var(--ac-dtp-transition);
+}
+
+.ac-dtp__input-wrap:hover .ac-dtp__icon {
+  color: var(--ac-dtp-accent);
+}
+
+/* ── Disabled / readonly ───────────────────────────────────── */
+.ac-dtp--disabled .ac-dtp__input-wrap {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ac-dtp--readonly .ac-dtp__input-wrap {
+  cursor: default;
+  background: var(--ac-dtp-bg-alt);
+}
+
+/* ── Popup ─────────────────────────────────────────────────── */
+.ac-dtp__popup {
+  position: fixed;  /* Popper sets top/left; we declare fixed so Popper uses fixed strategy */
+  z-index: var(--ac-dtp-popup-z);
+  background: var(--ac-dtp-bg);
+  border: 1px solid var(--ac-dtp-border);
+  border-radius: var(--ac-dtp-popup-radius);
+  box-shadow: var(--ac-dtp-popup-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 560px;
+  /* Max height constrains the popup so the sidebar body can scroll */
+  max-height: var(--ac-dtp-popup-max-height, 480px);
+
+  /* Hidden state */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity var(--ac-dtp-transition),
+    transform var(--ac-dtp-transition);
+}
+
+/* Flip the slide direction when Popper places the popup above the trigger */
+.ac-dtp__popup[data-popper-placement^='top'] {
+  transform: translateY(-4px);
+}
+
+.ac-dtp__popup--open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.ac-dtp__header {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  background: var(--ac-dtp-header-bg);
+  border-bottom: 1px solid var(--ac-dtp-header-border);
+  padding: 12px 16px;
+}
+
+.ac-dtp__header-start,
+.ac-dtp__header-end {
+  flex: 1;
+  min-width: 0;
+}
+
+.ac-dtp__header-separator {
+  width: 1px;
+  height: 36px;
+  background: var(--ac-dtp-border);
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+
+.ac-dtp__header-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ac-dtp-text-muted);
+  margin-bottom: 3px;
+}
+
+.ac-dtp__header-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ac-dtp-text);
+  min-height: 22px;
+  transition: color var(--ac-dtp-transition);
+}
+
+.ac-dtp__header-value--active {
+  color: var(--ac-dtp-accent);
+}
+
+/* ── Body (sidebar + calendars) ────────────────────────────── */
+.ac-dtp__body {
+  display: flex;
+  flex: 1;
+  /* min-height: 0 is required for flex children to respect overflow and allow
+     the sidebar to scroll — without this, flex children grow beyond the container */
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────── */
+.ac-dtp__sidebar-container {
+  height: 10px;
+  min-height: stretch;
+}
+.ac-dtp__sidebar {
+  width: var(--ac-dtp-sidebar-width);
+  background: var(--ac-dtp-sidebar-bg);
+  border-right: 1px solid var(--ac-dtp-border);
+  /* Stretch to fill the full body height so it matches the calendars */
+  align-self: stretch;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 8px 0;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ac-dtp-border) transparent;
+  height: -webkit-fill-available;
+}
+
+.ac-dtp__presets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ac-dtp__preset {
+  padding: 7px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--ac-dtp-text);
+  border-radius: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background var(--ac-dtp-transition), color var(--ac-dtp-transition);
+  user-select: none;
+}
+
+.ac-dtp__preset:hover {
+  background: var(--ac-dtp-sidebar-hover);
+  color: var(--ac-dtp-accent);
+}
+
+.ac-dtp__preset--active {
+  background: var(--ac-dtp-sidebar-active-bg);
+  color: var(--ac-dtp-sidebar-active-text);
+  font-weight: 600;
+}
+
+.ac-dtp__preset--active:hover {
+  background: var(--ac-dtp-accent-hover);
+  color: var(--ac-dtp-sidebar-active-text);
+}
+
+/* ── Calendars ─────────────────────────────────────────────── */
+.ac-dtp__calendars {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 0px;
+  gap: 16px;
+}
+
+.ac-dtp__cal {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Air Datepicker inline overrides */
+.ac-dtp__cal .air-datepicker {
+  --adp-width: 100%;
+  --adp-padding: 0;
+  --adp-background-color: transparent;
+  --adp-background-color-hover: var(--ac-dtp-accent-light);
+  --adp-background-color-active: var(--ac-dtp-accent);
+  --adp-background-color-selected-other-month-focused: var(--ac-dtp-accent);
+  --adp-color: var(--ac-dtp-text);
+  --adp-color-secondary: var(--ac-dtp-text-muted);
+  --adp-color-current-date: var(--ac-dtp-accent);
+  --adp-color-other-month: var(--ac-dtp-text-muted);
+  --adp-color-other-month-hover: var(--ac-dtp-text);
+  --adp-accent-color: var(--ac-dtp-accent);
+  --adp-btn-color: var(--ac-dtp-accent);
+  --adp-btn-color-hover: var(--ac-dtp-accent-hover);
+  --adp-border-color: transparent;
+  --adp-border-color-inner: var(--ac-dtp-border);
+  --adp-nav-color-secondary: var(--ac-dtp-text-muted);
+  --adp-day-name-color: var(--ac-dtp-text-muted);
+  --adp-day-name-color-hover: var(--ac-dtp-text);
+  --adp-cell-background-color-hover: var(--ac-dtp-accent-light);
+  --adp-cell-background-color-selected: var(--ac-dtp-accent);
+  --adp-cell-background-color-selected-hover: var(--ac-dtp-accent-hover);
+  --adp-cell-background-color-in-range: var(--ac-dtp-range-bg);
+  --adp-cell-background-color-in-range-focused: var(--ac-dtp-range-bg);
+  --adp-cell-border-color-in-range: transparent;
+  position: static !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  font-family: var(--ac-dtp-font);
+  font-size: var(--ac-dtp-font-size);
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.ac-dtp__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--ac-dtp-footer-bg);
+  border-top: 1px solid var(--ac-dtp-footer-border);
+}
+
+.ac-dtp__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--ac-dtp-btn-height);
+  padding: var(--ac-dtp-btn-padding);
+  font-family: var(--ac-dtp-font);
+  font-size: var(--ac-dtp-btn-font-size);
+  font-weight: 500;
+  border-radius: var(--ac-dtp-btn-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background var(--ac-dtp-transition),
+    border-color var(--ac-dtp-transition),
+    color var(--ac-dtp-transition),
+    box-shadow var(--ac-dtp-transition);
+  user-select: none;
+}
+
+.ac-dtp__btn:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ac-dtp-accent) 30%, transparent);
+}
+
+.ac-dtp__btn--cancel {
+  background: transparent;
+  border-color: var(--ac-dtp-border);
+  color: var(--ac-dtp-text-muted);
+}
+
+.ac-dtp__btn--cancel:hover {
+  background: var(--ac-dtp-bg-alt);
+  color: var(--ac-dtp-text);
+  border-color: var(--ac-dtp-text-muted);
+}
+
+.ac-dtp__btn--clear {
+  background: transparent;
+  border-color: var(--ac-dtp-border);
+  color: var(--ac-dtp-text-muted);
+  margin-right: auto;
+}
+
+.ac-dtp__btn--clear:hover {
+  background: #fff1f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.ac-dtp__btn--apply {
+  background: var(--ac-dtp-accent);
+  border-color: var(--ac-dtp-accent);
+  color: var(--ac-dtp-text-inverse);
+}
+
+.ac-dtp__btn--apply:hover {
+  background: var(--ac-dtp-accent-hover);
+  border-color: var(--ac-dtp-accent-hover);
+}
+
+/* ── Responsive — Tablet (< 800px) ────────────────────────── */
+@media (max-width: 800px) {
+  .ac-dtp__popup {
+    min-width: 0;
+    width: min(100vw - 16px, 560px);
+  }
+
+  .ac-dtp__sidebar {
+    width: 130px;
+  }
+}
+
+/* ── Responsive — Mobile (< 600px) ────────────────────────── */
+@media (max-width: 599px) {
+  .ac-dtp__popup {
+    min-width: 0;
+    width: 100vw;
+    left: 0 !important;
+    right: 0;
+    border-radius: var(--ac-dtp-popup-radius) var(--ac-dtp-popup-radius) 0 0;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .ac-dtp__body {
+    flex-direction: column;
+  }
+
+  .ac-dtp__sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--ac-dtp-border);
+    padding: 4px 0;
+    /* Horizontal scroll presets on mobile */
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: 44px;
+  }
+
+  .ac-dtp__presets {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+  }
+
+  .ac-dtp__preset {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin: 4px 3px;
+    background: var(--ac-dtp-bg-alt);
+    border: 1px solid var(--ac-dtp-border);
+  }
+
+  .ac-dtp__preset--active {
+    background: var(--ac-dtp-sidebar-active-bg);
+    border-color: var(--ac-dtp-sidebar-active-bg);
+  }
+
+  .ac-dtp__calendars {
+    flex-direction: column;
+    padding: 8px;
+  }
+
+  .ac-dtp__header-separator {
+    display: none;
+  }
+
+  .ac-dtp__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ac-dtp__header-start,
+  .ac-dtp__header-end {
+    width: 100%;
+  }
+}
+
+/* ── Single mode — only calendar, no chrome ─────────────────── */
+.ac-dtp--single .ac-dtp__cal--right,
+.ac-dtp--single .ac-dtp__header,
+.ac-dtp--single .ac-dtp__sidebar,
+.ac-dtp--single .ac-dtp__footer {
+  display: none;
+}
+
+/* Let popup shrink to calendar width in single mode */
+.ac-dtp--single.ac-dtp__popup {
+  min-width: 0;
+}
+
+/* ── Sidebar hidden ────────────────────────────────────────── */
+.ac-dtp--no-sidebar .ac-dtp__sidebar {
+  display: none;
+}
+
+/* ── Footer hidden ─────────────────────────────────────────── */
+.ac-dtp--no-footer .ac-dtp__footer {
+  display: none;
+}

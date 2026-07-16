@@ -8,6 +8,7 @@
     "build:ac-browser": "nx run ac-browser:build",
     "build:ac-builder": "nx run ac-builder:build",
     "build:ac-bwipjs-pipe": "nx run ac-bwipjs-pipe:build",
+    "build:ac-datetime-picker": "nx run ac-datetime-picker:build",
     "build:ac-data-bridge": "nx run ac-data-bridge:build",
     "build:ac-data-bridge-ui": "nx run ac-data-bridge-ui:build",
     "build:ac-data-manager-export": "nx run ac-data-manager-export:build",

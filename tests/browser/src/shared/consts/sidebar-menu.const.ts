@@ -67,6 +67,7 @@ export const SIDEBAR_NAV: IAppNavItem[] = [
     label: 'Inputs & Forms',
     children: [
       { label: 'Basic Inputs', route: APP_ROUTES.inputs.basic },
+      { label: 'Datetime Picker', route: APP_ROUTES.inputs.datetimePicker },
       { label: 'Elements', route: APP_ROUTES.inputs.elements },
       { label: 'File Preview', route: APP_ROUTES.filePreview },
       { label: 'AcForm', route: APP_ROUTES.inputs.form }

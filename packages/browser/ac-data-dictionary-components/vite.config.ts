@@ -56,7 +56,7 @@ export default defineConfig(({ command }) => {
           globals: {
             "@autocode-ts/autocode": "autocode",
             "@autocode-ts/ac-browser": "acBrowser",
-            "@autocode-ts/ac-data-dictionary": "acDataDuctionary",
+            "@autocode-ts/ac-data-dictionary": "acDataDictionary",
             "@autocode-ts/ac-extensions": "acExtensions",
           }
         }

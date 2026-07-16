@@ -1,0 +1,9 @@
+{
+  "name": "ac-datetime-picker",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/browser/ac-datetime-picker/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project ac-datetime-picker --web",
+  "targets": {}
+}

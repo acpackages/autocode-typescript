@@ -9,7 +9,7 @@ export * from './draggable/_draggable.export';
 export * from './drawer.page';
 export * from './dropdown.page';
 export * from './file-preview.page';
-export * from './inputs.page';
+export * from './inputs/_inputs.export';
 export * from './message.page';
 export * from './modal.page';
 export * from './popover.page';

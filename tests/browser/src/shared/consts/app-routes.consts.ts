@@ -41,10 +41,11 @@ export const APP_ROUTES = {
   dropdown:'/dropdown',
   filePreview: '/file-preview',
   inputs:{
-    basic:'/basic',
+    basic:'/inputs/basic',
     elements:'/elements',
     filePreview:'/file-preview',
-    form:'/form'
+    form:'/form',
+    datetimePicker:'/inputs/datetime-picker'
   },
   message:'/message',
   modal:{

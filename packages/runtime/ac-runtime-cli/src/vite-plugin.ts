@@ -331,6 +331,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
         },
 
         transformIndexHtml(html: string) {
+            if (runtimeConfig.type !== 'app') return html;
             // Rewrite <script src="./src/main.ts"> to point to cached version
             const entryFile = runtimeConfig.entryFile;
             const cachePath = getCachePath(entryFile);

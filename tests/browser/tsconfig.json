@@ -25,6 +25,7 @@
     "baseUrl": ".",
     "paths": {
       "@autocode-ts/ac-browser": ["../../packages/browser/ac-browser/src/ac-browser.ts"],
+      "@autocode-ts/ac-datetime-picker": ["../../packages/browser/ac-datetime-picker/src/ac-datetime-picker.ts"],
       "@autocode-ts/ac-runtime": ["../../packages/runtime/ac-runtime/src/ac-runtime.ts"],
       "@autocode-ts/ac-runtime-router": ["../../packages/runtime/ac-runtime-router/src/ac-runtime-router.ts"],
       "@autocode-ts/autocode": ["../../packages/common/autocode/src/autocode.ts"],

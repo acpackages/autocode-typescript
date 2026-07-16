@@ -35,9 +35,9 @@ export class AcRouter {
 
   /** The last emitted route snapshot (for late subscribers). */
   lastSnapshot?: IAcRouteSnapshot;
-  basePath:string = '';
+  basePath: string = '';
 
-  get currentRoute():any{
+  get currentRoute(): any {
     return this.lastSnapshot;
   }
 
@@ -48,15 +48,27 @@ export class AcRouter {
   private constructor() {
     window.addEventListener('hashchange', () => this.handleHashChange());
     window.addEventListener('load', () => {
-      if(!this.basePath){
+      if (!this.basePath) {
         this.basePath = window.location.origin;
       }
       let hash = window.location.href.substring(this.basePath.length);
-      if(window.location.hash.length > 0){
+      if (window.location.hash.length > 0) {
         hash = window.location.hash;
       }
-      window.history.replaceState({},'',`${this.basePath}/#`);
-        this.navigateTo({path:hash});
+      let queryString: string = "";
+      if (hash.indexOf("?") > 0) {
+        queryString = hash.substring(hash.indexOf("?")+1);
+        hash = hash.substring(0, hash.indexOf('?'));
+      }
+      if (hash.indexOf("#") >= 0) {
+        hash = hash.substring(hash.indexOf('#') + 1);
+      }
+      if (queryString != '') {
+        hash += "?" + queryString;
+      }
+      window.history.replaceState({}, '', `${this.basePath}/#`);
+      console.log(hash);
+      this.navigateTo({ path: hash });
     });
   }
 
@@ -84,7 +96,7 @@ export class AcRouter {
    *
    * @param routes - Array of route definitions.
    */
-  registerRoutes({routes}:{routes: IAcRoute[]}): void {
+  registerRoutes({ routes }: { routes: IAcRoute[] }): void {
     this.routes = routes;
     // Trigger initial check if already loaded
     if (document.readyState === 'complete' && !this.isPaused) {
@@ -97,10 +109,10 @@ export class AcRouter {
    *
    * @param path - The target path (e.g., `'/dashboard'`).
    */
-  navigateTo({path}:{path: string}): void {
-    let hash:string = path;
-    if(!path.startsWith("/")){
-      hash = "/"+hash;
+  navigateTo({ path }: { path: string }): void {
+    let hash: string = path;
+    if (!path.startsWith("/")) {
+      hash = "/" + hash;
     }
     window.location.hash = hash;
   }
@@ -111,7 +123,7 @@ export class AcRouter {
    * @param callback - Invoked with the new URL path on each change.
    * @returns An unsubscribe function.
    */
-  subscribe({callback}:{callback: (url: string) => void}): () => void {
+  subscribe({ callback }: { callback: (url: string) => void }): () => void {
     return this.routeChange.subscribe((snapshot) => {
       callback(snapshot.path);
     });
@@ -152,7 +164,7 @@ export class AcRouter {
   private handleHashChange(): void {
 
     const path = this.getCurrentPath();
-    console.log("Route Changed",path,this.isPaused);
+    console.log("Route Changed", path, this.isPaused);
     if (this.isPaused) return;
     this.matchRoute(path);
   }
@@ -184,7 +196,7 @@ export class AcRouter {
     // Handle redirects
     const redirectRoute = matchedRoutes.find(r => r.redirectTo !== undefined);
     if (redirectRoute) {
-      this.navigateTo({path:redirectRoute.redirectTo!});
+      this.navigateTo({ path: redirectRoute.redirectTo! });
       return;
     }
 

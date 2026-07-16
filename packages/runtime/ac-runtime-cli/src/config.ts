@@ -32,8 +32,10 @@ export type AcRuntimeConfig = {
   description?: string;
   /** Absolute path to the entry file. */
   entryFile: string;
-  /** Project type — currently only 'app'. */
-  type: 'app';
+  /** Project type — 'app' or 'library'. */
+  type: 'app' | 'library';
+  /** Name of the output file when building as library. */
+  buildFile?: string;
   /** Build output directory, relative to project root. Default: 'dist'. */
   buildDirectory: string;
   /** Cache directory for generated files, relative to project root. Default: '.ac-runtime-cache'. */
@@ -42,6 +44,10 @@ export type AcRuntimeConfig = {
   assets: AssetMapping[];
   /** Static copy/serve resource mappings. Default: []. */
   staticResources: StaticResourceMapping[];
+  /** Library build formats. E.g. ['es', 'umd']. Default: ['es']. */
+  buildFormats?: ('es' | 'cjs' | 'umd' | 'iife')[];
+  /** Optional mapping of external package names to global variables. */
+  externalGlobals?: Record<string, string>;
 };
 
 /**
@@ -79,8 +85,13 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     console.error('ERROR: ac-runtime.json: "type" is required');
     process.exit(1);
   }
-  if (raw.type !== 'app') {
-    console.error(`ERROR: ac-runtime.json: unsupported type "${raw.type}". Only "app" is supported.`);
+  if (raw.type !== 'app' && raw.type !== 'library') {
+    console.error(`ERROR: ac-runtime.json: unsupported type "${raw.type}". Only "app" and "library" are supported.`);
+    process.exit(1);
+  }
+  const buildFile = raw.buildFile;
+  if (raw.type === 'library' && !buildFile) {
+    console.error('ERROR: ac-runtime.json: "buildFile" is required when type is "library"');
     process.exit(1);
   }
   if (!raw.entryFile || typeof raw.entryFile !== 'string') {
@@ -177,6 +188,40 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     }
   }
 
+  // --- Build formats validation ---
+  let buildFormats: ('es' | 'cjs' | 'umd' | 'iife')[] | undefined = undefined;
+  if (raw.buildFormats) {
+    if (!Array.isArray(raw.buildFormats)) {
+      console.error('ERROR: ac-runtime.json: "buildFormats" must be an array of strings');
+      process.exit(1);
+    }
+    const validFormats = ['es', 'cjs', 'umd', 'iife'] as const;
+    for (const fmt of raw.buildFormats) {
+      if (!validFormats.includes(fmt)) {
+        console.error(`ERROR: ac-runtime.json: invalid format "${fmt}" in "buildFormats". Valid formats are: ${validFormats.join(', ')}`);
+        process.exit(1);
+      }
+    }
+    buildFormats = raw.buildFormats;
+  }
+
+  // --- External globals validation ---
+  let externalGlobals: Record<string, string> | undefined = undefined;
+  if (raw.externalGlobals) {
+    if (typeof raw.externalGlobals !== 'object' || Array.isArray(raw.externalGlobals)) {
+      console.error('ERROR: ac-runtime.json: "externalGlobals" must be a key-value object');
+      process.exit(1);
+    }
+    externalGlobals = {};
+    for (const [key, val] of Object.entries(raw.externalGlobals)) {
+      if (typeof val !== 'string') {
+        console.error(`ERROR: ac-runtime.json: externalGlobals["${key}"] must be a string`);
+        process.exit(1);
+      }
+      externalGlobals[key] = val;
+    }
+  }
+
   return {
     projectRoot,
     name: raw.name,
@@ -188,6 +233,9 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     cacheDirectory,
     assets,
     staticResources,
+    buildFile,
+    buildFormats,
+    externalGlobals,
   };
 }
 

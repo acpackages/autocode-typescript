@@ -99,6 +99,9 @@
       "@autocode-ts/ac-pipes": [
         "packages/common/ac-pipes/src/ac-pipes.ts"
       ],
+      "@autocode-ts/ac-datetime-picker": [
+        "packages/browser/ac-datetime-picker/src/ac-datetime-picker.ts"
+      ],
       "@autocode-ts/ac-quill-editor-input": [
         "packages/browser/ac-quill-editor-input/src/ac-quill-editor-input.ts"
       ],

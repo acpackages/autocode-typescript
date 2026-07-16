@@ -1,0 +1,13 @@
+{
+  "name": "@autocode-ts/ac-datetime-picker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "dependencies": {
+    "@autocode-ts/ac-browser": "^0.0.1",
+    "@popperjs/core": "^2.11.8",
+    "air-datepicker": "^3.6.0"
+  }
+}

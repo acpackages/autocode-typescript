@@ -18,5 +18,15 @@
     { "path": "node_modules/@autocode-ts/ac-report-engine/ac-report-engine.umd.js", "buildPath": "assets/third-party/ac-report-engine/ac-report-engine.umd.js" },
     { "path": "node_modules/@autocode-ts/autocode/autocode.umd.js", "buildPath": "assets/third-party/autocode/autocode.umd.js" },
     { "path": "node_modules/bwip-js/dist/bwip-js.js", "buildPath": "assets/third-party/bwip-js/bwip-js.js" }
-  ]
+  ],
+  "externalGlobals": {
+    "@autocode-ts/ac-runtime": "acRuntime",
+    "@autocode-ts/ac-pipes": "acPipes",
+    "@autocode-ts/ac-reactivity": "acReactivity",
+    "@autocode-ts/ac-browser": "acBrowser",
+    "@autocode-ts/ac-datagrid-on-ag-grid": "acDatagridOnAgGrid",
+    "@autocode-ts/ac-data-dictionary": "acDataDictionary",
+    "@autocode-ts/ac-runtime-router": "acRouter",
+    "@autocode-ts/autocode": "autocode"
+  }
 }

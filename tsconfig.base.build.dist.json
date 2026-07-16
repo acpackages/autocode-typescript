@@ -44,6 +44,7 @@
       "@autocode-ts/ac-ng-report-engine": ["dist/packages/angular/ac-ng-report-engine"],
       "@autocode-ts/ac-ng-runtime": ["dist/packages/angular/ac-ng-runtime"],
       "@autocode-ts/ac-nodeflow-designer": ["dist/packages/browser/ac-nodeflow-designer"],
+      "@autocode-ts/ac-datetime-picker": ["dist/packages/browser/ac-datetime-picker"],
       "@autocode-ts/ac-quill-editor-input": ["dist/packages/browser/ac-quill-editor-input"],
       "@autocode-ts/ac-react": ["dist/packages/react/ac-react"],
       "@autocode-ts/ac-reactivity": ["dist/packages/common/ac-reactivity"],

@@ -1,0 +1,25 @@
+<div class="app-page">
+  <app-header [title]="'Datetime Picker Page'"></app-header>
+  <div class="container py-4 flex-fill overflow-auto">
+    <div class="row">
+      <div class="col-3">
+        <div class="form-group">
+          <label>Date Range Picker</label>
+          <ac-datetime-picker mode="daterange"></ac-datetime-picker>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <label>Date Picker</label>
+          <ac-datetime-picker mode="date"></ac-datetime-picker>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <label>Date Time Picker</label>
+          <ac-datetime-picker mode="datetime" show-time="true"></ac-datetime-picker>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

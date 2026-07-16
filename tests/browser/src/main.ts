@@ -18,11 +18,13 @@ import { APP_ROUTES } from "./shared/consts/app-routes.consts";
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { AC_DATAGRID_AGGRID_DEFAULT_OPTIONS, initAgGrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
-import { AcDatagridExtensionManager, acInit } from "@autocode-ts/ac-browser";
+import { AcDatagridExtensionManager, acInit, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AgGridOnAcDatagrid } from "@autocode-ts/ac-datagrid-on-ag-grid";
 import { AcDataDictionary } from "@autocode-ts/ac-data-dictionary";
 import { dataDictionaryJson as actDataDictionary } from './data/accountea-pro';
 import './_app.export';
+
+import { AcDateTimePickerElement } from '@autocode-ts/ac-datetime-picker';
 import { IAcRoute,acRouter } from "@autocode-ts/ac-runtime-router";
 
 ModuleRegistry.registerModules([
@@ -71,6 +73,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         { path: APP_ROUTES.dropdown, element:{selector: 'dropdown-page' }},
         { path: APP_ROUTES.filePreview, element:{selector: 'file-preview-page' }},
         { path: APP_ROUTES.inputs.basic, element:{selector: 'inputs-page' }},
+        { path: APP_ROUTES.inputs.datetimePicker, element:{selector: 'datetime-picker-page' }},
         { path: APP_ROUTES.message, element:{selector: 'message-page' }},
         { path: APP_ROUTES.modal.simple, element:{selector: 'modal-page' }},
         { path: APP_ROUTES.popover.popover, element:{selector: 'popover-page' }},
@@ -95,6 +98,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (appRoot) {
         appRoot.innerHTML = '<app-layout></app-layout>';
     }
+    acRegisterCustomElement({ tag: 'ac-datetime-picker', type: AcDateTimePickerElement });
 
     console.log("✅ [Main] Bootstrap completed successfully.");
 });
