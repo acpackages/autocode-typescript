@@ -2,6 +2,7 @@ export const AcEnumRepeaterEvent = {
   ActiveRowChange: 'ACTIVE_ROW_CHANGE',
   DisplayedRowsChange: 'DISPLAYED_ROWS_CHANGE',
   PaginationChange: 'PAGINATION_CHANGE',
+  AddClick: 'ADD_CLICK',
   RowAdd: 'ROW_ADD',
   RowBlur: 'ROW_BLUR',
   RowClick: 'ROW_CLICK',

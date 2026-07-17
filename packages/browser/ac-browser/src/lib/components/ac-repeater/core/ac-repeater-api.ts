@@ -1,8 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcEvents, AcHooks, AcSortOrder, IAcDataManagerDisplayedRowsChangeEvent } from "@autocode-ts/autocode";
-import { AcEnumPaginationEvent, AcPagination } from "../../ac-pagination/_ac-pagination.export";
-import { IAcPaginationPageChangeEvent } from "../../ac-pagination/interfaces/_interfaces.export";
+import { AcPaginationElement } from "../../ac-pagination/_ac-pagination.export";
 import { AcEnumRepeaterEvent } from "../enums/ac-enum-repeater-event.enum";
 import { AcEnumRepeaterHook } from "../enums/ac-enum-repeater-hooks.enum";
 import { IAcRepeaterState } from "../interfaces/ac-repeater-state.interface";
@@ -47,6 +46,19 @@ export class AcRepeaterApi{
     return [];
   }
 
+  private _showAddButton: boolean = false;
+    get showAddButton(): boolean {
+      return this._showAddButton;
+    }
+    set showAddButton(value: boolean) {
+      if (this._showAddButton != value) {
+        this._showAddButton = value;
+        if(this.pagination){
+          this.pagination.showAddButton = value;
+        }
+      }
+    }
+
   private _usePagination: boolean = false;
   get usePagination(): boolean {
     return this._usePagination;
@@ -59,8 +71,12 @@ export class AcRepeaterApi{
     };
     this._usePagination = value;
     if (value == true) {
-      this.pagination = new AcPagination();
+      this.pagination = new AcPaginationElement();
       this.pagination.bindDataManager({ dataManager: this.dataManager });
+      this.pagination.showAddButton = this.showAddButton;
+      this.pagination.addEventListener('add',()=>{
+        this.events.execute({event:AcEnumRepeaterEvent.AddClick});
+      });
     } else {
       this.pagination = undefined;
     }
@@ -78,7 +94,7 @@ export class AcRepeaterApi{
   hoverCellId?: string;
   hoverColumnId?: string;
   hoverRowId?: string;
-  pagination?: AcPagination;
+  pagination?: AcPaginationElement;
   sortOrder: AcSortOrder = new AcSortOrder();
   rowRendererFunction?:any;
   fields: IAcRepeaterField[] = [];

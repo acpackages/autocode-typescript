@@ -1,7 +1,7 @@
-import { AcPagination } from "../../elements/ac-pagination.element";
+import { AcPaginationElement } from "../../elements/ac-pagination.element";
 
 export interface IAcPaginationPageSizeChangeEvent{
   previousPageSize:number,
   pageSize:number,
-  pagination:AcPagination
+  pagination:AcPaginationElement
 }

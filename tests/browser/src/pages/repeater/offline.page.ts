@@ -33,6 +33,7 @@ export class RepeaterOfflinePage {
     const api = this.repeater.repeaterApi;
 
     api.usePagination = true;
+    api.showAddButton = true;
     api.rowRendererFunction = (args: IAcRepeaterRowRendererElementArgs) => {
       const data = args.row.data;
       // const instance = acCreateRuntimeInstance({type:RepeaterListItem});

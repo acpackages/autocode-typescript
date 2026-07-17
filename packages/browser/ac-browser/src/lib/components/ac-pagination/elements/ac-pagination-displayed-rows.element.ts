@@ -1,15 +1,15 @@
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AcPagination } from "./ac-pagination.element";
+import { AcPaginationElement } from "./ac-pagination.element";
 
 import { AcEnumPaginationEvent } from "../enums/ac-enum-pagination-event.enum";
 
-export class AcPaginationDisplayedRows extends AcElementBase{
-  private _pagination?: AcPagination;
-  get pagination():AcPagination|undefined{
+export class AcPaginationDisplayedRowsElement extends AcElementBase{
+  private _pagination?: AcPaginationElement;
+  get pagination():AcPaginationElement|undefined{
     return this._pagination;
   }
-  set pagination(value:AcPagination){
+  set pagination(value:AcPaginationElement){
     this._pagination = value;
     value.on({event:AcEnumPaginationEvent.PageChange,callback:()=>{
       this.render();
@@ -32,4 +32,4 @@ export class AcPaginationDisplayedRows extends AcElementBase{
 
 }
 
-acRegisterCustomElement({'tag':'ac-pagination-displayed-rows',type:AcPaginationDisplayedRows});
+acRegisterCustomElement({'tag':'ac-pagination-displayed-rows',type:AcPaginationDisplayedRowsElement});

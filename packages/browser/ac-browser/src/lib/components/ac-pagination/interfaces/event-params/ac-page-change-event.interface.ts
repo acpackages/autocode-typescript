@@ -1,4 +1,4 @@
-import { AcPagination } from "../../elements/ac-pagination.element";
+import { AcPaginationElement } from "../../elements/ac-pagination.element";
 
 export interface IAcPaginationPageChangeEvent{
   previousActivePage:number,
@@ -6,5 +6,5 @@ export interface IAcPaginationPageChangeEvent{
   totalPages:number,
   startRow:number,
   endRow:number
-  pagination:AcPagination
+  pagination:AcPaginationElement
 }

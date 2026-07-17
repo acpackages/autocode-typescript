@@ -2,13 +2,13 @@
 import { AcDataManager, AC_DATA_MANAGER_EVENT } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_PAGINATION_TAG, AcEnumPaginationEvent, AcPaginationDisplayedRows } from "../_ac-pagination.export";
+import { AC_PAGINATION_TAG, AcEnumPaginationEvent, AcPaginationDisplayedRowsElement } from "../_ac-pagination.export";
 import { AcPaginationCssClassName } from "../consts/ac-pagination-css-class-name.const";
 import { IAcPaginationPageChangeEvent, IAcPaginationPageSizeChangeEvent } from "../interfaces/_interfaces.export";
-import { AcPaginationNavigationButtons } from "./ac-pagination-navigation-buttons.element";
-import { AcPaginationSizeDropdown } from "./ac-pagination-size-dropdown.element";
+import { AcPaginationNavigationButtonsElement } from "./ac-pagination-navigation-buttons.element";
+import { AcPaginationSizeDropdownElement } from "./ac-pagination-size-dropdown.element";
 
-export class AcPagination extends AcElementBase {
+export class AcPaginationElement extends AcElementBase {
   private _activePage: number = 0;
   get activePage(): number {
     return this._activePage;
@@ -58,6 +58,17 @@ export class AcPagination extends AcElementBase {
 
   private dataManager?: AcDataManager;
 
+  private _showAddButton: boolean = false;
+  get showAddButton(): boolean {
+    return this._showAddButton;
+  }
+  set showAddButton(value: boolean) {
+    if (value != this._showAddButton) {
+      this._showAddButton = value;
+      this.handleShowAddButton();
+    }
+  }
+
   private _totalRows: number = 0;
   get totalRows(): number {
     return this._totalRows;
@@ -69,10 +80,11 @@ export class AcPagination extends AcElementBase {
     }
   }
 
-  displayedRows: AcPaginationDisplayedRows = new AcPaginationDisplayedRows();
-  navigationButtons: AcPaginationNavigationButtons = new AcPaginationNavigationButtons();
-  sizeDropdown: AcPaginationSizeDropdown = new AcPaginationSizeDropdown();
+  displayedRows: AcPaginationDisplayedRowsElement = new AcPaginationDisplayedRowsElement();
+  navigationButtons: AcPaginationNavigationButtonsElement = new AcPaginationNavigationButtonsElement();
+  sizeDropdown: AcPaginationSizeDropdownElement = new AcPaginationSizeDropdownElement();
 
+  addButton?: HTMLButtonElement;
   endRow: number = 0;
   pageSizes: number[] = [5, 20, 50, 100];
   startRow: number = 0;
@@ -87,12 +99,18 @@ export class AcPagination extends AcElementBase {
     });
     dataManager.on({
       event: AC_DATA_MANAGER_EVENT.OnDemandFunctionSet, callback: () => {
-        this.dataManager.getRows({startIndex:this.startRow -1,rowsCount:this.activePageSize});
+        this.dataManager.getRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
       }
     });
   }
 
   private resizeObserver?: ResizeObserver;
+
+  override destroy(): void {
+    this.resizeObserver?.disconnect();
+    super.destroy();
+  }
+
 
   override init() {
     super.init();
@@ -101,13 +119,37 @@ export class AcPagination extends AcElementBase {
     this.sizeDropdown.pagination = this;
 
     acAddClassToElement({ class_: AcPaginationCssClassName.acPagination, element: this });
-    acClearElement({element:this});
+    acClearElement({ element: this });
 
     this.append(this.navigationButtons);
     this.append(this.displayedRows);
     this.append(this.sizeDropdown);
+    this.handleShowAddButton();
 
     this.setupResizeObserver();
+  }
+
+  private handleShowAddButton() {
+    if (this.showAddButton) {
+      if (!this.addButton) {
+        this.addButton = this.ownerDocument.createElement('button');
+        this.addButton.setAttribute('type', 'button');
+        this.addButton.classList.add('btn-ac-repeater-add');
+        this.addButton.innerHTML = '+ Add';
+        this.addButton.addEventListener('click',()=>{
+          this.dispatchEvent(new CustomEvent('add'));
+        });
+        this.append(this.addButton);
+      }
+    }
+    else{
+       if (!this.addButton) {
+        this.addButton.remove();
+        this.addButton = null;
+       }
+    }
+
+
   }
 
   private setupResizeObserver() {
@@ -119,11 +161,6 @@ export class AcPagination extends AcElementBase {
       }
     });
     this.resizeObserver.observe(this);
-  }
-
-  override destroy(): void {
-    this.resizeObserver?.disconnect();
-    super.destroy();
   }
 
   updateDisplayedRows() {
@@ -146,12 +183,12 @@ export class AcPagination extends AcElementBase {
     }
     if (this.startRow != oldStart || this.endRow != oldEnd || this.totalPages != oldTotal) {
       if (this.dataManager && !this.dataManager.isWorking) {
-        if(this.dataManager.type == 'ondemand'){
-          this.dataManager.getData({startIndex:this.startRow -1,rowsCount:this.activePageSize}).then((res:any)=>{
+        if (this.dataManager.type == 'ondemand') {
+          this.dataManager.getData({ startIndex: this.startRow - 1, rowsCount: this.activePageSize }).then((res: any) => {
             this.dataManager.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
           });
         }
-        else{
+        else {
           this.dataManager.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
         }
       }
@@ -166,4 +203,4 @@ export class AcPagination extends AcElementBase {
 
 }
 
-acRegisterCustomElement({ tag: AC_PAGINATION_TAG.pagination, type: AcPagination });
+acRegisterCustomElement({ tag: AC_PAGINATION_TAG.pagination, type: AcPaginationElement });

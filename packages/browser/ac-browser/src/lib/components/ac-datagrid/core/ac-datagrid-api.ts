@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcPagination } from "../../ac-pagination/elements/ac-pagination.element";
+import { AcPaginationElement } from "../../ac-pagination/elements/ac-pagination.element";
 import { AcDatagridElement } from "../elements/ac-datagrid.element";
 import { IAcDatagridColumnDefinition } from "../interfaces/ac-datagrid-column-definition.interface";
 import { AcDataManager, AC_DATA_MANAGER_EVENT, AcEnumLogicalOperator, AcEnumSortOrder, AcEvents, AcHooks, AcLogger, Autocode, IAcDataManagerDataEvent, IAcFilter, IAcFilterGroup, acNullifyInstanceProperties } from "@autocode-ts/autocode";
@@ -17,9 +17,6 @@ import { AC_DATAGRID_HOOK } from "../consts/ac-datagrid-hook.const";
 import { AcDatagridExtension } from "./ac-datagrid-extension";
 import { AcDatagridExtensionManager } from "./ac-datagrid-extension-manager";
 import { IAcDatagridColDefsChangeHookArgs } from "../interfaces/hook-args/ac-datagrid-coldefs-change-hook-args.interface";
-import { IAcDatagridRowAddHookArgs } from "../interfaces/hook-args/ac-datagrid-row-add-hook-args.interface";
-import { IAcDatagridRowDeleteHookArgs } from "../interfaces/hook-args/ac-datagrid-row-delete-hook-args.interface";
-import { IAcDatagridRowEvent } from "../interfaces/event-args/ac-datagrid-row-event.interface";
 import { AcDatagridEventHandler } from "./ac-datagrid-event-handler";
 import { AcEnumDataSourceType } from "../../../enums/ac-enum-data-source-type.enum";
 import { IAcDatagridColumnHookArgs } from "../interfaces/hook-args/ac-datagrid-column-hook-args.interface";
@@ -218,7 +215,7 @@ export class AcDatagridApi {
     this._usePagination = value;
     if (this.datagrid && this.datagrid.datagridFooter) {
       if (value) {
-        this.pagination = new AcPagination();
+        this.pagination = new AcPaginationElement();
         this.pagination.bindDataManager({ dataManager: this.dataManager });
         this.logger.log('Created and bound pagination');
       } else {
@@ -317,7 +314,7 @@ export class AcDatagridApi {
   hoverRowId?: string;
   lastColumnIndex: number = 0;
   logger: AcLogger = new AcLogger({ logMessages: false });
-  pagination?: AcPagination;
+  pagination?: AcPaginationElement;
   rowValueChangeTimeoutDuration = 250;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {

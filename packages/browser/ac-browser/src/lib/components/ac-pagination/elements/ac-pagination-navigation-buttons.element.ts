@@ -1,14 +1,14 @@
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AcEnumPaginationEvent, AcPagination, AcPaginationCssClassName, AC_PAGINATION_SVG_ICONS } from "../_ac-pagination.export";
+import { AcEnumPaginationEvent, AcPaginationElement, AcPaginationCssClassName, AC_PAGINATION_SVG_ICONS } from "../_ac-pagination.export";
 import { IAcPaginationPageChangeEvent } from "../interfaces/event-params/ac-page-change-event.interface";
 
-export class AcPaginationNavigationButtons extends AcElementBase{
-  private _pagination?: AcPagination;
-  get pagination():AcPagination|undefined{
+export class AcPaginationNavigationButtonsElement extends AcElementBase{
+  private _pagination?: AcPaginationElement;
+  get pagination():AcPaginationElement|undefined{
     return this._pagination;
   }
-  set pagination(value: AcPagination) {
+  set pagination(value: AcPaginationElement) {
     this._pagination = value;
     value.on({
       event: AcEnumPaginationEvent.PageChange, callback: (event: IAcPaginationPageChangeEvent) => {
@@ -112,4 +112,4 @@ export class AcPaginationNavigationButtons extends AcElementBase{
 
 }
 
-acRegisterCustomElement({'tag':'ac-pagination-navigation-buttons',type:AcPaginationNavigationButtons});
+acRegisterCustomElement({'tag':'ac-pagination-navigation-buttons',type:AcPaginationNavigationButtonsElement});
