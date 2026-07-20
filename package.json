@@ -108,6 +108,7 @@
     "@vue/eslint-config-prettier": "7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
     "@vue/test-utils": "^2.4.6",
+
     "ajv": "^8.0.0",
     "angular-eslint": "^20.1.1",
     "autoprefixer": "^10.4.0",
@@ -187,6 +188,7 @@
     "@tiptap/pm": "^3.10.1",
     "@tiptap/starter-kit": "^3.10.1",
     "@types/backbone": "^1.4.23",
+    "air-datepicker": "^3.6.0",
     "ag-charts-community": "^11.3.2",
     "ag-charts-types": "^11.3.2",
     "ag-grid-angular": "^34.0.1",

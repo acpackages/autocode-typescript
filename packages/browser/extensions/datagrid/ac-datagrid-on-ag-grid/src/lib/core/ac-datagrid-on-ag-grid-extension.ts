@@ -780,9 +780,18 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
       if (pagingPanel) {
         acClearElement({ element: this.leftFooterContainer });
-        this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-page-summary-panel')!);
-        this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-row-summary-panel')!);
-        this.leftFooterContainer?.appendChild(pagingPanel.querySelector('.ag-paging-page-size')!);
+        const pageSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-summary-panel');
+        if(pageSummaryPanel){
+          this.leftFooterContainer?.appendChild(pageSummaryPanel);
+        }
+        const rowSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-row-summary-panel');
+        if(rowSummaryPanel){
+          this.leftFooterContainer?.appendChild(rowSummaryPanel);
+        }
+        const pageSizePanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-size');
+        if(pageSizePanel){
+          this.leftFooterContainer?.appendChild(pageSizePanel);
+        }
         acClearElement({ element: pagingPanel });
         this.leftFooterContainer!.append(this.addButtonContainer!);
         this.leftFooterContainer!.append(this.searchInputContainer!);
@@ -791,8 +800,10 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         pagingPanel.append(this.leftFooterContainer!);
         pagingPanel.append(this.rightFooterContainer!);
       }
-      const fullWidthContainer = this.agGridElement.querySelector('.ag-full-width-container') as HTMLElement;
-      fullWidthContainer.append(this.datagridApi.datagrid.afterRowsContainer!);
+      const fullWidthContainer:HTMLElement = this.agGridElement.querySelector('.ag-full-width-container');
+      if(fullWidthContainer){
+        fullWidthContainer.append(this.datagridApi.datagrid.afterRowsContainer!);
+      }
       this.agGridEventHandler.init({ agGridExtension: this });
       this.agGridRowDragExt.init({ agGridExtension: this });
       this.agGridSelectionExt.init({ agGridExtension: this });
