@@ -29,7 +29,7 @@ export class AcDDRepeaterFieldManager {
           continueOperation = false;
         }
         if (continueOperation) {
-          const field: IAcRepeaterField | undefined = this.getTableColumnField({ tableName: ddTable.tableName, columnName: column.columnName });
+          const field: IAcRepeaterField | undefined = this.getTableColumnField({ tableName: ddTable.tableName, columnName: column.columnName,dataDictionaryName });
           if (field) {
             result.push(field);
           }
@@ -39,9 +39,9 @@ export class AcDDRepeaterFieldManager {
     return [...result,...fields];
   }
 
-  static getTableColumnField({ tableName, columnName }: { tableName: string, columnName: string }): IAcRepeaterField | undefined {
+  static getTableColumnField({ tableName, columnName ,dataDictionaryName = 'default' }: { tableName: string, columnName: string,dataDictionaryName?:string }): IAcRepeaterField | undefined {
     const result: IAcRepeaterField = { key: columnName,label:columnName };
-    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName });
+    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName,dataDictionaryName });
     if (ddTableColumn) {
       let resolvedDefinition: IAcRepeaterField | undefined;
       if (resolvedDefinition == undefined) {
@@ -97,7 +97,7 @@ export class AcDDRepeaterFieldManager {
           continueOperation = false;
         }
         if (continueOperation) {
-          const field: IAcRepeaterField | undefined = this.getViewColumnField({ viewName: ddView.viewName, columnName: column.columnName });
+          const field: IAcRepeaterField | undefined = this.getViewColumnField({ viewName: ddView.viewName, columnName: column.columnName,dataDictionaryName });
           if (field) {
             result.push(field);
           }
@@ -107,9 +107,9 @@ export class AcDDRepeaterFieldManager {
     return [...result,...fields];
   }
 
-  static getViewColumnField({ viewName, columnName }: { viewName: string, columnName: string }): IAcRepeaterField | undefined {
+  static getViewColumnField({ viewName, columnName,dataDictionaryName = 'default'  }: { viewName: string, columnName: string,dataDictionaryName?:string }): IAcRepeaterField | undefined {
     const result: IAcRepeaterField = { label:columnName,key: columnName };
-    const ddViewColumn: AcDDViewColumn | null = AcDataDictionary.getViewColumn({ viewName, columnName });
+    const ddViewColumn: AcDDViewColumn | null = AcDataDictionary.getViewColumn({ viewName, columnName,dataDictionaryName });
     if (ddViewColumn) {
       let resolvedDefinition: IAcRepeaterField | undefined;
       if (resolvedDefinition == undefined) {

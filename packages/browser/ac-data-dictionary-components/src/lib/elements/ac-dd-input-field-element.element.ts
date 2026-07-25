@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { acClearElement, AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputElement } from "./ac-dd-input-element.element";
@@ -15,6 +16,18 @@ export class AcDDInputFieldElement extends AcInputBase {
   }
   set columnName(value: string) {
     this.setAttribute('column-name', value);
+    this.setDDInput();
+  }
+
+  get dataDictionary(): string {
+    let result:string = 'default';
+    if(this.hasAttribute('data-dictionary')){
+      result = this.getAttribute('data-dictionary')!;
+    }
+    return result;
+  }
+  set dataDictionary(value: string) {
+    this.setAttribute('data-dictionary',value);
     this.setDDInput();
   }
 
@@ -167,6 +180,11 @@ export class AcDDInputFieldElement extends AcInputBase {
       }
     });
     this.ddInput.on({
+      event: 'input', callback: () => {
+        this.value = this.ddInput.value;
+      }
+    });
+    this.ddInput.on({
       event: 'inputElementSet', callback: (args: any) => {
         const event = new CustomEvent('inputElementSet', { detail: { inputElement: this.ddInput.inputElement } });
         this.dispatchEvent(event);
@@ -207,6 +225,9 @@ export class AcDDInputFieldElement extends AcInputBase {
       case 'table-name':
         this.tableName = newValue;
         break;
+      case 'data-dictionary':
+        this.dataDictionary = newValue;
+        break;
       default:
         super.attributeChangedCallback(name, oldValue, newValue);
         break;
@@ -223,6 +244,7 @@ export class AcDDInputFieldElement extends AcInputBase {
 
   private setDDInput() {
     if ((this.tableName && this.columnName) || this.inputName) {
+      this.ddInput.dataDictionary = this.dataDictionary;
       this.ddInput.tableName = this.tableName;
       this.ddInput.columnName = this.columnName;
       this.ddInput.inputName = this.inputName;

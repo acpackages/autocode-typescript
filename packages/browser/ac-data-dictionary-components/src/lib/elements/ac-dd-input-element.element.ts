@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acClearElement, AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import { AcDDInputManager } from "../core/ac-dd-input-manager";
 import { AcDataDictionary, AcDDTableColumn } from "@autocode-ts/ac-data-dictionary";
@@ -13,6 +15,18 @@ export class AcDDInputElement extends AcInputBase {
   }
   set columnName(value: string) {
     this.setAttribute('column-name', value);
+    this.setInputElement();
+  }
+
+  get dataDictionary(): string {
+    let result: string = 'default';
+    if (this.hasAttribute('data-dictionary')) {
+      result = this.getAttribute('data-dictionary')!;
+    }
+    return result;
+  }
+  set dataDictionary(value: string) {
+    this.setAttribute('data-dictionary', value);
     this.setInputElement();
   }
 
@@ -33,10 +47,10 @@ export class AcDDInputElement extends AcInputBase {
     return this.getAttribute('form-input-name') ?? '';
   }
   set formInputName(value: string) {
-    if(value){
+    if (value) {
       this.setAttribute('form-input-name', value);
     }
-    else{
+    else {
       this.removeAttribute('form-input-name');
     }
     this.setInputElementName();
@@ -46,10 +60,10 @@ export class AcDDInputElement extends AcInputBase {
     return this.getAttribute('input-class');
   }
   set inputClass(value: any) {
-    if(value){
+    if (value) {
       this.setAttribute('input-class', value);
     }
-    else{
+    else {
       this.removeAttribute('input-class');
     }
     this.setInputElementClass();
@@ -67,10 +81,10 @@ export class AcDDInputElement extends AcInputBase {
     return this.getAttribute('input-style');
   }
   set inputStyle(value: any) {
-    if(value){
+    if (value) {
       this.setAttribute('input-style', value);
     }
-    else{
+    else {
       this.removeAttribute('input-style');
     }
     this.setInputElementStyle();
@@ -89,10 +103,10 @@ export class AcDDInputElement extends AcInputBase {
     return this.getAttribute('placeholder');
   }
   override set placeholder(value: any) {
-    if(value){
+    if (value) {
       this.setAttribute('placeholder', value);
     }
-    else{
+    else {
       this.removeAttribute('placeholder');
     }
     this.setInputElementPlaceholder();
@@ -176,6 +190,9 @@ export class AcDDInputElement extends AcInputBase {
       case 'table-name':
         this.tableName = newValue;
         break;
+      case 'data-dictionary':
+        this.dataDictionary = newValue;
+        break;
       default:
         super.attributeChangedCallback(name, oldValue, newValue);
         break;
@@ -191,24 +208,18 @@ export class AcDDInputElement extends AcInputBase {
     if ((this.tableName && this.columnName) || this.inputName) {
       let inputDefinition: IAcDDInputDefinition | undefined;
       if (this.tableName && this.columnName) {
-        const column = AcDataDictionary.getTableColumn({ tableName: this.tableName, columnName: this.columnName });
+        const column = AcDataDictionary.getTableColumn({ tableName: this.tableName, columnName: this.columnName, dataDictionaryName: this.dataDictionary });
         if (column) {
           this.ddTableColumn = column;
         }
-        inputDefinition = AcDDInputManager.getColumnInputDefinition({ tableName: this.tableName, columnName: this.columnName });
+        inputDefinition = AcDDInputManager.getColumnInputDefinition({ tableName: this.tableName, columnName: this.columnName, dataDictionaryName: this.dataDictionary });
       }
       if (this.inputName) {
         inputDefinition = AcDDInputManager.getInputDefinition({ name: this.inputName });
       }
       if (inputDefinition) {
-        acClearElement({element:this});
+        acClearElement({ element: this });
         this.inputElement = new inputDefinition.inputElement();
-        if(this.ddTableColumn){
-          const defaultValue:any = this.ddTableColumn.getDefaultValue();
-          if(defaultValue && !this.value){
-            this.inputElement.value = defaultValue;
-          }
-        }
         if (inputDefinition.defaultProperties) {
           for (const key in inputDefinition.defaultProperties) {
             this.inputElement[key] = inputDefinition.defaultProperties[key];
@@ -228,6 +239,14 @@ export class AcDDInputElement extends AcInputBase {
         });
         if (this.value) {
           this.inputElement.value = this.value;
+        }
+        else {
+          if (this.ddTableColumn) {
+            const defaultValue: any = this.ddTableColumn.getDefaultValue();
+            if (defaultValue && !this.value) {
+              this.inputElement.value = defaultValue;
+            }
+          }
         }
         if (this.disabled) {
           this.inputElement.disabled = this.disabled;

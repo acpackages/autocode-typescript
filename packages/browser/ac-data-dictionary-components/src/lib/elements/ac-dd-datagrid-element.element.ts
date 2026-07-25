@@ -99,7 +99,8 @@ export class AcDDDatagridElement extends AcElementBase {
           tableName:this.sourceValue,
           columnDefinitions:this.columnDefinitions,
           excludeColumns:this.excludeColumns,
-          includeColumns:this.includeColumns
+          includeColumns:this.includeColumns,
+          dataDictionaryName:this.dataDictionary
         });
         this.datagridApi.columnDefinitions = columns;
       }

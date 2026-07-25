@@ -2,6 +2,381 @@ export const dataDictionaryJson = {
   "name": "Match The Ledgers",
   "version": 1,
   "tables": {
+    "mtl_entry_actions": {
+      "tableName": "mtl_entry_actions",
+      "tableColumns": {
+        "entry_action_id": {
+          "columnName": "entry_action_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entry Action Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "external_entry_id": {
+          "columnName": "external_entry_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entry"
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        },
+        "transaction_entry_id": {
+          "columnName": "transaction_entry_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction Entry"
+            }
+          }
+        },
+        "entry_action": {
+          "columnName": "entry_action",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entry Action"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "mtl_entry_actions"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "mtl_entry_action"
+        }
+      }
+    },
+    "mtl_entry_matches": {
+      "tableName": "mtl_entry_matches",
+      "tableColumns": {
+        "entry_match_id": {
+          "columnName": "entry_match_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entry Match Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "transaction_entry_id": {
+          "columnName": "transaction_entry_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction Entry"
+            }
+          }
+        },
+        "external_entry_id": {
+          "columnName": "external_entry_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Enternal Entry"
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "mtl_entry_matches"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "mtl_entry_match"
+        }
+      }
+    },
+    "mtl_external_details": {
+      "tableName": "mtl_external_details",
+      "tableColumns": {
+        "external_detail_id": {
+          "columnName": "external_detail_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Detail Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "session_id": {
+          "columnName": "session_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session"
+            }
+          }
+        },
+        "external_detail_json": {
+          "columnName": "external_detail_json",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Detail Json"
+            }
+          }
+        },
+        "raw_external_contents": {
+          "columnName": "raw_external_contents",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Raw External Contentx"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "mtl_external_details"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "mtl_external_detail"
+        }
+      }
+    },
+    "mtl_external_entries": {
+      "tableName": "mtl_external_entries",
+      "tableColumns": {
+        "external_entry_id": {
+          "columnName": "external_entry_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "external_entry_amount": {
+          "columnName": "external_entry_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Amount"
+            }
+          }
+        },
+        "external_entry_description": {
+          "columnName": "external_entry_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Description"
+            }
+          }
+        },
+        "is_credit": {
+          "columnName": "is_credit",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Credit?"
+            }
+          }
+        },
+        "external_entry_time": {
+          "columnName": "external_entry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Time"
+            }
+          }
+        },
+        "external_entry_remarks": {
+          "columnName": "external_entry_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Remarks"
+            }
+          }
+        },
+        "external_entry_json": {
+          "columnName": "external_entry_json",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Json"
+            }
+          }
+        },
+        "external_entry_index": {
+          "columnName": "external_entry_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "External Entry Index"
+            }
+          }
+        },
+        "session_id": {
+          "columnName": "session_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session"
+            }
+          }
+        },
+        "external_entry_reference_number": {
+          "columnName": "external_entry_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Reference Number"
+            }
+          }
+        },
+        "external_entry_balance": {
+          "columnName": "external_entry_balance",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Balance"
+            }
+          }
+        },
+        "match_status": {
+          "columnName": "match_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Match Status"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "mtl_external_entries"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "mtl_external_entry"
+        }
+      }
+    },
+    "mtl_session_medias": {
+      "tableName": "mtl_session_medias",
+      "tableColumns": {
+        "session_media_id": {
+          "columnName": "session_media_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session Media"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "media_id": {
+          "columnName": "media_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Media"
+            }
+          }
+        },
+        "session_id": {
+          "columnName": "session_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "mtl_session_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "mtl_session_media"
+        }
+      }
+    },
     "mtl_sessions": {
       "tableName": "mtl_sessions",
       "tableColumns": {
@@ -168,351 +543,6 @@ export const dataDictionaryJson = {
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
           "propertyValue": "mtl_session"
-        }
-      }
-    },
-    "mtl_external_entries": {
-      "tableName": "mtl_external_entries",
-      "tableColumns": {
-        "external_entry_id": {
-          "columnName": "external_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Id"
-            },
-            "PRIMARY_KEY": {
-              "propertyName": "PRIMARY_KEY",
-              "propertyValue": true
-            }
-          }
-        },
-        "external_entry_amount": {
-          "columnName": "external_entry_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Amount"
-            }
-          }
-        },
-        "external_entry_description": {
-          "columnName": "external_entry_description",
-          "columnType": "TEXT",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Description"
-            }
-          }
-        },
-        "is_credit": {
-          "columnName": "is_credit",
-          "columnType": "YES_NO",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Is Credit?"
-            }
-          }
-        },
-        "external_entry_time": {
-          "columnName": "external_entry_time",
-          "columnType": "DATETIME",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Time"
-            }
-          }
-        },
-        "external_entry_remarks": {
-          "columnName": "external_entry_remarks",
-          "columnType": "TEXT",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Remarks"
-            }
-          }
-        },
-        "external_entry_json": {
-          "columnName": "external_entry_json",
-          "columnType": "JSON",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Json"
-            }
-          }
-        },
-        "external_entry_index": {
-          "columnName": "external_entry_index",
-          "columnType": "INTEGER",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Entry Index"
-            }
-          }
-        },
-        "session_id": {
-          "columnName": "session_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Session"
-            }
-          }
-        }
-      },
-      "tableProperties": {
-        "PLURAL_NAME": {
-          "propertyName": "PLURAL_NAME",
-          "propertyValue": "mtl_external_entries"
-        },
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "mtl_external_entry"
-        }
-      }
-    },
-    "mtl_entry_matches": {
-      "tableName": "mtl_entry_matches",
-      "tableColumns": {
-        "entry_match_id": {
-          "columnName": "entry_match_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Entry Match Id"
-            },
-            "PRIMARY_KEY": {
-              "propertyName": "PRIMARY_KEY",
-              "propertyValue": true
-            }
-          }
-        },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "external_entry_id": {
-          "columnName": "external_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Enternal Entry"
-            }
-          }
-        },
-        "transaction_id": {
-          "columnName": "transaction_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction"
-            }
-          }
-        }
-      },
-      "tableProperties": {
-        "PLURAL_NAME": {
-          "propertyName": "PLURAL_NAME",
-          "propertyValue": "mtl_entry_matches"
-        },
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "mtl_entry_match"
-        }
-      }
-    },
-    "mtl_entry_actions": {
-      "tableName": "mtl_entry_actions",
-      "tableColumns": {
-        "entry_action_id": {
-          "columnName": "entry_action_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Entry Action Id"
-            },
-            "PRIMARY_KEY": {
-              "propertyName": "PRIMARY_KEY",
-              "propertyValue": true
-            }
-          }
-        },
-        "external_entry_id": {
-          "columnName": "external_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Entry"
-            }
-          }
-        },
-        "transaction_id": {
-          "columnName": "transaction_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction"
-            }
-          }
-        },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "entry_action": {
-          "columnName": "entry_action",
-          "columnType": "STRING",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Entry Action"
-            }
-          }
-        }
-      },
-      "tableProperties": {
-        "PLURAL_NAME": {
-          "propertyName": "PLURAL_NAME",
-          "propertyValue": "mtl_entry_actions"
-        },
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "mtl_entry_action"
-        }
-      }
-    },
-    "mtl_session_medias": {
-      "tableName": "mtl_session_medias",
-      "tableColumns": {
-        "session_media_id": {
-          "columnName": "session_media_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Session Media"
-            },
-            "PRIMARY_KEY": {
-              "propertyName": "PRIMARY_KEY",
-              "propertyValue": true
-            }
-          }
-        },
-        "media_id": {
-          "columnName": "media_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Media"
-            }
-          }
-        },
-        "session_id": {
-          "columnName": "session_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Session"
-            }
-          }
-        }
-      },
-      "tableProperties": {
-        "PLURAL_NAME": {
-          "propertyName": "PLURAL_NAME",
-          "propertyValue": "mtl_session_medias"
-        },
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "mtl_session_media"
-        }
-      }
-    },
-    "mtl_external_details": {
-      "tableName": "mtl_external_details",
-      "tableColumns": {
-        "external_detail_id": {
-          "columnName": "external_detail_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Detail Id"
-            },
-            "PRIMARY_KEY": {
-              "propertyName": "PRIMARY_KEY",
-              "propertyValue": true
-            }
-          }
-        },
-        "session_id": {
-          "columnName": "session_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Session"
-            }
-          }
-        },
-        "external_detail_json": {
-          "columnName": "external_detail_json",
-          "columnType": "JSON",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "External Detail Json"
-            }
-          }
-        },
-        "raw_external_contents": {
-          "columnName": "raw_external_contents",
-          "columnType": "TEXT",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Raw External Contentx"
-            }
-          }
-        }
-      },
-      "tableProperties": {
-        "PLURAL_NAME": {
-          "propertyName": "PLURAL_NAME",
-          "propertyValue": "mtl_external_details"
-        },
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "mtl_external_detail"
         }
       }
     }

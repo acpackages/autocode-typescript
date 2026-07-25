@@ -46,7 +46,7 @@ export class AcDDDatagridColumnManager {
           }
         }
         if (continueOperation) {
-          const columnDefinition: IAcDatagridColumnDefinition | undefined = this.getTableColumn({ tableName: ddTable.tableName, columnName: column.columnName,defaultValues:defaultValues });
+          const columnDefinition: IAcDatagridColumnDefinition | undefined = this.getTableColumn({ tableName: ddTable.tableName, columnName: column.columnName,defaultValues:defaultValues,dataDictionaryName });
           if (columnDefinition) {
             if (visibleColumns && visibleColumns.length > 0) {
               if (visibleColumns.includes(column.columnName)) {
@@ -95,9 +95,9 @@ export class AcDDDatagridColumnManager {
     return [...result,...columnDefinitions];
   }
 
-  static getTableColumn({ tableName, columnName,defaultValues = {}, skipResolver }: { tableName: string, columnName: string,defaultValues?:Partial<IAcDDColumnDefinition>, skipResolver?: boolean }): IAcDatagridColumnDefinition | undefined {
+  static getTableColumn({ tableName, columnName,defaultValues = {}, skipResolver,dataDictionaryName = 'default' }: { tableName: string, columnName: string,defaultValues?:Partial<IAcDDColumnDefinition>, skipResolver?: boolean,dataDictionaryName?:string, }): IAcDatagridColumnDefinition | undefined {
     let result: IAcDatagridColumnDefinition | any = {...defaultValues, field: columnName };
-    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName });
+    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName,dataDictionaryName });
     if (ddTableColumn) {
       let resolvedDefinition: IAcDatagridColumnDefinition | undefined;
       if (this.columnResolver && skipResolver != true) {
@@ -181,7 +181,7 @@ export class AcDDDatagridColumnManager {
           }
         }
         if (continueOperation) {
-          const columnDefinition: IAcDatagridColumnDefinition | undefined = this.getViewColumn({ viewName: ddView.viewName, columnName: column.columnName,defaultValues:defaultValues });
+          const columnDefinition: IAcDatagridColumnDefinition | undefined = this.getViewColumn({ viewName: ddView.viewName, columnName: column.columnName,defaultValues:defaultValues,dataDictionaryName });
           if (columnDefinition) {
             if (visibleColumns && visibleColumns.length > 0) {
               if (visibleColumns.includes(column.columnName)) {
@@ -230,9 +230,9 @@ export class AcDDDatagridColumnManager {
     return [...result,...columnDefinitions];
   }
 
-  static getViewColumn({ viewName, columnName,defaultValues = {}, skipResolver }: { viewName: string, columnName: string,defaultValues?:Partial<IAcDDColumnDefinition>, skipResolver?: boolean }): IAcDatagridColumnDefinition | undefined {
+  static getViewColumn({ viewName, columnName,defaultValues = {}, skipResolver,dataDictionaryName = 'default' }: { viewName: string, columnName: string,defaultValues?:Partial<IAcDDColumnDefinition>, skipResolver?: boolean,dataDictionaryName?:string }): IAcDatagridColumnDefinition | undefined {
     let result: IAcDatagridColumnDefinition | any = { ...defaultValues,field: columnName };
-    const ddViewColumn: AcDDViewColumn | null = AcDataDictionary.getViewColumn({ viewName, columnName });
+    const ddViewColumn: AcDDViewColumn | null = AcDataDictionary.getViewColumn({ viewName, columnName,dataDictionaryName });
     if (ddViewColumn) {
       let resolvedDefinition: IAcDatagridColumnDefinition | undefined;
       if (this.columnResolver && skipResolver != true) {

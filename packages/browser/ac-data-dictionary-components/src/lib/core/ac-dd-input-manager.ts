@@ -32,12 +32,12 @@ export class AcDDInputManager {
   static inputFieldElementClass: any = AcDDInputFieldBaseElement;
   static inputResolver?: Function;
 
-  static getColumnInputDefinition({ columnName, tableName }: { columnName: string, tableName: string }): IAcDDInputDefinition {
+  static getColumnInputDefinition({ columnName, tableName,dataDictionaryName = 'default' }: { columnName: string, tableName: string,dataDictionaryName?:string }): IAcDDInputDefinition {
     let result: IAcDDInputDefinition = { inputElement: AcInputElement, defaultProperties: {} };
-    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName });
+    const ddTableColumn: AcDDTableColumn | null = AcDataDictionary.getTableColumn({ tableName, columnName,dataDictionaryName });
     let resolvedDefinition;
     if (this.inputResolver) {
-      resolvedDefinition = this.inputResolver({columnName,tableName,ddTableColumn});
+      resolvedDefinition = this.inputResolver({columnName,tableName,ddTableColumn,dataDictionaryName});
       if(resolvedDefinition){
         result = resolvedDefinition;
       }
@@ -91,7 +91,7 @@ export class AcDDInputManager {
     AcDDInputManager.inputDefinitions[name] = inputDefinition;
   }
 
-  static registerForeignKeyInput({ primaryTableName, inputDefinition }: { primaryTableName: string, inputDefinition: IAcDDInputDefinition }) {
+  static registerForeignKeyInput({ primaryTableName, inputDefinition,dataDictionaryName }: { primaryTableName: string, inputDefinition: IAcDDInputDefinition,dataDictionaryName?:string }) {
     AcDDInputManager.foreignKeyInputs[primaryTableName] = inputDefinition;
   }
 }
