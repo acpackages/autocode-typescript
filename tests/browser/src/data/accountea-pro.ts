@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 19,
+  "version": 20,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -2880,6 +2880,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Purchase Charge"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -2890,6 +2894,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Sale Charge"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -2942,6 +2950,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Profit Margin%"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -2986,6 +2998,20 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Remarks"
+            }
+          }
+        },
+        "landing_cost_percentage": {
+          "columnName": "landing_cost_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Landing Cost"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         }
@@ -3232,7 +3258,11 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Tax Rate"
+              "propertyValue": "Purchase Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -3370,7 +3400,11 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Tax Rate"
+              "propertyValue": "Sale Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -3451,7 +3485,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "UOM Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -3473,7 +3507,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "UOM Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -3552,7 +3586,7 @@ export const dataDictionaryJson = {
             },
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Number"
+              "propertyValue": "Service Code"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3667,6 +3701,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "SAC Code"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -3677,6 +3715,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Category"
+            }
+          }
+        },
+        "chargeable_service_tags": {
+          "columnName": "chargeable_service_tags",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tags"
             }
           }
         }
@@ -16643,6 +16691,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Ledger Account"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -16677,6 +16729,10 @@ export const dataDictionaryJson = {
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
               "propertyValue": "0"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -16687,6 +16743,10 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Date/Time"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
@@ -28271,6 +28331,14 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_category_id"
+        },
+        "chargeable_service_tags": {
+          "columnName": "chargeable_service_tags",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_tags"
         }
       },
       "viewQuery": "SELECT act_chargeable_service_categories.chargeable_service_category_name,\njson_object('media_path', media_path,'media_details', media_details) AS chargeable_service_image_media,\nact_chargeable_services.* FROM act_chargeable_services LEFT JOIN act_chargeable_service_categories ON act_chargeable_services.chargeable_service_category_id = act_chargeable_service_categories.chargeable_service_category_id\nLEFT JOIN act_medias ON act_chargeable_services.chargeable_service_image_media_id = act_medias.media_id"
@@ -50244,6 +50312,12 @@ export const dataDictionaryJson = {
       "destinationTable": "act_sale_return_expenses",
       "sourceColumn": "transaction_entry_id",
       "sourceTable": "act_transaction_entries"
+    },
+    {
+      "destinationColumn": "parent_chargeable_service_category_id",
+      "destinationTable": "act_chargeable_service_categories",
+      "sourceColumn": "chargeable_service_category_id",
+      "sourceTable": "act_chargeable_service_categories"
     }
   ]
 };

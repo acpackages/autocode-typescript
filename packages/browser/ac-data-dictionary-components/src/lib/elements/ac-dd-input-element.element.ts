@@ -219,7 +219,12 @@ export class AcDDInputElement extends AcInputBase {
       }
       if (inputDefinition) {
         acClearElement({ element: this });
-        this.inputElement = new inputDefinition.inputElement();
+        if(inputDefinition.inputElement){
+          this.inputElement = new inputDefinition.inputElement();
+        }
+        else if(inputDefinition.inputElementTag){
+          this.inputElement = this.ownerDocument.createElement(inputDefinition.inputElementTag);
+        }
         if (inputDefinition.defaultProperties) {
           for (const key in inputDefinition.defaultProperties) {
             this.inputElement[key] = inputDefinition.defaultProperties[key];
@@ -237,7 +242,7 @@ export class AcDDInputElement extends AcInputBase {
         this.inputElement.addEventListener('change', () => {
           this.value = this.inputElement.value;
         });
-        if (this.value) {
+        if (this.value != undefined) {
           this.inputElement.value = this.value;
         }
         else {

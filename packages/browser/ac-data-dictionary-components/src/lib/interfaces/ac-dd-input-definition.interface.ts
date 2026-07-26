@@ -1,4 +1,5 @@
 export interface IAcDDInputDefinition{
-  inputElement:new (...args: any[]) => any,
+  inputElementTag?:string,
+  inputElement?:new (...args: any[]) => any,
   defaultProperties?:any
 }

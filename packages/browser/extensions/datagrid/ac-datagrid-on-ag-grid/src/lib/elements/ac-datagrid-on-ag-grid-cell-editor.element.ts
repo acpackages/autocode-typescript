@@ -20,6 +20,22 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   previousValue: any;
   private isValueChanged = false;
 
+  get currentInputValue() {
+    let currentValue = this.getValue();
+    if (currentValue == '' || currentValue == undefined) {
+      currentValue = null;
+    };
+    return currentValue;
+  }
+
+  get currentDataValue() {
+     let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
+              if (previousValue == '' || previousValue == undefined) {
+                previousValue = null;
+              }
+    return previousValue;
+  }
+
   handleBlur: Function = () => {
     // console.log("[AcDatagridOnAgGridCellEditor] Cell Blur",this);
     this.isFocused = false;
@@ -30,34 +46,29 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
           // console.log("[AcDatagridOnAgGridCellEditor] Editing element is not in focus");
           if (this.datagridRow && this.datagridColumn && this.datagridApi) {
             if (this.datagridColumn.columnDefinition.useCellEditorForRenderer) {
-              let currentValue = this.getValue();
-              if (currentValue == '' || currentValue == undefined) {
-                currentValue = null;
-              }
-              let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
-              if (previousValue == '' || previousValue == undefined) {
-                previousValue = null;
-              }
+              console.log("[AcDatagridOnAgGridCellEditor] Handle Blur");
+              const currentValue = this.currentInputValue;
+              const previousValue = this.currentDataValue;
               if (this.isValueChanged || previousValue != currentValue) {
                 this.isValueChanged = false;
-                this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
+                this.updateCurrentData();
                 this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridCell! });
-                // console.log("[AcDatagridOnAgGridCellEditor] Emit cell value change",previousValue,currentValue);
                 this.previousValue = currentValue;
+                console.log("[AcDatagridOnAgGridCellEditor] Handle Blur", this.previousValue, currentValue);
               }
-              else{
+              else {
                 // console.log(`[AcDatagridOnAgGridCellEditor] Value is not changed or old or current value not same | Value Changed : ${this.isValueChanged}, New Value : ${currentValue} | Old Value : ${previousValue}`);
               }
             }
-            else{
+            else {
               // console.log("[AcDatagridOnAgGridCellEditor] Not using editor for renderer");
             }
           }
-          else{
+          else {
             // console.log("[AcDatagridOnAgGridCellEditor] Datagrid row,column or api not set");
           }
         }
-        else{
+        else {
           // console.log("[AcDatagridOnAgGridCellEditor] Editing element is in focus");
         }
       }, duration: 10
@@ -68,18 +79,12 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
     if (this.datagridCell) {
       if (this.datagridRow && this.datagridColumn) {
 
-        let currentValue = this.getValue();
-        if (currentValue == '' || currentValue == undefined) {
-          currentValue = null;
-        }
-        let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
-        if (previousValue == '' || previousValue == undefined) {
-          previousValue = null;
-        }
+        const currentValue = this.currentInputValue;
+        const previousValue = this.currentDataValue;
 
         if (previousValue != currentValue) {
           this.isValueChanged = true;
-          this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
+          this.updateCurrentData();
         }
         this.datagridApi!.eventHandler.handleCellKeyUp({ datagridCell: this.datagridCell, event: event as any });
         this.datagridApi!.eventHandler.handleRowKeyUp({ datagridRow: this.datagridRow, event: event as any });
@@ -99,19 +104,9 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   handleInputAndChange: any = (el: HTMLInputElement, ev: Event) => {
     if (this.datagridCell) {
       if (this.datagridRow && this.datagridColumn) {
-
-        let currentValue = this.getValue();
-        if (currentValue == '' || currentValue == undefined) {
-          currentValue = null;
-        }
-        let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
-        if (previousValue == '' || previousValue == undefined) {
-          previousValue = null;
-        }
-
-        if (previousValue != currentValue) {
+        if (this.currentDataValue != this.currentInputValue) {
           this.isValueChanged = true;
-          this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
+          this.updateCurrentData();
         }
       }
     }
@@ -169,7 +164,7 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
     return value;
   }
 
-  init?(params: ICellRendererParams | any): AgPromise<void> | void {
+  init?(params: ICellEditorParams | any): AgPromise<void> | void {
     this.params = params;
     params.eGridCell?.setAttribute('tabindex', '-1');
     this.agGridExtension = params.agGridExtension;
@@ -294,14 +289,8 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   isValueModified() {
     let result: boolean = false;
     if (this.datagridCell) {
-      let newValue = this.getValue();
-      if (newValue == '' || newValue == undefined) {
-        newValue = null;
-      }
-      let previousValue = this.previousValue;
-      if (previousValue == '' || previousValue == undefined) {
-        previousValue = null;
-      }
+      const newValue = this.currentInputValue;
+      const previousValue = this.currentDataValue;
       result = previousValue != newValue;
     }
     return result;
@@ -319,14 +308,12 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   }
 
   refresh(params: ICellEditorParams<any, any, any>): boolean {
+    this.params = params;
     let value: any = params.value;
     if (value == '' || value == undefined) {
       value = null;
     }
-    let previousValue = this.previousValue;
-    if (previousValue == '' || previousValue == undefined) {
-      previousValue = null;
-    }
+    const previousValue = this.currentDataValue;
     // console.log(`[AcDatagridOnAgGridCellEditor] Refreshing editor value | Previous Value : ${previousValue} | New Value : ${value}`);
     if (value != previousValue) {
       if (value != '' && value != undefined && value != null && this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Number) {
@@ -338,6 +325,13 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
     return true;
   }
 
+  updateCurrentData() {
+    const currentValue = this.currentInputValue;
+    if(this.params && this.params.node && this.params.node.setDataValue){
+      this.params.node.setDataValue(this.datagridColumn.columnKey, currentValue);
+    }
+    this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
+  }
 
 
 }
