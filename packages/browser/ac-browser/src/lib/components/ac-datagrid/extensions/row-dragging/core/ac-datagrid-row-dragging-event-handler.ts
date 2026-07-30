@@ -10,14 +10,14 @@ export class AcDatagridRowDraggingEventHandler {
     acNullifyInstanceProperties({instance:this});
   }
 
-  // handleRowDrag({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
-  //   const eventArgs: IAcDatagridRowEvent = {
-  //     datagridApi: this.datagridApi,
-  //     datagridRow: datagridRow,
-  //     event: event
-  //   };
-  //   this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.RowDrag, args: eventArgs });
-  // }
+  handleRowDrag({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
+    const eventArgs: IAcDatagridRowEvent = {
+      datagridApi: this.datagridApi,
+      datagridRow: datagridRow,
+      event: event
+    };
+    this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.RowDrag, args: eventArgs });
+  }
 
   //  handleRowDragCancel({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
   //   const eventArgs: IAcDatagridRowEvent = {
@@ -37,14 +37,15 @@ export class AcDatagridRowDraggingEventHandler {
   //   this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.RowDragDrop, args: eventArgs });
   // }
 
-  // handleRowDragEnd({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
-  //   const eventArgs: IAcDatagridRowEvent = {
-  //     datagridApi: this.datagridApi,
-  //     datagridRow: datagridRow,
-  //     event: event
-  //   };
-  //   this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.RowDragEnd, args: eventArgs });
-  // }
+  handleRowDragEnd({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
+    const eventArgs: IAcDatagridRowEvent = {
+      datagridApi: this.datagridApi,
+      datagridRow: datagridRow,
+      event: event
+    };
+    console.log(eventArgs);
+    this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.RowDragEnd, args: eventArgs });
+  }
 
   // handleRowDragEnter({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
   //   const eventArgs: IAcDatagridRowEvent = {

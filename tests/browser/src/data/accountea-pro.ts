@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 20,
+  "version": 22,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -205,6 +205,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_addresses"
@@ -280,6 +284,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_bank_accounts"
@@ -341,6 +349,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_email_addresses"
@@ -402,6 +414,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_fax_numbers"
@@ -463,6 +479,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_legal_documents"
@@ -524,6 +544,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_medias"
@@ -585,6 +609,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_phone_numbers"
@@ -751,6 +779,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_social_medias"
@@ -881,6 +913,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "accountee_websites"
@@ -1337,13 +1373,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "address"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "addresses"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "address"
         }
       }
     },
@@ -1791,13 +1831,13 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "asset_media"
-        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "asset_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "asset_media"
         }
       }
     },
@@ -2621,13 +2661,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "bank_account"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "bank_accounts"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "bank_account"
         }
       }
     },
@@ -2698,16 +2742,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "purchase_taxing_scheme_id": {
-          "columnName": "purchase_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Purchase Taxing Scheme"
-            }
-          }
-        },
         "purchase_tax_rate_id": {
           "columnName": "purchase_tax_rate_id",
           "columnType": "UUID",
@@ -2715,16 +2749,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Purchase Tax Rate"
-            }
-          }
-        },
-        "sale_taxing_scheme_id": {
-          "columnName": "sale_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Sale Taxing Scheme"
             }
           }
         },
@@ -2824,6 +2848,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "chargeable_service_categories"
@@ -3135,13 +3163,13 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "chargeable_service_media"
-        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "chargeable_service_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "chargeable_service_media"
         }
       }
     },
@@ -3239,16 +3267,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Price"
-            }
-          }
-        },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
             }
           }
         },
@@ -3381,16 +3399,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Price"
-            }
-          }
-        },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
             }
           }
         },
@@ -3812,6 +3820,20 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Display Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -4225,9 +4247,33 @@ export const dataDictionaryJson = {
               "propertyValue": "1"
             }
           }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "delivery_note_chargeable_services"
@@ -4385,8 +4431,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -4409,28 +4455,84 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
             }
           }
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "delivery_note_expense_gross_amount": {
+          "columnName": "delivery_note_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
             }
           }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "delivery_note_expenses"
@@ -4484,6 +4586,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "delivery_note_medias"
@@ -4495,6 +4601,206 @@ export const dataDictionaryJson = {
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
           "propertyValue": "act_vw_delivery_note_medias"
+        }
+      }
+    },
+    "act_delivery_note_payments": {
+      "tableName": "act_delivery_note_payments",
+      "tableColumns": {
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            }
+          }
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Reference#"
+            }
+          }
+        },
+        "delivery_note_payment_remarks": {
+          "columnName": "delivery_note_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "delivery_note_id": {
+          "columnName": "delivery_note_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "delivery_note_payment_amount": {
+          "columnName": "delivery_note_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "delivery_note_payment_datetime": {
+          "columnName": "delivery_note_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Date/Time"
+            }
+          }
+        },
+        "delivery_note_payment_id": {
+          "columnName": "delivery_note_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "delivery_note_payment_status": {
+          "columnName": "delivery_note_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "PENDING"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Initiated",
+                  "value": "INITIATED"
+                },
+                {
+                  "label": "Received",
+                  "value": "RECEIVED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Returned",
+                  "value": "RETURNED"
+                },
+                {
+                  "label": "Technical Error",
+                  "value": "TECHINICAL_ERROR"
+                }
+              ]
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "delivery_note_payments"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "delivery_note_payment"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_delivery_note_payments"
         }
       }
     },
@@ -4629,6 +4935,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "delivery_note_products"
@@ -5086,13 +5396,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "email_address"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "email_addresses"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "email_address"
         }
       }
     },
@@ -5608,13 +5922,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "fax_number"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "fax_numbers"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "fax_number"
         }
       }
     },
@@ -6132,20 +6450,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "ledger_account_type_index": {
-          "columnName": "ledger_account_type_index",
-          "columnType": "INTEGER",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Index"
-            },
-            "DEFAULT_VALUE": {
-              "propertyName": "DEFAULT_VALUE",
-              "propertyValue": "0"
-            }
-          }
-        },
         "ledger_account_type_name": {
           "columnName": "ledger_account_type_name",
           "columnType": "STRING",
@@ -6191,6 +6495,20 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Description"
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Display Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
             }
           }
         }
@@ -6430,6 +6748,20 @@ export const dataDictionaryJson = {
               "propertyValue": "Related to Sale?"
             }
           }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Display Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -6494,13 +6826,13 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "legal_document_media"
-        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "legal_document_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "legal_document_media"
         }
       }
     },
@@ -6631,13 +6963,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "legal_document"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "legal_documents"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "legal_document"
         }
       }
     },
@@ -6688,13 +7024,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_address"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_addresses"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_address"
         }
       }
     },
@@ -6745,13 +7085,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_email_address"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_email_addresses"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_email_address"
         }
       }
     },
@@ -6802,13 +7146,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_fax_number"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_fax_numbers"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_fax_number"
         }
       }
     },
@@ -6859,13 +7207,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_legal_document"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_legal_documents"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_legal_document"
         }
       }
     },
@@ -6916,13 +7268,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_media"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_media"
         }
       }
     },
@@ -6973,13 +7329,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_phone_number"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_phone_numbers"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_phone_number"
         }
       }
     },
@@ -7030,13 +7390,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "location_website"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "location_websites"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "location_website"
         }
       }
     },
@@ -7399,13 +7763,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "menu_item"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "menu_items"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "menu_item"
         }
       }
     },
@@ -7915,6 +8283,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_addresses"
@@ -7968,6 +8340,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_bank_accounts"
@@ -8029,6 +8405,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_contact_persons"
@@ -8090,6 +8470,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_email_addresses"
@@ -8151,6 +8535,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_fax_numbers"
@@ -8212,6 +8600,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_legal_documents"
@@ -8273,6 +8665,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_medias"
@@ -8334,6 +8730,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_phone_numbers"
@@ -8387,6 +8787,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_social_medias"
@@ -8448,6 +8852,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "party_websites"
@@ -8624,9 +9032,27 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Display Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "payment_methods"
@@ -8730,13 +9156,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "phone_number"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "phone_numbers"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "phone_number"
         }
       }
     },
@@ -9673,16 +10103,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "purchase_taxing_scheme_id": {
-          "columnName": "purchase_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Default Purchase Taxing Scheme"
-            }
-          }
-        },
         "sale_tax_rate_id": {
           "columnName": "sale_tax_rate_id",
           "columnType": "UUID",
@@ -9690,16 +10110,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Default Sale Tax Rate"
-            }
-          }
-        },
-        "sale_taxing_scheme_id": {
-          "columnName": "sale_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Default Sale Taxing Scheme"
             }
           }
         },
@@ -9729,6 +10139,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "product_categories"
@@ -10274,20 +10688,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
-            }
-          }
-        },
         "is_current": {
           "columnName": "is_current",
           "columnType": "YES_NO",
@@ -10525,20 +10925,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Sale UOM"
-            }
-          }
-        },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
             }
           }
         },
@@ -11711,16 +12097,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -11787,6 +12163,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_invoice_chargeable_services"
@@ -11958,16 +12338,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -12006,18 +12376,84 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "purchase_invoice_expense_gross_amount": {
+          "columnName": "purchase_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
             }
           }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_invoice_expenses"
@@ -12057,13 +12493,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "purchase_invoice_media"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_invoice_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "purchase_invoice_media"
         },
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
@@ -12257,26 +12697,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -12289,6 +12709,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_invoice_payments"
@@ -12532,16 +12956,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -12628,6 +13042,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_invoice_products"
@@ -13357,16 +13775,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -13433,6 +13841,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_order_chargeable_services"
@@ -13600,16 +14012,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
         "include_in_amount": {
           "columnName": "include_in_amount",
           "columnType": "YES_NO",
@@ -13634,13 +14036,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Is Bourne By Supplier?"
+              "propertyValue": "Is Paid By Supplier?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -13648,18 +14050,84 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "purchase_order_expense_gross_amount": {
+          "columnName": "purchase_order_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
             }
           }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_order_expenses"
@@ -13713,6 +14181,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_order_medias"
@@ -13884,26 +14356,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -13916,6 +14368,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_order_payments"
@@ -14133,16 +14589,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -14199,6 +14645,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_order_products"
@@ -14681,16 +15131,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -14757,6 +15197,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_return_chargeable_services"
@@ -14912,18 +15356,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -14950,16 +15384,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -14969,9 +15393,85 @@ export const dataDictionaryJson = {
               "propertyValue": "Transaction"
             }
           }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "purchase_return_expense_gross_amount": {
+          "columnName": "purchase_return_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_return_expenses"
@@ -15025,6 +15525,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_return_medias"
@@ -15180,30 +15684,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Supplier Transaction Entry"
-            },
-            "USE_FOR_ROW_LIKE_FILTER": {
-              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
-              "propertyValue": false
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -15216,6 +15696,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_return_payments"
@@ -15437,16 +15921,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -15513,6 +15987,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "purchase_return_products"
@@ -15866,6 +16344,43 @@ export const dataDictionaryJson = {
               "propertyValue": "Payment Methods"
             }
           }
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "RECEIVED"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "PENDING",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "RECEIVED",
+                  "value": "RECEIVED"
+                }
+              ]
+            }
+          }
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Received Amount"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -16126,8 +16641,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
+        "transaction_id": {
+          "columnName": "transaction_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -16545,16 +17060,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -16621,6 +17126,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_invoice_chargeable_services"
@@ -16815,16 +17324,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -16835,8 +17334,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -16849,18 +17348,84 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "sale_invoice_expense_gross_amount": {
+          "columnName": "sale_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
             }
           }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_invoice_expenses"
@@ -16900,6 +17465,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_invoice_medias"
@@ -17084,26 +17653,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -17116,6 +17665,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_invoice_payments"
@@ -17370,16 +17923,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -17476,6 +18019,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_invoice_products"
@@ -18171,16 +18718,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -18247,6 +18784,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_maintenance_chargeable_services"
@@ -18398,16 +18939,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -18418,18 +18949,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
-            }
-          }
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -18455,9 +18976,85 @@ export const dataDictionaryJson = {
               "propertyValue": "1"
             }
           }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "sale_maintenance_expense_gross_amount": {
+          "columnName": "sale_maintenance_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_maintenance_expenses"
@@ -18511,6 +19108,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_maintenance_medias"
@@ -18666,26 +19267,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -18698,6 +19279,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_maintenance_payments"
@@ -18915,16 +19500,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
@@ -18954,9 +19529,73 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "product_amount": {
+          "columnName": "product_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            }
+          }
+        },
+        "product_price_mrp": {
+          "columnName": "product_price_mrp",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "MRP"
+            }
+          }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expiry"
+            }
+          }
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mfg"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_maintenance_product"
@@ -19284,6 +19923,26 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Payment Methods"
+            }
+          }
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Received Amount"
+            }
+          }
+        },
+        "address_id": {
+          "columnName": "address_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Address"
             }
           }
         }
@@ -19952,16 +20611,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -20024,6 +20673,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_quotation_chargeable_services"
@@ -20175,18 +20828,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -20219,18 +20862,84 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "sale_quotation_expense_gross_amount": {
+          "columnName": "sale_quotation_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
             }
           }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_quotation_expenses"
@@ -20284,6 +20993,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_quotation_medias"
@@ -20295,6 +21008,206 @@ export const dataDictionaryJson = {
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
           "propertyValue": "act_vw_sale_quotation_medias"
+        }
+      }
+    },
+    "act_sale_quotation_payments": {
+      "tableName": "act_sale_quotation_payments",
+      "tableColumns": {
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            }
+          }
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Reference#"
+            }
+          }
+        },
+        "sale_quotation_payment_remarks": {
+          "columnName": "sale_quotation_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "sale_quotation_id": {
+          "columnName": "sale_quotation_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "sale_quotation_payment_amount": {
+          "columnName": "sale_quotation_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_quotation_payment_datetime": {
+          "columnName": "sale_quotation_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Date/Time"
+            }
+          }
+        },
+        "sale_quotation_payment_id": {
+          "columnName": "sale_quotation_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_quotation_payment_status": {
+          "columnName": "sale_quotation_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "PENDING"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Initiated",
+                  "value": "INITIATED"
+                },
+                {
+                  "label": "Received",
+                  "value": "RECEIVED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Returned",
+                  "value": "RETURNED"
+                },
+                {
+                  "label": "Technical Error",
+                  "value": "TECHINICAL_ERROR"
+                }
+              ]
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_quotation_payments"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_quotation_payment"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_quotation_payments"
         }
       }
     },
@@ -20491,16 +21404,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -20563,6 +21466,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_quotation_products"
@@ -21059,16 +21966,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -21131,6 +22028,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_return_chargeable_services"
@@ -21282,18 +22183,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -21320,16 +22211,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -21339,9 +22220,85 @@ export const dataDictionaryJson = {
               "propertyValue": "Transaction"
             }
           }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "sale_return_expense_gross_amount": {
+          "columnName": "sale_return_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
+            }
+          }
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_return_expenses"
@@ -21395,6 +22352,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_return_medias"
@@ -21546,26 +22507,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Transaction Entry"
-            }
-          }
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Customer Transaction Entry"
-            }
-          }
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -21578,6 +22519,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_return_payments"
@@ -21795,16 +22740,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            }
-          }
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -21867,6 +22802,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "sale_return_products"
@@ -22220,6 +23159,43 @@ export const dataDictionaryJson = {
               "propertyValue": "Payment Methods"
             }
           }
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "PAID"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "PENDING",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "PAID",
+                  "value": "PAID"
+                }
+              ]
+            }
+          }
+        },
+        "paid_amount": {
+          "columnName": "paid_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Paid Amount"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -22506,13 +23482,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "social_media"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "social_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "social_media"
         }
       }
     },
@@ -22696,13 +23676,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "stock_audit_product_storage_location"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_audit_product_storage_locations"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "stock_audit_product_storage_location"
         }
       }
     },
@@ -22896,13 +23880,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "stock_audit_product"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_audit_products"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "stock_audit_product"
         }
       }
     },
@@ -23207,13 +24195,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "stock_transfer_packing_product"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_transfer_packing_products"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "stock_transfer_packing_product"
         }
       }
     },
@@ -23436,13 +24428,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "stock_transfer_packing"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_transfer_packings"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "stock_transfer_packing"
         }
       }
     },
@@ -23924,13 +24920,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "stock_transfer_product"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_transfer_products"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "stock_transfer_product"
         }
       }
     },
@@ -24589,6 +25589,10 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "stock_update_products"
@@ -25079,13 +26083,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "storage_location"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "storage_locations"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "storage_location"
         }
       }
     },
@@ -25648,16 +26656,34 @@ export const dataDictionaryJson = {
               "propertyValue": "Remarks"
             }
           }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Display Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "tax_part"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "tax_parts"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "tax_part"
         }
       }
     },
@@ -25813,13 +26839,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "tax_rate"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "tax_rates"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "tax_rate"
         }
       }
     },
@@ -26043,16 +27073,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Tax Scheme"
-            }
-          }
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -26112,6 +27132,20 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Remarks"
+            }
+          }
+        },
+        "is_autogenerated": {
+          "columnName": "is_autogenerated",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Autogenerated?"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
             }
           }
         }
@@ -26398,6 +27432,20 @@ export const dataDictionaryJson = {
               "propertyValue": "Credit Ledger Accounts"
             }
           }
+        },
+        "is_autogenerated": {
+          "columnName": "is_autogenerated",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Autogenerated"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -26555,13 +27603,17 @@ export const dataDictionaryJson = {
         }
       },
       "tableProperties": {
-        "SINGULAR_NAME": {
-          "propertyName": "SINGULAR_NAME",
-          "propertyValue": "website"
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
         },
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "websites"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "website"
         }
       }
     }
@@ -27861,14 +28913,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_service_categories",
           "columnSourceOriginalColumn": "default_uom_name"
         },
-        "purchase_taxing_scheme_id": {
-          "columnName": "purchase_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_categories",
-          "columnSourceOriginalColumn": "purchase_taxing_scheme_id"
-        },
         "purchase_tax_rate_id": {
           "columnName": "purchase_tax_rate_id",
           "columnType": "UUID",
@@ -27876,14 +28920,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_service_categories",
           "columnSourceOriginalColumn": "purchase_tax_rate_id"
-        },
-        "sale_taxing_scheme_id": {
-          "columnName": "sale_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_categories",
-          "columnSourceOriginalColumn": "sale_taxing_scheme_id"
         },
         "sale_tax_rate_id": {
           "columnName": "sale_tax_rate_id",
@@ -27958,7 +28994,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "chargeable_service_category_remarks"
         }
       },
-      "viewQuery": "SELECT \npurchase_taxing_schemes.taxing_scheme_name AS purchase_taxing_scheme_name,\nsale_taxing_schemes.taxing_scheme_name AS sale_taxing_scheme_name,\npurchase_tax_rates.tax_rate_name AS purchase_tax_rate_name,\npurchase_tax_rates.tax_rate_percentage AS purchase_tax_rate_percentage,\nsale_tax_rates.tax_rate_name AS sale_tax_rate_name,\nsale_tax_rates.tax_rate_percentage AS sale_tax_rate_percentage,\njson_object('media_path', media_path,'media_details', media_details) AS chargeable_service_category_image_media,\nact_chargeable_service_categories.* FROM act_chargeable_service_categories \nLEFT JOIN act_taxing_schemes as purchase_taxing_schemes ON act_chargeable_service_categories.purchase_taxing_scheme_id = purchase_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_taxing_schemes as sale_taxing_schemes ON act_chargeable_service_categories.sale_taxing_scheme_id = sale_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates as purchase_tax_rates ON act_chargeable_service_categories.purchase_tax_rate_id = purchase_tax_rates.tax_rate_id\nLEFT JOIN act_tax_rates as sale_tax_rates ON act_chargeable_service_categories.sale_tax_rate_id = sale_tax_rates.tax_rate_id \nLEFT JOIN act_medias ON act_chargeable_service_categories.chargeable_service_category_image_media_id = act_medias.media_id"
+      "viewQuery": "SELECT \npurchase_tax_rates.tax_rate_name AS purchase_tax_rate_name,\npurchase_tax_rates.tax_rate_percentage AS purchase_tax_rate_percentage,\nsale_tax_rates.tax_rate_name AS sale_tax_rate_name,\nsale_tax_rates.tax_rate_percentage AS sale_tax_rate_percentage,\njson_object('media_path', media_path,'media_details', media_details) AS chargeable_service_category_image_media,\nact_chargeable_service_categories.* FROM act_chargeable_service_categories \nLEFT JOIN act_tax_rates as purchase_tax_rates ON act_chargeable_service_categories.purchase_tax_rate_id = purchase_tax_rates.tax_rate_id\nLEFT JOIN act_tax_rates as sale_tax_rates ON act_chargeable_service_categories.sale_tax_rate_id = sale_tax_rates.tax_rate_id \nLEFT JOIN act_medias ON act_chargeable_service_categories.chargeable_service_category_image_media_id = act_medias.media_id"
     },
     "act_vw_chargeable_service_purchase_details": {
       "viewName": "act_vw_chargeable_service_purchase_details",
@@ -27970,14 +29006,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_service_uoms",
           "columnSourceOriginalColumn": "chargeable_service_uom_name"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -28051,14 +29079,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_service_purchase_details",
           "columnSourceOriginalColumn": "chargeable_service_charge_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_purchase_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_id": {
           "columnName": "tax_rate_id",
           "columnType": "UUID",
@@ -28076,7 +29096,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "chargeable_service_purchase_detail_remarks"
         }
       },
-      "viewQuery": "SELECT act_chargeable_service_uoms.chargeable_service_uom_name,\nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_tax_rates.tax_rate_percentage,\nact_chargeable_service_purchase_details.* FROM act_chargeable_service_purchase_details \nLEFT JOIN act_chargeable_service_uoms ON act_chargeable_service_purchase_details.purchase_uom_id=act_chargeable_service_uoms.chargeable_service_uom_id\nLEFT JOIN act_taxing_schemes ON act_chargeable_service_purchase_details.taxing_scheme_id=act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON act_chargeable_service_purchase_details.tax_rate_id=act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT act_chargeable_service_uoms.chargeable_service_uom_name,\nact_tax_rates.tax_rate_name,\nact_tax_rates.tax_rate_percentage,\nact_chargeable_service_purchase_details.* FROM act_chargeable_service_purchase_details \nLEFT JOIN act_chargeable_service_uoms ON act_chargeable_service_purchase_details.purchase_uom_id=act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON act_chargeable_service_purchase_details.tax_rate_id=act_tax_rates.tax_rate_id"
     },
     "act_vw_chargeable_service_sale_details": {
       "viewName": "act_vw_chargeable_service_sale_details",
@@ -28088,14 +29108,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_service_uoms",
           "columnSourceOriginalColumn": "chargeable_service_uom_name"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -28169,14 +29181,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_service_sale_details",
           "columnSourceOriginalColumn": "chargeable_service_charge_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_sale_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_id": {
           "columnName": "tax_rate_id",
           "columnType": "UUID",
@@ -28194,7 +29198,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "chargeable_service_sale_detail_remarks"
         }
       },
-      "viewQuery": "SELECT act_chargeable_service_uoms.chargeable_service_uom_name,\nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_tax_rates.tax_rate_percentage,\nact_chargeable_service_sale_details.* FROM act_chargeable_service_sale_details \nLEFT JOIN act_chargeable_service_uoms ON act_chargeable_service_sale_details.sale_uom_id=act_chargeable_service_uoms.chargeable_service_uom_id\nLEFT JOIN act_taxing_schemes ON act_chargeable_service_sale_details.taxing_scheme_id=act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON act_chargeable_service_sale_details.tax_rate_id=act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT act_chargeable_service_uoms.chargeable_service_uom_name,\nact_tax_rates.tax_rate_name,\nact_tax_rates.tax_rate_percentage,\nact_chargeable_service_sale_details.* FROM act_chargeable_service_sale_details \nLEFT JOIN act_chargeable_service_uoms ON act_chargeable_service_sale_details.sale_uom_id=act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON act_chargeable_service_sale_details.tax_rate_id=act_tax_rates.tax_rate_id"
     },
     "act_vw_chargeable_services": {
       "viewName": "act_vw_chargeable_services",
@@ -28512,14 +29516,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_service_purchase_details",
           "columnSourceOriginalColumn": "chargeable_service_charge_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_purchase_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_id": {
           "columnName": "tax_rate_id",
           "columnType": "UUID",
@@ -28613,14 +29609,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_service_sale_details",
           "columnSourceOriginalColumn": "chargeable_service_charge_id"
-        },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_chargeable_service_sale_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
         },
         "tax_rate_id": {
           "columnName": "tax_rate_id",
@@ -28896,14 +29884,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_product_purchase_details",
           "columnSourceOriginalColumn": "purchase_uom_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_purchase_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "is_current": {
           "columnName": "is_current",
           "columnType": "YES_NO",
@@ -28997,14 +29977,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_product_sale_details",
           "columnSourceOriginalColumn": "sale_uom_id"
-        },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_sale_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
         },
         "is_current": {
           "columnName": "is_current",
@@ -29384,6 +30356,58 @@ export const dataDictionaryJson = {
     "act_vw_delivery_note_chargeable_services": {
       "viewName": "act_vw_delivery_note_chargeable_services",
       "viewColumns": {
+        "gross_amount": {
+          "columnName": "gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_trade_amount": {
+          "columnName": "discount_trade_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_cash_amount": {
+          "columnName": "discount_cash_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_rebate_amount": {
+          "columnName": "discount_rebate_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "chargeable_service_name": {
           "columnName": "chargeable_service_name",
           "columnType": "STRING",
@@ -29552,52 +30576,42 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_delivery_note_chargeable_services",
           "columnSourceOriginalColumn": "exchange_rate"
         },
-        "gross_amount": {
-          "columnName": "gross_amount",
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_chargeable_services",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_chargeable_services",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "taxable_amount": {
+          "columnName": "taxable_amount",
           "columnType": "DOUBLE",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Gross Amount"
+              "propertyValue": "Taxable Amount"
             }
           },
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
-        "discount_trade_amount": {
-          "columnName": "discount_trade_amount",
+        "tax_amount": {
+          "columnName": "tax_amount",
           "columnType": "DOUBLE",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "TD Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "discount_cash_amount": {
-          "columnName": "discount_cash_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "CD Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "discount_rebate_amount": {
-          "columnName": "discount_rebate_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Rebate Amount"
+              "propertyValue": "Tax Amount"
             }
           },
           "columnSource": "function",
@@ -29605,26 +30619,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \nact_chargeable_services.chargeable_service_name, \nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_delivery_note_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount, \nact_chargeable_services.chargeable_service_name, \nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_delivery_note_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id"
     },
     "act_vw_delivery_note_expenses": {
       "viewName": "act_vw_delivery_note_expenses",
       "viewColumns": {
-        "include_amount": {
-          "columnName": "include_amount",
-          "columnType": "YES_NO",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_delivery_note_expenses",
-          "columnSourceOriginalColumn": "include_amount"
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
         },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -29722,13 +30757,13 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_delivery_note_expenses",
           "columnSourceOriginalColumn": "include_in_amount"
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_delivery_note_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
         "transaction_id": {
           "columnName": "transaction_id",
@@ -29738,24 +30773,56 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_delivery_note_expenses",
           "columnSourceOriginalColumn": "transaction_id"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_delivery_note_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
+          "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "delivery_note_expense_gross_amount": {
+          "columnName": "delivery_note_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_expenses",
+          "columnSourceOriginalColumn": "delivery_note_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_delivery_note_expenses",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT\n    act_vw_ledger_accounts.ledger_account_name,\n    act_delivery_note_expenses.*\nFROM act_delivery_note_expenses\nLEFT JOIN act_vw_ledger_accounts\n    ON act_delivery_note_expenses.ledger_account_id =\n       act_vw_ledger_accounts.ledger_account_id;"
+      "viewQuery": "SELECT\n(COALESCE(act_delivery_note_expenses.delivery_note_expense_gross_amount, 0) * (COALESCE(act_delivery_note_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_delivery_note_expenses.*\nFROM act_delivery_note_expenses\nLEFT JOIN act_tax_rates ON act_delivery_note_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_delivery_note_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_delivery_note_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_delivery_note_medias": {
       "viewName": "act_vw_delivery_note_medias",
@@ -29858,6 +30925,124 @@ export const dataDictionaryJson = {
         }
       },
       "viewQuery": "SELECT act_delivery_note_medias.delivery_note_media_id,act_delivery_note_medias.delivery_note_id,act_medias.* FROM act_delivery_note_medias LEFT JOIN act_medias ON act_medias.media_id = act_delivery_note_medias.media_id"
+    },
+    "act_vw_delivery_note_payments": {
+      "viewName": "act_vw_delivery_note_payments",
+      "viewColumns": {
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
+        },
+        "payment_method_image_media": {
+          "columnName": "payment_method_image_media",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_image_media"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "reference_number"
+        },
+        "delivery_note_payment_remarks": {
+          "columnName": "delivery_note_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_payment_remarks"
+        },
+        "delivery_note_id": {
+          "columnName": "delivery_note_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_id"
+        },
+        "delivery_note_payment_amount": {
+          "columnName": "delivery_note_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_payment_amount"
+        },
+        "delivery_note_payment_datetime": {
+          "columnName": "delivery_note_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_payment_datetime"
+        },
+        "delivery_note_payment_id": {
+          "columnName": "delivery_note_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_payment_id"
+        },
+        "delivery_note_payment_status": {
+          "columnName": "delivery_note_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "delivery_note_payment_status"
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_note_payments",
+          "columnSourceOriginalColumn": "transaction_id"
+        }
+      },
+      "viewQuery": "SELECT act_vw_payment_methods.payment_method_name,act_vw_payment_methods.payment_method_image_media,act_delivery_note_payments.* FROM act_delivery_note_payments LEFT JOIN act_vw_payment_methods ON act_delivery_note_payments.payment_method_id = act_vw_payment_methods.payment_method_id"
     },
     "act_vw_delivery_note_products": {
       "viewName": "act_vw_delivery_note_products",
@@ -29988,14 +31173,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
-        "delivery_note_id": {
-          "columnName": "delivery_note_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_delivery_notes",
-          "columnSourceOriginalColumn": "delivery_note_id"
-        },
         "chargeable_services_count": {
           "columnName": "chargeable_services_count",
           "columnType": "INTEGER",
@@ -30033,11 +31210,99 @@ export const dataDictionaryJson = {
           "columnType": "DOUBLE",
           "columnProperties": {},
           "columnSource": "function",
+          "columnSourceName": "null",
+          "columnSourceOriginalColumn": "null"
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_amount": {
+          "columnName": "products_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "delivery_note_id": {
+          "columnName": "delivery_note_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_delivery_notes",
+          "columnSourceOriginalColumn": "delivery_note_id"
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    dn.delivery_note_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    ROUND(IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount\nFROM act_delivery_notes AS dn\nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_product_id) AS products_count\n    FROM act_delivery_note_products\n    GROUP BY delivery_note_id\n) AS prd ON prd.delivery_note_id = dn.delivery_note_id \nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_delivery_note_chargeable_services\n    GROUP BY delivery_note_id\n) AS ser ON ser.delivery_note_id = dn.delivery_note_id \nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_expense_id) AS expenses_count,\n        SUM(delivery_note_expense_amount) AS expenses_amount\n    FROM act_delivery_note_expenses\n    GROUP BY delivery_note_id\n) AS exp ON exp.delivery_note_id = dn.delivery_note_id;"
+      "viewQuery": "SELECT\n    doc.delivery_note_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n\tROUND((IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount\nFROM act_delivery_notes doc\nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_product_id) AS products_count\n    FROM act_delivery_note_products\n    GROUP BY delivery_note_id\n) prd ON prd.delivery_note_id = doc.delivery_note_id\nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_delivery_note_chargeable_services\n    GROUP BY delivery_note_id\n) ser ON ser.delivery_note_id = doc.delivery_note_id\nLEFT JOIN (\n    SELECT\n        delivery_note_id,\n        COUNT(delivery_note_expense_id) AS expenses_count,\n\t\tSUM((delivery_note_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(delivery_note_expense_amount) AS expenses_amount\n    FROM act_delivery_note_expenses\n    WHERE include_in_amount = 1\n    GROUP BY delivery_note_id\n) exp ON exp.delivery_note_id = doc.delivery_note_id;"
     },
     "act_vw_delivery_notes": {
       "viewName": "act_vw_delivery_notes",
@@ -30785,14 +32050,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_ledger_account_types",
           "columnSourceOriginalColumn": "ledger_account_type_id"
-        },
-        "ledger_account_type_index": {
-          "columnName": "ledger_account_type_index",
-          "columnType": "INTEGER",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_ledger_account_types",
-          "columnSourceOriginalColumn": "ledger_account_type_index"
         },
         "ledger_account_type_name": {
           "columnName": "ledger_account_type_name",
@@ -32363,6 +33620,14 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_payment_methods",
           "columnSourceOriginalColumn": "payment_method_remarks"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "display_index"
         }
       },
       "viewQuery": "SELECT act_ledger_accounts.ledger_account_name,act_ledger_accounts.reflecting_statement,act_ledger_accounts.ledger_account_balance,\n(CASE WHEN act_payment_methods.payment_method_image_media_id IS NOT NULL THEN json_object('media_path', media_path,'media_details', media_details) ELSE NULL END) AS payment_method_image_media,act_payment_methods.* FROM act_payment_methods LEFT JOIN act_ledger_accounts ON act_payment_methods.ledger_account_id = act_ledger_accounts.ledger_account_id LEFT JOIN act_medias ON act_payment_methods.payment_method_image_media_id = act_medias.media_id"
@@ -32715,14 +33980,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_product_categories",
           "columnSourceOriginalColumn": "purchase_tax_rate_id"
         },
-        "purchase_taxing_scheme_id": {
-          "columnName": "purchase_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_categories",
-          "columnSourceOriginalColumn": "purchase_taxing_scheme_id"
-        },
         "sale_tax_rate_id": {
           "columnName": "sale_tax_rate_id",
           "columnType": "UUID",
@@ -32730,14 +33987,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_product_categories",
           "columnSourceOriginalColumn": "sale_tax_rate_id"
-        },
-        "sale_taxing_scheme_id": {
-          "columnName": "sale_taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_categories",
-          "columnSourceOriginalColumn": "sale_taxing_scheme_id"
         },
         "default_uom_name": {
           "columnName": "default_uom_name",
@@ -32834,7 +34083,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "tax_rate_percentage"
         }
       },
-      "viewQuery": "SELECT \npurchase_taxing_schemes.taxing_scheme_name AS purchase_taxing_scheme_name,\nsale_taxing_schemes.taxing_scheme_name AS sale_taxing_scheme_name,\npurchase_tax_rates.tax_rate_name AS purchase_tax_rate_name,\npurchase_tax_rates.tax_rate_percentage AS purchase_tax_rate_percentage,\nsale_tax_rates.tax_rate_name AS sale_tax_rate_name,\nsale_tax_rates.tax_rate_percentage AS sale_tax_rate_percentage,\njson_object('media_path', media_path,'media_details', media_details) AS product_category_image_media,\nact_product_categories.* FROM act_product_categories \nLEFT JOIN act_taxing_schemes as purchase_taxing_schemes ON act_product_categories.purchase_taxing_scheme_id = purchase_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_taxing_schemes as sale_taxing_schemes ON act_product_categories.sale_taxing_scheme_id = sale_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates as purchase_tax_rates ON act_product_categories.purchase_tax_rate_id = purchase_tax_rates.tax_rate_id\nLEFT JOIN act_tax_rates as sale_tax_rates ON act_product_categories.sale_tax_rate_id = sale_tax_rates.tax_rate_id \nLEFT JOIN act_medias ON act_product_categories.product_category_image_media_id = act_medias.media_id"
+      "viewQuery": "SELECT \npurchase_tax_rates.tax_rate_name AS purchase_tax_rate_name,\npurchase_tax_rates.tax_rate_percentage AS purchase_tax_rate_percentage,\nsale_tax_rates.tax_rate_name AS sale_tax_rate_name,\nsale_tax_rates.tax_rate_percentage AS sale_tax_rate_percentage,\njson_object('media_path', media_path,'media_details', media_details) AS product_category_image_media,\nact_product_categories.* FROM act_product_categories \nLEFT JOIN act_tax_rates as purchase_tax_rates ON act_product_categories.purchase_tax_rate_id = purchase_tax_rates.tax_rate_id\nLEFT JOIN act_tax_rates as sale_tax_rates ON act_product_categories.sale_tax_rate_id = sale_tax_rates.tax_rate_id \nLEFT JOIN act_medias ON act_product_categories.product_category_image_media_id = act_medias.media_id"
     },
     "act_vw_product_inward_details": {
       "viewName": "act_vw_product_inward_details",
@@ -33431,14 +34680,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_product_purchase_details",
           "columnSourceOriginalColumn": "purchase_uom_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_purchase_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "is_current": {
           "columnName": "is_current",
           "columnType": "YES_NO",
@@ -33480,7 +34721,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "product_purchase_detail_remarks"
         }
       },
-      "viewQuery": "SELECT act_product_uoms.product_uom_name AS purchase_uom_name, order_uoms.product_uom_name AS minimum_order_uom_name,\nact_taxing_schemes.taxing_scheme_name,act_tax_rates.tax_rate_name,act_tax_rates.tax_rate_percentage,\nact_product_purchase_details.* FROM act_product_purchase_details \nLEFT JOIN act_product_uoms ON act_product_purchase_details.purchase_uom_id=act_product_uoms.product_uom_id\nLEFT JOIN act_product_uoms AS order_uoms ON act_product_purchase_details.minimum_order_quantity_uom_id=order_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes ON act_product_purchase_details.taxing_scheme_id=act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON act_product_purchase_details.tax_rate_id=act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT act_product_uoms.product_uom_name AS purchase_uom_name, order_uoms.product_uom_name AS minimum_order_uom_name,\nact_tax_rates.tax_rate_name,act_tax_rates.tax_rate_percentage,\nact_product_purchase_details.* FROM act_product_purchase_details \nLEFT JOIN act_product_uoms ON act_product_purchase_details.purchase_uom_id=act_product_uoms.product_uom_id\nLEFT JOIN act_product_uoms AS order_uoms ON act_product_purchase_details.minimum_order_quantity_uom_id=order_uoms.product_uom_id\nLEFT JOIN act_tax_rates ON act_product_purchase_details.tax_rate_id=act_tax_rates.tax_rate_id"
     },
     "act_vw_product_sale_details": {
       "viewName": "act_vw_product_sale_details",
@@ -33549,14 +34790,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_product_sale_details",
           "columnSourceOriginalColumn": "sale_uom_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_product_sale_details",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "is_current": {
           "columnName": "is_current",
           "columnType": "YES_NO",
@@ -33598,7 +34831,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "product_sale_detail_remarks"
         }
       },
-      "viewQuery": "SELECT act_product_uoms.product_uom_name AS sale_uom_name,\nact_taxing_schemes.taxing_scheme_name,act_tax_rates.tax_rate_name,act_tax_rates.tax_rate_percentage,\nact_product_sale_details.* FROM act_product_sale_details\nLEFT JOIN act_product_uoms ON act_product_sale_details.sale_uom_id=act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes ON act_product_sale_details.taxing_scheme_id=act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON act_product_sale_details.tax_rate_id=act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT act_product_uoms.product_uom_name AS sale_uom_name,act_tax_rates.tax_rate_name,act_tax_rates.tax_rate_percentage,\nact_product_sale_details.* FROM act_product_sale_details\nLEFT JOIN act_product_uoms ON act_product_sale_details.sale_uom_id=act_product_uoms.product_uom_id\nLEFT JOIN act_tax_rates ON act_product_sale_details.tax_rate_id=act_tax_rates.tax_rate_id"
     },
     "act_vw_product_stock_details": {
       "viewName": "act_vw_product_stock_details",
@@ -33924,6 +35157,84 @@ export const dataDictionaryJson = {
     "act_vw_purchase_invoice_chargeable_services": {
       "viewName": "act_vw_purchase_invoice_chargeable_services",
       "viewColumns": {
+        "gross_amount": {
+          "columnName": "gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_trade_amount": {
+          "columnName": "discount_trade_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_cash_amount": {
+          "columnName": "discount_cash_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_rebate_amount": {
+          "columnName": "discount_rebate_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "taxable_amount": {
+          "columnName": "taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Taxable Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "chargeable_service_name": {
           "columnName": "chargeable_service_name",
           "columnType": "STRING",
@@ -33931,14 +35242,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -34076,14 +35379,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_invoice_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -34131,72 +35426,13 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoice_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_charge_standard"
-        },
-        "gross_amount": {
-          "columnName": "gross_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Gross Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "discount_trade_amount": {
-          "columnName": "discount_trade_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "TD Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "discount_cash_amount": {
-          "columnName": "discount_cash_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "CD Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "discount_rebate_amount": {
-          "columnName": "discount_rebate_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Rebate Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
-        "taxable_amount": {
-          "columnName": "taxable_amount",
-          "columnType": "DOUBLE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxable Amount"
-            }
-          },
-          "columnSource": "function",
-          "columnSourceName": "",
-          "columnSourceOriginalColumn": ""
-        },
+        }
+      },
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_tax_rates.tax_rate_name,\n act_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_invoice_chargeable_services AS docser \n LEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+    },
+    "act_vw_purchase_invoice_expenses": {
+      "viewName": "act_vw_purchase_invoice_expenses",
+      "viewColumns": {
         "tax_amount": {
           "columnName": "tax_amount",
           "columnType": "DOUBLE",
@@ -34209,28 +35445,30 @@ export const dataDictionaryJson = {
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
-        }
-      },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_invoice_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
-    },
-    "act_vw_purchase_invoice_expenses": {
-      "viewName": "act_vw_purchase_invoice_expenses",
-      "viewColumns": {
-        "payment_method_id": {
-          "columnName": "payment_method_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_expenses",
-          "columnSourceOriginalColumn": "payment_method_id"
         },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -34320,14 +35558,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_invoice_expenses",
           "columnSourceOriginalColumn": "purchase_invoice_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -34352,16 +35582,56 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_invoice_expenses",
           "columnSourceOriginalColumn": "is_borne_by_party"
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoice_expenses",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "purchase_invoice_expense_gross_amount": {
+          "columnName": "purchase_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_expenses",
+          "columnSourceOriginalColumn": "purchase_invoice_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_purchase_invoice_expenses.* FROM act_purchase_invoice_expenses LEFT JOIN act_vw_ledger_accounts ON act_purchase_invoice_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_purchase_invoice_expenses.purchase_invoice_expense_gross_amount, 0) * (COALESCE(act_purchase_invoice_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_purchase_invoice_expenses.*\nFROM act_purchase_invoice_expenses \nLEFT JOIN act_tax_rates ON act_purchase_invoice_expenses .tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_purchase_invoice_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_purchase_invoice_expenses .ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_purchase_invoice_medias": {
       "viewName": "act_vw_purchase_invoice_medias",
@@ -34555,22 +35825,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_purchase_invoice_payments",
           "columnSourceOriginalColumn": "purchase_invoice_payment_status"
-        },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_payments",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
         },
         "transaction_id": {
           "columnName": "transaction_id",
@@ -34929,14 +36183,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "product_image_media"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -35089,14 +36335,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_invoice_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoice_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -35162,7 +36400,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "expiry_time"
         }
       },
-      "viewQuery": "SELECT\nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(pip.product_quantity, 0) *\n        COALESCE(pip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(pip.product_quantity, 0) *\n            COALESCE(pip.product_price_gross, 0)\n        ) * (COALESCE(pip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(pip.product_quantity, 0) *\n                COALESCE(pip.product_price_gross, 0)\n            ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    pip.*\n\nFROM act_purchase_invoice_products pip\nLEFT JOIN act_vw_products\n    ON pip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON pip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON pip.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON pip.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT\nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(pip.product_quantity, 0) *\n        COALESCE(pip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(pip.product_quantity, 0) *\n            COALESCE(pip.product_price_gross, 0)\n        ) * (COALESCE(pip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(pip.product_quantity, 0) *\n                COALESCE(pip.product_price_gross, 0)\n            ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(pip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pip.product_quantity, 0) *\n                    COALESCE(pip.product_price_gross, 0)\n                ) * (1 - (COALESCE(pip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    pip.*\n\nFROM act_purchase_invoice_products pip\nLEFT JOIN act_vw_products\n    ON pip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON pip.product_uom_id = act_product_uoms.product_uom_id \nLEFT JOIN act_tax_rates\n    ON pip.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_purchase_invoice_summary": {
       "viewName": "act_vw_purchase_invoice_summary",
@@ -35190,14 +36428,6 @@ export const dataDictionaryJson = {
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
-        },
-        "purchase_invoice_id": {
-          "columnName": "purchase_invoice_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_invoices",
-          "columnSourceOriginalColumn": "purchase_invoice_id"
         },
         "products_amount": {
           "columnName": "products_amount",
@@ -35255,16 +36485,96 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "purchase_invoice_id": {
+          "columnName": "purchase_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_invoices",
+          "columnSourceOriginalColumn": "purchase_invoice_id"
+        },
         "payment_methods_used": {
           "columnName": "payment_methods_used",
-          "columnType": "STRING",
+          "columnType": "TEXT",
           "columnProperties": {},
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    pi.purchase_invoice_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    IFNULL(pay.payments_amount, 0) AS payments_amount,\n\tpay.payment_methods_used,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_paid_amount\nFROM act_purchase_invoices pi\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_purchase_invoice_products\n    GROUP BY purchase_invoice_id\n) prd ON prd.purchase_invoice_id = pi.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_invoice_chargeable_services\n    GROUP BY purchase_invoice_id\n) ser ON ser.purchase_invoice_id = pi.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_expense_id) AS expenses_count,\n        SUM(purchase_invoice_expense_amount) AS expenses_amount\n    FROM act_purchase_invoice_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_invoice_id\n) exp ON exp.purchase_invoice_id = pi.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        GROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_invoice_payment_id) AS payments_count,\n        SUM(purchase_invoice_payment_amount) AS payments_amount\n    FROM act_purchase_invoice_payments \n    LEFT JOIN act_payment_methods ON act_purchase_invoice_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_invoice_payment_status = 'PAID'\n    GROUP BY purchase_invoice_id\n) pay ON pay.purchase_invoice_id = pi.purchase_invoice_id;"
+      "viewQuery": "SELECT\n    doc.purchase_invoice_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_paid_amount\nFROM act_purchase_invoices doc\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_purchase_invoice_products\n    GROUP BY purchase_invoice_id\n) prd ON prd.purchase_invoice_id = doc.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_invoice_chargeable_services\n    GROUP BY purchase_invoice_id\n) ser ON ser.purchase_invoice_id = doc.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n        COUNT(purchase_invoice_expense_id) AS expenses_count,\n\t\tSUM((purchase_invoice_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(purchase_invoice_expense_amount) AS expenses_amount\n    FROM act_purchase_invoice_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_invoice_id\n) exp ON exp.purchase_invoice_id = doc.purchase_invoice_id\nLEFT JOIN (\n    SELECT\n        purchase_invoice_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_invoice_payment_id) AS payments_count,\n        SUM(purchase_invoice_payment_amount) AS payments_amount\n    FROM act_purchase_invoice_payments\n    LEFT JOIN act_payment_methods ON act_purchase_invoice_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_invoice_payment_status = 'PAID'\n    GROUP BY purchase_invoice_id\n) pay ON pay.purchase_invoice_id = doc.purchase_invoice_id;"
     },
     "act_vw_purchase_invoice_tax_register": {
       "viewName": "act_vw_purchase_invoice_tax_register",
@@ -36024,14 +37334,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -36168,14 +37470,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_order_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -36303,26 +37597,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_order_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_order_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_purchase_order_expenses": {
       "viewName": "act_vw_purchase_order_expenses",
       "viewColumns": {
-        "payment_method_id": {
-          "columnName": "payment_method_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_expenses",
-          "columnSourceOriginalColumn": "payment_method_id"
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
         },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -36412,14 +37727,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_order_expenses",
           "columnSourceOriginalColumn": "purchase_order_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
         "include_in_amount": {
           "columnName": "include_in_amount",
           "columnType": "YES_NO",
@@ -36436,24 +37743,64 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_order_expenses",
           "columnSourceOriginalColumn": "transaction_id"
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_order_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_order_expenses",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_order_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "purchase_order_expense_gross_amount": {
+          "columnName": "purchase_order_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_order_expenses",
+          "columnSourceOriginalColumn": "purchase_order_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_order_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_order_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_order_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_purchase_order_expenses.* FROM act_purchase_order_expenses LEFT JOIN act_vw_ledger_accounts ON act_purchase_order_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_purchase_order_expenses.purchase_order_expense_gross_amount, 0) * (COALESCE(act_purchase_order_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_purchase_order_expenses.*\nFROM act_purchase_order_expenses \nLEFT JOIN act_tax_rates ON act_purchase_order_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_purchase_order_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_purchase_order_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_purchase_order_medias": {
       "viewName": "act_vw_purchase_order_medias",
@@ -36664,22 +38011,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_order_payments",
           "columnSourceOriginalColumn": "purchase_order_payment_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_payments",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -36795,14 +38126,6 @@ export const dataDictionaryJson = {
           "columnSource": "view",
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "hsn_code"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -36948,14 +38271,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_order_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_order_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -36997,19 +38312,11 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "tax_rate_percentage"
         }
       },
-      "viewQuery": "SELECT\n    (\n        COALESCE(pop.product_quantity, 0) *\n        COALESCE(pop.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(pop.product_quantity, 0) *\n            COALESCE(pop.product_price_gross, 0)\n        ) * (COALESCE(pop.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(pop.product_quantity, 0) *\n                COALESCE(pop.product_price_gross, 0)\n            ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(pop.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(pop.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pop.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pop.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pop.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.product_image_media,\n    act_vw_products.hsn_code,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    pop.*\n\nFROM act_purchase_order_products pop\nLEFT JOIN act_vw_products\n    ON pop.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON pop.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON pop.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON pop.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT\n    (\n        COALESCE(pop.product_quantity, 0) *\n        COALESCE(pop.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(pop.product_quantity, 0) *\n            COALESCE(pop.product_price_gross, 0)\n        ) * (COALESCE(pop.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(pop.product_quantity, 0) *\n                COALESCE(pop.product_price_gross, 0)\n            ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(pop.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(pop.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pop.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(pop.product_quantity, 0) *\n                    COALESCE(pop.product_price_gross, 0)\n                ) * (1 - (COALESCE(pop.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(pop.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(pop.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(pop.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.product_image_media,\n    act_vw_products.hsn_code,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    pop.*\n\nFROM act_purchase_order_products pop\nLEFT JOIN act_vw_products\n    ON pop.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON pop.product_uom_id = act_product_uoms.product_uom_id \nLEFT JOIN act_tax_rates\n    ON pop.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_purchase_order_summary": {
       "viewName": "act_vw_purchase_order_summary",
       "viewColumns": {
-        "purchase_order_id": {
-          "columnName": "purchase_order_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_orders",
-          "columnSourceOriginalColumn": "purchase_order_id"
-        },
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
@@ -37090,6 +38397,86 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "purchase_order_id": {
+          "columnName": "purchase_order_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_orders",
+          "columnSourceOriginalColumn": "purchase_order_id"
+        },
         "payment_methods_used": {
           "columnName": "payment_methods_used",
           "columnType": "TEXT",
@@ -37099,7 +38486,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    doc.purchase_order_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    IFNULL(pay.payments_amount, 0) AS payments_amount,\n    pay.payment_methods_used,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_rpaid_amount\nFROM act_purchase_orders doc\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_purchase_order_products\n    GROUP BY purchase_order_id\n) prd ON prd.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_order_chargeable_services\n    GROUP BY purchase_order_id\n) ser ON ser.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_expense_id) AS expenses_count,\n        SUM(purchase_order_expense_amount) AS expenses_amount\n    FROM act_purchase_order_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_order_id\n) exp ON exp.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_order_payment_id) AS payments_count,\n        SUM(purchase_order_payment_amount) AS payments_amount\n    FROM act_purchase_order_payments\n    LEFT JOIN act_payment_methods ON act_purchase_order_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_order_payment_status = 'PAID'\n    GROUP BY purchase_order_id\n) pay ON pay.purchase_order_id = doc.purchase_order_id;"
+      "viewQuery": "SELECT\n    doc.purchase_order_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_paid_amount\nFROM act_purchase_orders doc\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_purchase_order_products\n    GROUP BY purchase_order_id\n) prd ON prd.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_order_chargeable_services\n    GROUP BY purchase_order_id\n) ser ON ser.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n        COUNT(purchase_order_expense_id) AS expenses_count,\n\t\tSUM((purchase_order_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(purchase_order_expense_amount) AS expenses_amount\n    FROM act_purchase_order_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_order_id\n) exp ON exp.purchase_order_id = doc.purchase_order_id\nLEFT JOIN (\n    SELECT\n        purchase_order_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_order_payment_id) AS payments_count,\n        SUM(purchase_order_payment_amount) AS payments_amount\n    FROM act_purchase_order_payments\n    LEFT JOIN act_payment_methods ON act_purchase_order_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_order_payment_status = 'PAID'\n    GROUP BY purchase_order_id\n) pay ON pay.purchase_order_id = doc.purchase_order_id;"
     },
     "act_vw_purchase_orders": {
       "viewName": "act_vw_purchase_orders",
@@ -37591,14 +38978,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -37735,14 +39114,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_return_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_return_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -37870,18 +39241,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_return_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_purchase_return_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_purchase_return_expenses": {
       "viewName": "act_vw_purchase_return_expenses",
       "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -37971,21 +39371,13 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_return_expenses",
           "columnSourceOriginalColumn": "purchase_return_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_return_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_return_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
         "include_in_amount": {
           "columnName": "include_in_amount",
@@ -37995,16 +39387,64 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_return_expenses",
           "columnSourceOriginalColumn": "include_in_amount"
         },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
+        "transaction_id": {
+          "columnName": "transaction_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_purchase_return_expenses",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
+          "columnSourceOriginalColumn": "transaction_id"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "purchase_return_expense_gross_amount": {
+          "columnName": "purchase_return_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "purchase_return_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_return_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_purchase_return_expenses.* FROM act_purchase_return_expenses LEFT JOIN act_vw_ledger_accounts ON act_purchase_return_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_purchase_return_expenses.purchase_return_expense_gross_amount, 0) * (COALESCE(act_purchase_return_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_purchase_return_expenses.*\nFROM act_purchase_return_expenses \nLEFT JOIN act_tax_rates ON act_purchase_return_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_purchase_return_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_purchase_return_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_purchase_return_medias": {
       "viewName": "act_vw_purchase_return_medias",
@@ -38215,22 +39655,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_return_payments",
           "columnSourceOriginalColumn": "purchase_return_payment_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_return_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "supplier_transaction_entry_id": {
-          "columnName": "supplier_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_return_payments",
-          "columnSourceOriginalColumn": "supplier_transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -38268,14 +39692,6 @@ export const dataDictionaryJson = {
           "columnSource": "view",
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "product_image_media"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -38421,14 +39837,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_purchase_return_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_return_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -38569,19 +39977,11 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(docprd.product_quantity, 0) *\n        COALESCE(docprd.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(docprd.product_quantity, 0) *\n            COALESCE(docprd.product_price_gross, 0)\n        ) * (COALESCE(docprd.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(docprd.product_quantity, 0) *\n                COALESCE(docprd.product_price_gross, 0)\n            ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    docprd.*\n\nFROM act_purchase_return_products docprd\nLEFT JOIN act_vw_products\n    ON docprd.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON docprd.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON docprd.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON docprd.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(docprd.product_quantity, 0) *\n        COALESCE(docprd.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(docprd.product_quantity, 0) *\n            COALESCE(docprd.product_price_gross, 0)\n        ) * (COALESCE(docprd.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(docprd.product_quantity, 0) *\n                COALESCE(docprd.product_price_gross, 0)\n            ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    docprd.*\n\nFROM act_purchase_return_products docprd\nLEFT JOIN act_vw_products\n    ON docprd.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON docprd.product_uom_id = act_product_uoms.product_uom_id \nLEFT JOIN act_tax_rates\n    ON docprd.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_purchase_return_summary": {
       "viewName": "act_vw_purchase_return_summary",
       "viewColumns": {
-        "purchase_return_id": {
-          "columnName": "purchase_return_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_purchase_returns",
-          "columnSourceOriginalColumn": "purchase_return_id"
-        },
         "total_amount": {
           "columnName": "total_amount",
           "columnType": "DOUBLE",
@@ -38662,16 +40062,96 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "purchase_return_id": {
+          "columnName": "purchase_return_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_returns",
+          "columnSourceOriginalColumn": "purchase_return_id"
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "payment_methods_used": {
           "columnName": "payment_methods_used",
-          "columnType": "STRING",
+          "columnType": "TEXT",
           "columnProperties": {},
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    doc.purchase_return_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    IFNULL(pay.payments_amount, 0) AS payments_amount,\n    pay.payment_methods_used,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_purchase_returns doc\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_purchase_return_products\n    GROUP BY purchase_return_id\n) prd ON prd.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_return_chargeable_services\n    GROUP BY purchase_return_id\n) ser ON ser.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_expense_id) AS expenses_count,\n        SUM(purchase_return_expense_amount) AS expenses_amount\n    FROM act_purchase_return_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_return_id\n) exp ON exp.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        GROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_return_payment_id) AS payments_count,\n        SUM(purchase_return_payment_amount) AS payments_amount\n    FROM act_purchase_return_payments \n    LEFT JOIN act_payment_methods ON act_purchase_return_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_return_payment_status = 'RECEIVED'\n    GROUP BY purchase_return_id\n) pay ON pay.purchase_return_id = doc.purchase_return_id;"
+      "viewQuery": "SELECT\n    doc.purchase_return_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_purchase_returns doc\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_purchase_return_products\n    GROUP BY purchase_return_id\n) prd ON prd.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_purchase_return_chargeable_services\n    GROUP BY purchase_return_id\n) ser ON ser.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n        COUNT(purchase_return_expense_id) AS expenses_count,\n\t\tSUM((purchase_return_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(purchase_return_expense_amount) AS expenses_amount\n    FROM act_purchase_return_expenses\n    WHERE include_in_amount = 1\n    GROUP BY purchase_return_id\n) exp ON exp.purchase_return_id = doc.purchase_return_id\nLEFT JOIN (\n    SELECT\n        purchase_return_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(purchase_return_payment_id) AS payments_count,\n        SUM(purchase_return_payment_amount) AS payments_amount\n    FROM act_purchase_return_payments\n    LEFT JOIN act_payment_methods ON act_purchase_return_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE purchase_return_payment_status = 'RECEIVED'\n    GROUP BY purchase_return_id\n) pay ON pay.purchase_return_id = doc.purchase_return_id;"
     },
     "act_vw_purchase_returns": {
       "viewName": "act_vw_purchase_returns",
@@ -38987,6 +40467,22 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_purchase_returns",
           "columnSourceOriginalColumn": "payment_methods_used"
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_returns",
+          "columnSourceOriginalColumn": "payment_status"
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_purchase_returns",
+          "columnSourceOriginalColumn": "received_amount"
         }
       },
       "viewQuery": "SELECT act_vw_suppliers.supplier_type,act_vw_suppliers.party_id,act_vw_suppliers.party_name,act_vw_suppliers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_purchase_returns.* FROM act_purchase_returns \nLEFT JOIN act_vw_suppliers ON act_purchase_returns.supplier_id = act_vw_suppliers.supplier_id\nLEFT JOIN act_addresses ON act_purchase_returns.address_id= act_addresses.address_id"
@@ -39087,14 +40583,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -39232,14 +40720,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_invoice_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_invoice_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -39289,18 +40769,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "sale_invoice_chargeable_service_remarks"
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, ((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, (((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, (((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,act_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_invoice_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, ((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, (((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, (((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,act_chargeable_services.chargeable_service_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_invoice_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_sale_invoice_expenses": {
       "viewName": "act_vw_sale_invoice_expenses",
       "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -39398,40 +40907,72 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_invoice_expenses",
           "columnSourceOriginalColumn": "include_in_amount"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_invoice_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
-          "columnType": "YES_NO",
+          "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoice_expenses",
           "columnSourceOriginalColumn": "transaction_id"
         },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoice_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_invoice_expenses",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "sale_invoice_expense_gross_amount": {
+          "columnName": "sale_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_invoice_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_sale_invoice_expenses.* FROM act_sale_invoice_expenses LEFT JOIN act_vw_ledger_accounts ON act_sale_invoice_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_sale_invoice_expenses.sale_invoice_expense_gross_amount, 0) * (COALESCE(act_sale_invoice_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_sale_invoice_expenses.*\nFROM act_sale_invoice_expenses\nLEFT JOIN act_tax_rates ON act_sale_invoice_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_sale_invoice_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_sale_invoice_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_sale_invoice_medias": {
       "viewName": "act_vw_sale_invoice_medias",
@@ -39625,22 +41166,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_invoice_payments",
           "columnSourceOriginalColumn": "sale_invoice_payment_status"
-        },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_invoice_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_invoice_payments",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
         },
         "transaction_id": {
           "columnName": "transaction_id",
@@ -39999,14 +41524,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "product_image_media"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -40151,14 +41668,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_invoice_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_invoice_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "tax_rate_percentage": {
           "columnName": "tax_rate_percentage",
           "columnType": "DOUBLE",
@@ -40232,7 +41741,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "manufacturing_time"
         }
       },
-      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(sip.product_quantity, 0) *\n        COALESCE(sip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sip.product_quantity, 0) *\n            COALESCE(sip.product_price_gross, 0)\n        ) * (COALESCE(sip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sip.product_quantity, 0) *\n                COALESCE(sip.product_price_gross, 0)\n            ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sip.*\n\nFROM act_sale_invoice_products sip\nLEFT JOIN act_vw_products\n    ON sip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON sip.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON sip.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(sip.product_quantity, 0) *\n        COALESCE(sip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sip.product_quantity, 0) *\n            COALESCE(sip.product_price_gross, 0)\n        ) * (COALESCE(sip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sip.product_quantity, 0) *\n                COALESCE(sip.product_price_gross, 0)\n            ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sip.*\n\nFROM act_sale_invoice_products sip\nLEFT JOIN act_vw_products\n    ON sip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_tax_rates\n    ON sip.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_sale_invoice_summary": {
       "viewName": "act_vw_sale_invoice_summary",
@@ -40317,6 +41826,78 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "sale_invoice_id": {
           "columnName": "sale_invoice_id",
           "columnType": "UUID",
@@ -40327,14 +41908,14 @@ export const dataDictionaryJson = {
         },
         "payment_methods_used": {
           "columnName": "payment_methods_used",
-          "columnType": "STRING",
+          "columnType": "TEXT",
           "columnProperties": {},
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    doc.sale_invoice_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    IFNULL(pay.payments_amount, 0) AS payments_amount,\n\tpay.payment_methods_used,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_sale_invoices doc\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_sale_invoice_products\n    GROUP BY sale_invoice_id\n) prd ON prd.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_invoice_chargeable_services\n    GROUP BY sale_invoice_id\n) ser ON ser.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_expense_id) AS expenses_count,\n        SUM(sale_invoice_expense_amount) AS expenses_amount\n    FROM act_sale_invoice_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_invoice_id\n) exp ON exp.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_invoice_payment_id) AS payments_count,\n        SUM(sale_invoice_payment_amount) AS payments_amount\n    FROM act_sale_invoice_payments\n    LEFT JOIN act_payment_methods ON act_sale_invoice_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE sale_invoice_payment_status = 'RECEIVED'\n    GROUP BY sale_invoice_id\n) pay ON pay.sale_invoice_id = doc.sale_invoice_id;"
+      "viewQuery": "SELECT\n    doc.sale_invoice_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_sale_invoices doc\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_sale_invoice_products\n    GROUP BY sale_invoice_id\n) prd ON prd.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_invoice_chargeable_services\n    GROUP BY sale_invoice_id\n) ser ON ser.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n        COUNT(sale_invoice_expense_id) AS expenses_count,\n\t\tSUM((sale_invoice_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(sale_invoice_expense_amount) AS expenses_amount\n    FROM act_sale_invoice_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_invoice_id\n) exp ON exp.sale_invoice_id = doc.sale_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_invoice_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_invoice_payment_id) AS payments_count,\n        SUM(sale_invoice_payment_amount) AS payments_amount\n    FROM act_sale_invoice_payments\n    LEFT JOIN act_payment_methods ON act_sale_invoice_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE sale_invoice_payment_status = 'RECEIVED'\n    GROUP BY sale_invoice_id\n) pay ON pay.sale_invoice_id = doc.sale_invoice_id;"
     },
     "act_vw_sale_invoice_tax_register": {
       "viewName": "act_vw_sale_invoice_tax_register",
@@ -41110,14 +42691,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -41254,14 +42827,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_maintenance_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -41311,18 +42876,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "tax_rate_percentage"
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_maintenance_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_maintenance_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_sale_maintenance_expenses": {
       "viewName": "act_vw_sale_maintenance_expenses",
       "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -41412,14 +43006,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_maintenance_expenses",
           "columnSourceOriginalColumn": "sale_maintenance_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -41428,21 +43014,13 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_maintenance_expenses",
           "columnSourceOriginalColumn": "transaction_id"
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_expenses",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_maintenance_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
         "include_in_amount": {
           "columnName": "include_in_amount",
@@ -41451,9 +43029,57 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_maintenance_expenses",
           "columnSourceOriginalColumn": "include_in_amount"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "sale_maintenance_expense_gross_amount": {
+          "columnName": "sale_maintenance_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "sale_maintenance_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_sale_maintenance_expenses.* FROM act_sale_maintenance_expenses LEFT JOIN act_vw_ledger_accounts ON act_sale_maintenance_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_sale_maintenance_expenses.sale_maintenance_expense_gross_amount, 0) * (COALESCE(act_sale_maintenance_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_sale_maintenance_expenses.*\nFROM act_sale_maintenance_expenses \nLEFT JOIN act_tax_rates ON act_sale_maintenance_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_sale_maintenance_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_sale_maintenance_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_sale_maintenance_medias": {
       "viewName": "act_vw_sale_maintenance_medias",
@@ -41664,22 +43290,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_maintenance_payments",
           "columnSourceOriginalColumn": "sale_maintenance_payment_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_payments",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -41694,6 +43304,46 @@ export const dataDictionaryJson = {
     "act_vw_sale_maintenance_products": {
       "viewName": "act_vw_sale_maintenance_products",
       "viewColumns": {
+        "product_name": {
+          "columnName": "product_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "product_name"
+        },
+        "hsn_code": {
+          "columnName": "hsn_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "hsn_code"
+        },
+        "product_image_media": {
+          "columnName": "product_image_media",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "product_image_media"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "product_uom_name": {
+          "columnName": "product_uom_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_product_uoms",
+          "columnSourceOriginalColumn": "product_uom_name"
+        },
         "discount_cash_percentage": {
           "columnName": "discount_cash_percentage",
           "columnType": "DOUBLE",
@@ -41822,14 +43472,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_maintenance_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_maintenance_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "exchange_rate": {
           "columnName": "exchange_rate",
           "columnType": "DOUBLE",
@@ -41853,13 +43495,339 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_maintenance_products",
           "columnSourceOriginalColumn": "sale_maintenance_product_remarks"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "product_amount": {
+          "columnName": "product_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "product_amount"
+        },
+        "product_price_mrp": {
+          "columnName": "product_price_mrp",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "product_price_mrp"
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "product_batch_code"
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "expiry_time"
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenance_products",
+          "columnSourceOriginalColumn": "manufacturing_time"
         }
       },
-      "viewQuery": "SELECT * FROM act_sale_maintenance_products"
+      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(sip.product_quantity, 0) *\n        COALESCE(sip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sip.product_quantity, 0) *\n            COALESCE(sip.product_price_gross, 0)\n        ) * (COALESCE(sip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sip.product_quantity, 0) *\n                COALESCE(sip.product_price_gross, 0)\n            ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sip.*\n\nFROM act_sale_maintenance_products sip\nLEFT JOIN act_vw_products\n    ON sip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sip.product_uom_id = act_product_uoms.product_uom_id \nLEFT JOIN act_tax_rates\n    ON sip.tax_rate_id = act_tax_rates.tax_rate_id;"
+    },
+    "act_vw_sale_maintenance_summary": {
+      "viewName": "act_vw_sale_maintenance_summary",
+      "viewColumns": {
+        "products_count": {
+          "columnName": "products_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_count": {
+          "columnName": "chargeable_services_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_count": {
+          "columnName": "expenses_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "payments_count": {
+          "columnName": "payments_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_received_amount": {
+          "columnName": "total_received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_amount": {
+          "columnName": "products_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_amount": {
+          "columnName": "chargeable_services_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_amount": {
+          "columnName": "expenses_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "payments_amount": {
+          "columnName": "payments_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "sale_maintenance_id": {
+          "columnName": "sale_maintenance_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenances",
+          "columnSourceOriginalColumn": "sale_maintenance_id"
+        },
+        "payment_methods_used": {
+          "columnName": "payment_methods_used",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT\n    doc.sale_maintenance_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_sale_maintenances doc\nLEFT JOIN (\n    SELECT\n        sale_maintenance_id,\n        COUNT(sale_maintenance_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_sale_maintenance_products\n    GROUP BY sale_maintenance_id\n) prd ON prd.sale_maintenance_id = doc.sale_maintenance_id\nLEFT JOIN (\n    SELECT\n        sale_maintenance_id,\n        COUNT(sale_maintenance_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_maintenance_chargeable_services\n    GROUP BY sale_maintenance_id\n) ser ON ser.sale_maintenance_id = doc.sale_maintenance_id\nLEFT JOIN (\n    SELECT\n        sale_maintenance_id,\n        COUNT(sale_maintenance_expense_id) AS expenses_count,\n\t\tSUM((sale_maintenance_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(sale_maintenance_expense_amount) AS expenses_amount\n    FROM act_sale_maintenance_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_maintenance_id\n) exp ON exp.sale_maintenance_id = doc.sale_maintenance_id\nLEFT JOIN (\n    SELECT\n        sale_maintenance_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_maintenance_payment_id) AS payments_count,\n        SUM(sale_maintenance_payment_amount) AS payments_amount\n    FROM act_sale_maintenance_payments\n    LEFT JOIN act_payment_methods ON act_sale_maintenance_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE sale_maintenance_payment_status = 'RECEIVED'\n    GROUP BY sale_maintenance_id\n) pay ON pay.sale_maintenance_id = doc.sale_maintenance_id;"
     },
     "act_vw_sale_maintenances": {
       "viewName": "act_vw_sale_maintenances",
       "viewColumns": {
+        "customer_category": {
+          "columnName": "customer_category",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "customer_category"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "legal_identifier": {
+          "columnName": "legal_identifier",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "legal_identifier"
+        },
+        "address_line_1": {
+          "columnName": "address_line_1",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "address_line_1"
+        },
+        "address_line_2": {
+          "columnName": "address_line_2",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "address_line_2"
+        },
+        "landmark": {
+          "columnName": "landmark",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "landmark"
+        },
+        "latitude": {
+          "columnName": "latitude",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "latitude"
+        },
+        "longitude": {
+          "columnName": "longitude",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "longitude"
+        },
+        "city_name": {
+          "columnName": "city_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "city_name"
+        },
+        "postal_code": {
+          "columnName": "postal_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "postal_code"
+        },
+        "state_name": {
+          "columnName": "state_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "state_name"
+        },
+        "country_name": {
+          "columnName": "country_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "country_name"
+        },
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
@@ -42051,9 +44019,25 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_maintenances",
           "columnSourceOriginalColumn": "payment_methods_used"
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenances",
+          "columnSourceOriginalColumn": "received_amount"
+        },
+        "address_id": {
+          "columnName": "address_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_maintenances",
+          "columnSourceOriginalColumn": "address_id"
         }
       },
-      "viewQuery": "SELECT * FROM act_sale_maintenances"
+      "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_maintenances.* \nFROM act_sale_maintenances \nLEFT JOIN act_vw_customers ON act_sale_maintenances.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_maintenances.address_id = act_addresses.address_id"
     },
     "act_vw_sale_quotation_chargeable_services": {
       "viewName": "act_vw_sale_quotation_chargeable_services",
@@ -42065,14 +44049,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -42210,14 +44186,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_quotation_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_quotation_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -42345,18 +44313,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_quotation_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_quotation_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_sale_quotation_expenses": {
       "viewName": "act_vw_sale_quotation_expenses",
       "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -42446,21 +44443,13 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_quotation_expenses",
           "columnSourceOriginalColumn": "sale_quotation_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_quotation_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotation_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
         "include_in_amount": {
           "columnName": "include_in_amount",
@@ -42478,16 +44467,56 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_quotation_expenses",
           "columnSourceOriginalColumn": "transaction_id"
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
           "columnType": "UUID",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_quotation_expenses",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "sale_quotation_expense_gross_amount": {
+          "columnName": "sale_quotation_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_expenses",
+          "columnSourceOriginalColumn": "sale_quotation_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT\n    act_vw_ledger_accounts.ledger_account_name,\n    act_sale_quotation_expenses.*\nFROM act_sale_quotation_expenses\nLEFT JOIN act_vw_ledger_accounts\n    ON act_sale_quotation_expenses.ledger_account_id =\n       act_vw_ledger_accounts.ledger_account_id;"
+      "viewQuery": "SELECT\n(COALESCE(act_sale_quotation_expenses.sale_quotation_expense_gross_amount, 0) * (COALESCE(act_sale_quotation_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_sale_quotation_expenses.*\nFROM act_sale_quotation_expenses\nLEFT JOIN act_tax_rates ON act_sale_quotation_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_sale_quotation_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_sale_quotation_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_sale_quotation_medias": {
       "viewName": "act_vw_sale_quotation_medias",
@@ -42591,6 +44620,124 @@ export const dataDictionaryJson = {
       },
       "viewQuery": "SELECT act_sale_quotation_medias.sale_quotation_media_id,act_sale_quotation_medias.sale_quotation_id,act_medias.* FROM act_sale_quotation_medias LEFT JOIN act_medias ON act_medias.media_id = act_sale_quotation_medias.media_id"
     },
+    "act_vw_sale_quotation_payments": {
+      "viewName": "act_vw_sale_quotation_payments",
+      "viewColumns": {
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
+        },
+        "payment_method_image_media": {
+          "columnName": "payment_method_image_media",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_image_media"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "reference_number"
+        },
+        "sale_quotation_payment_remarks": {
+          "columnName": "sale_quotation_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_payment_remarks"
+        },
+        "sale_quotation_id": {
+          "columnName": "sale_quotation_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_id"
+        },
+        "sale_quotation_payment_amount": {
+          "columnName": "sale_quotation_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_payment_amount"
+        },
+        "sale_quotation_payment_datetime": {
+          "columnName": "sale_quotation_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_payment_datetime"
+        },
+        "sale_quotation_payment_id": {
+          "columnName": "sale_quotation_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_payment_id"
+        },
+        "sale_quotation_payment_status": {
+          "columnName": "sale_quotation_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "sale_quotation_payment_status"
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotation_payments",
+          "columnSourceOriginalColumn": "transaction_id"
+        }
+      },
+      "viewQuery": "SELECT act_vw_payment_methods.payment_method_name,act_vw_payment_methods.payment_method_image_media,act_sale_quotation_payments.* FROM act_sale_quotation_payments LEFT JOIN act_vw_payment_methods ON act_sale_quotation_payments.payment_method_id = act_vw_payment_methods.payment_method_id"
+    },
     "act_vw_sale_quotation_products": {
       "viewName": "act_vw_sale_quotation_products",
       "viewColumns": {
@@ -42609,14 +44756,6 @@ export const dataDictionaryJson = {
           "columnSource": "view",
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "hsn_code"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -42754,14 +44893,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_quotation_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_quotation_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -42897,7 +45028,7 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": "product_image_media"
         }
       },
-      "viewQuery": "SELECT\n    (\n        COALESCE(sqp.product_quantity, 0) *\n        COALESCE(sqp.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sqp.product_quantity, 0) *\n            COALESCE(sqp.product_price_gross, 0)\n        ) * (COALESCE(sqp.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sqp.product_quantity, 0) *\n                COALESCE(sqp.product_price_gross, 0)\n            ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sqp.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sqp.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sqp.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sqp.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sqp.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sqp.*\n\nFROM act_sale_quotation_products sqp\nLEFT JOIN act_vw_products\n    ON sqp.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sqp.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON sqp.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON sqp.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT\n    (\n        COALESCE(sqp.product_quantity, 0) *\n        COALESCE(sqp.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sqp.product_quantity, 0) *\n            COALESCE(sqp.product_price_gross, 0)\n        ) * (COALESCE(sqp.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sqp.product_quantity, 0) *\n                COALESCE(sqp.product_price_gross, 0)\n            ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sqp.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sqp.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sqp.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sqp.product_quantity, 0) *\n                    COALESCE(sqp.product_price_gross, 0)\n                ) * (1 - (COALESCE(sqp.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sqp.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sqp.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sqp.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sqp.*\n\nFROM act_sale_quotation_products sqp\nLEFT JOIN act_vw_products\n    ON sqp.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sqp.product_uom_id = act_product_uoms.product_uom_id \nLEFT JOIN act_tax_rates\n    ON sqp.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_sale_quotation_summary": {
       "viewName": "act_vw_sale_quotation_summary",
@@ -42917,14 +45048,6 @@ export const dataDictionaryJson = {
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
-        },
-        "sale_quotation_id": {
-          "columnName": "sale_quotation_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_quotations",
-          "columnSourceOriginalColumn": "sale_quotation_id"
         },
         "products_amount": {
           "columnName": "products_amount",
@@ -42965,9 +45088,89 @@ export const dataDictionaryJson = {
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
+        },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "nu",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "null",
+          "columnSourceOriginalColumn": ""
+        },
+        "sale_quotation_id": {
+          "columnName": "sale_quotation_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_quotations",
+          "columnSourceOriginalColumn": "sale_quotation_id"
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    doc.sale_quotation_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount\nFROM act_sale_quotations doc\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_sale_quotation_products\n    GROUP BY sale_quotation_id\n) prd ON prd.sale_quotation_id = doc.sale_quotation_id\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_quotation_chargeable_services\n    GROUP BY sale_quotation_id\n) ser ON ser.sale_quotation_id = doc.sale_quotation_id\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_expense_id) AS expenses_count,\n        SUM(sale_quotation_expense_amount) AS expenses_amount\n    FROM act_sale_quotation_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_quotation_id\n) exp ON exp.sale_quotation_id = doc.sale_quotation_id;"
+      "viewQuery": "SELECT\n    doc.sale_quotation_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount\nFROM act_sale_quotations doc\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_sale_quotation_products\n    GROUP BY sale_quotation_id\n) prd ON prd.sale_quotation_id = doc.sale_quotation_id\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_quotation_chargeable_services\n    GROUP BY sale_quotation_id\n) ser ON ser.sale_quotation_id = doc.sale_quotation_id\nLEFT JOIN (\n    SELECT\n        sale_quotation_id,\n        COUNT(sale_quotation_expense_id) AS expenses_count,\n\t\tSUM((sale_quotation_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(sale_quotation_expense_amount) AS expenses_amount\n    FROM act_sale_quotation_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_quotation_id\n) exp ON exp.sale_quotation_id = doc.sale_quotation_id;"
     },
     "act_vw_sale_quotations": {
       "viewName": "act_vw_sale_quotations",
@@ -43467,14 +45670,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_chargeable_services",
           "columnSourceOriginalColumn": "chargeable_service_name"
         },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
           "columnType": "STRING",
@@ -43611,14 +45806,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_return_chargeable_services",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_chargeable_services",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -43746,18 +45933,47 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name, \nact_taxing_schemes.taxing_scheme_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_return_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_taxing_schemes ON docser.taxing_scheme_id= act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, \n((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, \n(((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, \n((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, \n(((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,\nact_chargeable_services.chargeable_service_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_return_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
     },
     "act_vw_sale_return_expenses": {
       "viewName": "act_vw_sale_return_expenses",
       "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
         "ledger_account_name": {
           "columnName": "ledger_account_name",
           "columnType": "STRING",
           "columnProperties": {},
-          "columnSource": "view",
-          "columnSourceName": "act_vw_ledger_accounts",
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
           "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
         },
         "currency_code": {
           "columnName": "currency_code",
@@ -43847,21 +46063,13 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_return_expenses",
           "columnSourceOriginalColumn": "sale_return_expense_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_expenses",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "is_bourne_by_party": {
-          "columnName": "is_bourne_by_party",
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
           "columnType": "YES_NO",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_sale_return_expenses",
-          "columnSourceOriginalColumn": "is_bourne_by_party"
+          "columnSourceOriginalColumn": "is_borne_by_party"
         },
         "include_in_amount": {
           "columnName": "include_in_amount",
@@ -43871,14 +46079,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_return_expenses",
           "columnSourceOriginalColumn": "include_in_amount"
         },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_expenses",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -43886,9 +46086,57 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_return_expenses",
           "columnSourceOriginalColumn": "transaction_id"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "sale_return_expense_gross_amount": {
+          "columnName": "sale_return_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "sale_return_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_return_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
         }
       },
-      "viewQuery": "SELECT act_vw_ledger_accounts.ledger_account_name,act_sale_return_expenses.* FROM act_sale_return_expenses LEFT JOIN act_vw_ledger_accounts ON act_sale_return_expenses.ledger_account_id = act_vw_ledger_accounts .ledger_account_id"
+      "viewQuery": "SELECT\n(COALESCE(act_sale_return_expenses.sale_return_expense_gross_amount, 0) * (COALESCE(act_sale_return_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_sale_return_expenses.*\nFROM act_sale_return_expenses\nLEFT JOIN act_tax_rates ON act_sale_return_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_sale_return_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_sale_return_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
     },
     "act_vw_sale_return_medias": {
       "viewName": "act_vw_sale_return_medias",
@@ -44099,22 +46347,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_return_payments",
           "columnSourceOriginalColumn": "sale_return_payment_status"
         },
-        "transaction_entry_id": {
-          "columnName": "transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_payments",
-          "columnSourceOriginalColumn": "transaction_entry_id"
-        },
-        "customer_transaction_entry_id": {
-          "columnName": "customer_transaction_entry_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_payments",
-          "columnSourceOriginalColumn": "customer_transaction_entry_id"
-        },
         "transaction_id": {
           "columnName": "transaction_id",
           "columnType": "UUID",
@@ -44152,14 +46384,6 @@ export const dataDictionaryJson = {
           "columnSource": "view",
           "columnSourceName": "act_vw_products",
           "columnSourceOriginalColumn": "product_image_media"
-        },
-        "taxing_scheme_name": {
-          "columnName": "taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "tax_rate_name": {
           "columnName": "tax_rate_name",
@@ -44305,14 +46529,6 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_sale_return_products",
           "columnSourceOriginalColumn": "tax_rate_id"
         },
-        "taxing_scheme_id": {
-          "columnName": "taxing_scheme_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_return_products",
-          "columnSourceOriginalColumn": "taxing_scheme_id"
-        },
         "currency_code": {
           "columnName": "currency_code",
           "columnType": "STRING",
@@ -44453,19 +46669,11 @@ export const dataDictionaryJson = {
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(docprd.product_quantity, 0) *\n        COALESCE(docprd.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(docprd.product_quantity, 0) *\n            COALESCE(docprd.product_price_gross, 0)\n        ) * (COALESCE(docprd.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(docprd.product_quantity, 0) *\n                COALESCE(docprd.product_price_gross, 0)\n            ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_taxing_schemes.taxing_scheme_name,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    docprd.*\n\nFROM act_sale_return_products docprd\nLEFT JOIN act_vw_products\n    ON docprd.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON docprd.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_taxing_schemes\n    ON docprd.taxing_scheme_id = act_taxing_schemes.taxing_scheme_id\nLEFT JOIN act_tax_rates\n    ON docprd.tax_rate_id = act_tax_rates.tax_rate_id;"
+      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(docprd.product_quantity, 0) *\n        COALESCE(docprd.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(docprd.product_quantity, 0) *\n            COALESCE(docprd.product_price_gross, 0)\n        ) * (COALESCE(docprd.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(docprd.product_quantity, 0) *\n                COALESCE(docprd.product_price_gross, 0)\n            ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(docprd.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(docprd.product_quantity, 0) *\n                    COALESCE(docprd.product_price_gross, 0)\n                ) * (1 - (COALESCE(docprd.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(docprd.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(docprd.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(docprd.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    docprd.*\n\nFROM act_sale_return_products docprd\nLEFT JOIN act_vw_products\n    ON docprd.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON docprd.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_tax_rates\n    ON docprd.tax_rate_id = act_tax_rates.tax_rate_id;"
     },
     "act_vw_sale_return_summary": {
       "viewName": "act_vw_sale_return_summary",
       "viewColumns": {
-        "sale_return_id": {
-          "columnName": "sale_return_id",
-          "columnType": "UUID",
-          "columnProperties": {},
-          "columnSource": "table",
-          "columnSourceName": "act_sale_returns",
-          "columnSourceOriginalColumn": "sale_return_id"
-        },
         "products_count": {
           "columnName": "products_count",
           "columnType": "INTEGER",
@@ -44546,16 +46754,96 @@ export const dataDictionaryJson = {
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "sale_return_id": {
+          "columnName": "sale_return_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_returns",
+          "columnSourceOriginalColumn": "sale_return_id"
+        },
         "payment_methods_used": {
           "columnName": "payment_methods_used",
-          "columnType": "STRING",
+          "columnType": "TEXT",
           "columnProperties": {},
           "columnSource": "function",
           "columnSourceName": "",
           "columnSourceOriginalColumn": ""
         }
       },
-      "viewQuery": "SELECT\n    doc.sale_return_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    IFNULL(prd.products_amount, 0) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    IFNULL(ser.chargeable_services_amount, 0) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    IFNULL(exp.expenses_amount, 0) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    IFNULL(pay.payments_amount, 0) AS payments_amount,\n\tpay.payment_methods_used,\n    ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_paid_amount\nFROM act_sale_returns doc\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_product_id) AS products_count,\n        SUM(product_amount) AS products_amount\n    FROM act_sale_return_products\n    GROUP BY sale_return_id\n) prd ON prd.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_chargeable_service_id) AS chargeable_services_count,\n        SUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_return_chargeable_services\n    GROUP BY sale_return_id\n) ser ON ser.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_expense_id) AS expenses_count,\n        SUM(sale_return_expense_amount) AS expenses_amount\n    FROM act_sale_return_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_return_id\n) exp ON exp.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_return_payment_id) AS payments_count,\n        SUM(sale_return_payment_amount) AS payments_amount\n    FROM act_sale_return_payments \n    LEFT JOIN act_payment_methods ON act_sale_return_payments.payment_method_id = act_payment_methods.payment_method_id \n    WHERE sale_return_payment_status = 'PAID'\n    GROUP BY sale_return_id\n) pay ON pay.sale_return_id = doc.sale_return_id;"
+      "viewQuery": "SELECT\n    doc.sale_return_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_paid_amount\nFROM act_sale_returns doc\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_sale_return_products\n    GROUP BY sale_return_id\n) prd ON prd.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_return_chargeable_services\n    GROUP BY sale_return_id\n) ser ON ser.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n        COUNT(sale_return_expense_id) AS expenses_count,\n\t\tSUM((sale_return_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(sale_return_expense_amount) AS expenses_amount\n    FROM act_sale_return_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_return_id\n) exp ON exp.sale_return_id = doc.sale_return_id\nLEFT JOIN (\n    SELECT\n        sale_return_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_return_payment_id) AS payments_count,\n        SUM(sale_return_payment_amount) AS payments_amount\n    FROM act_sale_return_payments\n    LEFT JOIN act_payment_methods ON act_sale_return_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE sale_return_payment_status = 'PAID'\n    GROUP BY sale_return_id\n) pay ON pay.sale_return_id = doc.sale_return_id;"
     },
     "act_vw_sale_returns": {
       "viewName": "act_vw_sale_returns",
@@ -44871,6 +47159,22 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_sale_returns",
           "columnSourceOriginalColumn": "payment_methods_used"
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_returns",
+          "columnSourceOriginalColumn": "payment_status"
+        },
+        "paid_amount": {
+          "columnName": "paid_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_returns",
+          "columnSourceOriginalColumn": "paid_amount"
         }
       },
       "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_returns.* \nFROM act_sale_returns \nLEFT JOIN act_vw_customers ON act_sale_returns.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_returns.address_id = act_addresses.address_id"
@@ -47050,6 +49354,14 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_transaction_entries",
           "columnSourceOriginalColumn": "transaction_entry_remarks"
+        },
+        "is_autogenerated": {
+          "columnName": "is_autogenerated",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_transaction_entries",
+          "columnSourceOriginalColumn": "is_autogenerated"
         }
       },
       "viewQuery": "SELECT \nCASE WHEN act_transaction_entries.transaction_entry_description IS NULL OR act_transaction_entries.transaction_entry_description = '' THEN act_transactions.transaction_narration ELSE act_transaction_entries.transaction_entry_description END AS transaction_entry_narration, \nCASE WHEN is_credit = 0 THEN  act_vw_ledger_accounts.ledger_account_name ELSE '' END AS debit_ledger_account_name,\nCASE WHEN is_credit = 0 THEN  act_vw_ledger_accounts.ledger_account_type_name ELSE '' END AS debit_ledger_account_type_name,\nCASE WHEN is_credit = 0 THEN  act_vw_ledger_accounts.reflecting_statement ELSE '' END AS debit_reflecting_statement,\nCASE WHEN is_credit = 0 THEN  act_vw_ledger_accounts.ledger_account_balance ELSE 0 END AS debit_ledger_account_balance,\nCASE WHEN is_credit = 0 THEN  act_transaction_entries.transaction_entry_amount ELSE 0 END AS debit_amount,\nCASE WHEN is_credit = 1 THEN  act_vw_ledger_accounts.ledger_account_name ELSE '' END AS credit_ledger_account_name,\nCASE WHEN is_credit = 1 THEN  act_vw_ledger_accounts.ledger_account_type_name ELSE '' END AS credit_ledger_account_type_name,\nCASE WHEN is_credit = 1 THEN  act_vw_ledger_accounts.reflecting_statement ELSE '' END AS credit_reflecting_statement,\nCASE WHEN is_credit = 1 THEN  act_vw_ledger_accounts.ledger_account_balance ELSE 0 END AS credit_ledger_account_balance,\nCASE WHEN is_credit = 1 THEN  act_transaction_entries.transaction_entry_amount ELSE 0 END AS credit_amount,\nact_vw_ledger_accounts.ledger_account_name,\nact_vw_ledger_accounts.ledger_account_type_name,\nact_vw_ledger_accounts.reflecting_statement,\nact_transactions.accountee_id,\nact_transactions.transaction_narration,\nact_transactions.transaction_time,\nact_transactions.transaction_type,\nact_transactions.debit_ledger_accounts,\nact_transactions.credit_ledger_accounts,\nact_transaction_entries.* FROM act_transaction_entries \nLEFT JOIN act_transactions ON act_transactions.transaction_id = act_transaction_entries.transaction_id\nLEFT JOIN act_vw_ledger_accounts ON act_transaction_entries.ledger_account_id = act_vw_ledger_accounts.ledger_account_id"
@@ -48953,31 +51265,7 @@ export const dataDictionaryJson = {
     },
     {
       "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_invoice_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_invoice_products",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
       "destinationTable": "act_purchase_invoices",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_order_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_order_products",
       "sourceColumn": "taxing_scheme_id",
       "sourceTable": "act_taxing_schemes"
     },
@@ -48989,73 +51277,13 @@ export const dataDictionaryJson = {
     },
     {
       "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_return_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_purchase_return_products",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_invoice_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_invoice_products",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
       "destinationTable": "act_sale_invoices",
       "sourceColumn": "taxing_scheme_id",
       "sourceTable": "act_taxing_schemes"
     },
     {
       "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_maintenance_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_maintenance_products",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_quotation_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_quotation_products",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
       "destinationTable": "act_sale_quotations",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_return_chargeable_services",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_sale_return_products",
       "sourceColumn": "taxing_scheme_id",
       "sourceTable": "act_taxing_schemes"
     },
@@ -49073,34 +51301,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_invoice_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_invoice_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "transaction_id",
       "destinationTable": "act_purchase_invoices",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_order_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_order_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "transaction_id",
@@ -49109,40 +51313,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_return_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_purchase_return_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "transaction_id",
       "destinationTable": "act_purchase_returns",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_coupon_uses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_invoice_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_invoice_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "transaction_id",
@@ -49151,40 +51325,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_maintenance_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_maintenance_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "transaction_id",
       "destinationTable": "act_sale_maintenances",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_quotation_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_return_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_sale_return_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "transaction_id",
@@ -49349,22 +51493,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_tax_rates"
     },
     {
-      "destinationColumn": "purchase_taxing_scheme_id",
-      "destinationTable": "act_product_categories",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
       "destinationColumn": "sale_tax_rate_id",
       "destinationTable": "act_product_categories",
       "sourceColumn": "tax_rate_id",
       "sourceTable": "act_tax_rates"
-    },
-    {
-      "destinationColumn": "sale_taxing_scheme_id",
-      "destinationTable": "act_product_categories",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
     },
     {
       "destinationColumn": "asset_attribute_media_id",
@@ -49538,18 +51670,6 @@ export const dataDictionaryJson = {
       "sourceTable": "act_product_uoms"
     },
     {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_product_purchase_details",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_product_sale_details",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
       "destinationColumn": "currency_code",
       "destinationTable": "act_accountees",
       "sourceColumn": "currency_code",
@@ -49632,22 +51752,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_product_prices"
     },
     {
-      "destinationColumn": "purchase_taxing_scheme_id",
-      "destinationTable": "act_chargeable_service_categories",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
       "destinationColumn": "purchase_tax_rate_id",
       "destinationTable": "act_chargeable_service_categories",
       "sourceColumn": "tax_rate_id",
       "sourceTable": "act_tax_rates"
-    },
-    {
-      "destinationColumn": "sale_taxing_scheme_id",
-      "destinationTable": "act_chargeable_service_categories",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
     },
     {
       "destinationColumn": "sale_tax_rate_id",
@@ -49732,12 +51840,6 @@ export const dataDictionaryJson = {
       "destinationTable": "act_transaction_entries",
       "sourceColumn": "tax_rate_id",
       "sourceTable": "act_tax_rates"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_transaction_entries",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
     },
     {
       "destinationColumn": "currency_code",
@@ -49830,22 +51932,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_accountees"
     },
     {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_chargeable_service_purchase_details",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
-    },
-    {
       "destinationColumn": "tax_rate_id",
       "destinationTable": "act_chargeable_service_purchase_details",
       "sourceColumn": "tax_rate_id",
       "sourceTable": "act_tax_rates"
-    },
-    {
-      "destinationColumn": "taxing_scheme_id",
-      "destinationTable": "act_chargeable_service_sale_details",
-      "sourceColumn": "taxing_scheme_id",
-      "sourceTable": "act_taxing_schemes"
     },
     {
       "destinationColumn": "tax_rate_id",
@@ -49884,42 +51974,6 @@ export const dataDictionaryJson = {
       "destinationTable": "act_purchase_invoice_medias",
       "sourceColumn": "media_id",
       "sourceTable": "act_medias"
-    },
-    {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_invoice_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_order_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_return_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_invoice_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_maintenance_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_return_payments",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "accountee_id",
@@ -50186,18 +52240,6 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "transaction_entry_id",
-      "destinationTable": "act_delivery_note_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_delivery_note_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "delivery_note_id",
       "destinationTable": "act_delivery_note_products",
       "sourceColumn": "delivery_note_id",
@@ -50208,12 +52250,6 @@ export const dataDictionaryJson = {
       "destinationTable": "act_purchase_invoice_expenses",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
-    },
-    {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_invoice_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "cascadeDeleteDestination": true,
@@ -50229,12 +52265,6 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_order_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "address_id",
       "destinationTable": "act_purchase_orders",
       "sourceColumn": "address_id",
@@ -50247,22 +52277,10 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "supplier_transaction_entry_id",
-      "destinationTable": "act_purchase_return_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "address_id",
       "destinationTable": "act_purchase_returns",
       "sourceColumn": "address_id",
       "sourceTable": "act_addresses"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_invoice_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "transaction_id",
@@ -50284,40 +52302,172 @@ export const dataDictionaryJson = {
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_maintenance_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "transaction_id",
       "destinationTable": "act_sale_quotation_expenses",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
     },
     {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_quotation_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
-    },
-    {
       "destinationColumn": "transaction_id",
       "destinationTable": "act_sale_return_expenses",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
-    },
-    {
-      "destinationColumn": "customer_transaction_entry_id",
-      "destinationTable": "act_sale_return_expenses",
-      "sourceColumn": "transaction_entry_id",
-      "sourceTable": "act_transaction_entries"
     },
     {
       "destinationColumn": "parent_chargeable_service_category_id",
       "destinationTable": "act_chargeable_service_categories",
       "sourceColumn": "chargeable_service_category_id",
       "sourceTable": "act_chargeable_service_categories"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_delivery_note_chargeable_services",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_delivery_note_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_purchase_invoice_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_purchase_order_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_purchase_return_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_invoice_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_maintenance_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_quotation_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_return_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_delivery_note_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_purchase_invoice_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_purchase_order_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_purchase_return_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_invoice_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_maintenance_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_quotation_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_return_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "address_id",
+      "destinationTable": "act_sale_maintenances",
+      "sourceColumn": "address_id",
+      "sourceTable": "act_addresses"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_delivery_note_payments",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "delivery_note_id",
+      "destinationTable": "act_delivery_note_payments",
+      "sourceColumn": "delivery_note_id",
+      "sourceTable": "act_delivery_notes"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_delivery_note_payments",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_quotation_payments",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "destinationColumn": "sale_quotation_id",
+      "destinationTable": "act_sale_quotation_payments",
+      "sourceColumn": "sale_quotation_id",
+      "sourceTable": "act_sale_quotations"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_sale_quotation_payments",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_sale_coupon_uses",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
     }
   ]
 };

@@ -1,16 +1,9 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcSortable } from "../../../../ac-draggable/_ac-draggable.export";
-import { AcDraggableApi } from "../../../../ac-draggable/core/ac-draggable-api";
 import { AcDatagridExtension } from "../../../core/ac-datagrid-extension";
 import { AC_DATAGRID_EXTENSION_NAME } from "../../../consts/ac-datagrid-extension-name.const";
-import { AC_DATAGRID_HOOK } from "../../../consts/ac-datagrid-hook.const";
 import { IAcDatagridExtension } from "../../../interfaces/ac-datagrid-extension.interface";
-import { IAcDatagridHeaderHookArgs } from "../../../interfaces/hook-args/ac-datagrid-header-hook-args.interface";
-import { IAcDatagridRowHookArgs } from "../../../interfaces/hook-args/ac-datagrid-row-hook-args.interface";
 import { AcDatagridInternalColumn } from "../../../models/ac-datagrid-internal-column.model";
 import { AcEnumDatagridRowDraggingHook } from "../_row-dragging.export";
-import { AcDatagridRowDraggingCell } from "../elements/ac-row-dragging-cell.element";
-import { AcDatagridRowDraggingHeaderCell } from "../elements/ac-row-dragging-header-cell.element";
 import { IAcDatagridRowDraggingHookArgs } from "../interfaces/ac-datagrid-row-dragging-hook-args.interface";
 import { AcDatagridRowDraggingEventHandler } from "./ac-datagrid-row-dragging-event-handler";
 
@@ -47,7 +40,8 @@ export class AcDatagridRowDraggingExtension extends AcDatagridExtension {
     // const draggableSort = new AcDraggableSort({element:this.datagridApi.datagrid.datagridBody.element});
     // const draggableSort = new AcSortable();
     // this.draggableApi = draggableSort.draggableApi;
-    // this.rowDraggingEventHandler = new AcDatagridRowDraggingEventHandler({rowDraggingExtension:this});
+    this.rowDraggingEventHandler = new AcDatagridRowDraggingEventHandler();
+    this.rowDraggingEventHandler.init({rowDraggingExtension:this});
   }
 
   // override handleHook({ hook, args }: { hook: string; args: any; }): void {

@@ -13,6 +13,7 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
   datagridApi?: AcDatagridApi | null;
   gridApi?: GridApi | null;
   private previousGroupChildIndex: number = -1;
+  private previousIndex:number = -1;
   rowDraggingExtension?: AcDatagridRowDraggingExtension | null;
   treeTableExtension?: AcDatagridTreeTableExtension | null;
   private draggingRow: any;
@@ -109,7 +110,7 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
     if (this.agGridExtension){
       const datagridRow = this.agGridExtension.getDatagridRowFromEvent({ event });
       if (datagridRow && this.rowDraggingExtension && this.rowDraggingExtension.rowDraggingEventHandler) {
-        // this.rowDraggingExtension.rowDraggingEventHandler.handleRowDragEnd({ datagridRow, event: event.event });
+        this.rowDraggingExtension.rowDraggingEventHandler!.handleRowDragEnd({ datagridRow, event: {...event.event,oldIndex:this.previousIndex,newIndex:event.overIndex} });
       }
     }
   }
@@ -118,6 +119,7 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
     this.draggingRow = event;
     const node = event.node;
     this.previousGroupChildIndex = -1;
+    this.previousIndex = event.node.rowIndex;
 
     if (node.parent && node.parent.childrenAfterGroup) {
       let index = 0;
@@ -167,11 +169,13 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
     this.agGridExtension = agGridExtension;
     this.datagridApi = agGridExtension.datagridApi;
     this.datagridApi!.hooks.subscribeAllHooks({callback: this.handleHook});
+    this.datagridApi.hooks.subscribe({hook:AcEnumDatagridRowDraggingHook.AllowRowDraggingChange,callback:()=>{
+      this.setExtension();
+    }});
     this.gridApi = this.agGridExtension.gridApi;
     if (this.datagridApi!.extensions[AC_DATAGRID_EXTENSION_NAME.TreeTable]) {
       this.treeTableExtension = this.datagridApi!.extensions[AC_DATAGRID_EXTENSION_NAME.TreeTable] as AcDatagridTreeTableExtension;
     }
-    this.setExtension();
   }
 
   removeListeners(){
@@ -190,8 +194,11 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
 
   setAllowRowDragging() {
     if (this.rowDraggingExtension) {
-      this.allowRowDragging = this.rowDraggingExtension.allowRowDragging;
-      if (this.allowRowDragging && this.gridApi) {
+
+    //   console.log(this.rowDraggingExtension,this.gridApi,this);
+    //   this.allowRowDragging = this.rowDraggingExtension.allowRowDragging;
+    //   if (this.allowRowDragging && this.gridApi) {
+    //     console.log("Set Row Dragging",this);
         this.gridApi.setGridOption('rowDragManaged', true);
         this.gridApi.setGridOption('rowDragEntireRow', true);
         this.gridApi.setGridOption('suppressMoveWhenRowDragging', true);
@@ -200,14 +207,20 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
         this.gridApi.addEventListener('rowDragCancel', this.onRowDragCancel);
         this.gridApi.addEventListener('rowDragLeave', this.onRowDragLeave);
         this.gridApi.addEventListener('rowDragMove', this.onRowDragMove);
-      }
+    //   }
     }
   }
 
   setExtension() {
     if (this.datagridApi && this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.RowDragging]) {
       this.rowDraggingExtension = this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.RowDragging] as AcDatagridRowDraggingExtension;
-      this.setAllowRowDragging();
+      this.allowRowDragging = this.rowDraggingExtension.allowRowDragging;
+      this.agGridExtension.setColumnDefs();
+      if(this.allowRowDragging){
+        this.setAllowRowDragging();
+      }
+
     }
   }
+
 }

@@ -56,7 +56,7 @@ export class AggridLocalPage {
     { label: 'Export', isHeader: true },
     {
       label: 'Export XLSX', callback: () => {
-        this.dataExportXlsxExtension.exportData({ fileName: 'Customer Data.xlsx' });
+        this.dataExportXlsxExtension.exportData({ filename: 'Customer Data.xlsx' });
       }
     },
     { label: 'Selection and Focus', isHeader: true },
@@ -125,6 +125,7 @@ export class AggridLocalPage {
       this.columnsCustomizerExtension.showColumnCustomizerPanel = true;
 
       this.rowNumbersExtension.showRowNumbers = true;
+      this.rowDraggingExtension.allowRowDragging = true;
 
       this.rowSelectionExtension.allowSelection = true;
       this.rowSelectionExtension.allowMultipleSelection = true;

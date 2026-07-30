@@ -101,6 +101,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   columnDraggingExtension?: AcDatagridColumnDraggingExtension;
   dataExportXlsxExtension?: AcDatagridDataExportXlsxExtension;
   rowNumbersExtension?: AcDatagridRowNumbersExtension;
+
   treeTableExtension?: AcDatagridTreeTableExtension;
   ignoreNextGetData: boolean = false;
   logger: AcLogger = new AcLogger({ logMessages: false });
@@ -434,7 +435,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.setDataExportXlsxExtension();
     }
     else if (args.extensionName == AC_DATAGRID_EXTENSION_NAME.RowDragging) {
-      this.setColumnDefs();
+      this.agGridRowDragExt.setExtension();
     }
 
   }
@@ -749,6 +750,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     this.setAfterRowsFooterExtension();
     this.setColumnsCustomizerExtension();
     this.setColumnDraggingExtension();
+    this.setRowDraggingExtension();
     this.setRowNumbersExtension();
     this.setAddButtonDisplay();
     this.setSearchInputDisplay();
@@ -888,7 +890,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
 
   setColumnDefs() {
     const colDefs: ColDef[] = [];
-    if (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true) {
+    if ((this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true)||this.agGridRowDragExt.allowRowDragging) {
       colDefs.push({
         field: '__internal_ac_datagrid__',
         headerName: '',
@@ -896,7 +898,9 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         sortable: false,
         suppressHeaderMenuButton: true,
         filter: false,
-        valueGetter: 'node.rowIndex + 1',
+        valueGetter: (params:any)=>{
+          return (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true)?params.node.rowIndex + 1:'';
+        },
         width: 32,
         pinned: 'left',
         cellClass: 'ag-row-number-cell',
@@ -906,6 +910,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         lockVisible: true,
         suppressNavigable: true,
         suppressMovable: true,
+        rowDrag:this.agGridRowDragExt.allowRowDragging,
         cellStyle: { paddingLeft: 0, paddingRight: 0 }
       });
     }
@@ -1048,6 +1053,12 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   setDataExportXlsxExtension() {
     if (this.datagridApi && this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx]) {
       this.dataExportXlsxExtension = this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] as AcDatagridDataExportXlsxExtension;
+    }
+  }
+
+  setRowDraggingExtension() {
+    if (this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.RowDragging]) {
+      this.agGridRowDragExt.setExtension();
     }
   }
 
