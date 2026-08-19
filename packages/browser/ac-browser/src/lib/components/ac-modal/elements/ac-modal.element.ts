@@ -86,6 +86,7 @@ export class AcModal extends AcElementBase {
 
     // Create backdrop
     this.backdrop = this.ownerDocument.createElement("div");
+    this.backdrop.classList.add('ac-modal-backdrop');
     const backdropStyle = { ...AC_MODAL_CONFIG.backdropStyle, "transition": `opacity ${this.animationDuration}ms ease` };
     Object.assign(this.backdrop.style, backdropStyle);
     this.appendChild(this.backdrop);

@@ -69,7 +69,7 @@ export class AcDatagridRowSelectionExtensionOnAgGrid {
   private handleAgGridRowSelected(event: RowSelectedEvent) {
     if (this.rowSelectionExtension) {
       this.rowSelectionExtension.setRowSelection({
-        isSelected: event.node.isSelected() === true,
+        isSelected: event.rowIndex != undefined && event.rowIndex != null && event.node.isSelected() === true,
         rowId: event.data[this.agGridExtension!.rowKey]
       });
     }

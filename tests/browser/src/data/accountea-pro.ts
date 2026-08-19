@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 22,
+  "version": 25,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -1384,6 +1384,69 @@ export const dataDictionaryJson = {
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
           "propertyValue": "address"
+        }
+      }
+    },
+    "act_ai_sessions": {
+      "tableName": "act_ai_sessions",
+      "tableColumns": {
+        "ai_session_id": {
+          "columnName": "ai_session_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "AI Session"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "ai_session_key": {
+          "columnName": "ai_session_key",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session Key"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "ai_session_details": {
+          "columnName": "ai_session_details",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Session Details"
+            }
+          }
+        },
+        "ai_session_status": {
+          "columnName": "ai_session_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "ai_sessions"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "ai_session"
         }
       }
     },
@@ -20418,6 +20481,1689 @@ export const dataDictionaryJson = {
         }
       }
     },
+    "act_sale_proforma_invoice_chargeable_services": {
+      "tableName": "act_sale_proforma_invoice_chargeable_services",
+      "tableColumns": {
+        "chargeable_service_charge_gross": {
+          "columnName": "chargeable_service_charge_gross",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Charge"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "chargeable_service_charge_final": {
+          "columnName": "chargeable_service_charge_final",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Charge"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "chargeable_service_description": {
+          "columnName": "chargeable_service_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Description"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "chargeable_service_id": {
+          "columnName": "chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Service"
+            }
+          }
+        },
+        "chargeable_service_quantity": {
+          "columnName": "chargeable_service_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quantity"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "chargeable_service_uom_id": {
+          "columnName": "chargeable_service_uom_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "UOM"
+            }
+          }
+        },
+        "chargeable_service_total_quantity": {
+          "columnName": "chargeable_service_total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quantity"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "discount_cash_percentage": {
+          "columnName": "discount_cash_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "discount_rebate_percentage": {
+          "columnName": "discount_rebate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "discount_trade_percentage": {
+          "columnName": "discount_trade_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_proforma_invoice_chargeable_service_id": {
+          "columnName": "sale_proforma_invoice_chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "chargeable_service_status": {
+          "columnName": "chargeable_service_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "DELIVERED"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Delivered",
+                  "value": "DELIVERED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Confirmed",
+                  "value": "CONFIRMED"
+                }
+              ]
+            }
+          }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "chargeable_service_amount": {
+          "columnName": "chargeable_service_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            }
+          }
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            }
+          }
+        },
+        "chargeable_service_charge_standard": {
+          "columnName": "chargeable_service_charge_standard",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Standard Charge"
+            }
+          }
+        },
+        "sale_proforma_invoice_chargeable_service_remarks": {
+          "columnName": "sale_proforma_invoice_chargeable_service_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoice_chargeable_services"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice_chargeable_service"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoice_chargeable_services"
+        }
+      }
+    },
+    "act_sale_proforma_invoice_expenses": {
+      "tableName": "act_sale_proforma_invoice_expenses",
+      "tableColumns": {
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "ledger_account_id": {
+          "columnName": "ledger_account_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Ledger Account"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Reference#"
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_remarks": {
+          "columnName": "sale_proforma_invoice_expense_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_amount": {
+          "columnName": "sale_proforma_invoice_expense_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_datetime": {
+          "columnName": "sale_proforma_invoice_expense_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Date/Time"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_id": {
+          "columnName": "sale_proforma_invoice_expense_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_status": {
+          "columnName": "sale_proforma_invoice_expense_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "INCURRED"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Incurred",
+                  "value": "INCURRED"
+                }
+              ]
+            }
+          }
+        },
+        "include_in_amount": {
+          "columnName": "include_in_amount",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Include in Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        },
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Paid By Customer?"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            }
+          }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "sale_proforma_invoice_expense_gross_amount": {
+          "columnName": "sale_proforma_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Ref#"
+            }
+          }
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Remarks"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoice_expenses"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice_expense"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoice_expenses"
+        }
+      }
+    },
+    "act_sale_proforma_invoice_medias": {
+      "tableName": "act_sale_proforma_invoice_medias",
+      "tableColumns": {
+        "sale_proforma_invoice_media_id": {
+          "columnName": "sale_proforma_invoice_media_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {}
+        },
+        "media_id": {
+          "columnName": "media_id",
+          "columnType": "UUID",
+          "columnProperties": {}
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoice_medias"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice_media"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoice_medias"
+        }
+      }
+    },
+    "act_sale_proforma_invoice_payments": {
+      "tableName": "act_sale_proforma_invoice_payments",
+      "tableColumns": {
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Method"
+            }
+          }
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Reference#"
+            }
+          }
+        },
+        "sale_proforma_invoice_payment_remarks": {
+          "columnName": "sale_proforma_invoice_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "sale_proforma_invoice_payment_amount": {
+          "columnName": "sale_proforma_invoice_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_proforma_invoice_payment_datetime": {
+          "columnName": "sale_proforma_invoice_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Date/Time"
+            }
+          }
+        },
+        "sale_proforma_invoice_payment_id": {
+          "columnName": "sale_proforma_invoice_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_payment_status": {
+          "columnName": "sale_proforma_invoice_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "PENDING"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Initiated",
+                  "value": "INITIATED"
+                },
+                {
+                  "label": "Received",
+                  "value": "RECEIVED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Returned",
+                  "value": "RETURNED"
+                },
+                {
+                  "label": "Technical Error",
+                  "value": "TECHINICAL_ERROR"
+                }
+              ]
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoice_payments"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice_payment"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoice_payments"
+        }
+      }
+    },
+    "act_sale_proforma_invoice_products": {
+      "tableName": "act_sale_proforma_invoice_products",
+      "tableColumns": {
+        "discount_cash_percentage": {
+          "columnName": "discount_cash_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "discount_rebate_percentage": {
+          "columnName": "discount_rebate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "discount_trade_percentage": {
+          "columnName": "discount_trade_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD%"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Index"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "inventory_tracking_id": {
+          "columnName": "inventory_tracking_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Inventory Tracking"
+            }
+          }
+        },
+        "product_description": {
+          "columnName": "product_description",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Description"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "product_id": {
+          "columnName": "product_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Product"
+            }
+          }
+        },
+        "product_price_gross": {
+          "columnName": "product_price_gross",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Price"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "product_price_final": {
+          "columnName": "product_price_final",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Price"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "product_quantity": {
+          "columnName": "product_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quantity"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "product_uom_id": {
+          "columnName": "product_uom_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "UOM"
+            }
+          }
+        },
+        "product_total_quantity": {
+          "columnName": "product_total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Quantity"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
+        },
+        "sale_proforma_invoice_product_id": {
+          "columnName": "sale_proforma_invoice_product_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "product_status": {
+          "columnName": "product_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "DELIVERED"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Dispatched",
+                  "value": "DISPATCHED"
+                },
+                {
+                  "label": "Delivered",
+                  "value": "DELIVERED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Returned",
+                  "value": "RETURNED"
+                },
+                {
+                  "label": "Damaged",
+                  "value": "DAMAGED"
+                },
+                {
+                  "label": "Confirmed",
+                  "value": "CONFIRMED"
+                }
+              ]
+            }
+          }
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Rate"
+            }
+          }
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax%"
+            }
+          }
+        },
+        "product_amount": {
+          "columnName": "product_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            }
+          }
+        },
+        "product_price_mrp": {
+          "columnName": "product_price_mrp",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "MRP"
+            }
+          }
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            }
+          }
+        },
+        "sale_proforma_invoice_product_remarks": {
+          "columnName": "sale_proforma_invoice_product_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Batch Code"
+            }
+          }
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expiry"
+            }
+          }
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mfg"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "ORDER_BY": {
+          "propertyName": "ORDER_BY",
+          "propertyValue": "display_index"
+        },
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoice_products"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice_product"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoice_products"
+        }
+      }
+    },
+    "act_sale_proforma_invoices": {
+      "tableName": "act_sale_proforma_invoices",
+      "tableColumns": {
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Accountee"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Currency"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "customer_id": {
+          "columnName": "customer_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Customer"
+            }
+          }
+        },
+        "device_id": {
+          "columnName": "device_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Device"
+            }
+          }
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Exchange Rate"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "1"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "is_draft": {
+          "columnName": "is_draft",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Draft?"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_proforma_invoice_remarks": {
+          "columnName": "sale_proforma_invoice_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Remarks"
+            }
+          }
+        },
+        "sale_proforma_invoice_amount": {
+          "columnName": "sale_proforma_invoice_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Amount"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "sale_proforma_invoice_datetime": {
+          "columnName": "sale_proforma_invoice_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Date/Time"
+            }
+          }
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_proforma_invoice_number": {
+          "columnName": "sale_proforma_invoice_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Invoice#"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": true
+            }
+          }
+        },
+        "sale_term_id": {
+          "columnName": "sale_term_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Terms"
+            }
+          }
+        },
+        "sale_proforma_invoice_status": {
+          "columnName": "sale_proforma_invoice_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "CREATED"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Created",
+                  "value": "CREATED"
+                },
+                {
+                  "label": "Active",
+                  "value": "ACTIVE"
+                },
+                {
+                  "label": "Settled",
+                  "value": "SETTLED"
+                },
+                {
+                  "label": "Cancelled",
+                  "value": "CANCELLED"
+                },
+                {
+                  "label": "Disputed",
+                  "value": "DISPUTED"
+                }
+              ]
+            }
+          }
+        },
+        "taxing_scheme_id": {
+          "columnName": "taxing_scheme_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Taxing Scheme"
+            }
+          }
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Transaction"
+            }
+          }
+        },
+        "sale_proforma_invoice_type": {
+          "columnName": "sale_proforma_invoice_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Type"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "TAX"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Tax",
+                  "value": "TAX"
+                },
+                {
+                  "label": "Retail",
+                  "value": "RETAIL"
+                }
+              ]
+            }
+          }
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User"
+            }
+          }
+        },
+        "products_count": {
+          "columnName": "products_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Products"
+            }
+          }
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Received"
+            }
+          }
+        },
+        "chargeable_services_count": {
+          "columnName": "chargeable_services_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Services"
+            }
+          }
+        },
+        "received_by": {
+          "columnName": "received_by",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Received By"
+            }
+          }
+        },
+        "sale_proforma_invoice_details": {
+          "columnName": "sale_proforma_invoice_details",
+          "columnType": "JSON",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Details"
+            }
+          }
+        },
+        "supply_mode": {
+          "columnName": "supply_mode",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Supply Mode"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "INTRA"
+            },
+            "REQUIRED": {
+              "propertyName": "REQUIRED",
+              "propertyValue": true
+            }
+          }
+        },
+        "is_finalized": {
+          "columnName": "is_finalized",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Finalized?"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            }
+          }
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Status"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "PENDING"
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Pending",
+                  "value": "PENDING"
+                },
+                {
+                  "label": "Partially Received",
+                  "value": "PARTIALLY_RECEIVED"
+                },
+                {
+                  "label": "Received",
+                  "value": "RECEIVED"
+                },
+                {
+                  "label": "Overdue",
+                  "value": "OVERDUE"
+                }
+              ]
+            }
+          }
+        },
+        "address_id": {
+          "columnName": "address_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Address"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": false
+            }
+          }
+        },
+        "is_credit": {
+          "columnName": "is_credit",
+          "columnType": "YES_NO",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Is Credit?"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "0"
+            },
+            "USE_FOR_ROW_LIKE_FILTER": {
+              "propertyName": "USE_FOR_ROW_LIKE_FILTER",
+              "propertyValue": false
+            }
+          }
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Vehicle Number"
+            }
+          }
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Type"
+            },
+            "DEFAULT_VALUE": {
+              "propertyName": "DEFAULT_VALUE",
+              "propertyValue": "IN_STORE"
+            }
+          }
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Channel Name"
+            }
+          }
+        },
+        "expenses_count": {
+          "columnName": "expenses_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Expenses"
+            }
+          }
+        },
+        "payments_count": {
+          "columnName": "payments_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payments"
+            }
+          }
+        },
+        "payment_methods_used": {
+          "columnName": "payment_methods_used",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Payment Methods"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "sale_proforma_invoices"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "sale_proforma_invoice"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "act_vw_sale_proforma_invoices"
+        }
+      }
+    },
     "act_sale_quotation_chargeable_services": {
       "tableName": "act_sale_quotation_chargeable_services",
       "tableColumns": {
@@ -23205,7 +24951,7 @@ export const dataDictionaryJson = {
         },
         "SINGULAR_NAME": {
           "propertyName": "SINGULAR_NAME",
-          "propertyValue": "sale_retrun"
+          "propertyValue": "sale_return"
         },
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
@@ -30163,6 +31909,218 @@ export const dataDictionaryJson = {
       },
       "viewQuery": "SELECT act_product_stock_details.*,\nact_product_uoms.product_uom_name AS stock_uom_name,\nact_product_uoms.product_uom_quantity AS stock_uom_quantity\nFROM (SELECT * FROM (SELECT *,ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY product_stock_detail_id ) AS rn FROM act_product_stock_details WHERE is_current = 1 ) WHERE rn = 1) AS act_product_stock_details \nLEFT JOIN act_product_uoms ON act_product_stock_details.stock_uom_id = act_product_uoms.product_uom_id"
     },
+    "act_vw_customer_chargeable_services_summary": {
+      "viewName": "act_vw_customer_chargeable_services_summary",
+      "viewColumns": {
+        "chargeable_service_name": {
+          "columnName": "chargeable_service_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_name"
+        },
+        "chargeable_service_id": {
+          "columnName": "chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_id"
+        },
+        "chargeable_service_code": {
+          "columnName": "chargeable_service_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_code"
+        },
+        "customer_id": {
+          "columnName": "customer_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_customers",
+          "columnSourceOriginalColumn": "customer_id"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_customers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_parties",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "total_quantity": {
+          "columnName": "total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Quantity"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "invoices_count": {
+          "columnName": "invoices_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Invoices Count"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "last_transaction_time": {
+          "columnName": "last_transaction_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Sold On"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT \nSUM(chargeable_service_total_quantity) AS total_quantity,\nSUM(chargeable_service_amount) AS total_amount,\nCOUNT(act_sale_invoices.sale_invoice_id) AS invoices_count,\nMAX(act_sale_invoices.sale_invoice_datetime) AS last_transaction_time,\nact_chargeable_services.chargeable_service_name, act_chargeable_services.chargeable_service_id, act_chargeable_services.chargeable_service_code, \nact_customers.customer_id,act_customers.party_id,act_parties.party_name\nFROM act_sale_invoice_chargeable_services \nLEFT JOIN act_sale_invoices ON act_sale_invoice_chargeable_services.sale_invoice_id = act_sale_invoices.sale_invoice_id\nLEFT JOIN act_chargeable_services ON act_sale_invoice_chargeable_services.chargeable_service_id = act_chargeable_services.chargeable_service_id\nLEFT JOIN act_customers ON act_sale_invoices.customer_id = act_customers.customer_id \nLEFT JOIN act_parties ON act_customers.party_id = act_parties.party_id \nWHERE act_sale_invoices.customer_id IS NOT NULL\nGROUP BY act_chargeable_services.chargeable_service_id"
+    },
+    "act_vw_customer_products_summary": {
+      "viewName": "act_vw_customer_products_summary",
+      "viewColumns": {
+        "product_name": {
+          "columnName": "product_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_name"
+        },
+        "product_id": {
+          "columnName": "product_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_id"
+        },
+        "product_sku": {
+          "columnName": "product_sku",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_sku"
+        },
+        "customer_id": {
+          "columnName": "customer_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_customers",
+          "columnSourceOriginalColumn": "customer_id"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_customers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_parties",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "total_quantity": {
+          "columnName": "total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Quantity"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "invoices_count": {
+          "columnName": "invoices_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Invoices Count"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "last_transaction_time": {
+          "columnName": "last_transaction_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Sold On"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT \nSUM(product_total_quantity) AS total_quantity,\nSUM(product_amount) AS total_amount,\nCOUNT(act_sale_invoices.sale_invoice_id) AS invoices_count,\nMAX(act_sale_invoices.sale_invoice_datetime) AS last_transaction_time,\nact_products.product_name, act_products.product_id, act_products.product_sku, \nact_customers.customer_id,act_customers.party_id,act_parties.party_name\nFROM act_sale_invoice_products \nLEFT JOIN act_sale_invoices ON act_sale_invoice_products.sale_invoice_id = act_sale_invoices.sale_invoice_id\nLEFT JOIN act_products ON act_sale_invoice_products.product_id = act_products.product_id\nLEFT JOIN act_customers ON act_sale_invoices.customer_id = act_customers.customer_id \nLEFT JOIN act_parties ON act_customers.party_id = act_parties.party_id \nWHERE act_sale_invoices.customer_id IS NOT NULL\nGROUP BY act_products.product_id"
+    },
     "act_vw_customers": {
       "viewName": "act_vw_customers",
       "viewColumns": {
@@ -34003,32 +35961,6 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "act_product_categories",
           "columnSourceOriginalColumn": "product_category_remarks"
-        },
-        "purchase_taxing_scheme_name": {
-          "columnName": "purchase_taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Purchase Taxing Scheme"
-            }
-          },
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
-        },
-        "sale_taxing_scheme_name": {
-          "columnName": "sale_taxing_scheme_name",
-          "columnType": "STRING",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Sale Taxing Scheme"
-            }
-          },
-          "columnSource": "table",
-          "columnSourceName": "act_taxing_schemes",
-          "columnSourceOriginalColumn": "taxing_scheme_name"
         },
         "purchase_tax_rate_name": {
           "columnName": "purchase_tax_rate_name",
@@ -44039,6 +45971,1582 @@ export const dataDictionaryJson = {
       },
       "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_maintenances.* \nFROM act_sale_maintenances \nLEFT JOIN act_vw_customers ON act_sale_maintenances.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_maintenances.address_id = act_addresses.address_id"
     },
+    "act_vw_sale_proforma_invoice_chargeable_services": {
+      "viewName": "act_vw_sale_proforma_invoice_chargeable_services",
+      "viewColumns": {
+        "chargeable_service_uom_quantity": {
+          "columnName": "chargeable_service_uom_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_uom_quantity"
+        },
+        "gross_amount": {
+          "columnName": "gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_trade_amount": {
+          "columnName": "discount_trade_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_cash_amount": {
+          "columnName": "discount_cash_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_rebate_amount": {
+          "columnName": "discount_rebate_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "taxable_amount": {
+          "columnName": "taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Taxable Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_service_name": {
+          "columnName": "chargeable_service_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "chargeable_service_uom_name": {
+          "columnName": "chargeable_service_uom_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_service_uoms",
+          "columnSourceOriginalColumn": "chargeable_service_uom_name"
+        },
+        "chargeable_service_charge_gross": {
+          "columnName": "chargeable_service_charge_gross",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_charge_gross"
+        },
+        "chargeable_service_charge_final": {
+          "columnName": "chargeable_service_charge_final",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_charge_final"
+        },
+        "chargeable_service_description": {
+          "columnName": "chargeable_service_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_description"
+        },
+        "chargeable_service_id": {
+          "columnName": "chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_id"
+        },
+        "chargeable_service_quantity": {
+          "columnName": "chargeable_service_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_quantity"
+        },
+        "chargeable_service_uom_id": {
+          "columnName": "chargeable_service_uom_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_uom_id"
+        },
+        "chargeable_service_total_quantity": {
+          "columnName": "chargeable_service_total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_total_quantity"
+        },
+        "discount_cash_percentage": {
+          "columnName": "discount_cash_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "discount_cash_percentage"
+        },
+        "discount_rebate_percentage": {
+          "columnName": "discount_rebate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "discount_rebate_percentage"
+        },
+        "discount_trade_percentage": {
+          "columnName": "discount_trade_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "discount_trade_percentage"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "sale_proforma_invoice_chargeable_service_id": {
+          "columnName": "sale_proforma_invoice_chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_chargeable_service_id"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "chargeable_service_status": {
+          "columnName": "chargeable_service_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_status"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "chargeable_service_amount": {
+          "columnName": "chargeable_service_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_amount"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "chargeable_service_charge_standard": {
+          "columnName": "chargeable_service_charge_standard",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_charge_standard"
+        },
+        "sale_proforma_invoice_chargeable_service_remarks": {
+          "columnName": "sale_proforma_invoice_chargeable_service_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_chargeable_services",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_chargeable_service_remarks"
+        }
+      },
+      "viewQuery": "SELECT  (COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) AS gross_amount, ((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (COALESCE(docser.discount_trade_percentage, 0) / 100)) AS discount_trade_amount, (((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (COALESCE(docser.discount_cash_percentage, 0) / 100)) AS discount_cash_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (COALESCE(docser.discount_rebate_percentage, 0) / 100)) AS discount_rebate_amount, ((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) AS taxable_amount, (((((COALESCE(docser.chargeable_service_quantity, 0) * COALESCE(docser.chargeable_service_charge_gross, 0)) * (1 - (COALESCE(docser.discount_trade_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_cash_percentage, 0) / 100))) * (1 - (COALESCE(docser.discount_rebate_percentage, 0) / 100))) * (COALESCE(docser.tax_rate_percentage, 0) / 100)) AS tax_amount,act_chargeable_services.chargeable_service_name,\nact_tax_rates.tax_rate_name,\nact_chargeable_service_uoms.chargeable_service_uom_name,\ndocser.* FROM act_sale_proforma_invoice_chargeable_services AS docser \nLEFT JOIN act_chargeable_services ON docser.chargeable_service_id= act_chargeable_services.chargeable_service_id\nLEFT JOIN act_chargeable_service_uoms ON docser.chargeable_service_uom_id = act_chargeable_service_uoms.chargeable_service_uom_id \nLEFT JOIN act_tax_rates ON docser.tax_rate_id = act_tax_rates.tax_rate_id"
+    },
+    "act_vw_sale_proforma_invoice_expenses": {
+      "viewName": "act_vw_sale_proforma_invoice_expenses",
+      "viewColumns": {
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "ledger_account_name": {
+          "columnName": "ledger_account_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_ledger_accounts",
+          "columnSourceOriginalColumn": "ledger_account_name"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "ledger_account_id": {
+          "columnName": "ledger_account_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "ledger_account_id"
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "reference_number"
+        },
+        "sale_proforma_invoice_expense_remarks": {
+          "columnName": "sale_proforma_invoice_expense_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_remarks"
+        },
+        "sale_proforma_invoice_expense_amount": {
+          "columnName": "sale_proforma_invoice_expense_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_amount"
+        },
+        "sale_proforma_invoice_expense_datetime": {
+          "columnName": "sale_proforma_invoice_expense_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_datetime"
+        },
+        "sale_proforma_invoice_expense_id": {
+          "columnName": "sale_proforma_invoice_expense_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_id"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "sale_proforma_invoice_expense_status": {
+          "columnName": "sale_proforma_invoice_expense_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_status"
+        },
+        "include_in_amount": {
+          "columnName": "include_in_amount",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "include_in_amount"
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "transaction_id"
+        },
+        "is_borne_by_party": {
+          "columnName": "is_borne_by_party",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "is_borne_by_party"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "sale_proforma_invoice_expense_gross_amount": {
+          "columnName": "sale_proforma_invoice_expense_gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_expense_gross_amount"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "payment_reference_number": {
+          "columnName": "payment_reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_reference_number"
+        },
+        "payment_remarks": {
+          "columnName": "payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_expenses",
+          "columnSourceOriginalColumn": "payment_remarks"
+        }
+      },
+      "viewQuery": "SELECT\n(COALESCE(act_sale_proforma_invoice_expenses.sale_proforma_invoice_expense_gross_amount, 0) * (COALESCE(act_sale_proforma_invoice_expenses.tax_rate_percentage, 0) / 100)) AS tax_amount,\n    act_ledger_accounts.ledger_account_name,\n    act_tax_rates.tax_rate_name,\n    act_payment_methods.payment_method_name,\n    act_sale_proforma_invoice_expenses.*\nFROM act_sale_proforma_invoice_expenses\nLEFT JOIN act_tax_rates ON act_sale_proforma_invoice_expenses.tax_rate_id = act_tax_rates.tax_rate_id \nLEFT JOIN act_payment_methods ON act_sale_proforma_invoice_expenses.payment_method_id = act_payment_methods.payment_method_id \nLEFT JOIN act_ledger_accounts ON act_sale_proforma_invoice_expenses.ledger_account_id = act_ledger_accounts.ledger_account_id;"
+    },
+    "act_vw_sale_proforma_invoice_medias": {
+      "viewName": "act_vw_sale_proforma_invoice_medias",
+      "viewColumns": {
+        "sale_proforma_invoice_media_id": {
+          "columnName": "sale_proforma_invoice_media_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_medias",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_media_id"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_medias",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "media_details": {
+          "columnName": "media_details",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_details"
+        },
+        "media_id": {
+          "columnName": "media_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_id"
+        },
+        "media_name": {
+          "columnName": "media_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_name"
+        },
+        "media_path": {
+          "columnName": "media_path",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_path"
+        },
+        "media_size": {
+          "columnName": "media_size",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_size"
+        },
+        "media_type": {
+          "columnName": "media_type",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_type"
+        },
+        "media_remarks": {
+          "columnName": "media_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_medias",
+          "columnSourceOriginalColumn": "media_remarks"
+        }
+      },
+      "viewQuery": "SELECT act_sale_proforma_invoice_medias.sale_proforma_invoice_media_id,act_sale_proforma_invoice_medias.sale_proforma_invoice_id,act_medias.* FROM act_sale_proforma_invoice_medias LEFT JOIN act_medias ON act_medias.media_id = act_sale_proforma_invoice_medias.media_id"
+    },
+    "act_vw_sale_proforma_invoice_payments": {
+      "viewName": "act_vw_sale_proforma_invoice_payments",
+      "viewColumns": {
+        "payment_method_name": {
+          "columnName": "payment_method_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_name"
+        },
+        "payment_method_image_media": {
+          "columnName": "payment_method_image_media",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_payment_methods",
+          "columnSourceOriginalColumn": "payment_method_image_media"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "payment_method_id": {
+          "columnName": "payment_method_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "payment_method_id"
+        },
+        "reference_number": {
+          "columnName": "reference_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "reference_number"
+        },
+        "sale_proforma_invoice_payment_remarks": {
+          "columnName": "sale_proforma_invoice_payment_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_payment_remarks"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "sale_proforma_invoice_payment_amount": {
+          "columnName": "sale_proforma_invoice_payment_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_payment_amount"
+        },
+        "sale_proforma_invoice_payment_datetime": {
+          "columnName": "sale_proforma_invoice_payment_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_payment_datetime"
+        },
+        "sale_proforma_invoice_payment_id": {
+          "columnName": "sale_proforma_invoice_payment_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_payment_id"
+        },
+        "sale_proforma_invoice_payment_status": {
+          "columnName": "sale_proforma_invoice_payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_payment_status"
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_payments",
+          "columnSourceOriginalColumn": "transaction_id"
+        }
+      },
+      "viewQuery": "SELECT act_vw_payment_methods.payment_method_name,act_vw_payment_methods.payment_method_image_media,act_sale_proforma_invoice_payments.* FROM act_sale_proforma_invoice_payments LEFT JOIN act_vw_payment_methods ON act_sale_proforma_invoice_payments.payment_method_id = act_vw_payment_methods.payment_method_id"
+    },
+    "act_vw_sale_proforma_invoice_products": {
+      "viewName": "act_vw_sale_proforma_invoice_products",
+      "viewColumns": {
+        "gross_amount": {
+          "columnName": "gross_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Gross Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_trade_amount": {
+          "columnName": "discount_trade_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "TD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_cash_amount": {
+          "columnName": "discount_cash_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "CD Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "discount_rebate_amount": {
+          "columnName": "discount_rebate_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rebate Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "taxable_amount": {
+          "columnName": "taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Taxable Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "tax_amount": {
+          "columnName": "tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Tax Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Rounding AMount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "product_name": {
+          "columnName": "product_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "product_name"
+        },
+        "hsn_code": {
+          "columnName": "hsn_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "hsn_code"
+        },
+        "product_image_media": {
+          "columnName": "product_image_media",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_products",
+          "columnSourceOriginalColumn": "product_image_media"
+        },
+        "tax_rate_name": {
+          "columnName": "tax_rate_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_tax_rates",
+          "columnSourceOriginalColumn": "tax_rate_name"
+        },
+        "product_uom_name": {
+          "columnName": "product_uom_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_product_uoms",
+          "columnSourceOriginalColumn": "product_uom_name"
+        },
+        "discount_cash_percentage": {
+          "columnName": "discount_cash_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "discount_cash_percentage"
+        },
+        "discount_rebate_percentage": {
+          "columnName": "discount_rebate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "discount_rebate_percentage"
+        },
+        "discount_trade_percentage": {
+          "columnName": "discount_trade_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "discount_trade_percentage"
+        },
+        "display_index": {
+          "columnName": "display_index",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "display_index"
+        },
+        "inventory_tracking_id": {
+          "columnName": "inventory_tracking_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "inventory_tracking_id"
+        },
+        "product_description": {
+          "columnName": "product_description",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_description"
+        },
+        "product_id": {
+          "columnName": "product_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_id"
+        },
+        "product_price_gross": {
+          "columnName": "product_price_gross",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_price_gross"
+        },
+        "product_price_final": {
+          "columnName": "product_price_final",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_price_final"
+        },
+        "product_quantity": {
+          "columnName": "product_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_quantity"
+        },
+        "product_uom_id": {
+          "columnName": "product_uom_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_uom_id"
+        },
+        "product_total_quantity": {
+          "columnName": "product_total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_total_quantity"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "sale_proforma_invoice_product_id": {
+          "columnName": "sale_proforma_invoice_product_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_product_id"
+        },
+        "product_status": {
+          "columnName": "product_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_status"
+        },
+        "tax_rate_id": {
+          "columnName": "tax_rate_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "tax_rate_id"
+        },
+        "tax_rate_percentage": {
+          "columnName": "tax_rate_percentage",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "tax_rate_percentage"
+        },
+        "product_amount": {
+          "columnName": "product_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_amount"
+        },
+        "product_price_mrp": {
+          "columnName": "product_price_mrp",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_price_mrp"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "sale_proforma_invoice_product_remarks": {
+          "columnName": "sale_proforma_invoice_product_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_product_remarks"
+        },
+        "product_batch_code": {
+          "columnName": "product_batch_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "product_batch_code"
+        },
+        "expiry_time": {
+          "columnName": "expiry_time",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "expiry_time"
+        },
+        "manufacturing_time": {
+          "columnName": "manufacturing_time",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoice_products",
+          "columnSourceOriginalColumn": "manufacturing_time"
+        }
+      },
+      "viewQuery": "SELECT \nROUND(product_amount - ((\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) +\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    )),4) AS rounding_amount,\n\n    (\n        COALESCE(sip.product_quantity, 0) *\n        COALESCE(sip.product_price_gross, 0)\n    ) AS gross_amount,\n\n    (\n        (\n            COALESCE(sip.product_quantity, 0) *\n            COALESCE(sip.product_price_gross, 0)\n        ) * (COALESCE(sip.discount_trade_percentage, 0) / 100)\n    ) AS discount_trade_amount,\n\n    (\n        (\n            (\n                COALESCE(sip.product_quantity, 0) *\n                COALESCE(sip.product_price_gross, 0)\n            ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_cash_percentage, 0) / 100)\n    ) AS discount_cash_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (COALESCE(sip.discount_rebate_percentage, 0) / 100)\n    ) AS discount_rebate_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n    ) AS taxable_amount,\n\n    (\n        (\n            (\n                (\n                    COALESCE(sip.product_quantity, 0) *\n                    COALESCE(sip.product_price_gross, 0)\n                ) * (1 - (COALESCE(sip.discount_trade_percentage, 0) / 100))\n            ) * (1 - (COALESCE(sip.discount_cash_percentage, 0) / 100))\n        ) * (1 - (COALESCE(sip.discount_rebate_percentage, 0) / 100))\n        * (COALESCE(sip.tax_rate_percentage, 0) / 100)\n    ) AS tax_amount,\n\n    act_vw_products.product_name,\n    act_vw_products.hsn_code,\n    act_vw_products.product_image_media,\n    act_tax_rates.tax_rate_name,\n    act_product_uoms.product_uom_name,\n    sip.*\n\nFROM act_sale_proforma_invoice_products sip\nLEFT JOIN act_vw_products\n    ON sip.product_id = act_vw_products.product_id\nLEFT JOIN act_product_uoms\n    ON sip.product_uom_id = act_product_uoms.product_uom_id\nLEFT JOIN act_tax_rates\n    ON sip.tax_rate_id = act_tax_rates.tax_rate_id;"
+    },
+    "act_vw_sale_proforma_invoice_summary": {
+      "viewName": "act_vw_sale_proforma_invoice_summary",
+      "viewColumns": {
+        "products_count": {
+          "columnName": "products_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_received_amount": {
+          "columnName": "total_received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_amount": {
+          "columnName": "products_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_count": {
+          "columnName": "chargeable_services_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_amount": {
+          "columnName": "chargeable_services_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_count": {
+          "columnName": "expenses_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_amount": {
+          "columnName": "expenses_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "payments_count": {
+          "columnName": "payments_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "payments_amount": {
+          "columnName": "payments_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_tax_amount": {
+          "columnName": "total_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "products_tax_amount": {
+          "columnName": "products_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "chargeable_services_tax_amount": {
+          "columnName": "chargeable_services_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "expenses_tax_amount": {
+          "columnName": "expenses_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_taxable_amount": {
+          "columnName": "total_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_taxable_amount": {
+          "columnName": "total_trading_taxable_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_tax_amount": {
+          "columnName": "total_trading_tax_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_trading_amount": {
+          "columnName": "total_trading_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "rounding_amount": {
+          "columnName": "rounding_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "payment_methods_used": {
+          "columnName": "payment_methods_used",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT\n    doc.sale_proforma_invoice_id,\n    IFNULL(prd.products_count, 0) AS products_count,\n    ROUND(IFNULL(prd.products_tax_amount, 0),4) AS products_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0),4) AS products_amount,\n    IFNULL(ser.chargeable_services_count, 0) AS chargeable_services_count,\n    ROUND(IFNULL(ser.chargeable_services_tax_amount, 0),4) AS chargeable_services_tax_amount,\n\tROUND(IFNULL(ser.chargeable_services_amount, 0),4) AS chargeable_services_amount,\n    IFNULL(exp.expenses_count, 0) AS expenses_count,\n    ROUND(IFNULL(exp.expenses_tax_amount, 0),4) AS expenses_tax_amount,\n\tROUND(IFNULL(exp.expenses_amount, 0),4) AS expenses_amount,\n    IFNULL(pay.payments_count, 0) AS payments_count,\n    ROUND(IFNULL(pay.payments_amount, 0),4) AS payments_amount,\n\tpay.payment_methods_used,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0))-(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0)),4) AS total_trading_taxable_amount,\n\tROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0),4) AS total_trading_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0),4) AS total_trading_amount,\n\tROUND((IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0)),4) AS total_taxable_amount,\n    ROUND(IFNULL(prd.products_tax_amount, 0) + IFNULL(ser.chargeable_services_tax_amount, 0) + IFNULL(exp.expenses_tax_amount, 0),4) AS total_tax_amount,\n\tROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) AS total_amount,\n\tROUND((ROUND(IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0)) - (IFNULL(prd.products_amount, 0) + IFNULL(ser.chargeable_services_amount, 0) + IFNULL(exp.expenses_amount, 0))),4) AS rounding_amount,\n    ROUND(IFNULL(pay.payments_amount, 0), 4) AS total_received_amount\nFROM act_sale_proforma_invoices doc\nLEFT JOIN (\n    SELECT\n        sale_proforma_invoice_id,\n        COUNT(sale_proforma_invoice_product_id) AS products_count,\n        SUM((product_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS products_tax_amount,\n\t\tSUM(product_amount) AS products_amount\n    FROM act_sale_proforma_invoice_products\n    GROUP BY sale_proforma_invoice_id\n) prd ON prd.sale_proforma_invoice_id = doc.sale_proforma_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_proforma_invoice_id,\n        COUNT(sale_proforma_invoice_chargeable_service_id) AS chargeable_services_count,\n        SUM((chargeable_service_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS chargeable_services_tax_amount,\n\t\tSUM(chargeable_service_amount) AS chargeable_services_amount\n    FROM act_sale_proforma_invoice_chargeable_services\n    GROUP BY sale_proforma_invoice_id\n) ser ON ser.sale_proforma_invoice_id = doc.sale_proforma_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_proforma_invoice_id,\n        COUNT(sale_proforma_invoice_expense_id) AS expenses_count,\n\t\tSUM((sale_proforma_invoice_expense_amount * IFNULL(tax_rate_percentage,0))/(100 + IFNULL(tax_rate_percentage,0))) AS expenses_tax_amount,\n\t\tSUM(sale_proforma_invoice_expense_amount) AS expenses_amount\n    FROM act_sale_proforma_invoice_expenses\n    WHERE include_in_amount = 1\n    GROUP BY sale_proforma_invoice_id\n) exp ON exp.sale_proforma_invoice_id = doc.sale_proforma_invoice_id\nLEFT JOIN (\n    SELECT\n        sale_proforma_invoice_id,\n\t\tGROUP_CONCAT(DISTINCT payment_method_name) AS payment_methods_used,\n        COUNT(sale_proforma_invoice_payment_id) AS payments_count,\n        SUM(sale_proforma_invoice_payment_amount) AS payments_amount\n    FROM act_sale_proforma_invoice_payments\n    LEFT JOIN act_payment_methods ON act_sale_proforma_invoice_payments.payment_method_id = act_payment_methods.payment_method_id\n    WHERE sale_proforma_invoice_payment_status = 'RECEIVED'\n    GROUP BY sale_proforma_invoice_id\n) pay ON pay.sale_proforma_invoice_id = doc.sale_proforma_invoice_id;"
+    },
+    "act_vw_sale_proforma_invoices": {
+      "viewName": "act_vw_sale_proforma_invoices",
+      "viewColumns": {
+        "customer_category": {
+          "columnName": "customer_category",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "customer_category"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "legal_identifier": {
+          "columnName": "legal_identifier",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "view",
+          "columnSourceName": "act_vw_customers",
+          "columnSourceOriginalColumn": "legal_identifier"
+        },
+        "address_line_1": {
+          "columnName": "address_line_1",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "address_line_1"
+        },
+        "address_line_2": {
+          "columnName": "address_line_2",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "address_line_2"
+        },
+        "landmark": {
+          "columnName": "landmark",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "landmark"
+        },
+        "latitude": {
+          "columnName": "latitude",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "latitude"
+        },
+        "longitude": {
+          "columnName": "longitude",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "longitude"
+        },
+        "city_name": {
+          "columnName": "city_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "city_name"
+        },
+        "postal_code": {
+          "columnName": "postal_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "postal_code"
+        },
+        "state_name": {
+          "columnName": "state_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "state_name"
+        },
+        "country_name": {
+          "columnName": "country_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_addresses",
+          "columnSourceOriginalColumn": "country_name"
+        },
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "accountee_id"
+        },
+        "currency_code": {
+          "columnName": "currency_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "currency_code"
+        },
+        "customer_id": {
+          "columnName": "customer_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "customer_id"
+        },
+        "device_id": {
+          "columnName": "device_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "device_id"
+        },
+        "exchange_rate": {
+          "columnName": "exchange_rate",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "exchange_rate"
+        },
+        "is_draft": {
+          "columnName": "is_draft",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "is_draft"
+        },
+        "sale_proforma_invoice_remarks": {
+          "columnName": "sale_proforma_invoice_remarks",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_remarks"
+        },
+        "sale_proforma_invoice_amount": {
+          "columnName": "sale_proforma_invoice_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_amount"
+        },
+        "sale_proforma_invoice_datetime": {
+          "columnName": "sale_proforma_invoice_datetime",
+          "columnType": "DATETIME",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_datetime"
+        },
+        "sale_proforma_invoice_id": {
+          "columnName": "sale_proforma_invoice_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_id"
+        },
+        "sale_proforma_invoice_number": {
+          "columnName": "sale_proforma_invoice_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_number"
+        },
+        "sale_term_id": {
+          "columnName": "sale_term_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_term_id"
+        },
+        "sale_proforma_invoice_status": {
+          "columnName": "sale_proforma_invoice_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_status"
+        },
+        "taxing_scheme_id": {
+          "columnName": "taxing_scheme_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "taxing_scheme_id"
+        },
+        "transaction_id": {
+          "columnName": "transaction_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "transaction_id"
+        },
+        "sale_proforma_invoice_type": {
+          "columnName": "sale_proforma_invoice_type",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_type"
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "user_id"
+        },
+        "products_count": {
+          "columnName": "products_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "products_count"
+        },
+        "received_amount": {
+          "columnName": "received_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "received_amount"
+        },
+        "chargeable_services_count": {
+          "columnName": "chargeable_services_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "chargeable_services_count"
+        },
+        "received_by": {
+          "columnName": "received_by",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "received_by"
+        },
+        "sale_proforma_invoice_details": {
+          "columnName": "sale_proforma_invoice_details",
+          "columnType": "JSON",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "sale_proforma_invoice_details"
+        },
+        "supply_mode": {
+          "columnName": "supply_mode",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "supply_mode"
+        },
+        "is_finalized": {
+          "columnName": "is_finalized",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "is_finalized"
+        },
+        "payment_status": {
+          "columnName": "payment_status",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "payment_status"
+        },
+        "address_id": {
+          "columnName": "address_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "address_id"
+        },
+        "is_credit": {
+          "columnName": "is_credit",
+          "columnType": "YES_NO",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "is_credit"
+        },
+        "vehicle_number": {
+          "columnName": "vehicle_number",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "vehicle_number"
+        },
+        "channel_type": {
+          "columnName": "channel_type",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "channel_type"
+        },
+        "channel_name": {
+          "columnName": "channel_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "channel_name"
+        },
+        "expenses_count": {
+          "columnName": "expenses_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "expenses_count"
+        },
+        "payments_count": {
+          "columnName": "payments_count",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "payments_count"
+        },
+        "payment_methods_used": {
+          "columnName": "payment_methods_used",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_sale_proforma_invoices",
+          "columnSourceOriginalColumn": "payment_methods_used"
+        }
+      },
+      "viewQuery": "SELECT \nact_vw_customers.customer_category,\nact_vw_customers.party_name,\nact_vw_customers.party_id,\nact_vw_customers.legal_identifier,\nact_addresses.address_line_1,\nact_addresses.address_line_2,\nact_addresses.landmark,\nact_addresses.latitude,\nact_addresses.longitude,\nact_addresses.city_name,\nact_addresses.postal_code,\nact_addresses.state_name,\nact_addresses.country_name,\nact_sale_proforma_invoices.* \nFROM act_sale_proforma_invoices \nLEFT JOIN act_vw_customers ON act_sale_proforma_invoices.customer_id = act_vw_customers.customer_id \nLEFT JOIN act_addresses ON act_sale_proforma_invoices.address_id = act_addresses.address_id"
+    },
     "act_vw_sale_quotation_chargeable_services": {
       "viewName": "act_vw_sale_quotation_chargeable_services",
       "viewColumns": {
@@ -48707,6 +52215,218 @@ export const dataDictionaryJson = {
       },
       "viewQuery": "SELECT * FROM act_storage_locations"
     },
+    "act_vw_supplier_chargeable_services_summary": {
+      "viewName": "act_vw_supplier_chargeable_services_summary",
+      "viewColumns": {
+        "chargeable_service_name": {
+          "columnName": "chargeable_service_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_name"
+        },
+        "chargeable_service_id": {
+          "columnName": "chargeable_service_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_id"
+        },
+        "chargeable_service_code": {
+          "columnName": "chargeable_service_code",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_chargeable_services",
+          "columnSourceOriginalColumn": "chargeable_service_code"
+        },
+        "supplier_id": {
+          "columnName": "supplier_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_suppliers",
+          "columnSourceOriginalColumn": "supplier_id"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_suppliers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_parties",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "total_quantity": {
+          "columnName": "total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Quantity"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "invoices_count": {
+          "columnName": "invoices_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Invoices Count"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "last_transaction_time": {
+          "columnName": "last_transaction_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Purchased On"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT \nSUM(chargeable_service_total_quantity) AS total_quantity,\nSUM(chargeable_service_amount) AS total_amount,\nCOUNT(act_purchase_invoices.purchase_invoice_id) AS invoices_count,\nMAX(act_purchase_invoices.purchase_invoice_datetime) AS last_transaction_time,\nact_chargeable_services.chargeable_service_name, act_chargeable_services.chargeable_service_id, act_chargeable_services.chargeable_service_code, \nact_suppliers.supplier_id,act_suppliers.party_id,act_parties.party_name\nFROM act_purchase_invoice_chargeable_services \nLEFT JOIN act_purchase_invoices ON act_purchase_invoice_chargeable_services.purchase_invoice_id = act_purchase_invoices.purchase_invoice_id\nLEFT JOIN act_chargeable_services ON act_purchase_invoice_chargeable_services.chargeable_service_id = act_chargeable_services.chargeable_service_id\nLEFT JOIN act_suppliers ON act_purchase_invoices.supplier_id = act_suppliers.supplier_id \nLEFT JOIN act_parties ON act_suppliers.party_id = act_parties.party_id \nWHERE act_purchase_invoices.supplier_id IS NOT NULL\nGROUP BY act_chargeable_services.chargeable_service_id"
+    },
+    "act_vw_supplier_products_summary": {
+      "viewName": "act_vw_supplier_products_summary",
+      "viewColumns": {
+        "product_name": {
+          "columnName": "product_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_name"
+        },
+        "product_id": {
+          "columnName": "product_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_id"
+        },
+        "product_sku": {
+          "columnName": "product_sku",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_products",
+          "columnSourceOriginalColumn": "product_sku"
+        },
+        "supplier_id": {
+          "columnName": "supplier_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_suppliers",
+          "columnSourceOriginalColumn": "supplier_id"
+        },
+        "party_id": {
+          "columnName": "party_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_suppliers",
+          "columnSourceOriginalColumn": "party_id"
+        },
+        "party_name": {
+          "columnName": "party_name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "act_parties",
+          "columnSourceOriginalColumn": "party_name"
+        },
+        "total_quantity": {
+          "columnName": "total_quantity",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Quantity"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "total_amount": {
+          "columnName": "total_amount",
+          "columnType": "DOUBLE",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Total Amount"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "invoices_count": {
+          "columnName": "invoices_count",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Invoices Count"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        },
+        "last_transaction_time": {
+          "columnName": "last_transaction_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Last Purchased On"
+            }
+          },
+          "columnSource": "function",
+          "columnSourceName": "",
+          "columnSourceOriginalColumn": ""
+        }
+      },
+      "viewQuery": "SELECT \nSUM(product_total_quantity) AS total_quantity,\nSUM(product_amount) AS total_amount,\nCOUNT(act_purchase_invoices.purchase_invoice_id) AS invoices_count,\nMAX(act_purchase_invoices.purchase_invoice_datetime) AS last_transaction_time,\nact_products.product_name, act_products.product_id, act_products.product_sku, \nact_suppliers.supplier_id,act_suppliers.party_id,act_parties.party_name\nFROM act_purchase_invoice_products \nLEFT JOIN act_purchase_invoices ON act_purchase_invoice_products.purchase_invoice_id = act_purchase_invoices.purchase_invoice_id\nLEFT JOIN act_products ON act_purchase_invoice_products.product_id = act_products.product_id\nLEFT JOIN act_suppliers ON act_purchase_invoices.supplier_id = act_suppliers.supplier_id \nLEFT JOIN act_parties ON act_suppliers.party_id = act_parties.party_id \nWHERE act_purchase_invoices.supplier_id IS NOT NULL\nGROUP BY act_products.product_id"
+    },
     "act_vw_suppliers": {
       "viewName": "act_vw_suppliers",
       "viewColumns": {
@@ -52468,6 +56188,191 @@ export const dataDictionaryJson = {
       "destinationTable": "act_sale_coupon_uses",
       "sourceColumn": "transaction_id",
       "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "accountee_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "accountee_id",
+      "sourceTable": "act_accountees"
+    },
+    {
+      "destinationColumn": "currency_code",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "currency_code",
+      "sourceTable": "act_currencies"
+    },
+    {
+      "destinationColumn": "customer_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "customer_id",
+      "sourceTable": "act_customers"
+    },
+    {
+      "destinationColumn": "device_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "device_id",
+      "sourceTable": "act_devices"
+    },
+    {
+      "destinationColumn": "sale_term_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "sale_term_id",
+      "sourceTable": "act_sale_terms"
+    },
+    {
+      "destinationColumn": "taxing_scheme_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "taxing_scheme_id",
+      "sourceTable": "act_taxing_schemes"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_sale_proforma_invoices",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "chargeable_service_id",
+      "destinationTable": "act_sale_proforma_invoice_chargeable_services",
+      "sourceColumn": "chargeable_service_id",
+      "sourceTable": "act_chargeable_services"
+    },
+    {
+      "destinationColumn": "chargeable_service_uom_id",
+      "destinationTable": "act_sale_proforma_invoice_chargeable_services",
+      "sourceColumn": "chargeable_service_uom_id",
+      "sourceTable": "act_chargeable_service_uoms"
+    },
+    {
+      "cascadeDeleteDestination": true,
+      "destinationColumn": "sale_proforma_invoice_id",
+      "destinationTable": "act_sale_proforma_invoice_chargeable_services",
+      "sourceColumn": "sale_proforma_invoice_id",
+      "sourceTable": "act_sale_proforma_invoices"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_proforma_invoice_chargeable_services",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "currency_code",
+      "destinationTable": "act_sale_proforma_invoice_chargeable_services",
+      "sourceColumn": "currency_code",
+      "sourceTable": "act_currencies"
+    },
+    {
+      "destinationColumn": "currency_code",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "currency_code",
+      "sourceTable": "act_currencies"
+    },
+    {
+      "destinationColumn": "ledger_account_id",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "ledger_account_id",
+      "sourceTable": "act_ledger_accounts"
+    },
+    {
+      "cascadeDeleteDestination": true,
+      "destinationColumn": "sale_proforma_invoice_id",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "sale_proforma_invoice_id",
+      "sourceTable": "act_sale_proforma_invoices"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_proforma_invoice_expenses",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "cascadeDeleteDestination": true,
+      "destinationColumn": "sale_proforma_invoice_id",
+      "destinationTable": "act_sale_proforma_invoice_medias",
+      "sourceColumn": "sale_proforma_invoice_id",
+      "sourceTable": "act_sale_proforma_invoices"
+    },
+    {
+      "destinationColumn": "media_id",
+      "destinationTable": "act_sale_proforma_invoice_medias",
+      "sourceColumn": "media_id",
+      "sourceTable": "act_medias"
+    },
+    {
+      "destinationColumn": "currency_code",
+      "destinationTable": "act_sale_proforma_invoice_payments",
+      "sourceColumn": "currency_code",
+      "sourceTable": "act_currencies"
+    },
+    {
+      "destinationColumn": "payment_method_id",
+      "destinationTable": "act_sale_proforma_invoice_payments",
+      "sourceColumn": "payment_method_id",
+      "sourceTable": "act_payment_methods"
+    },
+    {
+      "cascadeDeleteDestination": true,
+      "destinationColumn": "sale_proforma_invoice_id",
+      "destinationTable": "act_sale_proforma_invoice_payments",
+      "sourceColumn": "sale_proforma_invoice_id",
+      "sourceTable": "act_sale_proforma_invoices"
+    },
+    {
+      "destinationColumn": "transaction_id",
+      "destinationTable": "act_sale_proforma_invoice_payments",
+      "sourceColumn": "transaction_id",
+      "sourceTable": "act_transactions"
+    },
+    {
+      "destinationColumn": "currency_code",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "currency_code",
+      "sourceTable": "act_currencies"
+    },
+    {
+      "destinationColumn": "inventory_tracking_id",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "inventory_tracking_id",
+      "sourceTable": "act_inventory_trackings"
+    },
+    {
+      "destinationColumn": "product_id",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "product_id",
+      "sourceTable": "act_products"
+    },
+    {
+      "destinationColumn": "product_uom_id",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "product_uom_id",
+      "sourceTable": "act_product_uoms"
+    },
+    {
+      "cascadeDeleteDestination": true,
+      "destinationColumn": "sale_proforma_invoice_id",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "sale_proforma_invoice_id",
+      "sourceTable": "act_sale_proforma_invoices"
+    },
+    {
+      "destinationColumn": "tax_rate_id",
+      "destinationTable": "act_sale_proforma_invoice_products",
+      "sourceColumn": "tax_rate_id",
+      "sourceTable": "act_tax_rates"
     }
   ]
 };

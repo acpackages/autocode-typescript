@@ -29,10 +29,10 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   }
 
   get currentDataValue() {
-     let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
-              if (previousValue == '' || previousValue == undefined) {
-                previousValue = null;
-              }
+    let previousValue = this.datagridRow.data[this.datagridColumn.columnKey];
+    if (previousValue == '' || previousValue == undefined) {
+      previousValue = null;
+    }
     return previousValue;
   }
 
@@ -47,14 +47,10 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
           if (this.datagridRow && this.datagridColumn && this.datagridApi) {
             if (this.datagridColumn.columnDefinition.useCellEditorForRenderer) {
               console.log("[AcDatagridOnAgGridCellEditor] Handle Blur");
-              const currentValue = this.currentInputValue;
-              const previousValue = this.currentDataValue;
-              if (this.isValueChanged || previousValue != currentValue) {
+              if (this.isValueChanged) {
                 this.isValueChanged = false;
                 this.updateCurrentData();
                 this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridCell! });
-                this.previousValue = currentValue;
-                console.log("[AcDatagridOnAgGridCellEditor] Handle Blur", this.previousValue, currentValue);
               }
               else {
                 // console.log(`[AcDatagridOnAgGridCellEditor] Value is not changed or old or current value not same | Value Changed : ${this.isValueChanged}, New Value : ${currentValue} | Old Value : ${previousValue}`);
@@ -83,8 +79,8 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
         const previousValue = this.currentDataValue;
 
         if (previousValue != currentValue) {
-          this.isValueChanged = true;
           this.updateCurrentData();
+          this.isValueChanged = true;
         }
         this.datagridApi!.eventHandler.handleCellKeyUp({ datagridCell: this.datagridCell, event: event as any });
         this.datagridApi!.eventHandler.handleRowKeyUp({ datagridRow: this.datagridRow, event: event as any });
@@ -158,7 +154,7 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
       return this.editor.getValue()
     }
     let value: any = this.element.value;
-    if(value == ''){
+    if (value == '') {
       value = null;
     }
     if (value != '' && value != undefined && value != null && this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Number) {
@@ -316,24 +312,21 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
     if (value == '' || value == undefined) {
       value = null;
     }
-    const previousValue = this.currentDataValue;
-    // console.log(`[AcDatagridOnAgGridCellEditor] Refreshing editor value | Previous Value : ${previousValue} | New Value : ${value}`);
-    if (value != previousValue) {
-      if (value != '' && value != undefined && value != null && this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Number) {
-        value = Number(value);
-      }
+    if (value != '' && value != undefined && value != null && this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Number) {
+      value = Number(value);
     }
     this.element.value = value ?? '';
     this.previousValue = value;
+    console.log("Refresh value",value,this.datagridColumn.columnKey)
     return true;
   }
 
   updateCurrentData() {
     const currentValue = this.currentInputValue;
-    if(this.params && this.params.node && this.params.node.setDataValue){
+    this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
+    if (this.params && this.params.node && this.params.node.setDataValue) {
       this.params.node.setDataValue(this.datagridColumn.columnKey, currentValue);
     }
-    this.datagridRow.data[this.datagridColumn.columnKey] = currentValue;
   }
 
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @nx/enforce-module-boundaries */
 import { AcElement, acRouter, AcViewChild } from "@autocode-ts/ac-runtime";
-import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowNumbersExtension, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowSelectionExtension } from '@autocode-ts/ac-browser';
+import { AcDatagridElement, AcDatagridApi, AcDatagridExtensionManager, AC_DATAGRID_EXTENSION_NAME, AcDatagridRowNumbersExtension, AcDatagridAutoAddNewRowExtension, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowSelectionExtension, AcEnumDatagridColumnAggregateFunction } from '@autocode-ts/ac-browser';
 import { AcDatagridOnAgGridExtension, AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME, AgGridOnAcDatagrid } from '@autocode-ts/ac-datagrid-on-ag-grid';
 import { customersData } from '../../data/customers-data';
 import { AcDelayedCallback, Autocode } from "@autocode-ts/autocode";
@@ -133,21 +133,14 @@ export class AggridLocalPage {
 
       this.datagridApi.columnDefinitions = [
         // { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65,pinnedOn:'LEFT' },
-        { field: 'customer_id', title: "Id", visible: true, allowEdit: true ,useCellEditorForRenderer:true},
+        { field: 'customer_id', title: "Id", visible: true, allowEdit: false ,useCellEditorForRenderer:true},
         {
-          field: 'first_name', title: "First Name", allowEdit: true,useCellEditorForRenderer:true,
-          extensionData: {
-            fixedEditor1: {
-              inputElementFunction: () => {
-                const input = document.createElement('input');
-                input.value = 'Test Name';
-                return input;
-              }
-            }
-          }
+          field: 'first_name', title: "First Name", allowEdit: false,useCellEditorForRenderer:true,
+          isGroup:true,
+          groupAggregateFunction:AcEnumDatagridColumnAggregateFunction.Count
         },
         {
-          field: 'last_name', title: "Last Name", allowEdit: true,useCellEditorForRenderer:true,
+          field: 'last_name', title: "Last Name", allowEdit: false,useCellEditorForRenderer:true,
           extensionData: {
             fixedEditor1: {
               inputElementFunction: () => {
@@ -159,7 +152,7 @@ export class AggridLocalPage {
           }
         },
         {
-          field: 'company', title: "Company", allowEdit: true,useCellEditorForRenderer:true,
+          field: 'company', title: "Company", allowEdit: false,useCellEditorForRenderer:true,
           extensionData: {
             fixedEditor1: {
               inputElementFunction: () => {
@@ -170,13 +163,13 @@ export class AggridLocalPage {
             }
           }
         },
-        { field: 'city', title: "City", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'country', title: "Country", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'phone_1', title: "Phone 1", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'phone_2', title: "Phone 2", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'email', title: "Email", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'subscription_date', title: "Subscription Date", allowEdit: true,useCellEditorForRenderer:true },
-        { field: 'website', title: "Website", allowEdit: true,useCellEditorForRenderer:true },
+        { field: 'city', title: "City", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'country', title: "Country", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'phone_1', title: "Phone 1", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'phone_2', title: "Phone 2", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'email', title: "Email", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'subscription_date', title: "Subscription Date", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'website', title: "Website", allowEdit: false,useCellEditorForRenderer:true },
 
       ];
 
@@ -198,7 +191,7 @@ export class AggridLocalPage {
     const multiplier = 1;
     let index: number = 0;
     for (let i = 0; i < multiplier; i++) {
-      for (const row of customersData.splice(0, 10)) {
+      for (const row of customersData.splice(0, 1000)) {
         index++;
         data.push({ index: index, ...row });
       }

@@ -1,4 +1,4 @@
-import { AcEnumDatagridColumnDataType, IAcDatagridColumnDefinition } from "@autocode-ts/ac-browser";
+import { AcEnumDatagridColumnAggregateFunction, AcEnumDatagridColumnDataType, IAcDatagridColumnDefinition } from "@autocode-ts/ac-browser";
 import type { ColDef } from 'ag-grid-community';
 
 export function acGetAgDataTypeFromAcDataType(dataType: any) {
@@ -18,7 +18,7 @@ export function acGetAgDataTypeFromAcDataType(dataType: any) {
   return result;
 }
 
-export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridColDef: IAcDatagridColumnDefinition | any }): ColDef {
+export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridColDef: IAcDatagridColumnDefinition }): ColDef {
   let editable: boolean = datagridColDef.allowEdit;
   if (datagridColDef.allowEdit != undefined) {
     editable = datagridColDef.allowEdit;
@@ -44,6 +44,33 @@ export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridCo
   };
   if(datagridColDef.pinnedOn){
     colDef.pinned = datagridColDef.pinnedOn.toLowerCase();
+  }
+  if(datagridColDef.isGroup){
+    colDef.rowGroup = true;
+    colDef.enableRowGroup = true;
+  }
+  if(datagridColDef.groupAggregateFunction){
+    if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Average){
+      colDef.aggFunc = "avg";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Count){
+      colDef.aggFunc = "count";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.First){
+      colDef.aggFunc = "first";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Last){
+      colDef.aggFunc = "last";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Min){
+      colDef.aggFunc = "min";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Max){
+      colDef.aggFunc = "max";
+    }
+    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Sum){
+      colDef.aggFunc = "sum";
+    }
   }
   if(colDef.filter){
     colDef.filter = 'agTextColumnFilter';

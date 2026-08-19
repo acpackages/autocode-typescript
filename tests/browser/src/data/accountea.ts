@@ -321,6 +321,55 @@ export const dataDictionaryJson = {
         }
       }
     },
+    "act_accountee_user_entities": {
+      "tableName": "act_accountee_user_entities",
+      "tableColumns": {
+        "accountee_member_id": {
+          "columnName": "accountee_member_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Accountee Memeber Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Accountee"
+            }
+          }
+        },
+        "user_entity_id": {
+          "columnName": "user_entity_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Member"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "accountee_user_entities"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "accountee_user_entity"
+        }
+      }
+    },
     "act_accountee_phone_numbers": {
       "tableName": "act_accountee_phone_numbers",
       "tableColumns": {
@@ -654,34 +703,6 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "financial_year_end": {
-          "columnName": "financial_year_end",
-          "columnType": "DATE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Financial Year End"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
-            }
-          }
-        },
-        "financial_year_start": {
-          "columnName": "financial_year_start",
-          "columnType": "DATE",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Financial Year Start"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
-            }
-          }
-        },
         "is_active": {
           "columnName": "is_active",
           "columnType": "YES_NO",
@@ -697,16 +718,6 @@ export const dataDictionaryJson = {
             "REQUIRED": {
               "propertyName": "REQUIRED",
               "propertyValue": true
-            }
-          }
-        },
-        "accountee_remarks": {
-          "columnName": "accountee_remarks",
-          "columnType": "TEXT",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
             }
           }
         },
@@ -806,50 +817,13 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "legal_identifier": {
-          "columnName": "legal_identifier",
-          "columnType": "STRING",
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "GST No."
-            }
-          }
-        },
-        "accountee_taxing_type": {
-          "columnName": "accountee_taxing_type",
-          "columnType": "STRING",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
-            },
-            "DEFAULT_VALUE": {
-              "propertyName": "DEFAULT_VALUE",
-              "propertyValue": "REGULAR"
-            },
-            "VALUE_OPTIONS": {
-              "propertyName": "VALUE_OPTIONS",
-              "propertyValue": [
-                {
-                  "value": "REGULAR",
-                  "label": "Regular"
-                },
-                {
-                  "value": "COMPOSITION",
-                  "label": "Composition"
-                }
-              ]
-            }
-          }
-        },
-        "is_remote": {
-          "columnName": "is_remote",
-          "columnType": "YES_NO",
-          "columnProperties": {
-            "COLUMN_TITLE": {
-              "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Is Remote?"
+              "propertyValue": "User"
             }
           }
         }
@@ -860,7 +834,7 @@ export const dataDictionaryJson = {
           "propertyValue": [
             {
               "type": "COMPOSITE_UNIQUE_KEY",
-              "value": "accountee_name,financial_year_end,financial_year_start"
+              "value": "accountee_name"
             }
           ]
         },
@@ -3144,6 +3118,65 @@ export const dataDictionaryJson = {
         }
       }
     },
+    "act_user_entities": {
+      "tableName": "act_user_entities",
+      "tableColumns": {
+        "user_entity_id": {
+          "columnName": "user_entity_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User Entity Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "user_entity_name": {
+          "columnName": "user_entity_name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User Entity Name"
+            }
+          }
+        },
+        "user_entity_image_media_id": {
+          "columnName": "user_entity_image_media_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User Entity Profile"
+            }
+          }
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "user_entities"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "user_entity"
+        }
+      }
+    },
     "act_notifications": {
       "tableName": "act_notifications",
       "tableColumns": {
@@ -4944,6 +4977,75 @@ export const dataDictionaryJson = {
         "PLURAL_NAME": {
           "propertyName": "PLURAL_NAME",
           "propertyValue": "trigger_flags"
+        }
+      }
+    },
+    "act_users": {
+      "tableName": "act_users",
+      "tableColumns": {
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "user_image_media_id": {
+          "columnName": "user_image_media_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Profile Media"
+            }
+          }
+        },
+        "mobile_number": {
+          "columnName": "mobile_number",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Mobile Number"
+            }
+          }
+        },
+        "name": {
+          "columnName": "name",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Name"
+            }
+          }
+        },
+        "accountee_id": {
+          "columnName": "accountee_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Accountee"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "users"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "user"
         }
       }
     },
@@ -8818,6 +8920,18 @@ export const dataDictionaryJson = {
       "destinationTable": "act_party_social_medias",
       "sourceColumn": "social_media_id",
       "sourceTable": "act_social_medias"
+    },
+    {
+      "destinationColumn": "accountee_id",
+      "destinationTable": "act_accountee_user_entities",
+      "sourceColumn": "accountee_id",
+      "sourceTable": "act_accountees"
+    },
+    {
+      "destinationColumn": "user_entity_id",
+      "destinationTable": "act_accountee_user_entities",
+      "sourceColumn": "user_entity_id",
+      "sourceTable": "act_user_entities"
     }
   ]
 };

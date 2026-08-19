@@ -9,12 +9,21 @@ import { Autocode } from "./autocode";
 import { blobToBase64 } from '@autocode-ts/ac-extensions';
 import { AcEnumHttpResponseCode } from "../enums/ac-enum-http-response-code.enum";
 
+export interface IAcHttpUploadProgressEvent {
+  loaded: number;
+  total?: number;
+  /** Upload completion percentage (0–100), or undefined when total is unknown */
+  percentage?: number;
+}
+
 export interface IAcHttpRequest {
   url:string,
   queryParams?: { [key: string]: string | number },
   data?:any,
   formData?:FormData
   headers?: { [key: string]: string }
+  /** Called periodically with upload progress while sending FormData/file payloads */
+  onUploadProgress?: (event: IAcHttpUploadProgressEvent) => void;
 }
 
 export interface IAcHttpResponse {
@@ -75,6 +84,16 @@ export class AcHttp {
       method: method.toLowerCase() as any,
       headers: request.headers,
       data: method === AcEnumHttpMethod.Get || method === AcEnumHttpMethod.Delete ? undefined : request.formData,
+      onUploadProgress: request.onUploadProgress
+        ? (progressEvent: any) => {
+            const total = progressEvent.total as number | undefined;
+            request.onUploadProgress!({
+              loaded: progressEvent.loaded as number,
+              total,
+              percentage: total ? Math.round((progressEvent.loaded * 100) / total) : undefined,
+            });
+          }
+        : undefined,
     };
 
     try {

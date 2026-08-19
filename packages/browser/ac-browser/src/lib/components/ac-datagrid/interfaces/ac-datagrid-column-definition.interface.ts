@@ -1,3 +1,5 @@
+import { AcEnumDatagridColumnAggregateFunction } from "../enums/ac-enum-datagrid-column-aggregate-function.enum";
+
 export interface IAcDatagridColumnDefinition {
   /* AcDoc({
     "description": "Set to `true` to have the grid allow sorting on this column."
@@ -96,6 +98,8 @@ export interface IAcDatagridColumnDefinition {
   tooltipField?: string;
 
   useCellEditorForRenderer?:boolean;
+  isGroup?:boolean;
+  groupAggregateFunction?:AcEnumDatagridColumnAggregateFunction;
 
   /* AcDoc({
     "description": A function or expression to format a value, should return a string."

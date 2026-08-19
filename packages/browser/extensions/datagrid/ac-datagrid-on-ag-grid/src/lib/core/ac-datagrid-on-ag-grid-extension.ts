@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType } from '@autocode-ts/ac-browser';
 import { ColDef, createGrid, ModuleRegistry, AllCommunityModule, GridApi, GetRowIdParams, GridOptions, IRowNode, IServerSideGetRowsParams, IServerSideDatasource, SuppressKeyboardEventParams, ClientSideRowModelModule, IServerSideGetRowsRequest, TextFilterModule, NumberFilterModule, DateFilterModule } from 'ag-grid-community';
-import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
+import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule,RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 import { AcDatagridRowSelectionExtensionOnAgGrid } from './ac-datagrid-row-selection-extension-on-ag-grid';
 import { IAcDatagriOnAgGridColDefsChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-col-defs-set-hook-args.interface';
 import { AcEnumDatagridOnAgGridHook } from '../enums/ac-enum-datagrid-on-ag-grid-hook.enum';
@@ -31,7 +31,9 @@ export function initAgGrid() {
     TextFilterModule,
     NumberFilterModule,
     DateFilterModule,
-    TreeDataModule
+    TreeDataModule,
+    RowGroupingModule,
+    RowGroupingPanelModule
   ]);
 }
 
@@ -131,6 +133,9 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     };
     this.gridOptions['onFirstDataRendered'] = () => {
       this.isFirstDataRendered = true;
+    };
+    this.gridOptions['onFilterChanged'] = (params) => {
+      this.syncRowsFromAgGrid();
     };
     this.gridOptions['rowModelType'] = 'serverSide';
     this.gridOptions['serverSideDatasource'] = this.onDemandDataSource;
@@ -1172,6 +1177,28 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       force:true,
       rowNodes:[rowNode]
     })
+  }
+
+  private syncRowsFromAgGrid(){
+    if(this.datagridApi && this.gridApi){
+       this.gridApi.forEachNode((node)=>{
+        const row = this.datagridApi.getRow({rowId:node.data['__ac_row_id__']});
+        if(row){
+          if(!row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]){
+            row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] = {};
+          }
+          if(node.rowIndex != undefined && node.rowIndex != null){
+            row.index = node.rowIndex;
+            row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected = node.isSelected();
+          }
+          else{
+            row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected = false;
+            row.index = -1;
+          }
+
+        }
+      });
+    }
   }
 }
 export const AC_DATAGRID_ON_AG_GRID_EXTENSION_NAME = 'agGridOnAcDatagrid';
