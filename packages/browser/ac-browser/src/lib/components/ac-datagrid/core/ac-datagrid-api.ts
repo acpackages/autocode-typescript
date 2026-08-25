@@ -309,17 +309,8 @@ export class AcDatagridApi {
   hoverColumnId?: string;
   hoverRowId?: string;
   lastColumnIndex: number = 0;
-  private _pagination?: AcPaginationElement;
-  get pagination(): AcPaginationElement {
-    if (!this._pagination) {
-      this._pagination = new AcPaginationElement();
-      this._pagination.bindDataManager({ dataManager: this.dataManager });
-    }
-    return this._pagination;
-  }
-  set pagination(value: AcPaginationElement) {
-    this._pagination = value;
-  }
+  logger: AcLogger = new AcLogger({ logMessages: false });
+  pagination?: AcPaginationElement;
   rowValueChangeTimeoutDuration = 250;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {
