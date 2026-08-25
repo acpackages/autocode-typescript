@@ -97,7 +97,30 @@ export class AcRepeaterApi{
   pagination?: AcPaginationElement;
   sortOrder: AcSortOrder = new AcSortOrder();
   rowRendererFunction?:any;
-  fields: IAcRepeaterField[] = [];
+
+  private _fields: IAcRepeaterField[] = [];
+  get fields(): IAcRepeaterField[] {
+    return this._fields;
+  }
+  set fields(value: IAcRepeaterField[]) {
+    this._fields = value ?? [];
+    this.updateHeaderFields();
+    this.hooks.execute({ hook: AcEnumRepeaterHook.FieldsChange, args: { fields: this._fields, repeaterApi: this } });
+    this.events.execute({ event: AcEnumRepeaterEvent.FieldsChange, args: { fields: this._fields, repeaterApi: this } });
+  }
+
+  updateHeaderFields() {
+    if (this.repeater) {
+      const filterEl = this.repeater.querySelector('ac-data-filter') as any;
+      if (filterEl) {
+        filterEl.fields = this._fields;
+      }
+      const sortEl = this.repeater.querySelector('ac-data-sort') as any;
+      if (sortEl) {
+        sortEl.fields = this._fields;
+      }
+    }
+  }
 
   constructor({ repeater }: { repeater: AcRepeaterElement }) {
     AcRepeaterExtensionManager.registerBuiltInExtensions();

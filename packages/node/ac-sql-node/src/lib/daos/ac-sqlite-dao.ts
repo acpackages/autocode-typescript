@@ -177,7 +177,7 @@ export class AcSqliteDao extends AcBaseSqlDao {
     const formattedRow = { ...row };
     for (const key in columnFormats) {
       const formats = columnFormats[key];
-      if (formattedRow.hasOwnProperty(key)) {
+      if (formattedRow[key] != undefined) {
         let value = formattedRow[key];
         if (typeof value === "string") {
           if (formats.includes(AcEnumDDColumnFormat.Encrypt)) {
@@ -453,7 +453,7 @@ export class AcSqliteDao extends AcBaseSqlDao {
       const db = await this._getConnection();
       const columns = Object.keys(row);
       const setValues = columns.map((key) => `${key} = ?`).join(", ");
-      
+
       const { statement: updatedCondition, statementParametersList: conditionParams } =
         this.setSqlStatementParameters({
           statement: condition,
@@ -463,7 +463,7 @@ export class AcSqliteDao extends AcBaseSqlDao {
 
       const sql = `UPDATE ${tableName} SET ${setValues} ${updatedCondition ? "WHERE " + updatedCondition : ""}`;
       const values = [...columns.map(c => row[c]), ...(conditionParams ?? [])];
-      
+
       const updateResult = await db.run(sql, values);
       result.affectedRowsCount = updateResult.changes;
       result.setSuccess();
@@ -489,10 +489,10 @@ export class AcSqliteDao extends AcBaseSqlDao {
           const row = rowWithCondition["row"] as Record<string, any>;
           const condition = rowWithCondition["condition"] as string;
           const conditionParameters = rowWithCondition["parameters"] ?? {};
-          
+
           const columns = Object.keys(row);
           const setValues = columns.map((key) => `${key} = ?`).join(", ");
-          
+
           const { statement: updatedCondition, statementParametersList: conditionParams } =
             this.setSqlStatementParameters({
               statement: condition,
@@ -502,7 +502,7 @@ export class AcSqliteDao extends AcBaseSqlDao {
 
           const sql = `UPDATE ${tableName} SET ${setValues} WHERE ${updatedCondition}`;
           const values = [...columns.map(c => row[c]), ...(conditionParams ?? [])];
-          
+
           const updateResult = await db.run(sql, values);
           result.affectedRowsCount = (result.affectedRowsCount ?? 0) + (updateResult.changes ?? 0);
         }

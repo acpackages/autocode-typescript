@@ -34,6 +34,20 @@ export class RepeaterOfflinePage {
 
     api.usePagination = true;
     api.showAddButton = true;
+
+    api.fields = [
+      {key:'customer_id',label:'CustomerId',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'first_name',label:'First Name',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'last_name',label:'Last Name',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'company',label:'Company',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'city',label:'City',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'country',label:'Country',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'phone_1',label:'Phone 1',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'phone_2',label:'Phone 2',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'email',label:'Email',allowFilter:true,allowSort:true,type:'STRING'},
+      {key:'subscription_date',label:'Subscription Date',allowFilter:true,allowSort:true,type:'DATE'},
+      {key:'website',label:'Website',allowFilter:true,allowSort:true,type:'STRING'}
+    ]
     api.rowRendererFunction = (args: IAcRepeaterRowRendererElementArgs) => {
       const data = args.row.data;
       // const instance = acCreateRuntimeInstance({type:RepeaterListItem});

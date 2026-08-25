@@ -3,3 +3,4 @@
 export * from './ac-datagrid-on-ag-grid-cell-renderer.element';
 export * from './ac-datagrid-on-ag-grid-cell-editor.element';
 export * from './ac-datagrid-on-ag-grid-fixed-editor-input.element';
+export * from './ac-datagrid-on-ag-grid-header.element';

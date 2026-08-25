@@ -135,9 +135,9 @@ export class AggridLocalPage {
         // { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65,pinnedOn:'LEFT' },
         { field: 'customer_id', title: "Id", visible: true, allowEdit: false ,useCellEditorForRenderer:true},
         {
-          field: 'first_name', title: "First Name", allowEdit: false,useCellEditorForRenderer:true,
-          isGroup:true,
-          groupAggregateFunction:AcEnumDatagridColumnAggregateFunction.Count
+          field: 'first_name', title: "First Name", allowEdit: false,useCellEditorForRenderer:true,allowFilter:true
+          // isGroup:true,
+          // groupAggregateFunction:AcEnumDatagridColumnAggregateFunction.Count
         },
         {
           field: 'last_name', title: "Last Name", allowEdit: false,useCellEditorForRenderer:true,
@@ -168,7 +168,8 @@ export class AggridLocalPage {
         { field: 'phone_1', title: "Phone 1", allowEdit: false,useCellEditorForRenderer:true },
         { field: 'phone_2', title: "Phone 2", allowEdit: false,useCellEditorForRenderer:true },
         { field: 'email', title: "Email", allowEdit: false,useCellEditorForRenderer:true },
-        { field: 'subscription_date', title: "Subscription Date", allowEdit: false,useCellEditorForRenderer:true },
+        { field: 'subscription_date', title: "Subscription Date", allowEdit: false,useCellEditorForRenderer:true, dataType:"DATE" },
+        { field: 'salary', title: "Salary", allowEdit: false, useCellEditorForRenderer: true, dataType: "NUMBER" },
         { field: 'website', title: "Website", allowEdit: false,useCellEditorForRenderer:true },
 
       ];
@@ -191,7 +192,7 @@ export class AggridLocalPage {
     const multiplier = 1;
     let index: number = 0;
     for (let i = 0; i < multiplier; i++) {
-      for (const row of customersData.splice(0, 1000)) {
+      for (const row of customersData.slice(0, 1000)) {
         index++;
         data.push({ index: index, ...row });
       }

@@ -20,6 +20,10 @@ export function numberIsOdd(num: number): boolean {
   return num % 2 !== 0;
 }
 
+export function numberIsValid(value: unknown): boolean {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
 /**
  * Formats a number according to specified options or a simplified format string.
  * This function specifically handles '0,0.00' style formats for Intl.NumberFormat.

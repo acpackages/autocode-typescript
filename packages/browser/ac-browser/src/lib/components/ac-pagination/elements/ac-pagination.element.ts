@@ -2,8 +2,7 @@
 import { AcDataManager, AC_DATA_MANAGER_EVENT } from "@autocode-ts/autocode";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_PAGINATION_TAG, AcEnumPaginationEvent, AcPaginationDisplayedRowsElement } from "../_ac-pagination.export";
-import { AcPaginationCssClassName } from "../consts/ac-pagination-css-class-name.const";
+import { AcEnumPaginationEvent, AcPaginationCssClassName, acPaginationElementHtml, acPaginationTags } from "../_ac-pagination.export";
 import { IAcPaginationPageChangeEvent, IAcPaginationPageSizeChangeEvent } from "../interfaces/_interfaces.export";
 import { AcPaginationNavigationButtonsElement } from "./ac-pagination-navigation-buttons.element";
 import { AcPaginationSizeDropdownElement } from "./ac-pagination-size-dropdown.element";
@@ -79,8 +78,6 @@ export class AcPaginationElement extends AcElementBase {
       this.updateDisplayedRows();
     }
   }
-
-  displayedRows: AcPaginationDisplayedRowsElement = new AcPaginationDisplayedRowsElement();
   navigationButtons: AcPaginationNavigationButtonsElement = new AcPaginationNavigationButtonsElement();
   sizeDropdown: AcPaginationSizeDropdownElement = new AcPaginationSizeDropdownElement();
 
@@ -114,15 +111,14 @@ export class AcPaginationElement extends AcElementBase {
 
   override init() {
     super.init();
-    this.displayedRows.pagination = this;
     this.navigationButtons.pagination = this;
     this.sizeDropdown.pagination = this;
 
     acAddClassToElement({ class_: AcPaginationCssClassName.acPagination, element: this });
+    acAddClassToElement({ class_: 'ac-res-container', element: this });
     acClearElement({ element: this });
 
     this.append(this.navigationButtons);
-    this.append(this.displayedRows);
     this.append(this.sizeDropdown);
     this.handleShowAddButton();
 
@@ -134,8 +130,8 @@ export class AcPaginationElement extends AcElementBase {
       if (!this.addButton) {
         this.addButton = this.ownerDocument.createElement('button');
         this.addButton.setAttribute('type', 'button');
-        this.addButton.classList.add('btn-ac-repeater-add');
-        this.addButton.innerHTML = '+ Add';
+        this.addButton.setAttribute('class','ac-pagination-add-btn');
+        this.addButton.innerHTML = acPaginationElementHtml.add;
         this.addButton.addEventListener('click',()=>{
           this.dispatchEvent(new CustomEvent('add'));
         });
@@ -193,9 +189,6 @@ export class AcPaginationElement extends AcElementBase {
         }
       }
     }
-    if (this.displayedRows) {
-      this.displayedRows.render();
-    }
     if (this.navigationButtons) {
       this.navigationButtons.render();
     }
@@ -203,4 +196,4 @@ export class AcPaginationElement extends AcElementBase {
 
 }
 
-acRegisterCustomElement({ tag: AC_PAGINATION_TAG.pagination, type: AcPaginationElement });
+acRegisterCustomElement({ tag: acPaginationTags.pagination, type: AcPaginationElement });

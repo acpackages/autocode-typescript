@@ -50,7 +50,7 @@ export class AcDDTable {
     const result = new AcDDTable();
     const acDataDictionary = AcDataDictionary.getInstance({ dataDictionaryName });
 
-    if (acDataDictionary.tables.hasOwnProperty(tableName)) {
+    if (acDataDictionary.tables[tableName] != undefined) {
       result.fromJson({ jsonData: acDataDictionary.tables[tableName] });
     }
     else{

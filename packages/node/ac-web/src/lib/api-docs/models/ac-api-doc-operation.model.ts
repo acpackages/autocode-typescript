@@ -26,12 +26,12 @@ export class AcApiDocOperation {
   fromJson({ jsonData }: { jsonData: Record<string, any> }): this {
     const json = { ...jsonData };
 
-    if (json.hasOwnProperty(AcApiDocOperation.KEY_RESPONSES)) {
+    if (json[AcApiDocOperation.KEY_RESPONSES] != undefined) {
       const responsesMap: Record<string, AcApiDocResponse> = {};
       const responsesJson = json[AcApiDocOperation.KEY_RESPONSES];
       if (responsesJson && typeof responsesJson === 'object') {
         for (const status in responsesJson) {
-          if (responsesJson.hasOwnProperty(status)) {
+          if (responsesJson[status] != undefined) {
             responsesMap[status] = AcApiDocResponse.instanceFromJson({ jsonData: responsesJson[status] });
           }
         }
@@ -62,7 +62,7 @@ export class AcApiDocOperation {
     if (Object.keys(this.responses).length > 0) {
       const respJson: Record<string, any> = {};
       for (const status in this.responses) {
-        if (this.responses.hasOwnProperty(status)) {
+        if (this.responses[status] != undefined) {
           respJson[status] = this.responses[status].toJson();
         }
       }

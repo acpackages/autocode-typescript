@@ -10,7 +10,8 @@ export const customersData = [
     "phone_2": "480-078-0535x889",
     "email": "nicolas00@faulkner-kramer.com",
     "subscription_date": "2020-11-29",
-    "website": "https://nelson.com/"
+    "website": "https://nelson.com/",
+    "salary": 120000
   },
   {
     "customer_id": "fed28edf-37b9-4f6d-b3a2-bfaf9a7ee68d",
@@ -23,7 +24,8 @@ export const customersData = [
     "phone_2": "+1-752-593-4777x07171",
     "email": "yfarley@morgan.com",
     "subscription_date": "2021-01-03",
-    "website": "https://pineda-rogers.biz/"
+    "website": "https://pineda-rogers.biz/",
+    "salary": 141000
   },
   {
     "customer_id": "97667fd4-fbd2-48ea-a42f-6391505370e7",
@@ -36,7 +38,8 @@ export const customersData = [
     "phone_2": "+1-311-216-7855",
     "email": "jennyhayden@petty.org",
     "subscription_date": "2021-06-20",
-    "website": "https://mckinney.com/"
+    "website": "https://mckinney.com/",
+    "salary": 144000
   },
   {
     "customer_id": "6135d9f4-8357-4a88-a649-5abee25a86e5",
@@ -49,7 +52,8 @@ export const customersData = [
     "phone_2": "521-630-3858x953",
     "email": "igrimes@ruiz-todd.org",
     "subscription_date": "2020-02-13",
-    "website": "https://dominguez.biz/"
+    "website": "https://dominguez.biz/",
+    "salary": 153000
   },
   {
     "customer_id": "fa51d247-f53c-4f25-8436-9de299bb9160",
@@ -62,7 +66,8 @@ export const customersData = [
     "phone_2": "(633)283-6034x500",
     "email": "diamondcarter@jordan.com",
     "subscription_date": "2020-10-20",
-    "website": "http://murillo-ryan.com/"
+    "website": "http://murillo-ryan.com/",
+    "salary": 125000
   },
   {
     "customer_id": "49a8e767-5db1-4edb-a98c-f15384e1f17f",
@@ -75,7 +80,8 @@ export const customersData = [
     "phone_2": "822-449-7638",
     "email": "mannkiara@bowman.com",
     "subscription_date": "2020-02-19",
-    "website": "https://www.richard.biz/"
+    "website": "https://www.richard.biz/",
+    "salary": 37000
   },
   {
     "customer_id": "09d4e454-9d1d-458f-b82d-ea9f7e54fec4",
@@ -88,7 +94,8 @@ export const customersData = [
     "phone_2": "926-957-7052x6181",
     "email": "dlynn@palmer-morgan.com",
     "subscription_date": "2020-03-31",
-    "website": "https://www.washington.org/"
+    "website": "https://www.washington.org/",
+    "salary": 45000
   },
   {
     "customer_id": "385e71ea-77f5-4e2f-8f02-3f7260952428",
@@ -101,7 +108,8 @@ export const customersData = [
     "phone_2": "076.454.1128",
     "email": "joy45@conner.org",
     "subscription_date": "2021-03-20",
-    "website": "http://www.armstrong-golden.com/"
+    "website": "http://www.armstrong-golden.com/",
+    "salary": 176000
   },
   {
     "customer_id": "a680504b-8b54-4b1e-85a1-65d8eeafdcde",
@@ -114,7 +122,8 @@ export const customersData = [
     "phone_2": "852.896.9192x3681",
     "email": "stacydavis@spencer.com",
     "subscription_date": "2020-01-16",
-    "website": "https://watson.com/"
+    "website": "https://watson.com/",
+    "salary": 153000
   },
   {
     "customer_id": "c9c664d5-32f8-4fa7-be55-841d1dcf1b86",
@@ -127,7 +136,8 @@ export const customersData = [
     "phone_2": "931.227.4541",
     "email": "danhouston@moon.net",
     "subscription_date": "2022-05-18",
-    "website": "https://www.farley.net/"
+    "website": "https://www.farley.net/",
+    "salary": 50000
   },
   {
     "customer_id": "e45167f6-f177-4560-ae7f-96aea2f26b15",
@@ -140,7 +150,8 @@ export const customersData = [
     "phone_2": "037-375-9588x561",
     "email": "batesbill@jensen.net",
     "subscription_date": "2020-05-22",
-    "website": "http://alvarez.com/"
+    "website": "http://alvarez.com/",
+    "salary": 58000
   },
   {
     "customer_id": "e090b496-6ca8-417e-866a-ffefcf6a1f84",
@@ -153,7 +164,8 @@ export const customersData = [
     "phone_2": "500-005-1315",
     "email": "sherry62@robinson.org",
     "subscription_date": "2020-01-17",
-    "website": "https://carlson-johnston.com/"
+    "website": "https://carlson-johnston.com/",
+    "salary": 129000
   },
   {
     "customer_id": "f05033fe-dfbd-4437-823c-6f67edd2b8da",
@@ -166,7 +178,8 @@ export const customersData = [
     "phone_2": "001-367-405-8096x592",
     "email": "ivillarreal@fowler.biz",
     "subscription_date": "2020-09-11",
-    "website": "https://foley.com/"
+    "website": "https://foley.com/",
+    "salary": 54000
   },
   {
     "customer_id": "1a516e60-3d52-462b-9407-c54742b02ff8",
@@ -179,7 +192,8 @@ export const customersData = [
     "phone_2": "(265)475-2386x9812",
     "email": "duransheena@hughes.com",
     "subscription_date": "2021-10-09",
-    "website": "https://franco-galloway.com/"
+    "website": "https://franco-galloway.com/",
+    "salary": 164000
   },
   {
     "customer_id": "f95f85ea-d49b-476e-9d3d-effb1d4812c3",
@@ -192,7 +206,8 @@ export const customersData = [
     "phone_2": "900.196.1169x767",
     "email": "albertparsons@shea.com",
     "subscription_date": "2020-04-29",
-    "website": "https://howard-boyer.net/"
+    "website": "https://howard-boyer.net/",
+    "salary": 108000
   },
   {
     "customer_id": "bcf3c076-b15b-43e5-bc1b-a8720dc710c1",
@@ -205,7 +220,8 @@ export const customersData = [
     "phone_2": "+1-943-399-6212x1474",
     "email": "rita82@carey.com",
     "subscription_date": "2021-04-16",
-    "website": "https://ashley-oneill.info/"
+    "website": "https://ashley-oneill.info/",
+    "salary": 78000
   },
   {
     "customer_id": "cdc5228e-0c3f-43b9-9d8d-761c3bc329d1",
@@ -218,7 +234,8 @@ export const customersData = [
     "phone_2": "001-253-461-6631x21150",
     "email": "housegreg@dillon.com",
     "subscription_date": "2021-11-29",
-    "website": "http://www.young.com/"
+    "website": "http://www.young.com/",
+    "salary": 64000
   },
   {
     "customer_id": "2653bd91-e589-4fcf-866b-93040c66803e",
@@ -231,7 +248,8 @@ export const customersData = [
     "phone_2": "166-747-2389x97375",
     "email": "jodyeverett@potter.com",
     "subscription_date": "2020-02-11",
-    "website": "https://www.knapp.net/"
+    "website": "https://www.knapp.net/",
+    "salary": 47000
   },
   {
     "customer_id": "92d56d33-a5a0-4738-82f6-b4280f2b1977",
@@ -244,7 +262,8 @@ export const customersData = [
     "phone_2": "(812)799-2828x896",
     "email": "beth75@noble.com",
     "subscription_date": "2021-10-16",
-    "website": "https://padilla.info/"
+    "website": "https://padilla.info/",
+    "salary": 170000
   },
   {
     "customer_id": "3bc387e8-21c9-421e-b50a-e37fd5ac55d1",
@@ -257,7 +276,8 @@ export const customersData = [
     "phone_2": "(813)152-5505x275",
     "email": "reginaldavila@stanley.com",
     "subscription_date": "2020-02-04",
-    "website": "http://patton-pineda.com/"
+    "website": "http://patton-pineda.com/",
+    "salary": 43000
   },
   {
     "customer_id": "dc2b60eb-8eed-4670-8d05-d92a21c701ad",
@@ -270,7 +290,8 @@ export const customersData = [
     "phone_2": "309.689.4293",
     "email": "debbie00@orozco.com",
     "subscription_date": "2020-03-08",
-    "website": "https://downs-meyers.com/"
+    "website": "https://downs-meyers.com/",
+    "salary": 121000
   },
   {
     "customer_id": "abd91bc7-f31f-48cc-a51f-6e3e1a34e086",
@@ -283,7 +304,8 @@ export const customersData = [
     "phone_2": "471.896.6847x82788",
     "email": "chambersdanielle@good-cannon.com",
     "subscription_date": "2022-03-28",
-    "website": "http://solis.org/"
+    "website": "http://solis.org/",
+    "salary": 78000
   },
   {
     "customer_id": "4ba18d77-d7f1-4e71-b6a7-3ab2d0c9b76c",
@@ -296,7 +318,8 @@ export const customersData = [
     "phone_2": "454-844-4833",
     "email": "nsellers@winters.org",
     "subscription_date": "2021-09-23",
-    "website": "http://black.com/"
+    "website": "http://black.com/",
+    "salary": 60000
   },
   {
     "customer_id": "5746f3e1-bc94-45be-ac40-ce23574327d0",
@@ -309,7 +332,8 @@ export const customersData = [
     "phone_2": "(125)064-8330x702",
     "email": "zmcguire@cline.org",
     "subscription_date": "2022-02-22",
-    "website": "https://mason.info/"
+    "website": "https://mason.info/",
+    "salary": 166000
   },
   {
     "customer_id": "2369bc2f-8a0c-42ce-9e5f-1d42ab4b8654",
@@ -322,7 +346,8 @@ export const customersData = [
     "phone_2": "+1-166-984-6479",
     "email": "pbird@kirk.com",
     "subscription_date": "2021-07-20",
-    "website": "https://morales-watson.org/"
+    "website": "https://morales-watson.org/",
+    "salary": 127000
   },
   {
     "customer_id": "e7568ed8-0247-478c-87b5-32a54a4b4be5",
@@ -335,7 +360,8 @@ export const customersData = [
     "phone_2": "623-138-7583x327",
     "email": "wrussell@bradshaw-nguyen.net",
     "subscription_date": "2020-04-17",
-    "website": "http://barker-padilla.net/"
+    "website": "http://barker-padilla.net/",
+    "salary": 68000
   },
   {
     "customer_id": "7c28d396-5ab9-4267-8a6e-fa721359adc5",
@@ -348,7 +374,8 @@ export const customersData = [
     "phone_2": "243.994.4068",
     "email": "ymitchell@mayer.biz",
     "subscription_date": "2020-08-25",
-    "website": "http://archer.com/"
+    "website": "http://archer.com/",
+    "salary": 38000
   },
   {
     "customer_id": "6bc6b884-5cda-4dd4-8fe5-e2c50d0002c2",
@@ -361,7 +388,8 @@ export const customersData = [
     "phone_2": "315.423.2995",
     "email": "bwheeler@hickman-acevedo.com",
     "subscription_date": "2022-05-02",
-    "website": "http://www.pacheco.net/"
+    "website": "http://www.pacheco.net/",
+    "salary": 96000
   },
   {
     "customer_id": "0abe2beb-a199-4dc0-b2e8-40a3758a072c",
@@ -374,7 +402,8 @@ export const customersData = [
     "phone_2": "(927)507-8048",
     "email": "bholmes@wilson.com",
     "subscription_date": "2022-03-18",
-    "website": "http://www.maldonado.com/"
+    "website": "http://www.maldonado.com/",
+    "salary": 174000
   },
   {
     "customer_id": "67854976-cd44-4b67-beef-6fbfdecc1449",
@@ -387,7 +416,8 @@ export const customersData = [
     "phone_2": "730.274.0823x74706",
     "email": "jennifermccormick@ross-bernard.net",
     "subscription_date": "2022-01-24",
-    "website": "http://andersen-lyons.com/"
+    "website": "http://andersen-lyons.com/",
+    "salary": 78000
   },
   {
     "customer_id": "ded4f155-0fc3-4937-94e8-04ec195ded84",
@@ -400,7 +430,8 @@ export const customersData = [
     "phone_2": "612-945-4439",
     "email": "stricklandkayla@mcknight.biz",
     "subscription_date": "2022-03-18",
-    "website": "http://baxter.org/"
+    "website": "http://baxter.org/",
+    "salary": 34000
   },
   {
     "customer_id": "e8623e88-85f0-4ae5-ba8b-97393b3b4c17",
@@ -413,7 +444,8 @@ export const customersData = [
     "phone_2": "142.099.8931",
     "email": "andersenjeanne@massey.com",
     "subscription_date": "2020-04-25",
-    "website": "http://www.clay.org/"
+    "website": "http://www.clay.org/",
+    "salary": 166000
   },
   {
     "customer_id": "9e59b63d-594d-4e10-be4a-c2f3a35c91de",
@@ -426,7 +458,8 @@ export const customersData = [
     "phone_2": 2197092297,
     "email": "wburnett@delgado-padilla.net",
     "subscription_date": "2020-03-10",
-    "website": "https://www.jacobson.com/"
+    "website": "https://www.jacobson.com/",
+    "salary": 179000
   },
   {
     "customer_id": "7dadc326-88ae-4f22-a550-9662b9362dc5",
@@ -439,7 +472,8 @@ export const customersData = [
     "phone_2": "001-815-901-1906x77558",
     "email": "tmccarthy@moon.com",
     "subscription_date": "2021-08-03",
-    "website": "http://www.silva-singleton.com/"
+    "website": "http://www.silva-singleton.com/",
+    "salary": 72000
   },
   {
     "customer_id": "25d62d17-fd08-4d76-b355-82757c057947",
@@ -452,7 +486,8 @@ export const customersData = [
     "phone_2": "737.089.0659x36913",
     "email": "kristinegomez@mcgrath-shah.com",
     "subscription_date": "2021-01-20",
-    "website": "https://santos.com/"
+    "website": "https://santos.com/",
+    "salary": 154000
   },
   {
     "customer_id": "652bcfba-33d6-4a21-b2f1-244ef8e79d9a",
@@ -465,7 +500,8 @@ export const customersData = [
     "phone_2": "402-745-7304x75007",
     "email": "lbooth@orr.com",
     "subscription_date": "2021-08-31",
-    "website": "http://stevens.com/"
+    "website": "http://stevens.com/",
+    "salary": 51000
   },
   {
     "customer_id": "44698bca-e7a5-4cb7-a394-f6757061473c",
@@ -478,7 +514,8 @@ export const customersData = [
     "phone_2": "498-765-5122",
     "email": "andradejaime@adams-stafford.org",
     "subscription_date": "2020-06-29",
-    "website": "http://gregory-wolfe.com/"
+    "website": "http://gregory-wolfe.com/",
+    "salary": 174000
   },
   {
     "customer_id": "0d216745-ef2f-4b1a-b75f-88cda7d158ab",
@@ -491,7 +528,8 @@ export const customersData = [
     "phone_2": "432-221-0106",
     "email": "brenda98@cortez-stevens.org",
     "subscription_date": "2020-07-03",
-    "website": "https://www.bridges.net/"
+    "website": "https://www.bridges.net/",
+    "salary": 33000
   },
   {
     "customer_id": "e90f8d42-d33f-4159-9fc4-8b7acf2298a2",
@@ -504,7 +542,8 @@ export const customersData = [
     "phone_2": "(203)046-2932",
     "email": "orrdaisy@tyler-fritz.net",
     "subscription_date": "2020-05-04",
-    "website": "https://www.garrett.info/"
+    "website": "https://www.garrett.info/",
+    "salary": 32000
   },
   {
     "customer_id": "7be0124a-5238-442b-ac33-8372b3320147",
@@ -517,7 +556,8 @@ export const customersData = [
     "phone_2": "001-559-725-8074x53225",
     "email": "randallwood@green.com",
     "subscription_date": "2020-03-03",
-    "website": "http://rhodes.com/"
+    "website": "http://rhodes.com/",
+    "salary": 60000
   },
   {
     "customer_id": "8192d55c-e4e7-470b-9699-a4eeafee0440",
@@ -530,7 +570,8 @@ export const customersData = [
     "phone_2": "671.647.3080x4088",
     "email": "bernardgerald@oneal.com",
     "subscription_date": "2021-06-23",
-    "website": "http://www.stewart-ochoa.com/"
+    "website": "http://www.stewart-ochoa.com/",
+    "salary": 82000
   },
   {
     "customer_id": "5ebad133-8c45-4682-b00e-c916c754b825",
@@ -543,7 +584,8 @@ export const customersData = [
     "phone_2": "001-030-954-2572x94129",
     "email": "xpatton@harrington.net",
     "subscription_date": "2021-07-07",
-    "website": "https://joseph.com/"
+    "website": "https://joseph.com/",
+    "salary": 92000
   },
   {
     "customer_id": "39ed4093-e546-4d73-ad07-48517fb2d50e",
@@ -556,7 +598,8 @@ export const customersData = [
     "phone_2": "(375)359-5844x0723",
     "email": "herbert23@salas.com",
     "subscription_date": "2020-10-18",
-    "website": "http://www.barker-galloway.org/"
+    "website": "http://www.barker-galloway.org/",
+    "salary": 76000
   },
   {
     "customer_id": "b8c7396c-eac5-4e88-a26a-f9c6286c25d9",
@@ -569,7 +612,8 @@ export const customersData = [
     "phone_2": "529.216.8691",
     "email": "lucas25@case.info",
     "subscription_date": "2020-10-28",
-    "website": "http://tyler-horn.net/"
+    "website": "http://tyler-horn.net/",
+    "salary": 61000
   },
   {
     "customer_id": "9d349b5b-d482-47cc-8d0a-e6d8f8af6e93",
@@ -582,7 +626,8 @@ export const customersData = [
     "phone_2": "001-151-420-0723x543",
     "email": "gilesdonna@keller-york.com",
     "subscription_date": "2022-02-09",
-    "website": "https://hicks.info/"
+    "website": "https://hicks.info/",
+    "salary": 38000
   },
   {
     "customer_id": "dd9a52b8-6524-48f4-88cc-802033d4f732",
@@ -595,7 +640,8 @@ export const customersData = [
     "phone_2": "324-793-2945x37429",
     "email": "alejandratravis@santos-vargas.com",
     "subscription_date": "2021-03-18",
-    "website": "https://gilmore-montgomery.com/"
+    "website": "https://gilmore-montgomery.com/",
+    "salary": 38000
   },
   {
     "customer_id": "72826b1f-325e-419c-a1bc-5e59b21775ec",
@@ -608,7 +654,8 @@ export const customersData = [
     "phone_2": 1868644445,
     "email": "franklin06@bean-dalton.com",
     "subscription_date": "2020-07-10",
-    "website": "http://www.oneal-ortega.com/"
+    "website": "http://www.oneal-ortega.com/",
+    "salary": 38000
   },
   {
     "customer_id": "c29c72c3-248a-4da8-b8f0-1a01909986f8",
@@ -621,7 +668,8 @@ export const customersData = [
     "phone_2": "408-905-8017x92959",
     "email": "sweeneymark@hopkins-hughes.com",
     "subscription_date": "2020-09-22",
-    "website": "http://www.fuller-key.info/"
+    "website": "http://www.fuller-key.info/",
+    "salary": 165000
   },
   {
     "customer_id": "ea2630e9-451c-496a-9e86-48015bb8e0b1",
@@ -634,7 +682,8 @@ export const customersData = [
     "phone_2": "117.858.1639x02832",
     "email": "garzacaroline@gross-hall.net",
     "subscription_date": "2020-11-09",
-    "website": "http://waller.com/"
+    "website": "http://waller.com/",
+    "salary": 156000
   },
   {
     "customer_id": "4a4751db-e206-4236-b98c-03f95d860c40",
@@ -647,7 +696,8 @@ export const customersData = [
     "phone_2": "418.799.5365x280",
     "email": "chasecathy@wheeler-franco.info",
     "subscription_date": "2020-07-06",
-    "website": "https://www.duncan.com/"
+    "website": "https://www.duncan.com/",
+    "salary": 154000
   },
   {
     "customer_id": "08a5a723-40ed-4c2c-a42b-8941f6b9fef4",
@@ -660,7 +710,8 @@ export const customersData = [
     "phone_2": 7308167002,
     "email": "hcannon@weeks-obrien.com",
     "subscription_date": "2021-04-28",
-    "website": "http://www.hess.biz/"
+    "website": "http://www.hess.biz/",
+    "salary": 98000
   },
   {
     "customer_id": "96fc81cd-e03e-4120-8bb3-44ca4bd96d70",
@@ -673,7 +724,8 @@ export const customersData = [
     "phone_2": "+1-927-207-0490x3295",
     "email": "antonioduncan@martinez.org",
     "subscription_date": "2020-02-05",
-    "website": "https://manning-abbott.com/"
+    "website": "https://manning-abbott.com/",
+    "salary": 34000
   },
   {
     "customer_id": "ba3749f8-fb91-4eac-be32-ffa8c31fc955",
@@ -686,7 +738,8 @@ export const customersData = [
     "phone_2": "966-958-7906x94663",
     "email": "ohowell@hays.org",
     "subscription_date": "2020-09-26",
-    "website": "https://www.franco.com/"
+    "website": "https://www.franco.com/",
+    "salary": 135000
   },
   {
     "customer_id": "d8939dba-6be5-40ca-8772-0dba88f77d84",
@@ -699,7 +752,8 @@ export const customersData = [
     "phone_2": 2084498585,
     "email": "bonnie23@rivas.net",
     "subscription_date": "2020-02-26",
-    "website": "https://www.michael-bowen.com/"
+    "website": "https://www.michael-bowen.com/",
+    "salary": 58000
   },
   {
     "customer_id": "176b3797-711a-44d5-a35e-cc80178bed4c",
@@ -712,7 +766,8 @@ export const customersData = [
     "phone_2": "+1-177-843-9417x645",
     "email": "leah21@roberts.biz",
     "subscription_date": "2021-12-14",
-    "website": "http://www.berger.org/"
+    "website": "http://www.berger.org/",
+    "salary": 133000
   },
   {
     "customer_id": "fe79ef36-7c1e-47c9-bf5c-1a9dad40006f",
@@ -725,7 +780,8 @@ export const customersData = [
     "phone_2": "297.263.4781",
     "email": "whitneykane@camacho-cook.biz",
     "subscription_date": "2021-06-06",
-    "website": "https://warren.info/"
+    "website": "https://warren.info/",
+    "salary": 87000
   },
   {
     "customer_id": "04fa240e-98ed-41ea-b789-7793a10efe85",
@@ -738,7 +794,8 @@ export const customersData = [
     "phone_2": "634.019.7613",
     "email": "sampsonchristie@reynolds.biz",
     "subscription_date": "2022-03-28",
-    "website": "http://pacheco.com/"
+    "website": "http://pacheco.com/",
+    "salary": 71000
   },
   {
     "customer_id": "6e1afd24-8492-43cf-8ed5-14ef8cffbbed",
@@ -751,7 +808,8 @@ export const customersData = [
     "phone_2": "920.613.2842x4664",
     "email": "stacey27@glenn.org",
     "subscription_date": "2021-12-22",
-    "website": "https://www.meyers.com/"
+    "website": "https://www.meyers.com/",
+    "salary": 74000
   },
   {
     "customer_id": "21064432-1c40-4ecb-93bc-fa6b2f8621fe",
@@ -764,7 +822,8 @@ export const customersData = [
     "phone_2": "001-569-908-2993",
     "email": "mario15@berger.com",
     "subscription_date": "2021-12-13",
-    "website": "https://www.jefferson.com/"
+    "website": "https://www.jefferson.com/",
+    "salary": 112000
   },
   {
     "customer_id": "508325d2-52b9-474d-a0b5-b3189a5ed8c5",
@@ -777,7 +836,8 @@ export const customersData = [
     "phone_2": "126.688.6635x7823",
     "email": "shelby65@howe.com",
     "subscription_date": "2021-12-26",
-    "website": "http://johnson.net/"
+    "website": "http://johnson.net/",
+    "salary": 64000
   },
   {
     "customer_id": "9a121dce-29ee-46b0-beb3-71f91facc4fb",
@@ -790,7 +850,8 @@ export const customersData = [
     "phone_2": "685-150-2175",
     "email": "nnorton@love.com",
     "subscription_date": "2020-05-01",
-    "website": "https://dodson-bernard.com/"
+    "website": "https://dodson-bernard.com/",
+    "salary": 57000
   },
   {
     "customer_id": "2d22bc00-e72e-4563-8e56-d2415e49c28c",
@@ -803,7 +864,8 @@ export const customersData = [
     "phone_2": 5735321415,
     "email": "cordovatiffany@english.com",
     "subscription_date": "2021-01-21",
-    "website": "https://www.quinn.com/"
+    "website": "https://www.quinn.com/",
+    "salary": 147000
   },
   {
     "customer_id": "4c679553-b581-4f77-99dc-8a3c7a709555",
@@ -816,7 +878,8 @@ export const customersData = [
     "phone_2": "(893)678-9529x3837",
     "email": "uvazquez@porter.com",
     "subscription_date": "2021-01-03",
-    "website": "https://www.humphrey.org/"
+    "website": "https://www.humphrey.org/",
+    "salary": 41000
   },
   {
     "customer_id": "8cf5de81-ca20-438b-bd26-416b00228f85",
@@ -829,7 +892,8 @@ export const customersData = [
     "phone_2": "664.702.1010",
     "email": "daisycooke@ross.biz",
     "subscription_date": "2020-12-31",
-    "website": "http://hess.org/"
+    "website": "http://hess.org/",
+    "salary": 137000
   },
   {
     "customer_id": "8cdc8d49-3f48-4219-9513-233215fd2c9c",
@@ -842,7 +906,8 @@ export const customersData = [
     "phone_2": "806.816.9816",
     "email": "juanmartin@oconnell.com",
     "subscription_date": "2020-02-02",
-    "website": "https://hines.com/"
+    "website": "https://hines.com/",
+    "salary": 82000
   },
   {
     "customer_id": "494b7594-e481-4be9-ba93-a3facfd8f3e8",
@@ -855,7 +920,8 @@ export const customersData = [
     "phone_2": "410-369-6850",
     "email": "leaholson@galloway-washington.biz",
     "subscription_date": "2021-12-11",
-    "website": "https://www.chaney.com/"
+    "website": "https://www.chaney.com/",
+    "salary": 126000
   },
   {
     "customer_id": "f00e22de-5e8c-464f-a913-5c05d08cace7",
@@ -868,7 +934,8 @@ export const customersData = [
     "phone_2": "867.321.5284",
     "email": "villanuevalydia@zhang.com",
     "subscription_date": "2020-07-22",
-    "website": "https://www.murphy.info/"
+    "website": "https://www.murphy.info/",
+    "salary": 99000
   },
   {
     "customer_id": "2262c3dc-951b-4ce8-98af-2c191391d791",
@@ -881,7 +948,8 @@ export const customersData = [
     "phone_2": "(109)222-1264x919",
     "email": "hansenmichelle@raymond.com",
     "subscription_date": "2021-06-28",
-    "website": "https://lozano.com/"
+    "website": "https://lozano.com/",
+    "salary": 79000
   },
   {
     "customer_id": "cb37f2f7-f74e-4529-8c64-d3962a534d48",
@@ -894,7 +962,8 @@ export const customersData = [
     "phone_2": "389-828-5186",
     "email": "akaufman@reynolds.com",
     "subscription_date": "2021-07-10",
-    "website": "http://www.greene-krause.com/"
+    "website": "http://www.greene-krause.com/",
+    "salary": 74000
   },
   {
     "customer_id": "d92a11ec-664e-4632-a86f-20da135942fa",
@@ -907,7 +976,8 @@ export const customersData = [
     "phone_2": "001-080-844-5022x2089",
     "email": "charleneholloway@harrison-zuniga.com",
     "subscription_date": "2021-10-24",
-    "website": "http://schroeder.info/"
+    "website": "http://schroeder.info/",
+    "salary": 66000
   },
   {
     "customer_id": "d3149dfe-9750-4e19-9174-d3fc32ef753f",
@@ -920,7 +990,8 @@ export const customersData = [
     "phone_2": "308.797.5478",
     "email": "hgraham@nichols.com",
     "subscription_date": "2020-05-24",
-    "website": "http://www.solomon.com/"
+    "website": "http://www.solomon.com/",
+    "salary": 136000
   },
   {
     "customer_id": "329e941f-5043-46de-b14e-2c9e23fe4fb8",
@@ -933,7 +1004,8 @@ export const customersData = [
     "phone_2": "+1-846-257-1216x0067",
     "email": "shelly82@sloan.com",
     "subscription_date": "2022-05-06",
-    "website": "https://marquez-frazier.com/"
+    "website": "https://marquez-frazier.com/",
+    "salary": 118000
   },
   {
     "customer_id": "9c1a9ff5-3f80-42a8-8b1b-e08a42d840fc",
@@ -946,7 +1018,8 @@ export const customersData = [
     "phone_2": "293.036.9845",
     "email": "huffmanguy@mcknight.com",
     "subscription_date": "2021-01-27",
-    "website": "http://vaughan.com/"
+    "website": "http://vaughan.com/",
+    "salary": 89000
   },
   {
     "customer_id": "d95e4fcb-4504-43f8-8c14-2f4256f63546",
@@ -959,7 +1032,8 @@ export const customersData = [
     "phone_2": "(415)950-4034x282",
     "email": "nicole43@stout-harrell.com",
     "subscription_date": "2022-01-21",
-    "website": "http://smith.com/"
+    "website": "http://smith.com/",
+    "salary": 31000
   },
   {
     "customer_id": "3133b6d7-62ff-44c3-a05f-6c8291fdf49f",
@@ -972,7 +1046,8 @@ export const customersData = [
     "phone_2": "635-364-2900x5677",
     "email": "xrubio@fischer.com",
     "subscription_date": "2020-05-19",
-    "website": "http://www.hunter-moss.com/"
+    "website": "http://www.hunter-moss.com/",
+    "salary": 103000
   },
   {
     "customer_id": "b1e1bbca-c9f2-47bf-bafa-5421ec17fde1",
@@ -985,7 +1060,8 @@ export const customersData = [
     "phone_2": "282.614.9105",
     "email": "curtis87@keller.org",
     "subscription_date": "2020-04-30",
-    "website": "https://mcguire-bates.biz/"
+    "website": "https://mcguire-bates.biz/",
+    "salary": 113000
   },
   {
     "customer_id": "dcf02170-181b-46d5-9c8c-5409915d60dd",
@@ -998,7 +1074,8 @@ export const customersData = [
     "phone_2": "001-617-424-1636",
     "email": "amayer@patrick-mullen.com",
     "subscription_date": "2021-07-05",
-    "website": "https://foley.com/"
+    "website": "https://foley.com/",
+    "salary": 50000
   },
   {
     "customer_id": "34c3233f-333f-49c1-9943-0f607d8222c3",
@@ -1011,7 +1088,8 @@ export const customersData = [
     "phone_2": "683-450-4089x83513",
     "email": "pkirk@mcfarland.com",
     "subscription_date": "2022-04-24",
-    "website": "http://bautista.com/"
+    "website": "http://bautista.com/",
+    "salary": 90000
   },
   {
     "customer_id": "d306d8c6-e7f8-40ed-b61e-e82ec753fb0a",
@@ -1024,7 +1102,8 @@ export const customersData = [
     "phone_2": 9563890781,
     "email": "phillip13@hutchinson.com",
     "subscription_date": "2021-02-22",
-    "website": "http://www.newton.info/"
+    "website": "http://www.newton.info/",
+    "salary": 158000
   },
   {
     "customer_id": "a3528e58-bb4d-4c7f-9c5d-2392cd8d2482",
@@ -1037,7 +1116,8 @@ export const customersData = [
     "phone_2": "(817)387-6671x578",
     "email": "tonya69@shaw.com",
     "subscription_date": "2021-09-12",
-    "website": "http://austin.net/"
+    "website": "http://austin.net/",
+    "salary": 67000
   },
   {
     "customer_id": "6e2ea530-9a9d-434f-9445-b1d55b03d308",
@@ -1050,7 +1130,8 @@ export const customersData = [
     "phone_2": "+1-376-546-7208",
     "email": "jenkinschris@dunn.biz",
     "subscription_date": "2021-12-15",
-    "website": "https://escobar-mcneil.biz/"
+    "website": "https://escobar-mcneil.biz/",
+    "salary": 49000
   },
   {
     "customer_id": "5e9881fe-740c-4b7b-b44b-e4ea7168290f",
@@ -1063,7 +1144,8 @@ export const customersData = [
     "phone_2": "(332)295-1861x2478",
     "email": "gwendolyn79@schmitt.biz",
     "subscription_date": "2022-02-24",
-    "website": "https://www.garcia-hobbs.com/"
+    "website": "https://www.garcia-hobbs.com/",
+    "salary": 114000
   },
   {
     "customer_id": "eee4b73a-1f38-4b02-8714-09be5a53373c",
@@ -1076,7 +1158,8 @@ export const customersData = [
     "phone_2": "002-591-2996",
     "email": "daisy12@watkins-good.com",
     "subscription_date": "2020-03-18",
-    "website": "http://cisneros.com/"
+    "website": "http://cisneros.com/",
+    "salary": 98000
   },
   {
     "customer_id": "551ecd34-4738-4179-baed-258c398aee7c",
@@ -1089,7 +1172,8 @@ export const customersData = [
     "phone_2": "001-285-671-9781x258",
     "email": "xknox@copeland-stout.org",
     "subscription_date": "2021-11-03",
-    "website": "http://porter.com/"
+    "website": "http://porter.com/",
+    "salary": 108000
   },
   {
     "customer_id": "bba6dc42-9f01-46b3-932a-d32d866b236d",
@@ -1102,7 +1186,8 @@ export const customersData = [
     "phone_2": "781.470.9656x4095",
     "email": "sdennis@thompson.com",
     "subscription_date": "2021-06-07",
-    "website": "http://cobb-cantrell.org/"
+    "website": "http://cobb-cantrell.org/",
+    "salary": 60000
   },
   {
     "customer_id": "824cec15-df9c-48e4-b5fd-ef667840a876",
@@ -1115,7 +1200,8 @@ export const customersData = [
     "phone_2": "+1-896-537-0457x2800",
     "email": "cochrandorothy@hood.com",
     "subscription_date": "2021-04-03",
-    "website": "https://anthony-little.com/"
+    "website": "https://anthony-little.com/",
+    "salary": 166000
   },
   {
     "customer_id": "7de9680c-dc2c-427f-aadb-e4f6a1b93741",
@@ -1128,7 +1214,8 @@ export const customersData = [
     "phone_2": "001-972-926-6534x31630",
     "email": "vbender@herrera.com",
     "subscription_date": "2022-01-15",
-    "website": "http://www.conley.com/"
+    "website": "http://www.conley.com/",
+    "salary": 105000
   },
   {
     "customer_id": "d2805785-10b2-4e60-b46e-067447cbc0e0",
@@ -1141,7 +1228,8 @@ export const customersData = [
     "phone_2": "086.585.2347",
     "email": "uholder@middleton.net",
     "subscription_date": "2021-02-07",
-    "website": "https://butler.com/"
+    "website": "https://butler.com/",
+    "salary": 53000
   },
   {
     "customer_id": "d58782b2-ca33-4149-852d-83bf303d9801",
@@ -1154,7 +1242,8 @@ export const customersData = [
     "phone_2": "(683)095-1351",
     "email": "spencerthomas@norman-mckinney.com",
     "subscription_date": "2021-01-19",
-    "website": "http://www.wheeler.info/"
+    "website": "http://www.wheeler.info/",
+    "salary": 60000
   },
   {
     "customer_id": "c313d1ce-9fbd-4692-a3ff-5f1dd5474d27",
@@ -1167,7 +1256,8 @@ export const customersData = [
     "phone_2": "753.523.8715",
     "email": "cindy55@sosa-ward.com",
     "subscription_date": "2021-10-24",
-    "website": "http://www.hale.info/"
+    "website": "http://www.hale.info/",
+    "salary": 63000
   },
   {
     "customer_id": "834c502a-54c2-4249-8ea8-1b839b466e48",
@@ -1180,7 +1270,8 @@ export const customersData = [
     "phone_2": "+1-940-564-1661x0699",
     "email": "fhampton@schneider.net",
     "subscription_date": "2020-09-14",
-    "website": "http://farmer-cervantes.com/"
+    "website": "http://farmer-cervantes.com/",
+    "salary": 43000
   },
   {
     "customer_id": "700f2fce-adac-4888-9929-8aa1b6b35085",
@@ -1193,7 +1284,8 @@ export const customersData = [
     "phone_2": "001-525-241-9973x127",
     "email": "donald08@rosario-edwards.com",
     "subscription_date": "2020-06-28",
-    "website": "http://www.nunez.com/"
+    "website": "http://www.nunez.com/",
+    "salary": 36000
   },
   {
     "customer_id": "f772ce97-2d01-46f5-9130-8f4757178871",
@@ -1206,7 +1298,8 @@ export const customersData = [
     "phone_2": "(776)380-4710x28251",
     "email": "uwilkerson@brown.com",
     "subscription_date": "2021-04-16",
-    "website": "http://lewis.com/"
+    "website": "http://lewis.com/",
+    "salary": 55000
   },
   {
     "customer_id": "e2178f15-2a3e-495e-ac34-4da6ed95e4d5",
@@ -1219,7 +1312,8 @@ export const customersData = [
     "phone_2": "+1-496-343-6909x370",
     "email": "psalas@bowman-smith.com",
     "subscription_date": "2022-01-29",
-    "website": "http://www.roberson.biz/"
+    "website": "http://www.roberson.biz/",
+    "salary": 58000
   },
   {
     "customer_id": "dbad0538-33ca-4ba2-b702-e376b637e49e",
@@ -1232,7 +1326,8 @@ export const customersData = [
     "phone_2": "001-514-491-0412",
     "email": "ryanphillips@huber-haynes.com",
     "subscription_date": "2020-02-29",
-    "website": "https://randall.net/"
+    "website": "https://randall.net/",
+    "salary": 140000
   },
   {
     "customer_id": "cf19554b-05ff-47c0-9054-0d46f4ff2fdb",
@@ -1245,7 +1340,8 @@ export const customersData = [
     "phone_2": "185-492-2069",
     "email": "larsenbilly@powell.com",
     "subscription_date": "2021-06-12",
-    "website": "http://www.reyes.org/"
+    "website": "http://www.reyes.org/",
+    "salary": 121000
   },
   {
     "customer_id": "bfa7f55f-a690-4a90-b874-e47cb5d2b31d",
@@ -1258,7 +1354,8 @@ export const customersData = [
     "phone_2": "014-649-7841",
     "email": "theresahunt@galloway.info",
     "subscription_date": "2020-08-31",
-    "website": "https://michael-baird.com/"
+    "website": "https://michael-baird.com/",
+    "salary": 109000
   },
   {
     "customer_id": "b59b9ac6-48a6-4c2b-bf2b-f16fbf19c87f",
@@ -1271,7 +1368,8 @@ export const customersData = [
     "phone_2": "949.547.7143x526",
     "email": "virginia07@grant.com",
     "subscription_date": "2021-12-09",
-    "website": "https://www.austin-moss.info/"
+    "website": "https://www.austin-moss.info/",
+    "salary": 91000
   },
   {
     "customer_id": "02598f9b-1263-4e7e-a50a-864aaf6b1f60",
@@ -1284,7 +1382,8 @@ export const customersData = [
     "phone_2": "946.733.3645x141",
     "email": "sylvia97@wu-harrell.com",
     "subscription_date": "2021-12-06",
-    "website": "http://www.brennan.com/"
+    "website": "http://www.brennan.com/",
+    "salary": 169000
   },
   {
     "customer_id": "650827e4-b71f-48e7-bbfd-466b908869a9",
@@ -1297,7 +1396,8 @@ export const customersData = [
     "phone_2": "+1-869-725-4229x615",
     "email": "billmayer@david.com",
     "subscription_date": "2021-08-10",
-    "website": "http://bailey.com/"
+    "website": "http://bailey.com/",
+    "salary": 94000
   },
   {
     "customer_id": "e9e2cbb1-c921-48e3-bb22-3d1b669aee2d",
@@ -1310,7 +1410,8 @@ export const customersData = [
     "phone_2": "+1-582-474-9544",
     "email": "alfredmichael@ellison-alvarez.info",
     "subscription_date": "2021-09-27",
-    "website": "https://mccall-wyatt.com/"
+    "website": "https://mccall-wyatt.com/",
+    "salary": 61000
   },
   {
     "customer_id": "ee356fb6-d2de-488a-9417-aa0e74c8f94f",
@@ -1323,7 +1424,8 @@ export const customersData = [
     "phone_2": "(584)761-7055",
     "email": "brianaarellano@reeves-kent.com",
     "subscription_date": "2022-04-17",
-    "website": "http://griffin-romero.org/"
+    "website": "http://griffin-romero.org/",
+    "salary": 121000
   },
   {
     "customer_id": "8a5ead16-2fb3-4dc6-ae94-bfbb6620cb78",
@@ -1336,7 +1438,8 @@ export const customersData = [
     "phone_2": "+1-353-570-5323x256",
     "email": "jeffball@webster-valencia.org",
     "subscription_date": "2022-01-18",
-    "website": "http://may.com/"
+    "website": "http://may.com/",
+    "salary": 95000
   },
   {
     "customer_id": "35e89104-5619-4765-8048-96bbceae2b4c",
@@ -1349,7 +1452,8 @@ export const customersData = [
     "phone_2": "(075)022-6982x1922",
     "email": "tiffany36@yang.biz",
     "subscription_date": "2021-04-10",
-    "website": "https://www.weaver-pierce.com/"
+    "website": "https://www.weaver-pierce.com/",
+    "salary": 93000
   },
   {
     "customer_id": "e3c70677-d708-4ca6-abcc-5b8722aad02e",
@@ -1362,7 +1466,8 @@ export const customersData = [
     "phone_2": "(799)400-5391",
     "email": "lpatton@stanley-garza.org",
     "subscription_date": "2020-04-08",
-    "website": "https://conway.biz/"
+    "website": "https://conway.biz/",
+    "salary": 41000
   },
   {
     "customer_id": "ae0eb3b0-27b4-4b0e-997c-b96e2087d32a",
@@ -1375,7 +1480,8 @@ export const customersData = [
     "phone_2": "+1-697-735-0243",
     "email": "heidirasmussen@gamble-shepard.biz",
     "subscription_date": "2020-08-22",
-    "website": "https://davila.com/"
+    "website": "https://davila.com/",
+    "salary": 111000
   },
   {
     "customer_id": "5c18d136-9391-4008-8de5-64a963355ee1",
@@ -1388,7 +1494,8 @@ export const customersData = [
     "phone_2": "053.268.0107x094",
     "email": "kimberly23@mcneil.biz",
     "subscription_date": "2020-02-08",
-    "website": "http://www.neal-obrien.com/"
+    "website": "http://www.neal-obrien.com/",
+    "salary": 166000
   },
   {
     "customer_id": "bd962eef-4f60-45ce-92a9-14e0721bba6b",
@@ -1401,7 +1508,8 @@ export const customersData = [
     "phone_2": "(011)093-8864",
     "email": "erikgoodman@snow.biz",
     "subscription_date": "2022-01-10",
-    "website": "https://www.hodges.com/"
+    "website": "https://www.hodges.com/",
+    "salary": 114000
   },
   {
     "customer_id": "1e446e49-bb44-4a6e-a7bc-18b925112829",
@@ -1414,7 +1522,8 @@ export const customersData = [
     "phone_2": 5585704891,
     "email": "leroy67@schroeder.org",
     "subscription_date": "2021-09-16",
-    "website": "https://www.walter.info/"
+    "website": "https://www.walter.info/",
+    "salary": 63000
   },
   {
     "customer_id": "20ecffbd-c027-41a1-9e19-efada985f0d2",
@@ -1427,7 +1536,8 @@ export const customersData = [
     "phone_2": "(873)358-6340",
     "email": "jenny19@mcneil.com",
     "subscription_date": "2021-07-09",
-    "website": "http://www.stokes-parrish.com/"
+    "website": "http://www.stokes-parrish.com/",
+    "salary": 179000
   },
   {
     "customer_id": "e432d589-7efc-4421-abfe-7ac9dba8cce2",
@@ -1440,7 +1550,8 @@ export const customersData = [
     "phone_2": "(495)613-9463",
     "email": "kerrfrederick@garrison.com",
     "subscription_date": "2021-01-02",
-    "website": "http://www.ayala.com/"
+    "website": "http://www.ayala.com/",
+    "salary": 53000
   },
   {
     "customer_id": "a815d839-3912-48d1-89f3-be5d7c124fc2",
@@ -1453,7 +1564,8 @@ export const customersData = [
     "phone_2": "(492)332-3906x34392",
     "email": "sandyfuller@stokes-hunter.com",
     "subscription_date": "2020-03-02",
-    "website": "https://www.daugherty-benton.com/"
+    "website": "https://www.daugherty-benton.com/",
+    "salary": 139000
   },
   {
     "customer_id": "613f6cd1-eb57-4e43-a544-5c1e7ef596a6",
@@ -1466,7 +1578,8 @@ export const customersData = [
     "phone_2": "582.256.4834",
     "email": "bernard34@stephenson-cantu.info",
     "subscription_date": "2021-07-16",
-    "website": "http://www.russo.com/"
+    "website": "http://www.russo.com/",
+    "salary": 102000
   },
   {
     "customer_id": "414d9c5e-a0fa-4093-a56b-5767ecd5a03b",
@@ -1479,7 +1592,8 @@ export const customersData = [
     "phone_2": "(874)953-3992",
     "email": "kara87@bowman.biz",
     "subscription_date": "2020-02-22",
-    "website": "https://nichols-sparks.org/"
+    "website": "https://nichols-sparks.org/",
+    "salary": 170000
   },
   {
     "customer_id": "450ced9d-4a3d-43cd-8bec-3867bd255f18",
@@ -1492,7 +1606,8 @@ export const customersData = [
     "phone_2": "(485)374-7739x401",
     "email": "candace36@blair-mayer.com",
     "subscription_date": "2020-05-14",
-    "website": "https://www.pope.info/"
+    "website": "https://www.pope.info/",
+    "salary": 87000
   },
   {
     "customer_id": "0469417c-1018-44a5-a202-4bc731163b49",
@@ -1505,7 +1620,8 @@ export const customersData = [
     "phone_2": 8497660932,
     "email": "morrisondevon@schneider.info",
     "subscription_date": "2020-09-13",
-    "website": "https://www.wang.com/"
+    "website": "https://www.wang.com/",
+    "salary": 103000
   },
   {
     "customer_id": "ed498840-d290-4f96-ad01-6a256cacc32b",
@@ -1518,7 +1634,8 @@ export const customersData = [
     "phone_2": "(682)886-2292x297",
     "email": "pprice@norman-johns.com",
     "subscription_date": "2020-12-03",
-    "website": "https://www.pineda-mclean.info/"
+    "website": "https://www.pineda-mclean.info/",
+    "salary": 44000
   },
   {
     "customer_id": "a40bf6ab-06e6-439c-ad7c-1267b5ccf64c",
@@ -1531,7 +1648,8 @@ export const customersData = [
     "phone_2": "+1-856-896-6132x573",
     "email": "bernardpeter@ritter.org",
     "subscription_date": "2022-02-08",
-    "website": "http://www.norman.com/"
+    "website": "http://www.norman.com/",
+    "salary": 158000
   },
   {
     "customer_id": "8d3cfcd5-cddd-4041-903a-27024505c5b2",
@@ -1544,7 +1662,8 @@ export const customersData = [
     "phone_2": 2737968500,
     "email": "gchen@spears-harding.org",
     "subscription_date": "2020-04-26",
-    "website": "http://www.simmons.biz/"
+    "website": "http://www.simmons.biz/",
+    "salary": 85000
   },
   {
     "customer_id": "122e71c0-34be-45a5-bdc1-a59fc1fd5506",
@@ -1557,7 +1676,8 @@ export const customersData = [
     "phone_2": "442.360.5043x5826",
     "email": "dorisbrooks@hobbs.com",
     "subscription_date": "2022-02-13",
-    "website": "http://www.lamb.org/"
+    "website": "http://www.lamb.org/",
+    "salary": 52000
   },
   {
     "customer_id": "39745473-dca8-4162-9afa-fcc4cca41165",
@@ -1570,7 +1690,8 @@ export const customersData = [
     "phone_2": "112.751.9897",
     "email": "mendezantonio@maldonado-bowers.net",
     "subscription_date": "2021-11-26",
-    "website": "http://www.hancock.net/"
+    "website": "http://www.hancock.net/",
+    "salary": 115000
   },
   {
     "customer_id": "8a1186ed-642b-44dd-8988-11cbac604f40",
@@ -1583,7 +1704,8 @@ export const customersData = [
     "phone_2": "+1-838-456-1010x7826",
     "email": "jean37@ramirez.com",
     "subscription_date": "2020-03-16",
-    "website": "http://herman.com/"
+    "website": "http://herman.com/",
+    "salary": 42000
   },
   {
     "customer_id": "e7d641e7-6dd3-4b6a-9f98-0f803c84dc1a",
@@ -1596,7 +1718,8 @@ export const customersData = [
     "phone_2": "+1-528-057-7045x64999",
     "email": "mason38@best.com",
     "subscription_date": "2021-02-18",
-    "website": "https://lowery.com/"
+    "website": "https://lowery.com/",
+    "salary": 162000
   },
   {
     "customer_id": "86576c20-fda6-48b3-ad88-8c32529cad56",
@@ -1609,7 +1732,8 @@ export const customersData = [
     "phone_2": "001-009-293-9881",
     "email": "camachoabigail@gallagher.com",
     "subscription_date": "2020-05-04",
-    "website": "http://www.booth-becker.net/"
+    "website": "http://www.booth-becker.net/",
+    "salary": 166000
   },
   {
     "customer_id": "dfc62a12-d4b2-4238-8edb-230af83aa25d",
@@ -1622,7 +1746,8 @@ export const customersData = [
     "phone_2": 6635659964,
     "email": "nnielsen@lee-koch.org",
     "subscription_date": "2022-03-05",
-    "website": "http://www.armstrong-benjamin.com/"
+    "website": "http://www.armstrong-benjamin.com/",
+    "salary": 145000
   },
   {
     "customer_id": "cd1483dc-5dff-45e9-9c94-1cc0def40adf",
@@ -1635,7 +1760,8 @@ export const customersData = [
     "phone_2": "001-636-136-9158x230",
     "email": "tommy90@martin-pruitt.com",
     "subscription_date": "2020-06-24",
-    "website": "http://clarke.com/"
+    "website": "http://clarke.com/",
+    "salary": 117000
   },
   {
     "customer_id": "64e27e4a-3136-4ba1-b889-798a610d3a9b",
@@ -1648,7 +1774,8 @@ export const customersData = [
     "phone_2": "251.183.2360x9801",
     "email": "robynbullock@cole-summers.org",
     "subscription_date": "2021-11-26",
-    "website": "http://www.mcclain-cole.net/"
+    "website": "http://www.mcclain-cole.net/",
+    "salary": 178000
   },
   {
     "customer_id": "b610675b-b8d0-4802-9776-047c0fd5e681",
@@ -1661,7 +1788,8 @@ export const customersData = [
     "phone_2": "108.512.9458x0349",
     "email": "phogan@mcconnell.net",
     "subscription_date": "2021-10-28",
-    "website": "http://www.roberson.com/"
+    "website": "http://www.roberson.com/",
+    "salary": 47000
   },
   {
     "customer_id": "4b9d7e3b-0d59-471e-8e4b-5a1449dbdfae",
@@ -1674,7 +1802,8 @@ export const customersData = [
     "phone_2": "861-214-4522x4260",
     "email": "latasha15@mcintosh.info",
     "subscription_date": "2022-03-28",
-    "website": "https://www.castaneda.com/"
+    "website": "https://www.castaneda.com/",
+    "salary": 96000
   },
   {
     "customer_id": "272b257a-218c-4950-bede-464824188332",
@@ -1687,7 +1816,8 @@ export const customersData = [
     "phone_2": "787.106.4710x987",
     "email": "singletoncassie@booker.com",
     "subscription_date": "2020-12-04",
-    "website": "https://www.rosales.info/"
+    "website": "https://www.rosales.info/",
+    "salary": 88000
   },
   {
     "customer_id": "aaea6b2a-9358-43d3-b039-4aa59b2c7405",
@@ -1700,7 +1830,8 @@ export const customersData = [
     "phone_2": "+1-696-869-1526x5839",
     "email": "bobcurtis@spencer.com",
     "subscription_date": "2022-05-04",
-    "website": "http://www.pruitt.com/"
+    "website": "http://www.pruitt.com/",
+    "salary": 132000
   },
   {
     "customer_id": "dc3dcf29-23a4-4b1a-9e0d-b468305eb957",
@@ -1713,7 +1844,8 @@ export const customersData = [
     "phone_2": "(689)574-6882",
     "email": "dtodd@yang-moran.com",
     "subscription_date": "2020-05-11",
-    "website": "http://whitney.com/"
+    "website": "http://whitney.com/",
+    "salary": 41000
   },
   {
     "customer_id": "647304d2-0b7f-4b9f-8869-a7cb65da959f",
@@ -1726,7 +1858,8 @@ export const customersData = [
     "phone_2": "001-321-749-2112x546",
     "email": "fredbruce@hamilton.net",
     "subscription_date": "2020-03-24",
-    "website": "http://www.castaneda.org/"
+    "website": "http://www.castaneda.org/",
+    "salary": 163000
   },
   {
     "customer_id": "e0fdc19c-ca54-40f4-8b6a-37cead9fe170",
@@ -1739,7 +1872,8 @@ export const customersData = [
     "phone_2": "891.869.1962x8906",
     "email": "whendricks@horn.com",
     "subscription_date": "2020-03-26",
-    "website": "https://bullock.org/"
+    "website": "https://bullock.org/",
+    "salary": 44000
   },
   {
     "customer_id": "a232f79c-8624-4c9d-a3cc-921dd4eead17",
@@ -1752,7 +1886,8 @@ export const customersData = [
     "phone_2": "+1-386-567-3428x59917",
     "email": "gwendolynflynn@huber.com",
     "subscription_date": "2020-05-30",
-    "website": "http://www.mcbride.biz/"
+    "website": "http://www.mcbride.biz/",
+    "salary": 157000
   },
   {
     "customer_id": "01d11d6e-0a85-4127-af89-4c353f0a8506",
@@ -1765,7 +1900,8 @@ export const customersData = [
     "phone_2": "(457)436-0542",
     "email": "yshah@madden.com",
     "subscription_date": "2022-03-08",
-    "website": "http://stephenson-clay.com/"
+    "website": "http://stephenson-clay.com/",
+    "salary": 54000
   },
   {
     "customer_id": "4904210f-034d-4405-aa95-e0773bbc8d13",
@@ -1778,7 +1914,8 @@ export const customersData = [
     "phone_2": "(351)681-1821",
     "email": "jacobberry@bradford.com",
     "subscription_date": "2021-03-21",
-    "website": "http://peters-jackson.com/"
+    "website": "http://peters-jackson.com/",
+    "salary": 40000
   },
   {
     "customer_id": "81435a2f-fbcf-4c63-9881-0c3f5ab155d5",
@@ -1791,7 +1928,8 @@ export const customersData = [
     "phone_2": "457-400-3900",
     "email": "tylergarza@huffman.com",
     "subscription_date": "2020-09-28",
-    "website": "https://woodward.net/"
+    "website": "https://woodward.net/",
+    "salary": 50000
   },
   {
     "customer_id": "5ce097ee-e5ad-4709-bbaf-74743392915c",
@@ -1804,7 +1942,8 @@ export const customersData = [
     "phone_2": "001-754-720-6908",
     "email": "miguelthomas@thompson.info",
     "subscription_date": "2021-12-26",
-    "website": "http://www.peck-david.org/"
+    "website": "http://www.peck-david.org/",
+    "salary": 103000
   },
   {
     "customer_id": "144a4393-3761-4e26-9a54-bc62880273de",
@@ -1817,7 +1956,8 @@ export const customersData = [
     "phone_2": "001-728-977-0770x1061",
     "email": "wgillespie@ramos.com",
     "subscription_date": "2022-05-04",
-    "website": "http://www.mcdaniel.net/"
+    "website": "http://www.mcdaniel.net/",
+    "salary": 68000
   },
   {
     "customer_id": "3387a83c-3e26-4415-befe-bb6f31845836",
@@ -1830,7 +1970,8 @@ export const customersData = [
     "phone_2": "001-210-307-4062x64022",
     "email": "preston15@phillips.net",
     "subscription_date": "2020-11-17",
-    "website": "https://www.avila.com/"
+    "website": "https://www.avila.com/",
+    "salary": 32000
   },
   {
     "customer_id": "58666b2f-bee1-478c-b9be-bcf0035f2547",
@@ -1843,7 +1984,8 @@ export const customersData = [
     "phone_2": "+1-022-328-7198x30933",
     "email": "silvateresa@west-solis.com",
     "subscription_date": "2021-01-31",
-    "website": "http://holloway.com/"
+    "website": "http://holloway.com/",
+    "salary": 126000
   },
   {
     "customer_id": "bd41117b-af16-4434-b30f-ed4812303a38",
@@ -1856,7 +1998,8 @@ export const customersData = [
     "phone_2": "073.729.6219",
     "email": "levi78@espinoza-graves.com",
     "subscription_date": "2021-08-27",
-    "website": "http://medina.com/"
+    "website": "http://medina.com/",
+    "salary": 148000
   },
   {
     "customer_id": "64e5d8f4-a0e6-40d0-860b-dada6dbc21a5",
@@ -1869,7 +2012,8 @@ export const customersData = [
     "phone_2": "001-135-865-2061",
     "email": "jefferyatkins@bautista-schaefer.info",
     "subscription_date": "2020-09-06",
-    "website": "http://estes.com/"
+    "website": "http://estes.com/",
+    "salary": 156000
   },
   {
     "customer_id": "62d76ebb-d32e-4750-aa19-9acd30f8ed9e",
@@ -1882,7 +2026,8 @@ export const customersData = [
     "phone_2": "+1-217-086-7585x72443",
     "email": "paul00@morrison.com",
     "subscription_date": "2020-09-28",
-    "website": "http://www.frazier-sosa.com/"
+    "website": "http://www.frazier-sosa.com/",
+    "salary": 106000
   },
   {
     "customer_id": "13458dad-d456-46ea-bc19-aa6511609ba1",
@@ -1895,7 +2040,8 @@ export const customersData = [
     "phone_2": "579-752-6195",
     "email": "connieellison@rivas.com",
     "subscription_date": "2020-05-20",
-    "website": "https://www.lambert.com/"
+    "website": "https://www.lambert.com/",
+    "salary": 133000
   },
   {
     "customer_id": "e19f9fa1-cd2b-4b2c-950f-9ef8fd40b92a",
@@ -1908,7 +2054,8 @@ export const customersData = [
     "phone_2": 3740300547,
     "email": "katherine83@russell.org",
     "subscription_date": "2022-05-21",
-    "website": "https://www.alvarez.com/"
+    "website": "https://www.alvarez.com/",
+    "salary": 61000
   },
   {
     "customer_id": "c8767f09-845d-4326-b843-f1f887ff71d8",
@@ -1921,7 +2068,8 @@ export const customersData = [
     "phone_2": "621.963.7590x093",
     "email": "iadams@rangel-singleton.com",
     "subscription_date": "2021-01-03",
-    "website": "http://www.duarte.net/"
+    "website": "http://www.duarte.net/",
+    "salary": 97000
   },
   {
     "customer_id": "6980d3df-cdb2-4235-8e24-05f39fab778e",
@@ -1934,7 +2082,8 @@ export const customersData = [
     "phone_2": "+1-623-401-0221x6099",
     "email": "ycruz@mayer.com",
     "subscription_date": "2021-04-27",
-    "website": "http://www.bright.info/"
+    "website": "http://www.bright.info/",
+    "salary": 154000
   },
   {
     "customer_id": "99d0c708-bda5-428c-8ecf-4bc0c369f9e2",
@@ -1947,7 +2096,8 @@ export const customersData = [
     "phone_2": "898-028-4641",
     "email": "brad66@griffith.net",
     "subscription_date": "2020-11-16",
-    "website": "http://www.werner.com/"
+    "website": "http://www.werner.com/",
+    "salary": 169000
   },
   {
     "customer_id": "c4ad6af7-e52d-4f96-9874-81d003355310",
@@ -1960,7 +2110,8 @@ export const customersData = [
     "phone_2": "304.249.4394",
     "email": "bgibson@mckay.biz",
     "subscription_date": "2020-01-31",
-    "website": "https://www.fletcher.com/"
+    "website": "https://www.fletcher.com/",
+    "salary": 159000
   },
   {
     "customer_id": "9ae67d19-7bab-42af-80d4-468a40d5dacc",
@@ -1973,7 +2124,8 @@ export const customersData = [
     "phone_2": "979.240.3243",
     "email": "yglass@parsons.org",
     "subscription_date": "2020-04-08",
-    "website": "http://baldwin.com/"
+    "website": "http://baldwin.com/",
+    "salary": 76000
   },
   {
     "customer_id": "c6e91c75-ed8c-4e04-b0b2-fc85ab6fb41c",
@@ -1986,7 +2138,8 @@ export const customersData = [
     "phone_2": "+1-699-234-0701",
     "email": "johnsanna@wagner-abbott.org",
     "subscription_date": "2020-12-16",
-    "website": "https://www.key-orr.com/"
+    "website": "https://www.key-orr.com/",
+    "salary": 114000
   },
   {
     "customer_id": "cdb615ef-e848-48f8-94c9-6c65ea8748ff",
@@ -1999,7 +2152,8 @@ export const customersData = [
     "phone_2": "441.990.1212",
     "email": "xmeza@moon.com",
     "subscription_date": "2022-05-27",
-    "website": "https://www.abbott.com/"
+    "website": "https://www.abbott.com/",
+    "salary": 30000
   },
   {
     "customer_id": "5c35a68e-f846-49eb-9041-b5f04f23a8ca",
@@ -2012,7 +2166,8 @@ export const customersData = [
     "phone_2": "+1-611-590-3355x5272",
     "email": "makaylashepard@mcguire-salazar.com",
     "subscription_date": "2021-12-24",
-    "website": "https://matthews.com/"
+    "website": "https://matthews.com/",
+    "salary": 111000
   },
   {
     "customer_id": "c02c2577-aafa-40b6-a0de-9f09b73f2c13",
@@ -2025,7 +2180,8 @@ export const customersData = [
     "phone_2": 1853451923,
     "email": "gilbert60@valencia-short.net",
     "subscription_date": "2021-10-19",
-    "website": "http://www.kelly.biz/"
+    "website": "http://www.kelly.biz/",
+    "salary": 61000
   },
   {
     "customer_id": "18fdfba0-7425-4675-bb93-323173788b00",
@@ -2038,7 +2194,8 @@ export const customersData = [
     "phone_2": "+1-912-785-0442",
     "email": "riverachris@wade.com",
     "subscription_date": "2020-02-14",
-    "website": "http://www.mckay.org/"
+    "website": "http://www.mckay.org/",
+    "salary": 151000
   },
   {
     "customer_id": "9e509254-cd23-4dd0-ac0c-2a8473a9c4c2",
@@ -2051,7 +2208,8 @@ export const customersData = [
     "phone_2": "+1-441-279-8137x187",
     "email": "wcurtis@brandt.com",
     "subscription_date": "2020-03-08",
-    "website": "http://jacobs.net/"
+    "website": "http://jacobs.net/",
+    "salary": 169000
   },
   {
     "customer_id": "1a9ce4f3-c988-4ce7-b3e7-7263caef7e5c",
@@ -2064,7 +2222,8 @@ export const customersData = [
     "phone_2": "262.719.6580x931",
     "email": "kirwin@crawford.com",
     "subscription_date": "2020-08-03",
-    "website": "https://www.mayo.biz/"
+    "website": "https://www.mayo.biz/",
+    "salary": 39000
   },
   {
     "customer_id": "5d58bb57-fcd7-4d2a-82ed-11a25968bd30",
@@ -2077,7 +2236,8 @@ export const customersData = [
     "phone_2": "612-426-5344",
     "email": "duransue@hicks.com",
     "subscription_date": "2021-06-24",
-    "website": "http://cantu.com/"
+    "website": "http://cantu.com/",
+    "salary": 135000
   },
   {
     "customer_id": "487ca516-dfc5-4b5b-96d5-bdcac98b7067",
@@ -2090,7 +2250,8 @@ export const customersData = [
     "phone_2": "457-143-8001x186",
     "email": "jorgepetersen@chan.com",
     "subscription_date": "2020-08-10",
-    "website": "http://mendez.com/"
+    "website": "http://mendez.com/",
+    "salary": 37000
   },
   {
     "customer_id": "2b762a1b-adc2-4c00-b4cc-96176824b3dc",
@@ -2103,7 +2264,8 @@ export const customersData = [
     "phone_2": "(255)835-3328x821",
     "email": "comptonashley@smith.com",
     "subscription_date": "2021-03-05",
-    "website": "https://fernandez.com/"
+    "website": "https://fernandez.com/",
+    "salary": 102000
   },
   {
     "customer_id": "5d9403de-00a8-40b8-b84b-55d9e8ced53b",
@@ -2116,7 +2278,8 @@ export const customersData = [
     "phone_2": 6744488419,
     "email": "jounderwood@heath.com",
     "subscription_date": "2022-05-25",
-    "website": "http://combs.com/"
+    "website": "http://combs.com/",
+    "salary": 96000
   },
   {
     "customer_id": "57f1b43b-1ef5-4b2b-8f9b-695ebf9379f6",
@@ -2129,7 +2292,8 @@ export const customersData = [
     "phone_2": "931-757-7527",
     "email": "zfrost@hale.biz",
     "subscription_date": "2021-03-21",
-    "website": "http://glover.org/"
+    "website": "http://glover.org/",
+    "salary": 93000
   },
   {
     "customer_id": "562d3b53-1a2e-45cd-b3c6-5a0a6ee99153",
@@ -2142,7 +2306,8 @@ export const customersData = [
     "phone_2": "+1-726-337-1315x54880",
     "email": "tbenjamin@montes.com",
     "subscription_date": "2021-07-23",
-    "website": "https://keller.com/"
+    "website": "https://keller.com/",
+    "salary": 31000
   },
   {
     "customer_id": "7068b2f6-47bb-4509-9d41-3a2135d3bff9",
@@ -2155,7 +2320,8 @@ export const customersData = [
     "phone_2": "+1-793-726-0797x000",
     "email": "gracestrong@sheppard-best.com",
     "subscription_date": "2022-02-28",
-    "website": "http://www.lin.biz/"
+    "website": "http://www.lin.biz/",
+    "salary": 140000
   },
   {
     "customer_id": "937ad27c-d1c6-4321-8af6-e3b6fab9b5a1",
@@ -2168,7 +2334,8 @@ export const customersData = [
     "phone_2": "098.108.5897x8243",
     "email": "arogers@madden.net",
     "subscription_date": "2021-08-31",
-    "website": "https://www.kim.info/"
+    "website": "https://www.kim.info/",
+    "salary": 106000
   },
   {
     "customer_id": "6619b295-bc77-477c-b486-2d15ebe4d8ec",
@@ -2181,7 +2348,8 @@ export const customersData = [
     "phone_2": "001-280-098-0044x514",
     "email": "shelleyspencer@mcgee.net",
     "subscription_date": "2022-02-03",
-    "website": "https://charles-hammond.net/"
+    "website": "https://charles-hammond.net/",
+    "salary": 175000
   },
   {
     "customer_id": "12fcc38d-7169-4e83-a963-be720e67cc95",
@@ -2194,7 +2362,8 @@ export const customersData = [
     "phone_2": "003-188-4402x8191",
     "email": "sabrinaacosta@casey.com",
     "subscription_date": "2022-02-21",
-    "website": "https://melton-riddle.net/"
+    "website": "https://melton-riddle.net/",
+    "salary": 91000
   },
   {
     "customer_id": "a58dc8c5-2266-4e55-88fa-de6a5ca4bd0d",
@@ -2207,7 +2376,8 @@ export const customersData = [
     "phone_2": "001-883-188-6827x631",
     "email": "omercer@webster.biz",
     "subscription_date": "2020-02-28",
-    "website": "http://booth.com/"
+    "website": "http://booth.com/",
+    "salary": 96000
   },
   {
     "customer_id": "c7a4292a-9e7b-4604-b33c-aa9347fd7040",
@@ -2220,7 +2390,8 @@ export const customersData = [
     "phone_2": 2027585508,
     "email": "qwolf@sloan.com",
     "subscription_date": "2020-06-01",
-    "website": "https://www.miles-clay.com/"
+    "website": "https://www.miles-clay.com/",
+    "salary": 77000
   },
   {
     "customer_id": "7fb421b1-06fc-4bfb-a32e-b66a51e171dd",
@@ -2233,7 +2404,8 @@ export const customersData = [
     "phone_2": "327.631.0251",
     "email": "paulshelly@gentry.com",
     "subscription_date": "2021-10-30",
-    "website": "http://cordova-santiago.com/"
+    "website": "http://cordova-santiago.com/",
+    "salary": 62000
   },
   {
     "customer_id": "d8f412e1-382d-4ad2-b29d-8bbd898d173e",
@@ -2246,7 +2418,8 @@ export const customersData = [
     "phone_2": "810.783.6001",
     "email": "ystuart@webster-stephenson.com",
     "subscription_date": "2021-07-11",
-    "website": "http://www.ortiz-clarke.com/"
+    "website": "http://www.ortiz-clarke.com/",
+    "salary": 173000
   },
   {
     "customer_id": "1069e3b4-3d8e-4962-b102-0428d97f9ad2",
@@ -2259,7 +2432,8 @@ export const customersData = [
     "phone_2": "168-969-2342x220",
     "email": "jbrock@wall.info",
     "subscription_date": "2021-10-30",
-    "website": "http://spence.info/"
+    "website": "http://spence.info/",
+    "salary": 39000
   },
   {
     "customer_id": "3040f2eb-c0d2-40e7-93ec-110099dfb8ed",
@@ -2272,7 +2446,8 @@ export const customersData = [
     "phone_2": "001-150-350-4850x79571",
     "email": "hgibson@barnett-taylor.net",
     "subscription_date": "2020-07-05",
-    "website": "http://www.evans-pittman.com/"
+    "website": "http://www.evans-pittman.com/",
+    "salary": 159000
   },
   {
     "customer_id": "904a36d0-74e5-414f-8dd7-20394a34187d",
@@ -2285,7 +2460,8 @@ export const customersData = [
     "phone_2": "001-526-120-2734x642",
     "email": "zkirk@brewer.com",
     "subscription_date": "2022-01-08",
-    "website": "https://www.murillo.com/"
+    "website": "https://www.murillo.com/",
+    "salary": 89000
   },
   {
     "customer_id": "03eb0d50-176a-4b78-8d22-f4fa8cf4be56",
@@ -2298,7 +2474,8 @@ export const customersData = [
     "phone_2": "001-985-882-8220x7204",
     "email": "frances36@chavez-knox.com",
     "subscription_date": "2020-12-06",
-    "website": "http://www.rush.com/"
+    "website": "http://www.rush.com/",
+    "salary": 123000
   },
   {
     "customer_id": "cea49871-efe5-4d7a-b3ed-c42c52aa8d5e",
@@ -2311,7 +2488,8 @@ export const customersData = [
     "phone_2": "(035)832-6721",
     "email": "christine56@schwartz-haney.com",
     "subscription_date": "2020-06-18",
-    "website": "https://www.gilmore.com/"
+    "website": "https://www.gilmore.com/",
+    "salary": 113000
   },
   {
     "customer_id": "ca654ebd-f31d-40c6-be81-471d99f435ae",
@@ -2324,7 +2502,8 @@ export const customersData = [
     "phone_2": "+1-807-937-4710x718",
     "email": "franklinlam@petersen.com",
     "subscription_date": "2020-09-09",
-    "website": "http://hendricks-bell.net/"
+    "website": "http://hendricks-bell.net/",
+    "salary": 49000
   },
   {
     "customer_id": "dd57b191-ad87-45bd-a210-4237421565a2",
@@ -2337,7 +2516,8 @@ export const customersData = [
     "phone_2": "001-235-320-9166",
     "email": "perrydorsey@kline-andersen.biz",
     "subscription_date": "2020-10-17",
-    "website": "http://www.braun-nixon.com/"
+    "website": "http://www.braun-nixon.com/",
+    "salary": 103000
   },
   {
     "customer_id": "77c382d0-38e0-47fd-9ecb-0d7d138c1a6b",
@@ -2350,7 +2530,8 @@ export const customersData = [
     "phone_2": "720-640-9433",
     "email": "choimercedes@burch-conner.com",
     "subscription_date": "2020-12-06",
-    "website": "https://www.wyatt.com/"
+    "website": "https://www.wyatt.com/",
+    "salary": 76000
   },
   {
     "customer_id": "f5d1be71-3a96-4234-a0e0-7c62a2f91a00",
@@ -2363,7 +2544,8 @@ export const customersData = [
     "phone_2": "+1-715-178-8850x911",
     "email": "glentorres@watkins.com",
     "subscription_date": "2021-07-29",
-    "website": "https://www.zamora.org/"
+    "website": "https://www.zamora.org/",
+    "salary": 55000
   },
   {
     "customer_id": "c3abeabb-da8e-46d3-ad01-a5de7dac784f",
@@ -2376,7 +2558,8 @@ export const customersData = [
     "phone_2": "001-951-319-5257x985",
     "email": "gburns@charles-huber.biz",
     "subscription_date": "2021-06-06",
-    "website": "http://www.anderson.com/"
+    "website": "http://www.anderson.com/",
+    "salary": 140000
   },
   {
     "customer_id": "b35fe4d1-9fbe-465b-b29c-f6bae28c13ae",
@@ -2389,7 +2572,8 @@ export const customersData = [
     "phone_2": "(621)145-2100x7125",
     "email": "alisonhorton@odom-ferguson.com",
     "subscription_date": "2021-07-07",
-    "website": "https://www.calhoun.info/"
+    "website": "https://www.calhoun.info/",
+    "salary": 146000
   },
   {
     "customer_id": "73897f52-2ae1-4f5a-a2d0-1cdf65cbbb77",
@@ -2402,7 +2586,8 @@ export const customersData = [
     "phone_2": 2809949535,
     "email": "marcus39@dudley.com",
     "subscription_date": "2022-03-02",
-    "website": "https://www.francis.biz/"
+    "website": "https://www.francis.biz/",
+    "salary": 62000
   },
   {
     "customer_id": "6ecdacde-a4a1-43fc-94a0-edb98a4e9c25",
@@ -2415,7 +2600,8 @@ export const customersData = [
     "phone_2": "654-699-8539",
     "email": "kbooth@wells-buckley.com",
     "subscription_date": "2022-05-07",
-    "website": "http://bright.biz/"
+    "website": "http://bright.biz/",
+    "salary": 134000
   },
   {
     "customer_id": "e6bc4577-5025-4c70-8502-cc672d6bcefe",
@@ -2428,7 +2614,8 @@ export const customersData = [
     "phone_2": "(227)935-8612",
     "email": "mparks@guerra.com",
     "subscription_date": "2020-05-27",
-    "website": "https://heath-heath.org/"
+    "website": "https://heath-heath.org/",
+    "salary": 105000
   },
   {
     "customer_id": "7cb0e083-e6f0-46e0-b9cd-33b328ec70cc",
@@ -2441,7 +2628,8 @@ export const customersData = [
     "phone_2": "824.216.7563x580",
     "email": "spearskirsten@clements.com",
     "subscription_date": "2020-09-06",
-    "website": "https://mcdowell-mclean.com/"
+    "website": "https://mcdowell-mclean.com/",
+    "salary": 151000
   },
   {
     "customer_id": "629d9817-4d11-427f-94d3-0b1b3827c095",
@@ -2454,7 +2642,8 @@ export const customersData = [
     "phone_2": "314-248-9165",
     "email": "fullerearl@douglas.com",
     "subscription_date": "2020-09-06",
-    "website": "https://www.murphy.com/"
+    "website": "https://www.murphy.com/",
+    "salary": 134000
   },
   {
     "customer_id": "5ed684b0-c85d-4557-afa0-1d77ef9fd283",
@@ -2467,7 +2656,8 @@ export const customersData = [
     "phone_2": 7897501839,
     "email": "katrinavincent@nunez.com",
     "subscription_date": "2021-06-01",
-    "website": "https://www.gill.com/"
+    "website": "https://www.gill.com/",
+    "salary": 134000
   },
   {
     "customer_id": "5e94cf24-876d-4188-8d0c-d557674cf30b",
@@ -2480,7 +2670,8 @@ export const customersData = [
     "phone_2": "631.250.1955x730",
     "email": "alicia17@pruitt.net",
     "subscription_date": "2021-04-10",
-    "website": "http://www.miles.com/"
+    "website": "http://www.miles.com/",
+    "salary": 126000
   },
   {
     "customer_id": "a2ab02cf-e513-4e03-91ab-50c6cb89e604",
@@ -2493,7 +2684,8 @@ export const customersData = [
     "phone_2": "+1-110-187-8317x90013",
     "email": "mowen@ponce-farrell.org",
     "subscription_date": "2020-10-02",
-    "website": "http://www.bonilla-newton.com/"
+    "website": "http://www.bonilla-newton.com/",
+    "salary": 168000
   },
   {
     "customer_id": "6d53155a-3764-40e3-8dac-75164ad04ddc",
@@ -2506,7 +2698,8 @@ export const customersData = [
     "phone_2": "316.972.1021x049",
     "email": "isabella73@bauer.net",
     "subscription_date": "2020-01-25",
-    "website": "https://pittman-novak.biz/"
+    "website": "https://pittman-novak.biz/",
+    "salary": 132000
   },
   {
     "customer_id": "5b37e782-d090-40ba-a7c3-7fa3270c7687",
@@ -2519,7 +2712,8 @@ export const customersData = [
     "phone_2": "445.805.8438",
     "email": "ujarvis@branch.org",
     "subscription_date": "2020-12-25",
-    "website": "http://www.frye-mcconnell.com/"
+    "website": "http://www.frye-mcconnell.com/",
+    "salary": 166000
   },
   {
     "customer_id": "2db74eca-a4db-42a5-8cbd-c64df4455229",
@@ -2532,7 +2726,8 @@ export const customersData = [
     "phone_2": "+1-388-467-5060x075",
     "email": "umcclure@mullins.com",
     "subscription_date": "2021-01-17",
-    "website": "http://www.mccarty-dudley.net/"
+    "website": "http://www.mccarty-dudley.net/",
+    "salary": 76000
   },
   {
     "customer_id": "89cc54dd-50fa-4012-931a-c5cea5411ddc",
@@ -2545,7 +2740,8 @@ export const customersData = [
     "phone_2": "001-189-383-7075x93271",
     "email": "rkidd@holder.net",
     "subscription_date": "2022-03-19",
-    "website": "http://www.ayers-zamora.com/"
+    "website": "http://www.ayers-zamora.com/",
+    "salary": 64000
   },
   {
     "customer_id": "f6aa2972-caaa-4a4f-a7d3-fa794652e5da",
@@ -2558,7 +2754,8 @@ export const customersData = [
     "phone_2": "001-961-789-9749x5903",
     "email": "candicemoore@hamilton-wong.biz",
     "subscription_date": "2020-03-29",
-    "website": "https://www.stevens.org/"
+    "website": "https://www.stevens.org/",
+    "salary": 158000
   },
   {
     "customer_id": "997ee9d2-b056-4fbc-9c94-d7c28ce4614e",
@@ -2571,7 +2768,8 @@ export const customersData = [
     "phone_2": "090.930.8769x43967",
     "email": "lorrainecowan@mejia-liu.net",
     "subscription_date": "2021-02-12",
-    "website": "https://www.newman.com/"
+    "website": "https://www.newman.com/",
+    "salary": 177000
   },
   {
     "customer_id": "d3366bdc-6e58-4f79-a74b-90f117b21391",
@@ -2584,7 +2782,8 @@ export const customersData = [
     "phone_2": "+1-885-733-8010x37068",
     "email": "caseyvicki@walker-blackwell.net",
     "subscription_date": "2021-07-23",
-    "website": "https://mclean.net/"
+    "website": "https://mclean.net/",
+    "salary": 178000
   },
   {
     "customer_id": "f8235c44-269c-4b4a-8c5f-2e1389d3fe62",
@@ -2597,7 +2796,8 @@ export const customersData = [
     "phone_2": "(680)802-3210x8066",
     "email": "prestonbuchanan@booth.com",
     "subscription_date": "2020-01-16",
-    "website": "http://www.oliver.com/"
+    "website": "http://www.oliver.com/",
+    "salary": 128000
   },
   {
     "customer_id": "9dce5cfe-2e20-4bc6-a6ac-f355fedfa994",
@@ -2610,7 +2810,8 @@ export const customersData = [
     "phone_2": "001-596-524-7831x9511",
     "email": "dominiqueestes@waller.com",
     "subscription_date": "2020-06-24",
-    "website": "http://www.figueroa.com/"
+    "website": "http://www.figueroa.com/",
+    "salary": 67000
   },
   {
     "customer_id": "fc8fce45-809b-4d4b-b5e9-316dbb8c26a7",
@@ -2623,7 +2824,8 @@ export const customersData = [
     "phone_2": "001-101-306-6413x7523",
     "email": "bauercolton@barron.com",
     "subscription_date": "2020-02-21",
-    "website": "https://bowers-faulkner.com/"
+    "website": "https://bowers-faulkner.com/",
+    "salary": 141000
   },
   {
     "customer_id": "5e2860a0-d2d8-4cd9-9701-808487800db7",
@@ -2636,7 +2838,8 @@ export const customersData = [
     "phone_2": "017-422-7409",
     "email": "crystalvillarreal@mcdonald.com",
     "subscription_date": "2022-05-13",
-    "website": "https://warren.info/"
+    "website": "https://warren.info/",
+    "salary": 133000
   },
   {
     "customer_id": "a3414795-a5bf-496c-bfe5-71e9d48525b2",
@@ -2649,7 +2852,8 @@ export const customersData = [
     "phone_2": "+1-483-492-6847x29072",
     "email": "dlozano@wu.net",
     "subscription_date": "2021-04-03",
-    "website": "http://www.davenport-melendez.com/"
+    "website": "http://www.davenport-melendez.com/",
+    "salary": 166000
   },
   {
     "customer_id": "b5d18590-5faa-43bd-84e4-928f960bbd59",
@@ -2662,7 +2866,8 @@ export const customersData = [
     "phone_2": "940.854.4376",
     "email": "connorharrison@schmidt.org",
     "subscription_date": "2020-06-28",
-    "website": "http://www.hahn-walsh.biz/"
+    "website": "http://www.hahn-walsh.biz/",
+    "salary": 41000
   },
   {
     "customer_id": "976d02aa-203e-4043-8f33-07bc25719b66",
@@ -2675,7 +2880,8 @@ export const customersData = [
     "phone_2": "(794)547-9058x9636",
     "email": "parsonsbecky@vazquez.net",
     "subscription_date": "2022-04-21",
-    "website": "https://www.bernard.com/"
+    "website": "https://www.bernard.com/",
+    "salary": 33000
   },
   {
     "customer_id": "f0f1ea4e-99ab-4b98-a520-89c0a919b732",
@@ -2688,7 +2894,8 @@ export const customersData = [
     "phone_2": "001-150-549-7171",
     "email": "gregory05@dyer-berger.com",
     "subscription_date": "2020-12-04",
-    "website": "https://alvarez-burch.net/"
+    "website": "https://alvarez-burch.net/",
+    "salary": 72000
   },
   {
     "customer_id": "67692bae-ae01-4c22-9dda-acdabeb54d4b",
@@ -2701,7 +2908,8 @@ export const customersData = [
     "phone_2": "+1-845-681-6293x83720",
     "email": "robynwalker@avila.net",
     "subscription_date": "2021-04-12",
-    "website": "http://wilcox-carter.biz/"
+    "website": "http://wilcox-carter.biz/",
+    "salary": 38000
   },
   {
     "customer_id": "154109e5-ce69-46fd-a5a0-dfa1f3629e7a",
@@ -2714,7 +2922,8 @@ export const customersData = [
     "phone_2": "749.309.3288x1810",
     "email": "barkerxavier@holmes.com",
     "subscription_date": "2021-08-02",
-    "website": "https://pennington.com/"
+    "website": "https://pennington.com/",
+    "salary": 48000
   },
   {
     "customer_id": "1091075e-5970-4182-b999-6537425b65aa",
@@ -2727,7 +2936,8 @@ export const customersData = [
     "phone_2": "052.521.1665",
     "email": "marisakim@carey.com",
     "subscription_date": "2020-11-01",
-    "website": "http://santiago-villarreal.net/"
+    "website": "http://santiago-villarreal.net/",
+    "salary": 104000
   },
   {
     "customer_id": "579f4c70-6f12-4910-9b1a-e5f7fa9f36c3",
@@ -2740,7 +2950,8 @@ export const customersData = [
     "phone_2": "+1-197-065-3357",
     "email": "ambertrevino@sweeney.com",
     "subscription_date": "2022-01-15",
-    "website": "http://craig-wheeler.com/"
+    "website": "http://craig-wheeler.com/",
+    "salary": 161000
   },
   {
     "customer_id": "71a5a26b-d37b-4ffb-8749-c0fb420ec86a",
@@ -2753,7 +2964,8 @@ export const customersData = [
     "phone_2": "524.709.7319x08613",
     "email": "normantanya@ruiz.info",
     "subscription_date": "2020-11-02",
-    "website": "https://maldonado.net/"
+    "website": "https://maldonado.net/",
+    "salary": 102000
   },
   {
     "customer_id": "3850b7f3-3452-4df0-98b0-dc1f56aec6a8",
@@ -2766,7 +2978,8 @@ export const customersData = [
     "phone_2": "209.661.1775",
     "email": "virginia73@turner.com",
     "subscription_date": "2021-04-18",
-    "website": "http://arnold.com/"
+    "website": "http://arnold.com/",
+    "salary": 62000
   },
   {
     "customer_id": "18652af6-fc6e-4eb0-8dc9-59152968be54",
@@ -2779,7 +2992,8 @@ export const customersData = [
     "phone_2": 4653976676,
     "email": "singhtaylor@martinez.net",
     "subscription_date": "2021-04-30",
-    "website": "https://ford.com/"
+    "website": "https://ford.com/",
+    "salary": 85000
   },
   {
     "customer_id": "99e8494d-9b11-45a1-9ea1-068d8bc1866f",
@@ -2792,7 +3006,8 @@ export const customersData = [
     "phone_2": "001-078-121-1869",
     "email": "joepineda@davenport-reed.com",
     "subscription_date": "2021-04-12",
-    "website": "https://www.lutz.com/"
+    "website": "https://www.lutz.com/",
+    "salary": 129000
   },
   {
     "customer_id": "dcb35770-9b2e-4439-b3f8-4759150ab9fb",
@@ -2805,7 +3020,8 @@ export const customersData = [
     "phone_2": "001-280-704-8319",
     "email": "eddie12@rice.org",
     "subscription_date": "2021-12-15",
-    "website": "http://www.mcgee.com/"
+    "website": "http://www.mcgee.com/",
+    "salary": 79000
   },
   {
     "customer_id": "17e183e1-6191-4741-9d6e-34e126635eb8",
@@ -2818,7 +3034,8 @@ export const customersData = [
     "phone_2": "153-067-8992",
     "email": "lawrencetara@booker.com",
     "subscription_date": "2021-08-15",
-    "website": "http://lewis-chambers.com/"
+    "website": "http://lewis-chambers.com/",
+    "salary": 112000
   },
   {
     "customer_id": "a8db6b52-3796-4f9b-9ac5-634707304a49",
@@ -2831,7 +3048,8 @@ export const customersData = [
     "phone_2": "059-387-5803",
     "email": "malik48@sherman.org",
     "subscription_date": "2020-08-08",
-    "website": "https://monroe.com/"
+    "website": "https://monroe.com/",
+    "salary": 167000
   },
   {
     "customer_id": "39b96eda-e2c5-456e-aed2-4a7428923597",
@@ -2844,7 +3062,8 @@ export const customersData = [
     "phone_2": "+1-862-787-5467x9121",
     "email": "ivanporter@bass.com",
     "subscription_date": "2021-06-15",
-    "website": "https://byrd-ho.com/"
+    "website": "https://byrd-ho.com/",
+    "salary": 170000
   },
   {
     "customer_id": "1f7e2c7b-1b83-4a31-9ad2-0fc6b7ac1b07",
@@ -2857,7 +3076,8 @@ export const customersData = [
     "phone_2": 3509849991,
     "email": "natashagibson@hardin.com",
     "subscription_date": "2021-06-29",
-    "website": "http://www.prince.org/"
+    "website": "http://www.prince.org/",
+    "salary": 159000
   },
   {
     "customer_id": "3211ed74-19c0-4881-b27b-56f221f984e1",
@@ -2870,7 +3090,8 @@ export const customersData = [
     "phone_2": "(364)530-5072",
     "email": "djoseph@ferrell.org",
     "subscription_date": "2021-09-25",
-    "website": "http://www.mcfarland-dennis.org/"
+    "website": "http://www.mcfarland-dennis.org/",
+    "salary": 144000
   },
   {
     "customer_id": "bb6d8d73-c0e0-4484-bde9-5c244bfcbb03",
@@ -2883,7 +3104,8 @@ export const customersData = [
     "phone_2": "+1-380-038-3077x2997",
     "email": "chall@frazier.com",
     "subscription_date": "2020-09-19",
-    "website": "https://oneal-burton.biz/"
+    "website": "https://oneal-burton.biz/",
+    "salary": 35000
   },
   {
     "customer_id": "f9457b37-c15a-4c63-b05d-0ec231850111",
@@ -2896,7 +3118,8 @@ export const customersData = [
     "phone_2": 1656954263,
     "email": "malloryferguson@hoffman-bradshaw.info",
     "subscription_date": "2021-02-11",
-    "website": "http://www.schwartz.org/"
+    "website": "http://www.schwartz.org/",
+    "salary": 144000
   },
   {
     "customer_id": "c584a2af-d02e-4e8c-b989-9e0221f4b2d7",
@@ -2909,7 +3132,8 @@ export const customersData = [
     "phone_2": "461-106-3044x390",
     "email": "taylortheresa@santiago.com",
     "subscription_date": "2020-08-25",
-    "website": "https://www.patrick.net/"
+    "website": "https://www.patrick.net/",
+    "salary": 112000
   },
   {
     "customer_id": "72e8e17f-61e7-49d4-9b8e-af6facce991a",
@@ -2922,7 +3146,8 @@ export const customersData = [
     "phone_2": "+1-666-315-0527x00588",
     "email": "christian32@ferguson.com",
     "subscription_date": "2020-05-21",
-    "website": "https://miranda.com/"
+    "website": "https://miranda.com/",
+    "salary": 120000
   },
   {
     "customer_id": "7799e682-6899-4084-a5aa-a3f7346c6f21",
@@ -2935,7 +3160,8 @@ export const customersData = [
     "phone_2": "001-699-394-7424",
     "email": "snyderkatherine@krause.org",
     "subscription_date": "2021-12-12",
-    "website": "http://dunlap-lutz.com/"
+    "website": "http://dunlap-lutz.com/",
+    "salary": 59000
   },
   {
     "customer_id": "70aa4861-dbae-48bb-be6a-79c378b4899c",
@@ -2948,7 +3174,8 @@ export const customersData = [
     "phone_2": "001-837-873-5788x80121",
     "email": "lynchana@collier-yu.com",
     "subscription_date": "2021-08-07",
-    "website": "http://edwards-porter.com/"
+    "website": "http://edwards-porter.com/",
+    "salary": 169000
   },
   {
     "customer_id": "764c93f2-463c-4446-b705-7d94d88b804b",
@@ -2961,7 +3188,8 @@ export const customersData = [
     "phone_2": "(163)039-1979",
     "email": "bryantangie@shannon-guerra.biz",
     "subscription_date": "2020-07-01",
-    "website": "http://grant.com/"
+    "website": "http://grant.com/",
+    "salary": 109000
   },
   {
     "customer_id": "d34f7b06-ed7d-40c6-9f7d-a590a4df234d",
@@ -2974,7 +3202,8 @@ export const customersData = [
     "phone_2": "001-544-964-0015x79591",
     "email": "susanlevy@cooper-rowe.org",
     "subscription_date": "2021-03-20",
-    "website": "https://dean.com/"
+    "website": "https://dean.com/",
+    "salary": 161000
   },
   {
     "customer_id": "a7e357d2-2056-4f7f-9dff-50398fbfeb9e",
@@ -2987,7 +3216,8 @@ export const customersData = [
     "phone_2": "098-033-3974x22568",
     "email": "glassdavid@austin.biz",
     "subscription_date": "2020-02-29",
-    "website": "http://www.solomon-whitney.com/"
+    "website": "http://www.solomon-whitney.com/",
+    "salary": 142000
   },
   {
     "customer_id": "d07cc325-02b0-4c1b-bdd8-c34d242c8175",
@@ -3000,7 +3230,8 @@ export const customersData = [
     "phone_2": "299.632.9247",
     "email": "wcarroll@sanchez-roberts.com",
     "subscription_date": "2020-02-05",
-    "website": "https://www.gamble-ingram.com/"
+    "website": "https://www.gamble-ingram.com/",
+    "salary": 169000
   },
   {
     "customer_id": "2dcbbccc-597d-4b22-af3b-585d01dd1b4a",
@@ -3013,7 +3244,8 @@ export const customersData = [
     "phone_2": "837.088.1778",
     "email": "tomflores@yates.net",
     "subscription_date": "2020-03-28",
-    "website": "http://www.harper.org/"
+    "website": "http://www.harper.org/",
+    "salary": 128000
   },
   {
     "customer_id": "e1d028c8-fe44-4235-9be4-3fa5f97615d6",
@@ -3026,7 +3258,8 @@ export const customersData = [
     "phone_2": "001-395-172-4275",
     "email": "mckeeashlee@stevens-harding.com",
     "subscription_date": "2020-03-25",
-    "website": "http://www.graham.org/"
+    "website": "http://www.graham.org/",
+    "salary": 170000
   },
   {
     "customer_id": "a4481f45-d4ac-4c6d-b235-ed27a18b9d3d",
@@ -3039,7 +3272,8 @@ export const customersData = [
     "phone_2": "(300)525-6775",
     "email": "halejanet@dodson-david.com",
     "subscription_date": "2021-12-19",
-    "website": "https://www.fowler.com/"
+    "website": "https://www.fowler.com/",
+    "salary": 97000
   },
   {
     "customer_id": "f206c890-771e-43ab-bd5d-a128651740a6",
@@ -3052,7 +3286,8 @@ export const customersData = [
     "phone_2": "669.673.2948x1142",
     "email": "michaeljody@miranda.com",
     "subscription_date": "2020-06-23",
-    "website": "https://mason.net/"
+    "website": "https://mason.net/",
+    "salary": 150000
   },
   {
     "customer_id": "cdcd2305-a95e-4ce4-bc96-5e8add288175",
@@ -3065,7 +3300,8 @@ export const customersData = [
     "phone_2": "+1-820-002-6961x54283",
     "email": "jaimeschneider@banks-weiss.net",
     "subscription_date": "2020-10-07",
-    "website": "https://harper.com/"
+    "website": "https://harper.com/",
+    "salary": 153000
   },
   {
     "customer_id": "9576fb0b-c8c9-4abe-9bec-82d2394757c4",
@@ -3078,7 +3314,8 @@ export const customersData = [
     "phone_2": "(751)849-2258",
     "email": "zjackson@dickerson-gardner.com",
     "subscription_date": "2020-08-15",
-    "website": "https://lang-johns.org/"
+    "website": "https://lang-johns.org/",
+    "salary": 153000
   },
   {
     "customer_id": "060b9fb6-a25c-4d1a-a5dd-6ec9a9f7641e",
@@ -3091,7 +3328,8 @@ export const customersData = [
     "phone_2": "034-816-0512",
     "email": "michele15@salazar.com",
     "subscription_date": "2021-03-26",
-    "website": "https://www.owen.com/"
+    "website": "https://www.owen.com/",
+    "salary": 30000
   },
   {
     "customer_id": "c849df90-154f-4554-ab7f-accc1c25a4d7",
@@ -3104,7 +3342,8 @@ export const customersData = [
     "phone_2": "(196)734-8462",
     "email": "prowe@neal-dominguez.net",
     "subscription_date": "2022-04-04",
-    "website": "https://figueroa.com/"
+    "website": "https://figueroa.com/",
+    "salary": 122000
   },
   {
     "customer_id": "2e46f33c-ec42-427f-8b30-7b1b2d084ccd",
@@ -3117,7 +3356,8 @@ export const customersData = [
     "phone_2": "(488)029-2115",
     "email": "acurtis@escobar.org",
     "subscription_date": "2020-12-07",
-    "website": "https://www.joyce.info/"
+    "website": "https://www.joyce.info/",
+    "salary": 87000
   },
   {
     "customer_id": "75bbd492-0d09-431e-977a-e618543f52f7",
@@ -3130,7 +3370,8 @@ export const customersData = [
     "phone_2": "(295)965-5724x8715",
     "email": "lydiamoss@rush-mitchell.com",
     "subscription_date": "2020-11-15",
-    "website": "https://www.waters.net/"
+    "website": "https://www.waters.net/",
+    "salary": 115000
   },
   {
     "customer_id": "0875172e-0408-49ee-bd72-5cc0145ddce2",
@@ -3143,7 +3384,8 @@ export const customersData = [
     "phone_2": "170.888.6999",
     "email": "harrelltricia@koch.com",
     "subscription_date": "2021-07-18",
-    "website": "http://sharp.com/"
+    "website": "http://sharp.com/",
+    "salary": 156000
   },
   {
     "customer_id": "0f22a186-b90e-431b-8d8d-3c0d77303f84",
@@ -3156,7 +3398,8 @@ export const customersData = [
     "phone_2": "001-045-820-2769",
     "email": "tricia16@crane-camacho.com",
     "subscription_date": "2021-10-28",
-    "website": "https://strong-montes.com/"
+    "website": "https://strong-montes.com/",
+    "salary": 83000
   },
   {
     "customer_id": "413d869b-51b3-4a0a-b22f-4c8f54ce7204",
@@ -3169,7 +3412,8 @@ export const customersData = [
     "phone_2": "+1-708-532-5344x2287",
     "email": "marisa78@flowers.com",
     "subscription_date": "2020-07-10",
-    "website": "http://armstrong-arellano.net/"
+    "website": "http://armstrong-arellano.net/",
+    "salary": 105000
   },
   {
     "customer_id": "0939c11a-4955-4eed-a248-8686409ac965",
@@ -3182,7 +3426,8 @@ export const customersData = [
     "phone_2": "111-171-9414",
     "email": "gilbert40@berry.info",
     "subscription_date": "2021-03-14",
-    "website": "https://ward.com/"
+    "website": "https://ward.com/",
+    "salary": 173000
   },
   {
     "customer_id": "ac5dfee7-6aeb-4dac-9253-6ea7d291725c",
@@ -3195,7 +3440,8 @@ export const customersData = [
     "phone_2": "458-065-7831x3023",
     "email": "gonzalesjessica@melendez.com",
     "subscription_date": "2021-10-19",
-    "website": "http://www.sloan.com/"
+    "website": "http://www.sloan.com/",
+    "salary": 52000
   },
   {
     "customer_id": "7b69d076-2e47-476d-9e26-ce3b1a0e92c1",
@@ -3208,7 +3454,8 @@ export const customersData = [
     "phone_2": "+1-305-882-4375x782",
     "email": "crystalvillarreal@robertson.org",
     "subscription_date": "2020-12-15",
-    "website": "https://stein-mitchell.info/"
+    "website": "https://stein-mitchell.info/",
+    "salary": 77000
   },
   {
     "customer_id": "3c8425ce-a610-483f-9a8f-3f69ce4a6140",
@@ -3221,7 +3468,8 @@ export const customersData = [
     "phone_2": "808.698.7499",
     "email": "aimeeroberts@powers.net",
     "subscription_date": "2021-05-20",
-    "website": "https://www.morse-braun.com/"
+    "website": "https://www.morse-braun.com/",
+    "salary": 67000
   },
   {
     "customer_id": "82436383-112f-4f24-b4f5-4d0eeca5db5d",
@@ -3234,7 +3482,8 @@ export const customersData = [
     "phone_2": "130.069.3370x46422",
     "email": "iyoder@larsen-weaver.info",
     "subscription_date": "2020-11-18",
-    "website": "http://hamilton-li.com/"
+    "website": "http://hamilton-li.com/",
+    "salary": 163000
   },
   {
     "customer_id": "99e1ae19-c66d-4de3-8cb6-b4da5603d26d",
@@ -3247,7 +3496,8 @@ export const customersData = [
     "phone_2": "(309)825-5595x51207",
     "email": "ymckee@michael.org",
     "subscription_date": "2020-11-03",
-    "website": "http://pruitt.com/"
+    "website": "http://pruitt.com/",
+    "salary": 172000
   },
   {
     "customer_id": "3a2da302-7eb5-4d71-9c8a-5fad72a4d410",
@@ -3260,7 +3510,8 @@ export const customersData = [
     "phone_2": "981.884.1393x23918",
     "email": "carolkelley@ford-molina.org",
     "subscription_date": "2020-08-29",
-    "website": "http://patrick.com/"
+    "website": "http://patrick.com/",
+    "salary": 160000
   },
   {
     "customer_id": "35289d16-0ac6-4f66-96a8-8bf6adb0a8d9",
@@ -3273,7 +3524,8 @@ export const customersData = [
     "phone_2": "(262)045-9925x64234",
     "email": "diazlawrence@houston.com",
     "subscription_date": "2021-03-01",
-    "website": "http://horne.net/"
+    "website": "http://horne.net/",
+    "salary": 117000
   },
   {
     "customer_id": "4a2d7d8a-bfc1-445a-8c02-1b973b89294c",
@@ -3286,7 +3538,8 @@ export const customersData = [
     "phone_2": "+1-129-593-7870x7318",
     "email": "bobkrause@cabrera.com",
     "subscription_date": "2020-02-18",
-    "website": "http://hopkins-simpson.com/"
+    "website": "http://hopkins-simpson.com/",
+    "salary": 64000
   },
   {
     "customer_id": "4b836beb-5d6b-4c9c-b40a-8f67e2ee2d84",
@@ -3299,7 +3552,8 @@ export const customersData = [
     "phone_2": "(682)950-0406x6811",
     "email": "preston37@delacruz.com",
     "subscription_date": "2020-05-23",
-    "website": "http://www.ward-salas.com/"
+    "website": "http://www.ward-salas.com/",
+    "salary": 89000
   },
   {
     "customer_id": "831dfb02-293f-4c5c-b5e9-981fcf9ebef0",
@@ -3312,7 +3566,8 @@ export const customersData = [
     "phone_2": "980-094-6904x337",
     "email": "andreaproctor@manning-torres.info",
     "subscription_date": "2021-09-18",
-    "website": "http://buck-choi.com/"
+    "website": "http://buck-choi.com/",
+    "salary": 177000
   },
   {
     "customer_id": "d7b66680-b851-4b1e-b10b-e9a82a472463",
@@ -3325,7 +3580,8 @@ export const customersData = [
     "phone_2": "(622)101-2613x53479",
     "email": "qwhitehead@grant-chung.com",
     "subscription_date": "2021-03-14",
-    "website": "http://daniels.com/"
+    "website": "http://daniels.com/",
+    "salary": 48000
   },
   {
     "customer_id": "c4595b16-29c1-4743-9e62-d5806b5b2b87",
@@ -3338,7 +3594,8 @@ export const customersData = [
     "phone_2": "(931)102-8354",
     "email": "ehowell@roach.net",
     "subscription_date": "2021-03-04",
-    "website": "http://www.howard.com/"
+    "website": "http://www.howard.com/",
+    "salary": 46000
   },
   {
     "customer_id": "dbe8f638-7f7b-4734-ba51-70a0ae272b24",
@@ -3351,7 +3608,8 @@ export const customersData = [
     "phone_2": "+1-826-940-0271x4632",
     "email": "abigail07@crosby.com",
     "subscription_date": "2020-10-12",
-    "website": "https://www.calhoun-ruiz.com/"
+    "website": "https://www.calhoun-ruiz.com/",
+    "salary": 139000
   },
   {
     "customer_id": "b351a8d8-9f2a-4703-9cc8-8442377d50cb",
@@ -3364,7 +3622,8 @@ export const customersData = [
     "phone_2": "+1-252-818-8635x636",
     "email": "briana71@boyd.info",
     "subscription_date": "2021-03-13",
-    "website": "https://marshall-clark.com/"
+    "website": "https://marshall-clark.com/",
+    "salary": 155000
   },
   {
     "customer_id": "cf0a47e2-30f9-4b23-a476-1739bcff5c41",
@@ -3377,7 +3636,8 @@ export const customersData = [
     "phone_2": "(479)244-8976x24529",
     "email": "whitneyrogers@robbins-dennis.net",
     "subscription_date": "2021-09-26",
-    "website": "https://hess.info/"
+    "website": "https://hess.info/",
+    "salary": 118000
   },
   {
     "customer_id": "2cf12fef-dbbf-4f60-92dd-81f41f3f54f7",
@@ -3390,7 +3650,8 @@ export const customersData = [
     "phone_2": "188-583-3159",
     "email": "mariobishop@pitts-cohen.com",
     "subscription_date": "2022-02-06",
-    "website": "https://cantu-adkins.com/"
+    "website": "https://cantu-adkins.com/",
+    "salary": 93000
   },
   {
     "customer_id": "ce6ce7bb-bfd1-403f-bdae-f387ced7ff7c",
@@ -3403,7 +3664,8 @@ export const customersData = [
     "phone_2": "754.096.3723x3475",
     "email": "nicolasmckay@cain.com",
     "subscription_date": "2021-08-19",
-    "website": "https://www.kirk.com/"
+    "website": "https://www.kirk.com/",
+    "salary": 69000
   },
   {
     "customer_id": "25f0e493-054d-4759-9a92-6583dc0baf4e",
@@ -3416,7 +3678,8 @@ export const customersData = [
     "phone_2": "(132)948-7510",
     "email": "rasmussenmeredith@prince-peterson.com",
     "subscription_date": "2021-01-05",
-    "website": "https://brennan.com/"
+    "website": "https://brennan.com/",
+    "salary": 155000
   },
   {
     "customer_id": "ccfa32d3-65a7-4987-b8ff-4dc4084dd829",
@@ -3429,7 +3692,8 @@ export const customersData = [
     "phone_2": "215.013.8782x37449",
     "email": "yjuarez@gallegos-richards.biz",
     "subscription_date": "2021-06-12",
-    "website": "https://strong-black.biz/"
+    "website": "https://strong-black.biz/",
+    "salary": 144000
   },
   {
     "customer_id": "f44013da-8f25-4ca1-bb85-66e14886f39b",
@@ -3442,7 +3706,8 @@ export const customersData = [
     "phone_2": "978.131.9721",
     "email": "roliver@fowler.com",
     "subscription_date": "2021-04-07",
-    "website": "https://campbell.com/"
+    "website": "https://campbell.com/",
+    "salary": 59000
   },
   {
     "customer_id": "9d12b842-88c1-47c0-a93b-da4ca8e0123e",
@@ -3455,7 +3720,8 @@ export const customersData = [
     "phone_2": "+1-494-134-8141",
     "email": "guy50@gordon.com",
     "subscription_date": "2020-04-18",
-    "website": "https://www.ortiz.com/"
+    "website": "https://www.ortiz.com/",
+    "salary": 135000
   },
   {
     "customer_id": "36fd066a-c2bf-4b4d-81f4-c6829b2e4a5f",
@@ -3468,7 +3734,8 @@ export const customersData = [
     "phone_2": "001-721-794-1168x227",
     "email": "angelicaroach@farmer-weber.biz",
     "subscription_date": "2021-01-14",
-    "website": "http://www.silva.com/"
+    "website": "http://www.silva.com/",
+    "salary": 61000
   },
   {
     "customer_id": "b89d073a-b888-4e58-88a8-231e6776458f",
@@ -3481,7 +3748,8 @@ export const customersData = [
     "phone_2": "+1-665-415-9717",
     "email": "mathewdelgado@frazier-perkins.com",
     "subscription_date": "2022-01-02",
-    "website": "http://luna.com/"
+    "website": "http://luna.com/",
+    "salary": 171000
   },
   {
     "customer_id": "79b7095f-6515-4c03-9f14-773e40474ed0",
@@ -3494,7 +3762,8 @@ export const customersData = [
     "phone_2": "(977)502-2966x064",
     "email": "jasminpeters@english.com",
     "subscription_date": "2021-12-13",
-    "website": "https://knapp.biz/"
+    "website": "https://knapp.biz/",
+    "salary": 94000
   },
   {
     "customer_id": "ea6f63b5-8b61-40a1-8532-1fd9a662cc0b",
@@ -3507,7 +3776,8 @@ export const customersData = [
     "phone_2": "+1-403-819-1901x28142",
     "email": "betty22@oliver-combs.biz",
     "subscription_date": "2020-10-22",
-    "website": "http://www.montgomery.com/"
+    "website": "http://www.montgomery.com/",
+    "salary": 174000
   },
   {
     "customer_id": "9c942ab4-8f2c-4bae-9a34-46b99ef3f3b0",
@@ -3520,7 +3790,8 @@ export const customersData = [
     "phone_2": "001-382-980-4480x17345",
     "email": "mccoybruce@murray.org",
     "subscription_date": "2020-12-17",
-    "website": "https://www.walls-fletcher.biz/"
+    "website": "https://www.walls-fletcher.biz/",
+    "salary": 66000
   },
   {
     "customer_id": "ac0d6239-2d1e-4c67-8d62-f8be39772330",
@@ -3533,7 +3804,8 @@ export const customersData = [
     "phone_2": "(037)709-6195x940",
     "email": "seth31@ortega.com",
     "subscription_date": "2020-07-02",
-    "website": "http://vance.com/"
+    "website": "http://vance.com/",
+    "salary": 77000
   },
   {
     "customer_id": "f4671cf0-38e8-4d44-b4c4-f114088251e4",
@@ -3546,7 +3818,8 @@ export const customersData = [
     "phone_2": "(368)828-6273x74514",
     "email": "gutierreznicole@middleton.com",
     "subscription_date": "2021-06-12",
-    "website": "https://www.delgado.com/"
+    "website": "https://www.delgado.com/",
+    "salary": 179000
   },
   {
     "customer_id": "cacde569-3db9-4219-a337-d551807ad758",
@@ -3559,7 +3832,8 @@ export const customersData = [
     "phone_2": 6025094660,
     "email": "roblesglenn@davies.com",
     "subscription_date": "2021-06-30",
-    "website": "http://www.jones-burke.biz/"
+    "website": "http://www.jones-burke.biz/",
+    "salary": 144000
   },
   {
     "customer_id": "1d16f442-6532-4043-a944-3071720a9877",
@@ -3572,7 +3846,8 @@ export const customersData = [
     "phone_2": "580-215-4480x991",
     "email": "norman96@olsen.net",
     "subscription_date": "2020-11-22",
-    "website": "https://www.wolfe.info/"
+    "website": "https://www.wolfe.info/",
+    "salary": 93000
   },
   {
     "customer_id": "ac69a29c-4b75-42be-8e88-3e76f534962c",
@@ -3585,7 +3860,8 @@ export const customersData = [
     "phone_2": "0512901845",
     "email": "roachnathaniel@woods.org",
     "subscription_date": "2021-04-28",
-    "website": "http://www.powell.com/"
+    "website": "http://www.powell.com/",
+    "salary": 149000
   },
   {
     "customer_id": "28133956-b0c8-437b-bfe7-5b0140d97bc2",
@@ -3598,7 +3874,8 @@ export const customersData = [
     "phone_2": "+1-051-279-2016x18482",
     "email": "kmckinney@kennedy.com",
     "subscription_date": "2020-10-23",
-    "website": "https://mcgee.org/"
+    "website": "https://mcgee.org/",
+    "salary": 30000
   },
   {
     "customer_id": "38beca7a-dacf-4857-9a39-a914c9916bc3",
@@ -3611,7 +3888,8 @@ export const customersData = [
     "phone_2": 6192038501,
     "email": "michaela28@rose.biz",
     "subscription_date": "2020-05-13",
-    "website": "https://bartlett-hoffman.info/"
+    "website": "https://bartlett-hoffman.info/",
+    "salary": 44000
   },
   {
     "customer_id": "d6dc9e0f-028b-4f71-bc2b-8ce95a5087f9",
@@ -3624,7 +3902,8 @@ export const customersData = [
     "phone_2": "+1-194-700-2497x812",
     "email": "johnsonjesse@munoz.com",
     "subscription_date": "2021-08-18",
-    "website": "http://booth.com/"
+    "website": "http://booth.com/",
+    "salary": 139000
   },
   {
     "customer_id": "702b1bbe-e72f-478e-b37e-ff5f9995cfb0",
@@ -3637,7 +3916,8 @@ export const customersData = [
     "phone_2": "741-758-4841x170",
     "email": "lmaddox@best-gonzalez.com",
     "subscription_date": "2021-03-15",
-    "website": "http://www.rowland.com/"
+    "website": "http://www.rowland.com/",
+    "salary": 160000
   },
   {
     "customer_id": "dd9f9631-0e26-4221-b8a4-4f20f82d52e4",
@@ -3650,7 +3930,8 @@ export const customersData = [
     "phone_2": "(766)151-7296x976",
     "email": "mcamacho@morrison.biz",
     "subscription_date": "2020-07-21",
-    "website": "http://drake.com/"
+    "website": "http://drake.com/",
+    "salary": 59000
   },
   {
     "customer_id": "e8c678e4-949e-4d41-bf42-89973ebb1f09",
@@ -3663,7 +3944,8 @@ export const customersData = [
     "phone_2": "537-809-0785",
     "email": "tonyasherman@gentry.net",
     "subscription_date": "2021-09-14",
-    "website": "https://www.quinn.com/"
+    "website": "https://www.quinn.com/",
+    "salary": 142000
   },
   {
     "customer_id": "9c819b56-9691-42e2-bf3d-3cfe50ac5d5c",
@@ -3676,7 +3958,8 @@ export const customersData = [
     "phone_2": "001-145-093-5539x7753",
     "email": "dlloyd@bowen.org",
     "subscription_date": "2020-05-09",
-    "website": "http://www.carter.com/"
+    "website": "http://www.carter.com/",
+    "salary": 119000
   },
   {
     "customer_id": "2a5bb5ea-23da-43f6-bb2f-e4443efbc743",
@@ -3689,7 +3972,8 @@ export const customersData = [
     "phone_2": 9668846235,
     "email": "kgomez@simon-lozano.biz",
     "subscription_date": "2021-04-01",
-    "website": "http://www.villanueva-mercado.com/"
+    "website": "http://www.villanueva-mercado.com/",
+    "salary": 167000
   },
   {
     "customer_id": "b138d08a-8d71-4aba-ba4f-12096d459ae8",
@@ -3702,7 +3986,8 @@ export const customersData = [
     "phone_2": "533.396.9858x558",
     "email": "charlene58@whitaker.com",
     "subscription_date": "2021-02-13",
-    "website": "https://www.dudley.org/"
+    "website": "https://www.dudley.org/",
+    "salary": 129000
   },
   {
     "customer_id": "978e8b6e-f81e-4a73-b568-750ebd16e8e2",
@@ -3715,7 +4000,8 @@ export const customersData = [
     "phone_2": "001-760-642-0365x2671",
     "email": "mossjody@singh.com",
     "subscription_date": "2022-01-27",
-    "website": "http://hebert.org/"
+    "website": "http://hebert.org/",
+    "salary": 151000
   },
   {
     "customer_id": "911bb308-b850-45b3-9c33-0bf832dd015e",
@@ -3728,7 +4014,8 @@ export const customersData = [
     "phone_2": "001-831-939-6219x8325",
     "email": "tomdyer@mcknight.com",
     "subscription_date": "2020-02-05",
-    "website": "http://www.mullins.com/"
+    "website": "http://www.mullins.com/",
+    "salary": 153000
   },
   {
     "customer_id": "b0cfc0f4-eaed-4194-9c2f-5726865db001",
@@ -3741,7 +4028,8 @@ export const customersData = [
     "phone_2": "789.411.1008x925",
     "email": "daltonpark@chaney.com",
     "subscription_date": "2021-05-09",
-    "website": "http://www.gamble.com/"
+    "website": "http://www.gamble.com/",
+    "salary": 103000
   },
   {
     "customer_id": "9dc0407f-84b1-4a1e-88df-6272d22e449e",
@@ -3754,7 +4042,8 @@ export const customersData = [
     "phone_2": "427.248.2392",
     "email": "jmoran@young.com",
     "subscription_date": "2021-12-27",
-    "website": "http://melendez.com/"
+    "website": "http://melendez.com/",
+    "salary": 99000
   },
   {
     "customer_id": "709cce54-5130-438d-8b47-f51844443083",
@@ -3767,7 +4056,8 @@ export const customersData = [
     "phone_2": "(354)253-2691",
     "email": "maxbonilla@dorsey.biz",
     "subscription_date": "2021-04-18",
-    "website": "https://www.ballard.com/"
+    "website": "https://www.ballard.com/",
+    "salary": 145000
   },
   {
     "customer_id": "10f22675-5d03-446d-b06d-26c4cfaf0bef",
@@ -3780,7 +4070,8 @@ export const customersData = [
     "phone_2": "843-028-3035",
     "email": "alexandrews@dalton.com",
     "subscription_date": "2020-04-10",
-    "website": "http://www.underwood-mahoney.com/"
+    "website": "http://www.underwood-mahoney.com/",
+    "salary": 119000
   },
   {
     "customer_id": "ddfefcb9-1ee3-4787-9077-bbfbe6738aa3",
@@ -3793,7 +4084,8 @@ export const customersData = [
     "phone_2": "(158)245-1825x18940",
     "email": "rshaffer@nelson.net",
     "subscription_date": "2020-02-15",
-    "website": "http://www.lynn.com/"
+    "website": "http://www.lynn.com/",
+    "salary": 50000
   },
   {
     "customer_id": "4e684fd5-4e6a-426c-9d81-84ad3fc69f43",
@@ -3806,7 +4098,8 @@ export const customersData = [
     "phone_2": "001-436-623-9937x3019",
     "email": "vvazquez@le-flowers.info",
     "subscription_date": "2021-04-09",
-    "website": "https://www.neal.biz/"
+    "website": "https://www.neal.biz/",
+    "salary": 179000
   },
   {
     "customer_id": "656b6cba-8249-4c57-8bad-9e5e67edb2f0",
@@ -3819,7 +4112,8 @@ export const customersData = [
     "phone_2": "(115)889-4285x862",
     "email": "heidichaney@shaw.com",
     "subscription_date": "2022-03-24",
-    "website": "http://hammond.info/"
+    "website": "http://hammond.info/",
+    "salary": 170000
   },
   {
     "customer_id": "b3183cf3-101f-44b2-840a-c2df81c368c4",
@@ -3832,7 +4126,8 @@ export const customersData = [
     "phone_2": "+1-201-722-4234x4961",
     "email": "shenry@browning-wiley.com",
     "subscription_date": "2021-09-14",
-    "website": "https://www.sharp.com/"
+    "website": "https://www.sharp.com/",
+    "salary": 141000
   },
   {
     "customer_id": "f9889173-0f25-4364-a4de-ee891320846f",
@@ -3845,7 +4140,8 @@ export const customersData = [
     "phone_2": "001-139-871-2309x667",
     "email": "dschultz@zimmerman.com",
     "subscription_date": "2021-01-31",
-    "website": "https://santos.net/"
+    "website": "https://santos.net/",
+    "salary": 58000
   },
   {
     "customer_id": "78885fb4-32ba-4f27-a995-a810775cee8b",
@@ -3858,7 +4154,8 @@ export const customersData = [
     "phone_2": "935-214-4315",
     "email": "danielle21@baxter-cervantes.com",
     "subscription_date": "2021-04-11",
-    "website": "https://glass-arroyo.biz/"
+    "website": "https://glass-arroyo.biz/",
+    "salary": 168000
   },
   {
     "customer_id": "90c79f28-55f2-4e5b-9919-db8265fd1a46",
@@ -3871,7 +4168,8 @@ export const customersData = [
     "phone_2": "(144)211-3391x10275",
     "email": "xspencer@hartman-lynn.com",
     "subscription_date": "2020-09-12",
-    "website": "http://www.oneal.com/"
+    "website": "http://www.oneal.com/",
+    "salary": 176000
   },
   {
     "customer_id": "82e36029-d446-4579-8d8d-8194900acbbe",
@@ -3884,7 +4182,8 @@ export const customersData = [
     "phone_2": "095-180-8674x062",
     "email": "bradjones@sellers.com",
     "subscription_date": "2020-04-21",
-    "website": "https://www.wu-garcia.org/"
+    "website": "https://www.wu-garcia.org/",
+    "salary": 43000
   },
   {
     "customer_id": "dd324c00-0277-4782-a053-e9439e0e5b9d",
@@ -3897,7 +4196,8 @@ export const customersData = [
     "phone_2": "0056894121",
     "email": "parsonsmarissa@arroyo.com",
     "subscription_date": "2021-12-29",
-    "website": "https://mcmillan.com/"
+    "website": "https://mcmillan.com/",
+    "salary": 76000
   },
   {
     "customer_id": "b1b8d22e-2e84-4ccb-838d-e3deb7843f62",
@@ -3910,7 +4210,8 @@ export const customersData = [
     "phone_2": "470.615.6305",
     "email": "hvalentine@gonzalez.com",
     "subscription_date": "2020-05-17",
-    "website": "https://osborne.com/"
+    "website": "https://osborne.com/",
+    "salary": 124000
   },
   {
     "customer_id": "0be4dc8c-1ac3-444a-943f-9602551cda32",
@@ -3923,7 +4224,8 @@ export const customersData = [
     "phone_2": "273.934.4421x062",
     "email": "carneymalik@allen-bullock.com",
     "subscription_date": "2021-10-09",
-    "website": "http://wang.com/"
+    "website": "http://wang.com/",
+    "salary": 158000
   },
   {
     "customer_id": "f04b6620-cda9-4933-b855-3b7306d02576",
@@ -3936,7 +4238,8 @@ export const customersData = [
     "phone_2": "+1-891-727-5690x112",
     "email": "destiny21@goodwin.com",
     "subscription_date": "2021-09-29",
-    "website": "http://www.gilbert.com/"
+    "website": "http://www.gilbert.com/",
+    "salary": 50000
   },
   {
     "customer_id": "81ee5ec4-5d44-4e5d-83eb-244ec949856f",
@@ -3949,7 +4252,8 @@ export const customersData = [
     "phone_2": "454-183-8983",
     "email": "joypacheco@haney.net",
     "subscription_date": "2020-04-20",
-    "website": "http://bradley-wiley.org/"
+    "website": "http://bradley-wiley.org/",
+    "salary": 151000
   },
   {
     "customer_id": "f8bfb91a-1109-4944-a289-798c8eb16e6c",
@@ -3962,7 +4266,8 @@ export const customersData = [
     "phone_2": "+1-778-677-4517",
     "email": "swhite@tyler-novak.biz",
     "subscription_date": "2021-04-06",
-    "website": "https://www.cabrera.com/"
+    "website": "https://www.cabrera.com/",
+    "salary": 57000
   },
   {
     "customer_id": "b62f44cb-45b6-4312-9bd1-4d6be0ba0b98",
@@ -3975,7 +4280,8 @@ export const customersData = [
     "phone_2": "+1-564-825-3794x733",
     "email": "devin86@shannon.info",
     "subscription_date": "2020-10-21",
-    "website": "http://meza-hoover.info/"
+    "website": "http://meza-hoover.info/",
+    "salary": 44000
   },
   {
     "customer_id": "080b78b7-d5fd-4f73-ae7d-895c4d00b44a",
@@ -3988,7 +4294,8 @@ export const customersData = [
     "phone_2": "(485)336-7423x75296",
     "email": "mcunningham@hinton.com",
     "subscription_date": "2020-05-20",
-    "website": "https://www.huerta.biz/"
+    "website": "https://www.huerta.biz/",
+    "salary": 119000
   },
   {
     "customer_id": "8b9e2093-4543-4ce0-befe-21aba3b422e6",
@@ -4001,7 +4308,8 @@ export const customersData = [
     "phone_2": "286.910.9381",
     "email": "barrycompton@bates.com",
     "subscription_date": "2020-07-02",
-    "website": "https://www.love-walsh.com/"
+    "website": "https://www.love-walsh.com/",
+    "salary": 157000
   },
   {
     "customer_id": "013c25c4-6621-464d-b874-61cc302cc5a0",
@@ -4014,7 +4322,8 @@ export const customersData = [
     "phone_2": "001-731-473-6607x063",
     "email": "ahancock@osborn-welch.info",
     "subscription_date": "2020-10-21",
-    "website": "http://joseph-mercer.biz/"
+    "website": "http://joseph-mercer.biz/",
+    "salary": 116000
   },
   {
     "customer_id": "d1a1cee8-f873-47a8-bd8e-4165916d652e",
@@ -4027,7 +4336,8 @@ export const customersData = [
     "phone_2": "(392)331-0636x40828",
     "email": "sarah08@merritt.com",
     "subscription_date": "2021-02-21",
-    "website": "https://www.pruitt.com/"
+    "website": "https://www.pruitt.com/",
+    "salary": 148000
   },
   {
     "customer_id": "c9655609-eb6e-400f-bd3a-6b587e72011f",
@@ -4040,7 +4350,8 @@ export const customersData = [
     "phone_2": "(662)087-3378",
     "email": "gallowayhayden@garrett.net",
     "subscription_date": "2021-04-24",
-    "website": "http://www.craig-holland.com/"
+    "website": "http://www.craig-holland.com/",
+    "salary": 65000
   },
   {
     "customer_id": "4bcdf37f-c7cd-4457-8779-34e9edbbb012",
@@ -4053,7 +4364,8 @@ export const customersData = [
     "phone_2": "243-969-3526x9348",
     "email": "sanchezbrittney@wu-deleon.com",
     "subscription_date": "2020-04-19",
-    "website": "http://www.klein.info/"
+    "website": "http://www.klein.info/",
+    "salary": 83000
   },
   {
     "customer_id": "81bbcf66-2329-4fe4-91af-6039cfb828b6",
@@ -4066,7 +4378,8 @@ export const customersData = [
     "phone_2": "001-853-732-2049",
     "email": "mosleyrose@parrish-marquez.com",
     "subscription_date": "2022-01-01",
-    "website": "https://www.sanders.com/"
+    "website": "https://www.sanders.com/",
+    "salary": 137000
   },
   {
     "customer_id": "58080a6c-f755-442e-a83f-e416b79ebcbb",
@@ -4079,7 +4392,8 @@ export const customersData = [
     "phone_2": "115-142-8911x6418",
     "email": "beckyrusso@mcneil.com",
     "subscription_date": "2021-04-13",
-    "website": "http://kemp.net/"
+    "website": "http://kemp.net/",
+    "salary": 132000
   },
   {
     "customer_id": "5814c8f3-f4b9-4dd8-9e15-035606c58367",
@@ -4092,7 +4406,8 @@ export const customersData = [
     "phone_2": "0472978225",
     "email": "joyce45@melton.com",
     "subscription_date": "2020-05-06",
-    "website": "http://www.saunders-mata.com/"
+    "website": "http://www.saunders-mata.com/",
+    "salary": 61000
   },
   {
     "customer_id": "fa0fe1d5-45e1-43ce-b88d-cd2dc0cb41ec",
@@ -4105,7 +4420,8 @@ export const customersData = [
     "phone_2": "(974)608-0701",
     "email": "kanekaitlyn@hobbs.biz",
     "subscription_date": "2020-12-21",
-    "website": "http://www.clark-zuniga.net/"
+    "website": "http://www.clark-zuniga.net/",
+    "salary": 121000
   },
   {
     "customer_id": "cc397a17-983e-423e-8047-f00bb8fa7610",
@@ -4118,7 +4434,8 @@ export const customersData = [
     "phone_2": "+1-823-706-0574x830",
     "email": "omontes@osborn.com",
     "subscription_date": "2020-11-01",
-    "website": "http://schneider.com/"
+    "website": "http://schneider.com/",
+    "salary": 100000
   },
   {
     "customer_id": "cd96672c-7413-49ac-8746-5fc412f9cc31",
@@ -4131,7 +4448,8 @@ export const customersData = [
     "phone_2": "+1-725-319-1354",
     "email": "wallersandy@dickson.info",
     "subscription_date": "2021-02-05",
-    "website": "https://reynolds.com/"
+    "website": "https://reynolds.com/",
+    "salary": 174000
   },
   {
     "customer_id": "e89398bb-f86d-498c-b063-f8bbc803df65",
@@ -4144,7 +4462,8 @@ export const customersData = [
     "phone_2": "866-402-6283",
     "email": "erikalee@logan.com",
     "subscription_date": "2020-08-18",
-    "website": "http://perry.org/"
+    "website": "http://perry.org/",
+    "salary": 161000
   },
   {
     "customer_id": "15c50df6-3a67-4501-ab42-c6d48eb78616",
@@ -4157,7 +4476,8 @@ export const customersData = [
     "phone_2": "376-676-8609",
     "email": "tracie55@carson-copeland.net",
     "subscription_date": "2021-10-28",
-    "website": "http://french.com/"
+    "website": "http://french.com/",
+    "salary": 62000
   },
   {
     "customer_id": "4d5eda64-b031-4eed-9cd0-3ea4b43891b8",
@@ -4170,7 +4490,8 @@ export const customersData = [
     "phone_2": "493-142-8035",
     "email": "claire47@chung.com",
     "subscription_date": "2020-08-01",
-    "website": "https://www.parrish.org/"
+    "website": "https://www.parrish.org/",
+    "salary": 115000
   },
   {
     "customer_id": "b74531bb-54e5-462b-adfe-6a1d199d8bc8",
@@ -4183,7 +4504,8 @@ export const customersData = [
     "phone_2": "001-445-519-2875x78565",
     "email": "margaret78@bird.com",
     "subscription_date": "2022-05-10",
-    "website": "http://www.paul.com/"
+    "website": "http://www.paul.com/",
+    "salary": 143000
   },
   {
     "customer_id": "5966459c-e079-488f-9a80-5e5c89179661",
@@ -4196,7 +4518,8 @@ export const customersData = [
     "phone_2": "+1-041-648-4536x83088",
     "email": "qdaniels@bauer.org",
     "subscription_date": "2020-06-28",
-    "website": "http://www.norton-roy.net/"
+    "website": "http://www.norton-roy.net/",
+    "salary": 77000
   },
   {
     "customer_id": "8dc955f9-633a-4a7d-8a60-bb8bd2d05804",
@@ -4209,7 +4532,8 @@ export const customersData = [
     "phone_2": "381.684.2303",
     "email": "joycecoffey@buckley.com",
     "subscription_date": "2020-03-13",
-    "website": "https://www.cruz.com/"
+    "website": "https://www.cruz.com/",
+    "salary": 50000
   },
   {
     "customer_id": "de31a008-56e0-4302-b3f1-99398dee42a4",
@@ -4222,7 +4546,8 @@ export const customersData = [
     "phone_2": "(201)404-7847x62011",
     "email": "hurleyjoan@velasquez.info",
     "subscription_date": "2022-05-22",
-    "website": "http://www.blair-robles.com/"
+    "website": "http://www.blair-robles.com/",
+    "salary": 167000
   },
   {
     "customer_id": "eb64c2fc-d5bf-4605-8d09-a17410925a19",
@@ -4235,7 +4560,8 @@ export const customersData = [
     "phone_2": "001-632-340-5535x5716",
     "email": "lfletcher@shaffer.com",
     "subscription_date": "2020-04-08",
-    "website": "https://rubio.net/"
+    "website": "https://rubio.net/",
+    "salary": 98000
   },
   {
     "customer_id": "82c41080-e0cb-429e-9d05-e285b24c4478",
@@ -4248,7 +4574,8 @@ export const customersData = [
     "phone_2": "001-871-511-2613",
     "email": "howelldarlene@downs-gamble.info",
     "subscription_date": "2021-02-13",
-    "website": "https://hudson.com/"
+    "website": "https://hudson.com/",
+    "salary": 176000
   },
   {
     "customer_id": "2a55fff5-5c35-4a2b-8bf6-742217093c54",
@@ -4261,7 +4588,8 @@ export const customersData = [
     "phone_2": "+1-450-515-0997x7970",
     "email": "patrick29@dunn-petersen.com",
     "subscription_date": "2020-03-08",
-    "website": "https://bernard-vega.biz/"
+    "website": "https://bernard-vega.biz/",
+    "salary": 93000
   },
   {
     "customer_id": "08020ce2-93a1-4551-b060-65c9f6155561",
@@ -4274,7 +4602,8 @@ export const customersData = [
     "phone_2": "+1-672-114-4496x395",
     "email": "theodoredurham@snow.info",
     "subscription_date": "2021-04-21",
-    "website": "http://mclaughlin.com/"
+    "website": "http://mclaughlin.com/",
+    "salary": 125000
   },
   {
     "customer_id": "355b76d1-7a11-4bce-bddc-81b41743e9f9",
@@ -4287,7 +4616,8 @@ export const customersData = [
     "phone_2": "001-809-249-8202x482",
     "email": "rosedakota@snyder-taylor.com",
     "subscription_date": "2020-10-13",
-    "website": "http://www.sandoval-chavez.com/"
+    "website": "http://www.sandoval-chavez.com/",
+    "salary": 175000
   },
   {
     "customer_id": "5dcb3e5e-db56-41e4-9cf4-ba9cc596125a",
@@ -4300,7 +4630,8 @@ export const customersData = [
     "phone_2": "(029)185-2428",
     "email": "bobbylove@morrow.com",
     "subscription_date": "2021-02-19",
-    "website": "http://herman.net/"
+    "website": "http://herman.net/",
+    "salary": 116000
   },
   {
     "customer_id": "7513dc3f-d30e-45d6-8050-899aaacfa587",
@@ -4313,7 +4644,8 @@ export const customersData = [
     "phone_2": "915.536.3828x347",
     "email": "qmeyer@rhodes.com",
     "subscription_date": "2021-09-15",
-    "website": "http://www.crosby-padilla.com/"
+    "website": "http://www.crosby-padilla.com/",
+    "salary": 83000
   },
   {
     "customer_id": "c0c43d5c-64ab-4e3d-958f-3425a29feecc",
@@ -4326,7 +4658,8 @@ export const customersData = [
     "phone_2": "556.987.1718",
     "email": "ngibbs@bender-norman.com",
     "subscription_date": "2021-01-14",
-    "website": "https://levy.net/"
+    "website": "https://levy.net/",
+    "salary": 171000
   },
   {
     "customer_id": "ec7e39e0-937b-4091-98a4-7b5a7431a790",
@@ -4339,7 +4672,8 @@ export const customersData = [
     "phone_2": "(379)344-5794x60656",
     "email": "craigstewart@clayton.org",
     "subscription_date": "2021-03-15",
-    "website": "https://www.kirby.com/"
+    "website": "https://www.kirby.com/",
+    "salary": 170000
   },
   {
     "customer_id": "80f616cc-7dbd-4a98-a59e-b5e6e81a818b",
@@ -4352,7 +4686,8 @@ export const customersData = [
     "phone_2": "778-761-4155x1888",
     "email": "brewerdan@morales-harrison.net",
     "subscription_date": "2020-12-06",
-    "website": "http://www.suarez-duke.info/"
+    "website": "http://www.suarez-duke.info/",
+    "salary": 148000
   },
   {
     "customer_id": "6fee8130-b843-4a9c-8f39-5e6a67b08c9a",
@@ -4365,7 +4700,8 @@ export const customersData = [
     "phone_2": "001-832-093-4766",
     "email": "kayleeevans@gilmore.com",
     "subscription_date": "2021-03-24",
-    "website": "https://www.macdonald-lee.biz/"
+    "website": "https://www.macdonald-lee.biz/",
+    "salary": 132000
   },
   {
     "customer_id": "391f0159-0262-4fb6-bd52-98884be8b236",
@@ -4378,7 +4714,8 @@ export const customersData = [
     "phone_2": "001-386-614-9079x87090",
     "email": "greg07@clayton.info",
     "subscription_date": "2021-09-20",
-    "website": "http://chavez.com/"
+    "website": "http://chavez.com/",
+    "salary": 141000
   },
   {
     "customer_id": "45b5f47b-9eb5-4308-9dd9-f26ef81dbe47",
@@ -4391,7 +4728,8 @@ export const customersData = [
     "phone_2": "331.575.9750",
     "email": "miguel61@kramer.info",
     "subscription_date": "2021-07-14",
-    "website": "http://stark.com/"
+    "website": "http://stark.com/",
+    "salary": 145000
   },
   {
     "customer_id": "6fd4e996-5216-4bb5-bc1f-a4e49d82e963",
@@ -4404,7 +4742,8 @@ export const customersData = [
     "phone_2": "+1-510-940-2900x828",
     "email": "swansonbrendan@sheppard.com",
     "subscription_date": "2020-07-18",
-    "website": "https://www.proctor.com/"
+    "website": "https://www.proctor.com/",
+    "salary": 116000
   },
   {
     "customer_id": "db317590-338c-4ec6-83a0-34ada968b6e8",
@@ -4417,7 +4756,8 @@ export const customersData = [
     "phone_2": "+1-606-651-7011x44739",
     "email": "moyerkatie@wheeler-adams.biz",
     "subscription_date": "2020-03-24",
-    "website": "http://moses.info/"
+    "website": "http://moses.info/",
+    "salary": 35000
   },
   {
     "customer_id": "825bcb80-bf9d-4adb-9bb5-7f3105386c16",
@@ -4430,7 +4770,8 @@ export const customersData = [
     "phone_2": "+1-372-628-8783x375",
     "email": "mindy49@rich-reeves.info",
     "subscription_date": "2020-06-18",
-    "website": "https://www.hess.org/"
+    "website": "https://www.hess.org/",
+    "salary": 34000
   },
   {
     "customer_id": "14fab5e0-7424-4176-95ce-fbe0fc4f5ad6",
@@ -4443,7 +4784,8 @@ export const customersData = [
     "phone_2": "+1-023-553-2657x2363",
     "email": "ghouston@patrick.com",
     "subscription_date": "2020-05-27",
-    "website": "http://jefferson-glenn.com/"
+    "website": "http://jefferson-glenn.com/",
+    "salary": 111000
   },
   {
     "customer_id": "34b4c7ad-1c6d-44ed-89fa-87de6e035585",
@@ -4456,7 +4798,8 @@ export const customersData = [
     "phone_2": "001-840-038-7540x9523",
     "email": "lwelch@dickson.com",
     "subscription_date": "2020-12-21",
-    "website": "https://www.evans.com/"
+    "website": "https://www.evans.com/",
+    "salary": 168000
   },
   {
     "customer_id": "2395e532-65c1-4ed4-ac88-8dec5e5a1593",
@@ -4469,7 +4812,8 @@ export const customersData = [
     "phone_2": "001-456-671-1688x3525",
     "email": "morgan66@pennington-james.com",
     "subscription_date": "2020-10-18",
-    "website": "http://www.herrera-franklin.com/"
+    "website": "http://www.herrera-franklin.com/",
+    "salary": 103000
   },
   {
     "customer_id": "0c1b803a-f325-4b50-bbc7-434fc9cc7090",
@@ -4482,7 +4826,8 @@ export const customersData = [
     "phone_2": "001-151-384-4375",
     "email": "baileycoleman@kelly-robertson.com",
     "subscription_date": "2020-04-20",
-    "website": "https://www.robles.net/"
+    "website": "https://www.robles.net/",
+    "salary": 178000
   },
   {
     "customer_id": "1c27de96-b39a-4bcf-8477-bebb5dc3fc9d",
@@ -4495,7 +4840,8 @@ export const customersData = [
     "phone_2": 9287767873,
     "email": "brian89@quinn-ballard.com",
     "subscription_date": "2022-03-01",
-    "website": "https://www.ponce.com/"
+    "website": "https://www.ponce.com/",
+    "salary": 133000
   },
   {
     "customer_id": "93701ec6-264d-4844-b0a0-622bf4afaa07",
@@ -4508,7 +4854,8 @@ export const customersData = [
     "phone_2": "001-566-991-6215x00203",
     "email": "saunderscalvin@house.com",
     "subscription_date": "2021-03-09",
-    "website": "https://www.erickson-key.biz/"
+    "website": "https://www.erickson-key.biz/",
+    "salary": 32000
   },
   {
     "customer_id": "34a5c21e-64dc-4762-b7a3-3a2b3653d655",
@@ -4521,7 +4868,8 @@ export const customersData = [
     "phone_2": "877.782.5179x167",
     "email": "sbrandt@mccann-hart.com",
     "subscription_date": "2020-06-14",
-    "website": "https://www.montes-bentley.info/"
+    "website": "https://www.montes-bentley.info/",
+    "salary": 80000
   },
   {
     "customer_id": "949621d2-67eb-43a7-b948-4b7e6f4b596e",
@@ -4534,7 +4882,8 @@ export const customersData = [
     "phone_2": "+1-841-301-0201x23337",
     "email": "joanna48@merritt-gillespie.com",
     "subscription_date": "2020-09-26",
-    "website": "https://wallace-kramer.com/"
+    "website": "https://wallace-kramer.com/",
+    "salary": 118000
   },
   {
     "customer_id": "ce4c55fa-6fd8-4dc4-9ae7-f2dad8e6f5fb",
@@ -4547,7 +4896,8 @@ export const customersData = [
     "phone_2": "362-532-2832x0483",
     "email": "perrypowell@hull.com",
     "subscription_date": "2020-03-11",
-    "website": "http://www.grimes.com/"
+    "website": "http://www.grimes.com/",
+    "salary": 149000
   },
   {
     "customer_id": "e840197b-8088-47d3-8593-c8f244de0ef9",
@@ -4560,7 +4910,8 @@ export const customersData = [
     "phone_2": 1521997944,
     "email": "gordonlynn@zuniga-barker.net",
     "subscription_date": "2020-08-13",
-    "website": "https://www.merritt.com/"
+    "website": "https://www.merritt.com/",
+    "salary": 117000
   },
   {
     "customer_id": "0b3ef070-5d12-463e-b46c-7e2d53c0e54a",
@@ -4573,7 +4924,8 @@ export const customersData = [
     "phone_2": "073-218-9423",
     "email": "jacksonhebert@alexander.org",
     "subscription_date": "2022-04-24",
-    "website": "https://schwartz.org/"
+    "website": "https://schwartz.org/",
+    "salary": 114000
   },
   {
     "customer_id": "bffb0f44-22e2-4dcb-a16f-b539a433f5e9",
@@ -4586,7 +4938,8 @@ export const customersData = [
     "phone_2": "+1-692-267-9139x946",
     "email": "faulknergeorge@molina.net",
     "subscription_date": "2020-05-07",
-    "website": "https://www.andrews.com/"
+    "website": "https://www.andrews.com/",
+    "salary": 97000
   },
   {
     "customer_id": "e33e68ea-dc30-4ccd-989a-38e353aff791",
@@ -4599,7 +4952,8 @@ export const customersData = [
     "phone_2": "633.245.8438",
     "email": "adrienne28@howell.com",
     "subscription_date": "2020-02-02",
-    "website": "https://www.flynn.net/"
+    "website": "https://www.flynn.net/",
+    "salary": 132000
   },
   {
     "customer_id": "d2d7e639-16f8-47f7-9108-1deefdfdadc1",
@@ -4612,7 +4966,8 @@ export const customersData = [
     "phone_2": "001-111-658-6968x914",
     "email": "brent08@jacobson.com",
     "subscription_date": "2022-04-02",
-    "website": "https://willis.com/"
+    "website": "https://willis.com/",
+    "salary": 45000
   },
   {
     "customer_id": "7671a386-d293-4f97-95c3-0cafc7318667",
@@ -4625,7 +4980,8 @@ export const customersData = [
     "phone_2": "805.920.3685",
     "email": "kevin23@schwartz.com",
     "subscription_date": "2020-03-09",
-    "website": "https://www.phelps.com/"
+    "website": "https://www.phelps.com/",
+    "salary": 152000
   },
   {
     "customer_id": "63f227b4-943b-4540-afe6-e729be13c532",
@@ -4638,7 +4994,8 @@ export const customersData = [
     "phone_2": "001-729-170-1616x75344",
     "email": "desireemcneil@fitzgerald-irwin.com",
     "subscription_date": "2022-02-03",
-    "website": "http://simon.info/"
+    "website": "http://simon.info/",
+    "salary": 42000
   },
   {
     "customer_id": "603a702c-b7a7-4929-a41c-fbd70eff87c8",
@@ -4651,7 +5008,8 @@ export const customersData = [
     "phone_2": "+1-671-798-0556x939",
     "email": "tapiadorothy@blankenship-bullock.net",
     "subscription_date": "2020-06-27",
-    "website": "http://www.mckay-knight.com/"
+    "website": "http://www.mckay-knight.com/",
+    "salary": 46000
   },
   {
     "customer_id": "275024ac-b213-49d2-bafd-3e682587d658",
@@ -4664,7 +5022,8 @@ export const customersData = [
     "phone_2": "111-398-3703",
     "email": "tyronejones@wolfe-pittman.com",
     "subscription_date": "2021-04-13",
-    "website": "https://wilkerson-travis.com/"
+    "website": "https://wilkerson-travis.com/",
+    "salary": 140000
   },
   {
     "customer_id": "56860ef5-e3d7-4ed2-948c-8f57720fccd5",
@@ -4677,7 +5036,8 @@ export const customersData = [
     "phone_2": "001-041-094-2578x164",
     "email": "curtisvelazquez@nelson.biz",
     "subscription_date": "2021-03-25",
-    "website": "http://hayden.com/"
+    "website": "http://hayden.com/",
+    "salary": 58000
   },
   {
     "customer_id": "8f5b4678-077c-4d42-9761-ddaa7fb64c7f",
@@ -4690,7 +5050,8 @@ export const customersData = [
     "phone_2": "+1-121-159-0746x9993",
     "email": "mbradford@montes.com",
     "subscription_date": "2020-07-31",
-    "website": "https://gibbs.com/"
+    "website": "https://gibbs.com/",
+    "salary": 177000
   },
   {
     "customer_id": "10ce25a5-5e3f-47ab-9e85-dbb4e3cb0879",
@@ -4703,7 +5064,8 @@ export const customersData = [
     "phone_2": "+1-076-852-9334x538",
     "email": "phillipshannon@vega.com",
     "subscription_date": "2020-08-10",
-    "website": "https://yu-sosa.biz/"
+    "website": "https://yu-sosa.biz/",
+    "salary": 176000
   },
   {
     "customer_id": "087e9b88-de3e-4f18-959f-ed9f33155d9e",
@@ -4716,7 +5078,8 @@ export const customersData = [
     "phone_2": "672-941-2961",
     "email": "mandypacheco@estes-leach.com",
     "subscription_date": "2020-04-17",
-    "website": "http://page-zavala.biz/"
+    "website": "http://page-zavala.biz/",
+    "salary": 82000
   },
   {
     "customer_id": "2ba4869e-549c-46a6-b3c5-9d129161a7cf",
@@ -4729,7 +5092,8 @@ export const customersData = [
     "phone_2": "957-463-3101x349",
     "email": "kristinereilly@sellers-acevedo.com",
     "subscription_date": "2021-01-10",
-    "website": "https://www.jarvis.biz/"
+    "website": "https://www.jarvis.biz/",
+    "salary": 171000
   },
   {
     "customer_id": "14e38ef2-41dd-4f1d-bfa5-802a4028fb73",
@@ -4742,7 +5106,8 @@ export const customersData = [
     "phone_2": "+1-312-142-0119x4393",
     "email": "kruegerbilly@zhang.com",
     "subscription_date": "2020-02-01",
-    "website": "https://www.walters.com/"
+    "website": "https://www.walters.com/",
+    "salary": 123000
   },
   {
     "customer_id": "0d5a33a3-e737-44e6-a3f3-deacb84c40ec",
@@ -4755,7 +5120,8 @@ export const customersData = [
     "phone_2": "(361)106-4435",
     "email": "ununez@stuart.net",
     "subscription_date": "2020-04-05",
-    "website": "http://donovan-shaw.biz/"
+    "website": "http://donovan-shaw.biz/",
+    "salary": 30000
   },
   {
     "customer_id": "bddc7d4a-1645-4d0c-90a0-2d48dd60b6dd",
@@ -4768,7 +5134,8 @@ export const customersData = [
     "phone_2": "(470)515-1605x85314",
     "email": "zacharyhardy@lawrence.com",
     "subscription_date": "2022-02-02",
-    "website": "https://lang.biz/"
+    "website": "https://lang.biz/",
+    "salary": 172000
   },
   {
     "customer_id": "57acc533-fe49-4c92-bccf-ec509a6ea08d",
@@ -4781,7 +5148,8 @@ export const customersData = [
     "phone_2": "(412)285-7638x56786",
     "email": "daryl61@beltran-gutierrez.net",
     "subscription_date": "2021-07-01",
-    "website": "http://www.hardy.com/"
+    "website": "http://www.hardy.com/",
+    "salary": 174000
   },
   {
     "customer_id": "a6a8e53b-5e05-4874-92ca-e8b314f8f707",
@@ -4794,7 +5162,8 @@ export const customersData = [
     "phone_2": "001-753-340-5311x1471",
     "email": "omar17@gentry.org",
     "subscription_date": "2021-12-22",
-    "website": "http://parks.org/"
+    "website": "http://parks.org/",
+    "salary": 178000
   },
   {
     "customer_id": "7dd70f12-3ef9-4d99-9137-ec9cc568c59d",
@@ -4807,7 +5176,8 @@ export const customersData = [
     "phone_2": "(810)484-1106",
     "email": "qduffy@reilly.org",
     "subscription_date": "2022-02-06",
-    "website": "https://mcclain.biz/"
+    "website": "https://mcclain.biz/",
+    "salary": 149000
   },
   {
     "customer_id": "9516bfb4-652b-44ab-a469-d0496e0087de",
@@ -4820,7 +5190,8 @@ export const customersData = [
     "phone_2": "(568)574-0021x837",
     "email": "awerner@carr.com",
     "subscription_date": "2022-01-17",
-    "website": "http://dean.com/"
+    "website": "http://dean.com/",
+    "salary": 148000
   },
   {
     "customer_id": "05d1f253-c734-4e5e-a1c3-c76d9188a5ea",
@@ -4833,7 +5204,8 @@ export const customersData = [
     "phone_2": "(766)341-3374x88176",
     "email": "kari58@burnett-cruz.biz",
     "subscription_date": "2020-09-09",
-    "website": "https://www.parsons.com/"
+    "website": "https://www.parsons.com/",
+    "salary": 109000
   },
   {
     "customer_id": "50e5d456-b658-4194-a5b8-a910749a284c",
@@ -4846,7 +5218,8 @@ export const customersData = [
     "phone_2": "001-540-689-6367x97972",
     "email": "jane20@graves.org",
     "subscription_date": "2020-09-24",
-    "website": "https://www.oneill.com/"
+    "website": "https://www.oneill.com/",
+    "salary": 54000
   },
   {
     "customer_id": "fc020fa4-ef72-48e3-ba5b-f5b34695af6d",
@@ -4859,7 +5232,8 @@ export const customersData = [
     "phone_2": "001-604-944-0268",
     "email": "calvin79@guerra.org",
     "subscription_date": "2021-08-26",
-    "website": "http://fletcher.com/"
+    "website": "http://fletcher.com/",
+    "salary": 66000
   },
   {
     "customer_id": "f85eaab3-bc1f-4294-be0b-80a152a255a7",
@@ -4872,7 +5246,8 @@ export const customersData = [
     "phone_2": "053.282.7472",
     "email": "dboyd@winters.info",
     "subscription_date": "2021-11-29",
-    "website": "https://larson-foley.com/"
+    "website": "https://larson-foley.com/",
+    "salary": 103000
   },
   {
     "customer_id": "0ae1f968-4f33-48fe-9d69-7e1e9941d522",
@@ -4885,7 +5260,8 @@ export const customersData = [
     "phone_2": "001-807-017-8927x31114",
     "email": "sheenafarley@strong-wiggins.biz",
     "subscription_date": "2021-05-06",
-    "website": "http://www.costa.net/"
+    "website": "http://www.costa.net/",
+    "salary": 111000
   },
   {
     "customer_id": "26972370-9c53-40a8-ae60-8983f0188545",
@@ -4898,7 +5274,8 @@ export const customersData = [
     "phone_2": "441.542.0012x23821",
     "email": "jenningskerri@freeman-morrow.com",
     "subscription_date": "2020-05-30",
-    "website": "https://www.merritt.com/"
+    "website": "https://www.merritt.com/",
+    "salary": 126000
   },
   {
     "customer_id": "2c9ce6e6-b501-42b6-8037-068cf06a1184",
@@ -4911,7 +5288,8 @@ export const customersData = [
     "phone_2": "+1-264-494-0393x47083",
     "email": "reginaldbarker@odonnell-miranda.com",
     "subscription_date": "2021-05-30",
-    "website": "https://www.stout-greer.org/"
+    "website": "https://www.stout-greer.org/",
+    "salary": 52000
   },
   {
     "customer_id": "2afa3420-fa9b-4d7b-95c7-c7c0e25443e0",
@@ -4924,7 +5302,8 @@ export const customersData = [
     "phone_2": "(286)325-5279x6393",
     "email": "stacieingram@hubbard.net",
     "subscription_date": "2020-04-23",
-    "website": "http://www.macdonald-fletcher.net/"
+    "website": "http://www.macdonald-fletcher.net/",
+    "salary": 123000
   },
   {
     "customer_id": "c1335975-047b-49d7-8d8c-79dea848e0a8",
@@ -4937,7 +5316,8 @@ export const customersData = [
     "phone_2": "485.748.7615x36512",
     "email": "jimdalton@bowers-hickman.com",
     "subscription_date": "2020-12-12",
-    "website": "https://www.scott-thomas.net/"
+    "website": "https://www.scott-thomas.net/",
+    "salary": 172000
   },
   {
     "customer_id": "ab3455ef-dd8f-41a3-a24a-e75d385400ef",
@@ -4950,7 +5330,8 @@ export const customersData = [
     "phone_2": "001-801-160-3370x597",
     "email": "glenn74@blair.com",
     "subscription_date": "2020-12-17",
-    "website": "https://ward-benton.com/"
+    "website": "https://ward-benton.com/",
+    "salary": 156000
   },
   {
     "customer_id": "2b366426-9f0d-4855-93d1-4a912b4506ee",
@@ -4963,7 +5344,8 @@ export const customersData = [
     "phone_2": "880.668.4025x07909",
     "email": "woodardaimee@frost.com",
     "subscription_date": "2020-06-25",
-    "website": "http://reese.net/"
+    "website": "http://reese.net/",
+    "salary": 145000
   },
   {
     "customer_id": "a3648377-a734-4234-bc7f-c49adf554c3f",
@@ -4976,7 +5358,8 @@ export const customersData = [
     "phone_2": "597.223.9397",
     "email": "judy87@russell.org",
     "subscription_date": "2020-10-22",
-    "website": "http://www.blair.com/"
+    "website": "http://www.blair.com/",
+    "salary": 70000
   },
   {
     "customer_id": "6758696a-16bb-48aa-b6c1-b6e04fa8cdfe",
@@ -4989,7 +5372,8 @@ export const customersData = [
     "phone_2": "001-248-585-7334",
     "email": "wendycox@terrell.com",
     "subscription_date": "2021-12-22",
-    "website": "http://roy.com/"
+    "website": "http://roy.com/",
+    "salary": 88000
   },
   {
     "customer_id": "f423e2ec-4113-44b0-b3a4-687432f98ea3",
@@ -5002,7 +5386,8 @@ export const customersData = [
     "phone_2": "012.254.4189",
     "email": "isaacrivas@jefferson-hall.biz",
     "subscription_date": "2021-05-30",
-    "website": "http://www.abbott-ali.net/"
+    "website": "http://www.abbott-ali.net/",
+    "salary": 43000
   },
   {
     "customer_id": "3e0e6b8b-4208-483c-bd55-c9cf5b0d1c84",
@@ -5015,7 +5400,8 @@ export const customersData = [
     "phone_2": "001-372-315-9326x5437",
     "email": "justin74@wilkerson.com",
     "subscription_date": "2021-08-02",
-    "website": "http://www.hobbs.com/"
+    "website": "http://www.hobbs.com/",
+    "salary": 79000
   },
   {
     "customer_id": "a15a185a-e77c-48c5-bb8c-6f122c7d45f4",
@@ -5028,7 +5414,8 @@ export const customersData = [
     "phone_2": "319.462.9224",
     "email": "zcannon@hardin-hunt.com",
     "subscription_date": "2020-03-27",
-    "website": "https://caldwell-calderon.com/"
+    "website": "https://caldwell-calderon.com/",
+    "salary": 33000
   },
   {
     "customer_id": "7fd63fcc-7413-424c-ba6d-71985558b5bc",
@@ -5041,7 +5428,8 @@ export const customersData = [
     "phone_2": "001-871-922-5967x932",
     "email": "belindahaynes@kane.com",
     "subscription_date": "2022-02-02",
-    "website": "http://www.sparks-randolph.com/"
+    "website": "http://www.sparks-randolph.com/",
+    "salary": 176000
   },
   {
     "customer_id": "d328434c-98f2-4839-a36d-bc75412b37ae",
@@ -5054,7 +5442,8 @@ export const customersData = [
     "phone_2": "001-862-699-4766",
     "email": "hesterchristian@holloway-pollard.com",
     "subscription_date": "2021-10-21",
-    "website": "https://gonzalez-ortiz.net/"
+    "website": "https://gonzalez-ortiz.net/",
+    "salary": 79000
   },
   {
     "customer_id": "44991db9-992b-4713-8d15-25b1e8509dd6",
@@ -5067,7 +5456,8 @@ export const customersData = [
     "phone_2": "(945)475-2200x504",
     "email": "jeremy83@swanson-stuart.com",
     "subscription_date": "2020-06-18",
-    "website": "http://www.richards-obrien.com/"
+    "website": "http://www.richards-obrien.com/",
+    "salary": 111000
   },
   {
     "customer_id": "c495a26f-ae71-4548-b458-6932a97fd781",
@@ -5080,7 +5470,8 @@ export const customersData = [
     "phone_2": "211-546-7754",
     "email": "sbaker@fletcher.com",
     "subscription_date": "2021-02-24",
-    "website": "http://norman-allison.biz/"
+    "website": "http://norman-allison.biz/",
+    "salary": 53000
   },
   {
     "customer_id": "46b69f30-4c3a-40d2-84c4-efbbc9315daf",
@@ -5093,7 +5484,8 @@ export const customersData = [
     "phone_2": "+1-919-307-7333x8148",
     "email": "juan98@swanson.com",
     "subscription_date": "2020-04-04",
-    "website": "https://www.solis-koch.biz/"
+    "website": "https://www.solis-koch.biz/",
+    "salary": 159000
   },
   {
     "customer_id": "84890be7-bd0f-4945-889c-7035715c62a7",
@@ -5106,7 +5498,8 @@ export const customersData = [
     "phone_2": "777.033.1357x1317",
     "email": "jeremynguyen@green-brennan.org",
     "subscription_date": "2021-04-04",
-    "website": "https://www.allison.com/"
+    "website": "https://www.allison.com/",
+    "salary": 95000
   },
   {
     "customer_id": "d7bc6b46-32a7-4235-a80d-296c6b067c90",
@@ -5119,7 +5512,8 @@ export const customersData = [
     "phone_2": 1352554638,
     "email": "alejandra24@lamb.com",
     "subscription_date": "2020-04-26",
-    "website": "https://www.cameron.com/"
+    "website": "https://www.cameron.com/",
+    "salary": 81000
   },
   {
     "customer_id": "dc765fe7-6882-4dfd-bf30-c6ae1591e142",
@@ -5132,7 +5526,8 @@ export const customersData = [
     "phone_2": "+1-409-653-1761x295",
     "email": "omeyer@santos.com",
     "subscription_date": "2020-07-17",
-    "website": "https://www.heath.com/"
+    "website": "https://www.heath.com/",
+    "salary": 136000
   },
   {
     "customer_id": "8221a9cd-76de-4b0b-a2e0-e410889619a6",
@@ -5145,7 +5540,8 @@ export const customersData = [
     "phone_2": "(788)524-8591x913",
     "email": "natalie14@stevenson-evans.com",
     "subscription_date": "2021-07-14",
-    "website": "https://www.garner-walters.biz/"
+    "website": "https://www.garner-walters.biz/",
+    "salary": 119000
   },
   {
     "customer_id": "e3cca9b9-fb1e-4779-8fa2-e73eda13389f",
@@ -5158,7 +5554,8 @@ export const customersData = [
     "phone_2": "+1-578-143-2664x257",
     "email": "keith03@cook-crane.com",
     "subscription_date": "2020-07-24",
-    "website": "http://www.haney.com/"
+    "website": "http://www.haney.com/",
+    "salary": 175000
   },
   {
     "customer_id": "bab7925d-3384-4277-a68a-d3e2a82d77e8",
@@ -5171,7 +5568,8 @@ export const customersData = [
     "phone_2": "584.997.1829x9618",
     "email": "lalvarado@shaw-dickson.org",
     "subscription_date": "2020-04-09",
-    "website": "http://fox.info/"
+    "website": "http://fox.info/",
+    "salary": 43000
   },
   {
     "customer_id": "881296e7-ce7a-414b-a2ad-57b94d91cd4c",
@@ -5184,7 +5582,8 @@ export const customersData = [
     "phone_2": "(382)903-0498",
     "email": "lampeggy@lutz.com",
     "subscription_date": "2021-09-27",
-    "website": "https://www.dickson.com/"
+    "website": "https://www.dickson.com/",
+    "salary": 99000
   },
   {
     "customer_id": "21152401-7e1c-4bb4-9eea-e0a441c13991",
@@ -5197,7 +5596,8 @@ export const customersData = [
     "phone_2": "410.227.8317x5700",
     "email": "shari83@edwards.org",
     "subscription_date": "2020-11-21",
-    "website": "http://wagner-valencia.com/"
+    "website": "http://wagner-valencia.com/",
+    "salary": 162000
   },
   {
     "customer_id": "1ca92eae-1ad5-45e0-8e3a-cdb7febb1939",
@@ -5210,7 +5610,8 @@ export const customersData = [
     "phone_2": "(653)161-1846x426",
     "email": "jane56@mckenzie.biz",
     "subscription_date": "2020-03-13",
-    "website": "http://howe-brown.com/"
+    "website": "http://howe-brown.com/",
+    "salary": 72000
   },
   {
     "customer_id": "ba9d0a68-d72d-494c-8749-726f8490805c",
@@ -5223,7 +5624,8 @@ export const customersData = [
     "phone_2": "836-818-8788x2886",
     "email": "olsenkatie@reeves.com",
     "subscription_date": "2021-11-23",
-    "website": "http://www.case.com/"
+    "website": "http://www.case.com/",
+    "salary": 167000
   },
   {
     "customer_id": "e2fae1fa-031b-4059-945b-d2ae91b17129",
@@ -5236,7 +5638,8 @@ export const customersData = [
     "phone_2": "+1-586-921-4988x4576",
     "email": "julian05@wood.com",
     "subscription_date": "2021-11-22",
-    "website": "http://www.barr.net/"
+    "website": "http://www.barr.net/",
+    "salary": 102000
   },
   {
     "customer_id": "90c8fbbe-146b-48aa-b67b-859a7028c899",
@@ -5249,7 +5652,8 @@ export const customersData = [
     "phone_2": 2004323857,
     "email": "chanjermaine@garrison-house.com",
     "subscription_date": "2021-03-24",
-    "website": "http://www.sutton.net/"
+    "website": "http://www.sutton.net/",
+    "salary": 65000
   },
   {
     "customer_id": "a022c5da-0b7a-4b0d-ad23-7f5d2ecd03c9",
@@ -5262,7 +5666,8 @@ export const customersData = [
     "phone_2": "548-136-5589x77108",
     "email": "kristindelgado@mcconnell.com",
     "subscription_date": "2020-10-28",
-    "website": "https://www.cameron.com/"
+    "website": "https://www.cameron.com/",
+    "salary": 59000
   },
   {
     "customer_id": "d2b78c2c-ccb4-45c8-94da-4f178c99b141",
@@ -5275,7 +5680,8 @@ export const customersData = [
     "phone_2": "+1-034-845-5206x83724",
     "email": "ospencer@watkins.info",
     "subscription_date": "2022-03-03",
-    "website": "http://www.cantu.com/"
+    "website": "http://www.cantu.com/",
+    "salary": 39000
   },
   {
     "customer_id": "2382a27c-6a76-4772-a1ee-380dcfa684dc",
@@ -5288,7 +5694,8 @@ export const customersData = [
     "phone_2": "0238737735",
     "email": "agarrett@lopez-maynard.com",
     "subscription_date": "2022-03-26",
-    "website": "http://www.casey.com/"
+    "website": "http://www.casey.com/",
+    "salary": 82000
   },
   {
     "customer_id": "d88ca7c3-c07c-4742-bf9f-69f3c0969ae0",
@@ -5301,7 +5708,8 @@ export const customersData = [
     "phone_2": "100-851-4423",
     "email": "anitaduncan@perkins-poole.com",
     "subscription_date": "2021-10-26",
-    "website": "http://www.cunningham-grant.com/"
+    "website": "http://www.cunningham-grant.com/",
+    "salary": 85000
   },
   {
     "customer_id": "7afe02fd-246e-4b7c-810f-681526b504ec",
@@ -5314,7 +5722,8 @@ export const customersData = [
     "phone_2": "690-819-4945x20838",
     "email": "catherine21@kane.com",
     "subscription_date": "2021-03-30",
-    "website": "http://www.shepherd-giles.net/"
+    "website": "http://www.shepherd-giles.net/",
+    "salary": 32000
   },
   {
     "customer_id": "d0703bc7-1c19-42a6-bf9c-6ae4d0d57f55",
@@ -5327,7 +5736,8 @@ export const customersData = [
     "phone_2": "(459)518-8772x7721",
     "email": "anthony93@bryant.com",
     "subscription_date": "2020-07-14",
-    "website": "https://www.chung-petty.com/"
+    "website": "https://www.chung-petty.com/",
+    "salary": 154000
   },
   {
     "customer_id": "012ffe49-1baf-40dd-b87c-2d3a46995fb0",
@@ -5340,7 +5750,8 @@ export const customersData = [
     "phone_2": "+1-448-640-1896",
     "email": "barberrodney@morales-jacobson.com",
     "subscription_date": "2021-11-17",
-    "website": "http://www.ford.com/"
+    "website": "http://www.ford.com/",
+    "salary": 45000
   },
   {
     "customer_id": "44a5755d-74cb-4fa2-9c9d-fdf99187e58d",
@@ -5353,7 +5764,8 @@ export const customersData = [
     "phone_2": "396.656.2930",
     "email": "ana16@holloway-barry.com",
     "subscription_date": "2020-04-15",
-    "website": "https://guerrero.com/"
+    "website": "https://guerrero.com/",
+    "salary": 72000
   },
   {
     "customer_id": "c83e923d-9c3c-45f7-a807-c13dc2d1faeb",
@@ -5366,7 +5778,8 @@ export const customersData = [
     "phone_2": "(202)347-7172x94872",
     "email": "haydenbuchanan@melton.com",
     "subscription_date": "2020-06-28",
-    "website": "https://spears.biz/"
+    "website": "https://spears.biz/",
+    "salary": 71000
   },
   {
     "customer_id": "4fb87dfe-c48b-4ee4-8579-dbf6f4548a53",
@@ -5379,7 +5792,8 @@ export const customersData = [
     "phone_2": "001-804-844-6459x8922",
     "email": "gregoryschneider@jacobson.com",
     "subscription_date": "2021-03-03",
-    "website": "https://buchanan.com/"
+    "website": "https://buchanan.com/",
+    "salary": 44000
   },
   {
     "customer_id": "befb0931-7bc9-478c-a760-c9c860058a3c",
@@ -5392,7 +5806,8 @@ export const customersData = [
     "phone_2": "001-603-6644x22867",
     "email": "kristi76@mack.biz",
     "subscription_date": "2020-06-20",
-    "website": "http://www.liu.com/"
+    "website": "http://www.liu.com/",
+    "salary": 138000
   },
   {
     "customer_id": "49f4fd1b-016f-4a49-b5d9-fd2337b78655",
@@ -5405,7 +5820,8 @@ export const customersData = [
     "phone_2": "236-153-5934",
     "email": "gmercado@greer.com",
     "subscription_date": "2021-01-08",
-    "website": "https://moran.net/"
+    "website": "https://moran.net/",
+    "salary": 127000
   },
   {
     "customer_id": "147deaf7-1ab5-4518-ad7c-f7d5bfd7d264",
@@ -5418,7 +5834,8 @@ export const customersData = [
     "phone_2": "472-271-3133",
     "email": "jaimedorsey@coffey-willis.com",
     "subscription_date": "2020-03-03",
-    "website": "http://www.leonard-johnson.biz/"
+    "website": "http://www.leonard-johnson.biz/",
+    "salary": 37000
   },
   {
     "customer_id": "40491743-cfb3-4a48-aed5-9a911a4d61f7",
@@ -5431,7 +5848,8 @@ export const customersData = [
     "phone_2": "(305)525-0756x2892",
     "email": "phyllis52@abbott.com",
     "subscription_date": "2020-11-29",
-    "website": "http://www.cabrera-carney.net/"
+    "website": "http://www.cabrera-carney.net/",
+    "salary": 170000
   },
   {
     "customer_id": "b09b1127-e27d-4d5a-b04b-928c25c8b9e2",
@@ -5444,7 +5862,8 @@ export const customersData = [
     "phone_2": "(182)561-1094x806",
     "email": "hayden56@fitzpatrick.com",
     "subscription_date": "2020-06-27",
-    "website": "https://www.lutz.com/"
+    "website": "https://www.lutz.com/",
+    "salary": 170000
   },
   {
     "customer_id": "169c6eb3-a7ac-403d-892b-454f537cdc25",
@@ -5457,7 +5876,8 @@ export const customersData = [
     "phone_2": "014.536.9255x66854",
     "email": "seanweber@martinez.net",
     "subscription_date": "2020-11-27",
-    "website": "http://clayton.net/"
+    "website": "http://clayton.net/",
+    "salary": 47000
   },
   {
     "customer_id": "c667d11a-641b-4243-8043-4e4f344aba03",
@@ -5470,7 +5890,8 @@ export const customersData = [
     "phone_2": "+1-322-867-9679x66357",
     "email": "elaine71@morales-shepard.com",
     "subscription_date": "2020-04-07",
-    "website": "http://www.bryant.com/"
+    "website": "http://www.bryant.com/",
+    "salary": 75000
   },
   {
     "customer_id": "f3f96bc7-9745-4c36-906f-675f09fa431b",
@@ -5483,7 +5904,8 @@ export const customersData = [
     "phone_2": "001-555-001-1595x1880",
     "email": "courtneyburke@carey-dodson.com",
     "subscription_date": "2022-05-07",
-    "website": "https://www.warren.net/"
+    "website": "https://www.warren.net/",
+    "salary": 169000
   },
   {
     "customer_id": "ec2e0549-41da-47d6-a846-e97fa2d68351",
@@ -5496,7 +5918,8 @@ export const customersData = [
     "phone_2": "236-420-9938x608",
     "email": "autumn48@copeland.com",
     "subscription_date": "2021-09-16",
-    "website": "http://www.shelton.net/"
+    "website": "http://www.shelton.net/",
+    "salary": 163000
   },
   {
     "customer_id": "37606331-422b-49df-bb66-88e9233665b9",
@@ -5509,7 +5932,8 @@ export const customersData = [
     "phone_2": "(960)506-9591x44984",
     "email": "gabriellaboyle@little.org",
     "subscription_date": "2021-10-21",
-    "website": "http://estrada.com/"
+    "website": "http://estrada.com/",
+    "salary": 159000
   },
   {
     "customer_id": "af5d6e82-cc94-411d-aab6-1bbfc8a65407",
@@ -5522,7 +5946,8 @@ export const customersData = [
     "phone_2": "500.684.4522x8404",
     "email": "meaganwallace@church.com",
     "subscription_date": "2021-10-31",
-    "website": "http://odonnell-mueller.net/"
+    "website": "http://odonnell-mueller.net/",
+    "salary": 60000
   },
   {
     "customer_id": "f3224387-06e6-4765-9f3c-201ce02fbbde",
@@ -5535,7 +5960,8 @@ export const customersData = [
     "phone_2": "398-823-5404x6947",
     "email": "dhaley@brewer.biz",
     "subscription_date": "2021-04-01",
-    "website": "https://www.harding.com/"
+    "website": "https://www.harding.com/",
+    "salary": 139000
   },
   {
     "customer_id": "0d5adca0-a053-45b7-8d86-c596e45921df",
@@ -5548,7 +5974,8 @@ export const customersData = [
     "phone_2": "001-832-565-8361x0541",
     "email": "harryhood@levine.com",
     "subscription_date": "2020-01-30",
-    "website": "http://scott.com/"
+    "website": "http://scott.com/",
+    "salary": 37000
   },
   {
     "customer_id": "89542928-15a7-4afa-99c0-877f56934f52",
@@ -5561,7 +5988,8 @@ export const customersData = [
     "phone_2": "(583)206-4758",
     "email": "tcallahan@schwartz.com",
     "subscription_date": "2021-01-11",
-    "website": "https://mcbride.info/"
+    "website": "https://mcbride.info/",
+    "salary": 173000
   },
   {
     "customer_id": "79ab5516-3925-496a-9876-2370382b0cb3",
@@ -5574,7 +6002,8 @@ export const customersData = [
     "phone_2": "001-080-082-4440x1364",
     "email": "katie34@jefferson-benton.com",
     "subscription_date": "2022-01-05",
-    "website": "https://www.shaffer.com/"
+    "website": "https://www.shaffer.com/",
+    "salary": 130000
   },
   {
     "customer_id": "2fb52eb0-b9ed-43e1-8a8b-278dec6f60c6",
@@ -5587,7 +6016,8 @@ export const customersData = [
     "phone_2": "042.833.6651x98429",
     "email": "benitezwyatt@craig.info",
     "subscription_date": "2021-07-13",
-    "website": "https://russo.net/"
+    "website": "https://russo.net/",
+    "salary": 177000
   },
   {
     "customer_id": "4fe9e753-5f1f-4f36-b5e5-5ea7070f1b89",
@@ -5600,7 +6030,8 @@ export const customersData = [
     "phone_2": "001-679-446-2949x907",
     "email": "adean@blevins.net",
     "subscription_date": "2021-06-01",
-    "website": "https://moreno-washington.com/"
+    "website": "https://moreno-washington.com/",
+    "salary": 80000
   },
   {
     "customer_id": "dcc462b7-ebcf-4e8a-bc67-de89d7b83483",
@@ -5613,7 +6044,8 @@ export const customersData = [
     "phone_2": "766-169-0074x4662",
     "email": "loretta20@middleton.info",
     "subscription_date": "2021-02-18",
-    "website": "https://www.gates.com/"
+    "website": "https://www.gates.com/",
+    "salary": 116000
   },
   {
     "customer_id": "67358baf-9f8b-43df-9fb5-f1d627a8dc75",
@@ -5626,7 +6058,8 @@ export const customersData = [
     "phone_2": "235-891-4864",
     "email": "wgrimes@reyes-prince.com",
     "subscription_date": "2022-03-27",
-    "website": "https://hinton-robertson.com/"
+    "website": "https://hinton-robertson.com/",
+    "salary": 170000
   },
   {
     "customer_id": "1f06daf5-0aef-4b9b-aecb-a8536d60aab3",
@@ -5639,7 +6072,8 @@ export const customersData = [
     "phone_2": "+1-325-836-6005",
     "email": "xnielsen@flynn.net",
     "subscription_date": "2021-08-17",
-    "website": "https://huber-clark.net/"
+    "website": "https://huber-clark.net/",
+    "salary": 171000
   },
   {
     "customer_id": "50a3a32f-a777-48a5-9f1e-d7b54869dc7a",
@@ -5652,7 +6086,8 @@ export const customersData = [
     "phone_2": "037-106-3564",
     "email": "erocha@franco.com",
     "subscription_date": "2020-04-29",
-    "website": "https://shaffer.com/"
+    "website": "https://shaffer.com/",
+    "salary": 67000
   },
   {
     "customer_id": "5129f533-d6cc-41ae-8ce6-4a873abb8f33",
@@ -5665,7 +6100,8 @@ export const customersData = [
     "phone_2": "851.834.8811",
     "email": "xodonnell@velasquez.info",
     "subscription_date": "2020-03-14",
-    "website": "http://www.huynh-skinner.com/"
+    "website": "http://www.huynh-skinner.com/",
+    "salary": 127000
   },
   {
     "customer_id": "280d81eb-dd65-4bae-ad52-916569d96d60",
@@ -5678,7 +6114,8 @@ export const customersData = [
     "phone_2": "(401)866-3212",
     "email": "rebekah62@chung.com",
     "subscription_date": "2021-01-14",
-    "website": "http://pittman-watkins.com/"
+    "website": "http://pittman-watkins.com/",
+    "salary": 50000
   },
   {
     "customer_id": "d917538e-99fe-4e0d-b7be-b136ef9bf64e",
@@ -5691,7 +6128,8 @@ export const customersData = [
     "phone_2": "577.641.2492x628",
     "email": "rileychapman@patel-strickland.com",
     "subscription_date": "2020-12-22",
-    "website": "https://smith.com/"
+    "website": "https://smith.com/",
+    "salary": 138000
   },
   {
     "customer_id": "b4703c73-8c08-444c-9154-e5a71d271719",
@@ -5704,7 +6142,8 @@ export const customersData = [
     "phone_2": "583-442-7599",
     "email": "phatfield@christensen.net",
     "subscription_date": "2021-11-01",
-    "website": "http://cannon.com/"
+    "website": "http://cannon.com/",
+    "salary": 179000
   },
   {
     "customer_id": "9fc9e70c-9881-4bb4-a66c-4ae5f243beac",
@@ -5717,7 +6156,8 @@ export const customersData = [
     "phone_2": 1809008446,
     "email": "janet28@jarvis.com",
     "subscription_date": "2021-09-15",
-    "website": "http://porter.com/"
+    "website": "http://porter.com/",
+    "salary": 129000
   },
   {
     "customer_id": "46d8973f-8976-4ada-8723-9c415b55f250",
@@ -5730,7 +6170,8 @@ export const customersData = [
     "phone_2": "001-137-643-4828",
     "email": "kirstenrosales@powers-poole.info",
     "subscription_date": "2022-04-28",
-    "website": "https://www.middleton.biz/"
+    "website": "https://www.middleton.biz/",
+    "salary": 106000
   },
   {
     "customer_id": "e36b7477-86e8-419d-9d10-4f73413b283a",
@@ -5743,7 +6184,8 @@ export const customersData = [
     "phone_2": "128-895-5086",
     "email": "melvin10@hall.org",
     "subscription_date": "2020-10-17",
-    "website": "http://www.drake.net/"
+    "website": "http://www.drake.net/",
+    "salary": 83000
   },
   {
     "customer_id": "90e6835e-c765-45c9-afd6-83d37d25f299",
@@ -5756,7 +6198,8 @@ export const customersData = [
     "phone_2": "792-641-1779x8912",
     "email": "kayla51@snyder.com",
     "subscription_date": "2020-03-09",
-    "website": "http://www.nicholson.org/"
+    "website": "http://www.nicholson.org/",
+    "salary": 90000
   },
   {
     "customer_id": "63623761-81ef-4861-85e7-f00bedc9af4d",
@@ -5769,7 +6212,8 @@ export const customersData = [
     "phone_2": "017-183-6270x265",
     "email": "hintonnathaniel@warren-ross.com",
     "subscription_date": "2022-04-05",
-    "website": "http://www.patel.info/"
+    "website": "http://www.patel.info/",
+    "salary": 122000
   },
   {
     "customer_id": "d9e3d26b-fb72-461b-9bcd-644baed6c327",
@@ -5782,7 +6226,8 @@ export const customersData = [
     "phone_2": "560-338-5692",
     "email": "alyssamann@huang.info",
     "subscription_date": "2021-10-19",
-    "website": "https://www.collier.com/"
+    "website": "https://www.collier.com/",
+    "salary": 91000
   },
   {
     "customer_id": "0343a512-1e49-4808-8b20-5b30486b20ee",
@@ -5795,7 +6240,8 @@ export const customersData = [
     "phone_2": "516-588-9201x2254",
     "email": "luis57@richardson.com",
     "subscription_date": "2021-06-24",
-    "website": "https://www.archer.com/"
+    "website": "https://www.archer.com/",
+    "salary": 130000
   },
   {
     "customer_id": "1a45d2da-f6eb-4519-9448-057058830f0b",
@@ -5808,7 +6254,8 @@ export const customersData = [
     "phone_2": "+1-907-885-8390",
     "email": "ohorn@vazquez-olsen.net",
     "subscription_date": "2021-01-16",
-    "website": "http://www.harrell.com/"
+    "website": "http://www.harrell.com/",
+    "salary": 66000
   },
   {
     "customer_id": "bb703193-4bad-492c-a882-0baa973b85b0",
@@ -5821,7 +6268,8 @@ export const customersData = [
     "phone_2": 9679745885,
     "email": "gardnerralph@newton-farley.info",
     "subscription_date": "2021-04-20",
-    "website": "http://www.harvey-giles.org/"
+    "website": "http://www.harvey-giles.org/",
+    "salary": 163000
   },
   {
     "customer_id": "13b0f9a0-1aa9-40f3-85ed-bd4056419d18",
@@ -5834,7 +6282,8 @@ export const customersData = [
     "phone_2": "(286)341-9021x29689",
     "email": "burnettsierra@bartlett-decker.com",
     "subscription_date": "2022-01-25",
-    "website": "http://www.eaton.com/"
+    "website": "http://www.eaton.com/",
+    "salary": 140000
   },
   {
     "customer_id": "6c952f96-eeca-412c-9a46-b6a173fb7c54",
@@ -5847,7 +6296,8 @@ export const customersData = [
     "phone_2": "+1-393-754-6328x11510",
     "email": "jeffery74@vazquez.net",
     "subscription_date": "2021-04-06",
-    "website": "https://weeks.com/"
+    "website": "https://weeks.com/",
+    "salary": 52000
   },
   {
     "customer_id": "5b67d753-e1e2-401e-8ce4-b1e6391ac10e",
@@ -5860,7 +6310,8 @@ export const customersData = [
     "phone_2": "001-683-237-6642",
     "email": "phill@spence.net",
     "subscription_date": "2020-07-25",
-    "website": "http://phelps.com/"
+    "website": "http://phelps.com/",
+    "salary": 122000
   },
   {
     "customer_id": "e2ac2153-128a-470b-90c4-a807b259aabc",
@@ -5873,7 +6324,8 @@ export const customersData = [
     "phone_2": "001-424-320-9787x3004",
     "email": "ihunt@madden.org",
     "subscription_date": "2020-11-16",
-    "website": "http://guerrero.org/"
+    "website": "http://guerrero.org/",
+    "salary": 76000
   },
   {
     "customer_id": "1fadff76-fdba-4562-b000-1af2cd6f6e27",
@@ -5886,7 +6338,8 @@ export const customersData = [
     "phone_2": "(715)052-0799x963",
     "email": "lorraine57@west.com",
     "subscription_date": "2020-05-12",
-    "website": "http://www.leblanc.com/"
+    "website": "http://www.leblanc.com/",
+    "salary": 99000
   },
   {
     "customer_id": "61c7ba21-1905-44d1-92fd-e6f31d2844f9",
@@ -5899,7 +6352,8 @@ export const customersData = [
     "phone_2": "001-513-461-4602x45962",
     "email": "mwells@robles-foster.biz",
     "subscription_date": "2022-05-25",
-    "website": "http://www.blake.com/"
+    "website": "http://www.blake.com/",
+    "salary": 144000
   },
   {
     "customer_id": "cd95816a-2a7e-4d56-b735-9ac3eb2e21f3",
@@ -5912,7 +6366,8 @@ export const customersData = [
     "phone_2": "001-679-161-8616x13888",
     "email": "stefaniehoover@monroe.info",
     "subscription_date": "2021-01-17",
-    "website": "https://key.biz/"
+    "website": "https://key.biz/",
+    "salary": 113000
   },
   {
     "customer_id": "8409e971-0129-409b-b41a-218e0439bacf",
@@ -5925,7 +6380,8 @@ export const customersData = [
     "phone_2": "327-203-9487",
     "email": "claytongrant@garner.net",
     "subscription_date": "2022-01-05",
-    "website": "http://www.poole-gallegos.com/"
+    "website": "http://www.poole-gallegos.com/",
+    "salary": 100000
   },
   {
     "customer_id": "2bb5168b-bc11-4688-87dd-a4767f860c7f",
@@ -5938,7 +6394,8 @@ export const customersData = [
     "phone_2": "001-538-193-0811x1719",
     "email": "tasha02@strickland.info",
     "subscription_date": "2020-12-04",
-    "website": "http://www.khan.info/"
+    "website": "http://www.khan.info/",
+    "salary": 40000
   },
   {
     "customer_id": "a5dd096f-e3d1-4266-9c7b-e666524fbd64",
@@ -5951,7 +6408,8 @@ export const customersData = [
     "phone_2": "600-327-9006x2098",
     "email": "nmccoy@shaw-kane.com",
     "subscription_date": "2021-10-01",
-    "website": "https://todd-lang.com/"
+    "website": "https://todd-lang.com/",
+    "salary": 89000
   },
   {
     "customer_id": "84bd0c14-003f-4f0c-ba50-e1fc3d297403",
@@ -5964,7 +6422,8 @@ export const customersData = [
     "phone_2": "746.918.8290",
     "email": "mcleanchelsea@gutierrez.com",
     "subscription_date": "2021-11-30",
-    "website": "https://www.alexander-proctor.com/"
+    "website": "https://www.alexander-proctor.com/",
+    "salary": 53000
   },
   {
     "customer_id": "841b113c-3114-40fb-bc84-e50064aa6d30",
@@ -5977,7 +6436,8 @@ export const customersData = [
     "phone_2": "(695)014-8346x5911",
     "email": "richard34@bruce-ewing.com",
     "subscription_date": "2022-04-09",
-    "website": "http://monroe.com/"
+    "website": "http://monroe.com/",
+    "salary": 93000
   },
   {
     "customer_id": "f2aaba58-2342-4f77-9ee2-80441522f4a4",
@@ -5990,7 +6450,8 @@ export const customersData = [
     "phone_2": "001-011-432-3405x072",
     "email": "kari80@hoover.com",
     "subscription_date": "2021-08-21",
-    "website": "http://gaines-jordan.com/"
+    "website": "http://gaines-jordan.com/",
+    "salary": 148000
   },
   {
     "customer_id": "4ef37e69-c6c3-49ea-808a-eec18fb563a0",
@@ -6003,7 +6464,8 @@ export const customersData = [
     "phone_2": "064-411-5713x396",
     "email": "smcclure@chan-gallegos.com",
     "subscription_date": "2020-06-21",
-    "website": "https://www.ashley.biz/"
+    "website": "https://www.ashley.biz/",
+    "salary": 57000
   },
   {
     "customer_id": "a6085aec-f69c-4dc1-906e-b017982ea741",
@@ -6016,7 +6478,8 @@ export const customersData = [
     "phone_2": "981-099-7848",
     "email": "tamipena@berg.com",
     "subscription_date": "2021-08-02",
-    "website": "https://www.pope.com/"
+    "website": "https://www.pope.com/",
+    "salary": 59000
   },
   {
     "customer_id": "bdd98b72-b1dd-4018-baf8-eeed30695b09",
@@ -6029,7 +6492,8 @@ export const customersData = [
     "phone_2": "(151)618-0304x22581",
     "email": "marilyn21@walter.com",
     "subscription_date": "2020-05-09",
-    "website": "https://russo.org/"
+    "website": "https://russo.org/",
+    "salary": 60000
   },
   {
     "customer_id": "82fd782f-aca0-430d-ad41-67ccac617d91",
@@ -6042,7 +6506,8 @@ export const customersData = [
     "phone_2": "+1-422-541-5328",
     "email": "amelton@morton-rich.org",
     "subscription_date": "2022-05-12",
-    "website": "http://mahoney.com/"
+    "website": "http://mahoney.com/",
+    "salary": 173000
   },
   {
     "customer_id": "1cc1f295-3d04-466e-aa59-213e45171ac3",
@@ -6055,7 +6520,8 @@ export const customersData = [
     "phone_2": 2740352418,
     "email": "beverly65@lowery.org",
     "subscription_date": "2021-05-09",
-    "website": "http://gonzalez-benton.com/"
+    "website": "http://gonzalez-benton.com/",
+    "salary": 173000
   },
   {
     "customer_id": "b0c5f8cd-043e-4075-a466-7b9a3a0de17e",
@@ -6068,7 +6534,8 @@ export const customersData = [
     "phone_2": "799-887-2712x18563",
     "email": "alexandra08@bush.net",
     "subscription_date": "2021-06-28",
-    "website": "http://watson.info/"
+    "website": "http://watson.info/",
+    "salary": 141000
   },
   {
     "customer_id": "f087c839-e4f1-4191-8e2e-c283014a403b",
@@ -6081,7 +6548,8 @@ export const customersData = [
     "phone_2": "(302)071-9228",
     "email": "kenneth19@harmon-sellers.com",
     "subscription_date": "2022-01-19",
-    "website": "http://figueroa.com/"
+    "website": "http://figueroa.com/",
+    "salary": 113000
   },
   {
     "customer_id": "8c7db6ea-2bff-4c1a-8cf7-99c300eac7e8",
@@ -6094,7 +6562,8 @@ export const customersData = [
     "phone_2": "(577)208-2362",
     "email": "tapiajon@brown.com",
     "subscription_date": "2021-08-22",
-    "website": "https://guzman-hunt.com/"
+    "website": "https://guzman-hunt.com/",
+    "salary": 179000
   },
   {
     "customer_id": "6464e0c9-b71e-4d4c-892e-77337df3965b",
@@ -6107,7 +6576,8 @@ export const customersData = [
     "phone_2": "174.943.0332",
     "email": "kylesantana@franco-gibbs.com",
     "subscription_date": "2020-01-07",
-    "website": "https://myers.info/"
+    "website": "https://myers.info/",
+    "salary": 75000
   },
   {
     "customer_id": "937046d3-91a1-4745-8ff1-1c01f9c62ff3",
@@ -6120,7 +6590,8 @@ export const customersData = [
     "phone_2": "045-571-4918",
     "email": "barrettkristine@cummings-velez.com",
     "subscription_date": "2021-05-16",
-    "website": "https://www.duffy-kane.org/"
+    "website": "https://www.duffy-kane.org/",
+    "salary": 175000
   },
   {
     "customer_id": "7d6f3bcc-a994-4619-b873-ce59449ec3ac",
@@ -6133,7 +6604,8 @@ export const customersData = [
     "phone_2": "316.608.5588",
     "email": "clifford55@jennings.com",
     "subscription_date": "2021-10-23",
-    "website": "https://www.fowler.com/"
+    "website": "https://www.fowler.com/",
+    "salary": 148000
   },
   {
     "customer_id": "72da485e-fea0-4a34-9451-d82c4bfd0c6d",
@@ -6146,7 +6618,8 @@ export const customersData = [
     "phone_2": "640.916.2405x3781",
     "email": "chelseygrimes@lindsey.net",
     "subscription_date": "2021-03-14",
-    "website": "https://odom-wade.info/"
+    "website": "https://odom-wade.info/",
+    "salary": 147000
   },
   {
     "customer_id": "0db6b338-62ed-4bd4-b124-d3fb416d5afe",
@@ -6159,7 +6632,8 @@ export const customersData = [
     "phone_2": "+1-693-556-4157",
     "email": "portercandace@kidd.com",
     "subscription_date": "2020-08-30",
-    "website": "http://www.pineda-schroeder.com/"
+    "website": "http://www.pineda-schroeder.com/",
+    "salary": 49000
   },
   {
     "customer_id": "398ce346-d3c9-486a-93e8-e1b4ec8790d4",
@@ -6172,7 +6646,8 @@ export const customersData = [
     "phone_2": "789-459-2362x338",
     "email": "morgan73@gaines-howard.com",
     "subscription_date": "2021-07-10",
-    "website": "https://hernandez.com/"
+    "website": "https://hernandez.com/",
+    "salary": 39000
   },
   {
     "customer_id": "da7b0a17-b32e-4e5a-ac5e-a687de795cdf",
@@ -6185,7 +6660,8 @@ export const customersData = [
     "phone_2": "347-983-3022x79719",
     "email": "stanley20@greer.com",
     "subscription_date": "2022-05-29",
-    "website": "http://www.dunn.com/"
+    "website": "http://www.dunn.com/",
+    "salary": 30000
   },
   {
     "customer_id": "2305e29e-d045-4b7b-a445-461c6089e3cf",
@@ -6198,7 +6674,8 @@ export const customersData = [
     "phone_2": "+1-825-700-2989",
     "email": "jacob13@mathis.com",
     "subscription_date": "2020-12-07",
-    "website": "https://newman.com/"
+    "website": "https://newman.com/",
+    "salary": 84000
   },
   {
     "customer_id": "08116916-0770-4aec-b5a3-83a83134c0fd",
@@ -6211,7 +6688,8 @@ export const customersData = [
     "phone_2": "+1-018-529-6537x6169",
     "email": "javiermaynard@mccann.com",
     "subscription_date": "2021-01-03",
-    "website": "https://goodwin-bean.com/"
+    "website": "https://goodwin-bean.com/",
+    "salary": 119000
   },
   {
     "customer_id": "30de1e4c-45eb-438a-b1cc-abe2930e8318",
@@ -6224,7 +6702,8 @@ export const customersData = [
     "phone_2": "001-558-590-9573x6341",
     "email": "powellcheyenne@perez.biz",
     "subscription_date": "2021-02-12",
-    "website": "http://www.villa-oneill.com/"
+    "website": "http://www.villa-oneill.com/",
+    "salary": 108000
   },
   {
     "customer_id": "ce073c9d-f574-4177-a23f-82651accdc89",
@@ -6237,7 +6716,8 @@ export const customersData = [
     "phone_2": 2593941163,
     "email": "ballison@bradley.com",
     "subscription_date": "2021-02-16",
-    "website": "http://www.moody-long.net/"
+    "website": "http://www.moody-long.net/",
+    "salary": 71000
   },
   {
     "customer_id": "a1ee9e6f-da84-437c-aa71-976ec0419a35",
@@ -6250,7 +6730,8 @@ export const customersData = [
     "phone_2": "(298)574-6640",
     "email": "berrykerri@hickman-lozano.biz",
     "subscription_date": "2020-07-28",
-    "website": "https://www.bond.com/"
+    "website": "https://www.bond.com/",
+    "salary": 80000
   },
   {
     "customer_id": "0aee46d8-c47e-47f4-90ab-2c3ddafdba86",
@@ -6263,7 +6744,8 @@ export const customersData = [
     "phone_2": "670-911-5228x5125",
     "email": "gcollins@kerr.com",
     "subscription_date": "2021-11-02",
-    "website": "https://neal.com/"
+    "website": "https://neal.com/",
+    "salary": 138000
   },
   {
     "customer_id": "8ac50b62-06fd-4574-85d4-fedbf5c9965c",
@@ -6276,7 +6758,8 @@ export const customersData = [
     "phone_2": "705.572.9257x920",
     "email": "whitney26@daniel.com",
     "subscription_date": "2021-10-25",
-    "website": "http://www.reilly.com/"
+    "website": "http://www.reilly.com/",
+    "salary": 59000
   },
   {
     "customer_id": "70d20c34-9283-4306-8a7c-7b6b07634ad6",
@@ -6289,7 +6772,8 @@ export const customersData = [
     "phone_2": "979-017-5735",
     "email": "escobartommy@paul.com",
     "subscription_date": "2021-10-25",
-    "website": "http://decker.org/"
+    "website": "http://decker.org/",
+    "salary": 118000
   },
   {
     "customer_id": "f71f3bb1-8d88-448b-a2f1-6dc224348a54",
@@ -6302,7 +6786,8 @@ export const customersData = [
     "phone_2": "(918)255-6675x1864",
     "email": "lesliepatterson@ferguson-maynard.org",
     "subscription_date": "2022-01-24",
-    "website": "https://preston.com/"
+    "website": "https://preston.com/",
+    "salary": 136000
   },
   {
     "customer_id": "53243203-5790-4156-bd4a-239f5586ef9b",
@@ -6315,7 +6800,8 @@ export const customersData = [
     "phone_2": "(094)646-0255x47078",
     "email": "vincent32@landry-rush.com",
     "subscription_date": "2020-05-30",
-    "website": "https://duarte-avery.net/"
+    "website": "https://duarte-avery.net/",
+    "salary": 157000
   },
   {
     "customer_id": "d66d1f67-9d76-48eb-a8a6-646160d0cdb5",
@@ -6328,7 +6814,8 @@ export const customersData = [
     "phone_2": "+1-023-898-5215x3499",
     "email": "mgarrison@odom-hull.com",
     "subscription_date": "2020-06-30",
-    "website": "http://copeland.com/"
+    "website": "http://copeland.com/",
+    "salary": 86000
   },
   {
     "customer_id": "8c4732c5-0dfd-4e91-95d4-b98eb3b886b4",
@@ -6341,7 +6828,8 @@ export const customersData = [
     "phone_2": "001-866-234-4359x5744",
     "email": "garnermisty@osborne.com",
     "subscription_date": "2022-04-02",
-    "website": "http://www.keith.net/"
+    "website": "http://www.keith.net/",
+    "salary": 96000
   },
   {
     "customer_id": "9272243c-9b9e-42ec-8b28-999907f31fcb",
@@ -6354,7 +6842,8 @@ export const customersData = [
     "phone_2": "+1-450-805-5583",
     "email": "npruitt@farley-campbell.com",
     "subscription_date": "2020-01-08",
-    "website": "https://tran.net/"
+    "website": "https://tran.net/",
+    "salary": 45000
   },
   {
     "customer_id": "b675c400-80d5-4e5e-ac20-b8e255c89282",
@@ -6367,7 +6856,8 @@ export const customersData = [
     "phone_2": "(501)039-9836x9249",
     "email": "mccallcarlos@ball.com",
     "subscription_date": "2022-03-04",
-    "website": "http://stephens-singleton.org/"
+    "website": "http://stephens-singleton.org/",
+    "salary": 38000
   },
   {
     "customer_id": "5d6a0f82-02b8-454a-8ef7-beaab0b45899",
@@ -6380,7 +6870,8 @@ export const customersData = [
     "phone_2": "168-562-6329",
     "email": "grantcowan@johns.com",
     "subscription_date": "2021-07-22",
-    "website": "https://richards.com/"
+    "website": "https://richards.com/",
+    "salary": 88000
   },
   {
     "customer_id": "56444595-687d-42ed-9a26-9d22a22e7e84",
@@ -6393,7 +6884,8 @@ export const customersData = [
     "phone_2": "001-734-930-7969x887",
     "email": "hurleycarly@colon-bowman.com",
     "subscription_date": "2021-10-04",
-    "website": "https://dudley-rowland.com/"
+    "website": "https://dudley-rowland.com/",
+    "salary": 163000
   },
   {
     "customer_id": "50f733eb-7d65-442f-97bb-5bafc7b9eab2",
@@ -6406,7 +6898,8 @@ export const customersData = [
     "phone_2": "801-047-8905x68776",
     "email": "ysanford@rowe.com",
     "subscription_date": "2021-10-10",
-    "website": "http://www.williamson.com/"
+    "website": "http://www.williamson.com/",
+    "salary": 170000
   },
   {
     "customer_id": "d0f11506-7f1a-4aea-9b9c-53a254cae9e2",
@@ -6419,7 +6912,8 @@ export const customersData = [
     "phone_2": 9325383554,
     "email": "bhall@little.com",
     "subscription_date": "2022-03-17",
-    "website": "http://blankenship.net/"
+    "website": "http://blankenship.net/",
+    "salary": 77000
   },
   {
     "customer_id": "82548cca-1ee6-4609-88ff-b220dc010e74",
@@ -6432,7 +6926,8 @@ export const customersData = [
     "phone_2": "277.321.4128x27379",
     "email": "huberkari@glover.com",
     "subscription_date": "2022-03-23",
-    "website": "https://campos-hendricks.com/"
+    "website": "https://campos-hendricks.com/",
+    "salary": 49000
   },
   {
     "customer_id": "079342ef-84f1-4dbd-b714-fd84790fa033",
@@ -6445,7 +6940,8 @@ export const customersData = [
     "phone_2": "(841)338-0703x29801",
     "email": "friedmanpatrick@mccormick.com",
     "subscription_date": "2022-02-12",
-    "website": "https://franco.info/"
+    "website": "https://franco.info/",
+    "salary": 95000
   },
   {
     "customer_id": "e0ffc05d-1a97-427b-9b0d-7cfc5e9ec37b",
@@ -6458,7 +6954,8 @@ export const customersData = [
     "phone_2": 2938376914,
     "email": "wnoble@preston.com",
     "subscription_date": "2020-06-15",
-    "website": "http://www.jennings.com/"
+    "website": "http://www.jennings.com/",
+    "salary": 48000
   },
   {
     "customer_id": "fdda7542-cb3c-4f88-b2fe-ae454704cf3e",
@@ -6471,7 +6968,8 @@ export const customersData = [
     "phone_2": "258-800-9165x1437",
     "email": "murphyjulian@herrera.com",
     "subscription_date": "2020-12-16",
-    "website": "https://ruiz-walton.com/"
+    "website": "https://ruiz-walton.com/",
+    "salary": 30000
   },
   {
     "customer_id": "b5f0d787-85f0-44a7-a2f3-d40de487762e",
@@ -6484,7 +6982,8 @@ export const customersData = [
     "phone_2": "(907)909-7350x289",
     "email": "brenthart@potter.com",
     "subscription_date": "2020-04-22",
-    "website": "https://www.osborne.info/"
+    "website": "https://www.osborne.info/",
+    "salary": 177000
   },
   {
     "customer_id": "85db5f48-37a7-4329-8885-bb6a4060a5bb",
@@ -6497,7 +6996,8 @@ export const customersData = [
     "phone_2": "179-850-1382x395",
     "email": "allenricardo@calhoun.com",
     "subscription_date": "2021-05-14",
-    "website": "https://garza.com/"
+    "website": "https://garza.com/",
+    "salary": 103000
   },
   {
     "customer_id": "1177b1b0-c728-4a8c-86ba-df2efa0b63de",
@@ -6510,7 +7010,8 @@ export const customersData = [
     "phone_2": "(162)785-8988",
     "email": "connorjensen@forbes.info",
     "subscription_date": "2021-01-07",
-    "website": "https://bird.com/"
+    "website": "https://bird.com/",
+    "salary": 41000
   },
   {
     "customer_id": "68ee65ae-c516-40f7-8959-83072b5dc408",
@@ -6523,7 +7024,8 @@ export const customersData = [
     "phone_2": "277.808.4300x20351",
     "email": "tammieguerra@pineda-peterson.com",
     "subscription_date": "2021-02-21",
-    "website": "https://ortega-alvarez.com/"
+    "website": "https://ortega-alvarez.com/",
+    "salary": 110000
   },
   {
     "customer_id": "7940b006-5a5f-4e63-b9c5-f12eec62f34e",
@@ -6536,7 +7038,8 @@ export const customersData = [
     "phone_2": "860-130-6865x489",
     "email": "deborah90@escobar.com",
     "subscription_date": "2020-05-17",
-    "website": "https://robbins.biz/"
+    "website": "https://robbins.biz/",
+    "salary": 124000
   },
   {
     "customer_id": "38b1e382-aceb-45ce-aca1-9a14dfac7064",
@@ -6549,7 +7052,8 @@ export const customersData = [
     "phone_2": "848-673-4939",
     "email": "anncollins@andrade-summers.com",
     "subscription_date": "2021-09-22",
-    "website": "https://hogan.com/"
+    "website": "https://hogan.com/",
+    "salary": 129000
   },
   {
     "customer_id": "e87b6725-93b3-4296-b084-17e92f1f61ae",
@@ -6562,7 +7066,8 @@ export const customersData = [
     "phone_2": "(155)212-6228",
     "email": "njohns@vang.com",
     "subscription_date": "2020-02-06",
-    "website": "http://roberts.com/"
+    "website": "http://roberts.com/",
+    "salary": 76000
   },
   {
     "customer_id": "9ff1e230-d5cb-4dfb-89a8-823f757de860",
@@ -6575,7 +7080,8 @@ export const customersData = [
     "phone_2": "001-433-310-6130x31698",
     "email": "cassandrawhitaker@casey.com",
     "subscription_date": "2022-04-11",
-    "website": "http://www.hodge.biz/"
+    "website": "http://www.hodge.biz/",
+    "salary": 69000
   },
   {
     "customer_id": "61104f8e-64b3-4cfb-ae28-7067f60fde91",
@@ -6588,7 +7094,8 @@ export const customersData = [
     "phone_2": "(076)968-5226x698",
     "email": "adrianpatel@fischer.biz",
     "subscription_date": "2021-08-18",
-    "website": "https://www.daniel.com/"
+    "website": "https://www.daniel.com/",
+    "salary": 133000
   },
   {
     "customer_id": "7c8ffa83-9486-4d41-be79-afe653351e55",
@@ -6601,7 +7108,8 @@ export const customersData = [
     "phone_2": 7321185578,
     "email": "tonya65@mathews.info",
     "subscription_date": "2020-01-10",
-    "website": "http://www.richards-deleon.com/"
+    "website": "http://www.richards-deleon.com/",
+    "salary": 144000
   },
   {
     "customer_id": "21070a78-4ee5-48d2-a47a-638eaba481fd",
@@ -6614,7 +7122,8 @@ export const customersData = [
     "phone_2": "983.223.4906x96666",
     "email": "brockjavier@solis.org",
     "subscription_date": "2021-02-01",
-    "website": "http://golden.biz/"
+    "website": "http://golden.biz/",
+    "salary": 103000
   },
   {
     "customer_id": "ec229dbf-6570-4e9c-a76a-23cc84371b28",
@@ -6627,7 +7136,8 @@ export const customersData = [
     "phone_2": "(999)765-4404x608",
     "email": "riddlekrystal@snyder-avery.org",
     "subscription_date": "2021-02-12",
-    "website": "https://www.stafford.com/"
+    "website": "https://www.stafford.com/",
+    "salary": 135000
   },
   {
     "customer_id": "2e7b72cd-d364-40d9-84bd-192aa62683ef",
@@ -6640,7 +7150,8 @@ export const customersData = [
     "phone_2": "451-723-8252x9458",
     "email": "brent14@wise.com",
     "subscription_date": "2021-05-27",
-    "website": "https://www.goodwin.com/"
+    "website": "https://www.goodwin.com/",
+    "salary": 151000
   },
   {
     "customer_id": "61b1243d-bf8d-4108-87a2-1402154912ed",
@@ -6653,7 +7164,8 @@ export const customersData = [
     "phone_2": "(475)857-5880",
     "email": "hendersonjacqueline@zamora.com",
     "subscription_date": "2020-03-07",
-    "website": "https://cabrera-goodman.info/"
+    "website": "https://cabrera-goodman.info/",
+    "salary": 140000
   },
   {
     "customer_id": "dac09ebe-dc2f-4ed3-bc70-f95b1053949e",
@@ -6666,7 +7178,8 @@ export const customersData = [
     "phone_2": "593-685-8354",
     "email": "rickpatton@wise.net",
     "subscription_date": "2021-07-13",
-    "website": "http://donovan-ferguson.net/"
+    "website": "http://donovan-ferguson.net/",
+    "salary": 177000
   },
   {
     "customer_id": "d2a35771-0a81-4cca-90c5-314b68228a81",
@@ -6679,7 +7192,8 @@ export const customersData = [
     "phone_2": "(545)098-6913x1932",
     "email": "colejulian@black.net",
     "subscription_date": "2021-11-19",
-    "website": "https://www.short.biz/"
+    "website": "https://www.short.biz/",
+    "salary": 148000
   },
   {
     "customer_id": "9cd71093-7557-44c0-b3c9-e2b6d1716483",
@@ -6692,7 +7206,8 @@ export const customersData = [
     "phone_2": "190.548.5440x36539",
     "email": "tduffy@jimenez-quinn.org",
     "subscription_date": "2021-05-29",
-    "website": "https://conley.com/"
+    "website": "https://conley.com/",
+    "salary": 157000
   },
   {
     "customer_id": "c37fc361-9f67-4e8e-a6cf-c38f68e0ddbd",
@@ -6705,7 +7220,8 @@ export const customersData = [
     "phone_2": "+1-412-752-1430x550",
     "email": "crawforddamon@tyler-hayden.com",
     "subscription_date": "2021-02-13",
-    "website": "https://www.bullock.com/"
+    "website": "https://www.bullock.com/",
+    "salary": 39000
   },
   {
     "customer_id": "43faddc6-8f16-4289-bf85-627e5225ee6f",
@@ -6718,7 +7234,8 @@ export const customersData = [
     "phone_2": "+1-713-446-9138",
     "email": "carlosobrien@berry.info",
     "subscription_date": "2020-09-15",
-    "website": "http://riley.info/"
+    "website": "http://riley.info/",
+    "salary": 84000
   },
   {
     "customer_id": "8db97113-554f-42e6-9153-d505e4bd0755",
@@ -6731,7 +7248,8 @@ export const customersData = [
     "phone_2": "(925)640-7774x2889",
     "email": "cjenkins@daniels.com",
     "subscription_date": "2022-03-26",
-    "website": "http://www.calderon.com/"
+    "website": "http://www.calderon.com/",
+    "salary": 127000
   },
   {
     "customer_id": "50c70cc0-a1f0-48bf-83c4-2e9379325ef4",
@@ -6744,7 +7262,8 @@ export const customersData = [
     "phone_2": "001-424-729-2641x69881",
     "email": "pamelawallace@house.com",
     "subscription_date": "2020-08-09",
-    "website": "http://bolton.com/"
+    "website": "http://bolton.com/",
+    "salary": 98000
   },
   {
     "customer_id": "0cd72267-6901-4f1d-afd8-c82d87d3d55d",
@@ -6757,7 +7276,8 @@ export const customersData = [
     "phone_2": "+1-283-433-4175",
     "email": "ashleyhubbard@castro.info",
     "subscription_date": "2021-09-23",
-    "website": "https://cantrell-spears.com/"
+    "website": "https://cantrell-spears.com/",
+    "salary": 107000
   },
   {
     "customer_id": "105ddfbb-b1f3-4f22-8471-ecca7f2c94a0",
@@ -6770,7 +7290,8 @@ export const customersData = [
     "phone_2": "661.128.1964",
     "email": "hhancock@reynolds.com",
     "subscription_date": "2020-10-27",
-    "website": "https://stafford.com/"
+    "website": "https://stafford.com/",
+    "salary": 97000
   },
   {
     "customer_id": "0d709110-5828-40e1-9b7c-63f4d1ad4953",
@@ -6783,7 +7304,8 @@ export const customersData = [
     "phone_2": "+1-346-503-7728x01163",
     "email": "tbarry@gray.com",
     "subscription_date": "2022-05-19",
-    "website": "http://gentry.com/"
+    "website": "http://gentry.com/",
+    "salary": 173000
   },
   {
     "customer_id": "17661bc4-833b-4c30-9564-cfe7dedf3c54",
@@ -6796,7 +7318,8 @@ export const customersData = [
     "phone_2": "626-720-3732",
     "email": "xbarnes@goodman.com",
     "subscription_date": "2021-08-22",
-    "website": "http://www.sutton.com/"
+    "website": "http://www.sutton.com/",
+    "salary": 140000
   },
   {
     "customer_id": "5e12291a-1970-4381-9641-0d5f47093f23",
@@ -6809,7 +7332,8 @@ export const customersData = [
     "phone_2": "(835)122-9606",
     "email": "pfoley@romero.biz",
     "subscription_date": "2021-04-20",
-    "website": "https://www.duran.com/"
+    "website": "https://www.duran.com/",
+    "salary": 171000
   },
   {
     "customer_id": "6aa4f14e-c9df-45ee-9d85-274787542747",
@@ -6822,7 +7346,8 @@ export const customersData = [
     "phone_2": "694.569.8658x95708",
     "email": "roberto87@george-valencia.com",
     "subscription_date": "2021-01-13",
-    "website": "http://carey.net/"
+    "website": "http://carey.net/",
+    "salary": 86000
   },
   {
     "customer_id": "985b12cc-5bf7-4338-9236-b3888f7c20f5",
@@ -6835,7 +7360,8 @@ export const customersData = [
     "phone_2": "(671)730-9154",
     "email": "qaguirre@shaffer.com",
     "subscription_date": "2021-04-13",
-    "website": "https://delacruz.com/"
+    "website": "https://delacruz.com/",
+    "salary": 111000
   },
   {
     "customer_id": "e864c7f1-e07e-4e4e-9db3-60f4fcd672c1",
@@ -6848,7 +7374,8 @@ export const customersData = [
     "phone_2": "115.341.9092x568",
     "email": "mia71@pham.com",
     "subscription_date": "2021-08-11",
-    "website": "http://sellers-lara.com/"
+    "website": "http://sellers-lara.com/",
+    "salary": 87000
   },
   {
     "customer_id": "45d38171-4c7d-44b9-9213-3081d42be13b",
@@ -6861,7 +7388,8 @@ export const customersData = [
     "phone_2": "(121)325-4427x992",
     "email": "glenda42@wilkins.info",
     "subscription_date": "2022-02-20",
-    "website": "http://www.stokes.net/"
+    "website": "http://www.stokes.net/",
+    "salary": 168000
   },
   {
     "customer_id": "5364fff5-e900-4d0e-b6ed-2c9da9797b2f",
@@ -6874,7 +7402,8 @@ export const customersData = [
     "phone_2": "(292)525-9793x9435",
     "email": "jmarks@soto.com",
     "subscription_date": "2021-01-27",
-    "website": "http://www.downs-christensen.net/"
+    "website": "http://www.downs-christensen.net/",
+    "salary": 30000
   },
   {
     "customer_id": "bdfccb95-275d-4f21-a071-415b564bd5ae",
@@ -6887,7 +7416,8 @@ export const customersData = [
     "phone_2": "232-068-9643x9665",
     "email": "snowleslie@bush.com",
     "subscription_date": "2022-04-04",
-    "website": "https://strong.biz/"
+    "website": "https://strong.biz/",
+    "salary": 143000
   },
   {
     "customer_id": "983d76db-4d3d-41e5-8e2c-5e5f4d8249f7",
@@ -6900,7 +7430,8 @@ export const customersData = [
     "phone_2": "(255)098-4188x468",
     "email": "dandersen@hodge-cook.com",
     "subscription_date": "2021-01-29",
-    "website": "http://www.daniel.net/"
+    "website": "http://www.daniel.net/",
+    "salary": 86000
   },
   {
     "customer_id": "5b226116-a907-4e15-a4bb-ab7cb6114e18",
@@ -6913,7 +7444,8 @@ export const customersData = [
     "phone_2": "254.536.9028x9783",
     "email": "herringmelinda@greer-atkinson.biz",
     "subscription_date": "2020-05-10",
-    "website": "https://holland-patton.org/"
+    "website": "https://holland-patton.org/",
+    "salary": 54000
   },
   {
     "customer_id": "0e779957-a717-4182-9ddc-32e675ce271f",
@@ -6926,7 +7458,8 @@ export const customersData = [
     "phone_2": "841.892.4390x1022",
     "email": "lware@leon.com",
     "subscription_date": "2021-01-15",
-    "website": "https://vaughan.com/"
+    "website": "https://vaughan.com/",
+    "salary": 35000
   },
   {
     "customer_id": "6453b4fa-e623-4a8c-92b1-b1e72fa2f7d5",
@@ -6939,7 +7472,8 @@ export const customersData = [
     "phone_2": "966.168.9695",
     "email": "roger80@stephens.com",
     "subscription_date": "2020-06-28",
-    "website": "http://cohen.com/"
+    "website": "http://cohen.com/",
+    "salary": 164000
   },
   {
     "customer_id": "3545fe6b-9d6c-44df-b045-5e6b7b349284",
@@ -6952,7 +7486,8 @@ export const customersData = [
     "phone_2": "+1-903-085-3124x588",
     "email": "royfrancisco@salas-hanna.com",
     "subscription_date": "2021-06-21",
-    "website": "https://www.cooley.com/"
+    "website": "https://www.cooley.com/",
+    "salary": 40000
   },
   {
     "customer_id": "0bf86a3b-b9e3-4576-90ce-3cceed94b3ab",
@@ -6965,7 +7500,8 @@ export const customersData = [
     "phone_2": "(260)987-5782",
     "email": "mark23@alexander.com",
     "subscription_date": "2021-04-06",
-    "website": "https://gay-farmer.com/"
+    "website": "https://gay-farmer.com/",
+    "salary": 36000
   },
   {
     "customer_id": "47dcb65d-c495-43a7-9ce6-13643138199f",
@@ -6978,7 +7514,8 @@ export const customersData = [
     "phone_2": "312.177.8309x7563",
     "email": "valdezmolly@meadows.biz",
     "subscription_date": "2021-05-19",
-    "website": "https://george.com/"
+    "website": "https://george.com/",
+    "salary": 124000
   },
   {
     "customer_id": "8d234c03-1ede-4897-92ca-5885c1f0d0bc",
@@ -6991,7 +7528,8 @@ export const customersData = [
     "phone_2": "236-762-6896x7868",
     "email": "alvin70@pace-benson.net",
     "subscription_date": "2020-05-03",
-    "website": "https://www.cabrera.net/"
+    "website": "https://www.cabrera.net/",
+    "salary": 39000
   },
   {
     "customer_id": "db7742ae-bc6b-443a-9c49-ec35f5726c32",
@@ -7004,7 +7542,8 @@ export const customersData = [
     "phone_2": "(385)949-5202",
     "email": "krausedarius@gallagher.biz",
     "subscription_date": "2022-04-14",
-    "website": "https://www.villarreal.com/"
+    "website": "https://www.villarreal.com/",
+    "salary": 164000
   },
   {
     "customer_id": "d29c9a5f-d86a-49a1-abdc-934b25d79d0a",
@@ -7017,7 +7556,8 @@ export const customersData = [
     "phone_2": "447.317.5203x16366",
     "email": "alexandermcpherson@fernandez.net",
     "subscription_date": "2020-05-18",
-    "website": "https://www.small.biz/"
+    "website": "https://www.small.biz/",
+    "salary": 176000
   },
   {
     "customer_id": "24024f6f-63b4-4582-b036-29515be00c5e",
@@ -7030,7 +7570,8 @@ export const customersData = [
     "phone_2": "864-668-3636x41678",
     "email": "cuevasevan@novak-dunn.biz",
     "subscription_date": "2021-01-01",
-    "website": "https://sherman.net/"
+    "website": "https://sherman.net/",
+    "salary": 147000
   },
   {
     "customer_id": "c7ab35db-b01a-4cef-8df6-026520d7e289",
@@ -7043,7 +7584,8 @@ export const customersData = [
     "phone_2": "+1-129-778-5261",
     "email": "brockangie@ortega-davidson.net",
     "subscription_date": "2021-06-18",
-    "website": "https://lopez.com/"
+    "website": "https://lopez.com/",
+    "salary": 163000
   },
   {
     "customer_id": "2fb9d60e-8e25-4e41-98f7-2906a54158c7",
@@ -7056,7 +7598,8 @@ export const customersData = [
     "phone_2": "662.135.2143x51107",
     "email": "eric18@douglas-alvarado.com",
     "subscription_date": "2022-05-04",
-    "website": "http://richardson-cook.com/"
+    "website": "http://richardson-cook.com/",
+    "salary": 167000
   },
   {
     "customer_id": "ae60c5d4-4465-45bc-9190-a4db094792f4",
@@ -7069,7 +7612,8 @@ export const customersData = [
     "phone_2": "(118)241-1317",
     "email": "barroyo@villanueva.org",
     "subscription_date": "2020-09-19",
-    "website": "http://www.leonard-daniel.com/"
+    "website": "http://www.leonard-daniel.com/",
+    "salary": 51000
   },
   {
     "customer_id": "0cb9f7c8-3b61-4971-946f-e48b5f97d544",
@@ -7082,7 +7626,8 @@ export const customersData = [
     "phone_2": "001-661-914-1197x271",
     "email": "vgamble@miller-ballard.net",
     "subscription_date": "2022-05-01",
-    "website": "http://kerr-morrow.com/"
+    "website": "http://kerr-morrow.com/",
+    "salary": 82000
   },
   {
     "customer_id": "ca29099f-6964-4329-8074-62ed64e34379",
@@ -7095,7 +7640,8 @@ export const customersData = [
     "phone_2": "737.410.4934",
     "email": "hubercaleb@rivera-hancock.info",
     "subscription_date": "2021-10-21",
-    "website": "http://www.ball-hayden.com/"
+    "website": "http://www.ball-hayden.com/",
+    "salary": 34000
   },
   {
     "customer_id": "416a6cea-9adc-459b-b018-f57d2ebaf5f7",
@@ -7108,7 +7654,8 @@ export const customersData = [
     "phone_2": "+1-863-261-5003x7458",
     "email": "christysuarez@bruce.com",
     "subscription_date": "2020-10-06",
-    "website": "http://www.hebert-hood.info/"
+    "website": "http://www.hebert-hood.info/",
+    "salary": 114000
   },
   {
     "customer_id": "19a6222f-64ef-4c47-9628-f37f9a72d2b2",
@@ -7121,7 +7668,8 @@ export const customersData = [
     "phone_2": 7308283183,
     "email": "elaine26@shea.com",
     "subscription_date": "2022-04-22",
-    "website": "http://www.booker.com/"
+    "website": "http://www.booker.com/",
+    "salary": 47000
   },
   {
     "customer_id": "842cd0a9-a7ce-4d8c-86d9-d181d779761d",
@@ -7134,7 +7682,8 @@ export const customersData = [
     "phone_2": "327-999-2730",
     "email": "tanner19@miller-arellano.net",
     "subscription_date": "2021-01-22",
-    "website": "https://greene.biz/"
+    "website": "https://greene.biz/",
+    "salary": 95000
   },
   {
     "customer_id": "a233b67a-5fad-486c-b8fa-9d342e2cf3c0",
@@ -7147,7 +7696,8 @@ export const customersData = [
     "phone_2": "964.247.4199x91826",
     "email": "jenniferpage@quinn.biz",
     "subscription_date": "2021-03-10",
-    "website": "https://www.costa.com/"
+    "website": "https://www.costa.com/",
+    "salary": 44000
   },
   {
     "customer_id": "420f90ee-399d-4e65-ae0b-1ce3d2ed6c4f",
@@ -7160,7 +7710,8 @@ export const customersData = [
     "phone_2": 9983112458,
     "email": "copelandseth@chambers.com",
     "subscription_date": "2022-01-28",
-    "website": "https://cummings.net/"
+    "website": "https://cummings.net/",
+    "salary": 106000
   },
   {
     "customer_id": "cb6fb4f4-b1f7-4fcf-ad34-e7ec281b23a3",
@@ -7173,7 +7724,8 @@ export const customersData = [
     "phone_2": "+1-652-361-8527x70986",
     "email": "breannastrickland@burns.com",
     "subscription_date": "2021-04-13",
-    "website": "http://www.keller.com/"
+    "website": "http://www.keller.com/",
+    "salary": 46000
   },
   {
     "customer_id": "f838caad-e3e0-4980-9ca5-25a46a3d864d",
@@ -7186,7 +7738,8 @@ export const customersData = [
     "phone_2": "122.508.4082",
     "email": "lance46@knox.info",
     "subscription_date": "2020-07-27",
-    "website": "http://gray.com/"
+    "website": "http://gray.com/",
+    "salary": 164000
   },
   {
     "customer_id": "0713acbf-7fff-4ba4-8281-a916706bb9ce",
@@ -7199,7 +7752,8 @@ export const customersData = [
     "phone_2": "129.481.8740",
     "email": "zhuynh@gardner.com",
     "subscription_date": "2020-01-27",
-    "website": "https://huynh.com/"
+    "website": "https://huynh.com/",
+    "salary": 74000
   },
   {
     "customer_id": "55c02804-784e-42c0-adf1-a1118a3c9418",
@@ -7212,7 +7766,8 @@ export const customersData = [
     "phone_2": 9223971662,
     "email": "marc85@may-walter.com",
     "subscription_date": "2020-06-08",
-    "website": "https://www.riley-quinn.org/"
+    "website": "https://www.riley-quinn.org/",
+    "salary": 152000
   },
   {
     "customer_id": "7e866a24-67bd-48e9-bbcd-32886f807e6b",
@@ -7225,7 +7780,8 @@ export const customersData = [
     "phone_2": "001-875-155-3524x5024",
     "email": "abarton@rogers-miller.com",
     "subscription_date": "2021-01-08",
-    "website": "http://oneill.biz/"
+    "website": "http://oneill.biz/",
+    "salary": 109000
   },
   {
     "customer_id": "f885e7ae-546e-4c61-9859-8008fa19bee2",
@@ -7238,7 +7794,8 @@ export const customersData = [
     "phone_2": "(299)492-6411x28759",
     "email": "meadowsstacy@haney.com",
     "subscription_date": "2020-03-30",
-    "website": "https://www.mathis-barry.com/"
+    "website": "https://www.mathis-barry.com/",
+    "salary": 55000
   },
   {
     "customer_id": "c170714d-5b60-4ead-beb6-0e24293afa0b",
@@ -7251,7 +7808,8 @@ export const customersData = [
     "phone_2": "001-842-674-5253x535",
     "email": "hunterjoel@hardin-crane.net",
     "subscription_date": "2021-02-22",
-    "website": "https://www.phelps.biz/"
+    "website": "https://www.phelps.biz/",
+    "salary": 62000
   },
   {
     "customer_id": "eeb00cad-9356-4528-842a-9245c628621a",
@@ -7264,7 +7822,8 @@ export const customersData = [
     "phone_2": "600-408-0247",
     "email": "fcantu@rogers.biz",
     "subscription_date": "2022-05-26",
-    "website": "https://richard.com/"
+    "website": "https://richard.com/",
+    "salary": 83000
   },
   {
     "customer_id": "bb41da4d-b557-4f46-bb14-cc04f9a3bafe",
@@ -7277,7 +7836,8 @@ export const customersData = [
     "phone_2": "367.674.2364",
     "email": "alex57@davila-cortez.com",
     "subscription_date": "2022-03-20",
-    "website": "http://walsh-velez.com/"
+    "website": "http://walsh-velez.com/",
+    "salary": 78000
   },
   {
     "customer_id": "eca6cf30-ca4e-4e0d-96d9-4b17d8f19033",
@@ -7290,7 +7850,8 @@ export const customersData = [
     "phone_2": 7611868365,
     "email": "gilbertwalsh@hunter.com",
     "subscription_date": "2021-10-23",
-    "website": "https://www.lewis.com/"
+    "website": "https://www.lewis.com/",
+    "salary": 179000
   },
   {
     "customer_id": "d1cae92e-6ece-4371-b0f2-c7b294cebe1f",
@@ -7303,7 +7864,8 @@ export const customersData = [
     "phone_2": "+1-274-885-1177x33076",
     "email": "tpierce@castro.com",
     "subscription_date": "2020-06-12",
-    "website": "https://jefferson.com/"
+    "website": "https://jefferson.com/",
+    "salary": 57000
   },
   {
     "customer_id": "8a146479-a40b-4927-86fc-697c0b2fa9c9",
@@ -7316,7 +7878,8 @@ export const customersData = [
     "phone_2": 9320230581,
     "email": "swang@friedman-dillon.org",
     "subscription_date": "2020-07-26",
-    "website": "http://shaw.com/"
+    "website": "http://shaw.com/",
+    "salary": 39000
   },
   {
     "customer_id": "ebdcfc80-894a-4a29-bb16-787d26dc64cc",
@@ -7329,7 +7892,8 @@ export const customersData = [
     "phone_2": "(296)239-7012x8612",
     "email": "jerryjacobs@arias.org",
     "subscription_date": "2020-11-08",
-    "website": "https://richards.com/"
+    "website": "https://richards.com/",
+    "salary": 106000
   },
   {
     "customer_id": "d64f35e4-359f-4f53-b88a-b839d43a4a05",
@@ -7342,7 +7906,8 @@ export const customersData = [
     "phone_2": "197.326.3708",
     "email": "alex07@reynolds.com",
     "subscription_date": "2021-03-15",
-    "website": "https://www.goodwin-moon.com/"
+    "website": "https://www.goodwin-moon.com/",
+    "salary": 128000
   },
   {
     "customer_id": "406c51a3-ffb6-4d4c-9ae4-8632704f9825",
@@ -7355,7 +7920,8 @@ export const customersData = [
     "phone_2": "(224)159-4771",
     "email": "sheppardjoyce@rowland-graham.com",
     "subscription_date": "2022-04-21",
-    "website": "http://caldwell-daugherty.com/"
+    "website": "http://caldwell-daugherty.com/",
+    "salary": 62000
   },
   {
     "customer_id": "8ea4783e-6832-4ef6-8ea4-fce59e1ee702",
@@ -7368,7 +7934,8 @@ export const customersData = [
     "phone_2": "283.894.1386",
     "email": "codybraun@williamson-velez.org",
     "subscription_date": "2021-09-19",
-    "website": "https://www.calderon.com/"
+    "website": "https://www.calderon.com/",
+    "salary": 44000
   },
   {
     "customer_id": "011d5fe8-999a-4ccd-b93b-6abbd9cfaf62",
@@ -7381,7 +7948,8 @@ export const customersData = [
     "phone_2": "001-613-460-2686x37093",
     "email": "norma17@solomon-olson.info",
     "subscription_date": "2020-12-31",
-    "website": "http://www.burnett.net/"
+    "website": "http://www.burnett.net/",
+    "salary": 153000
   },
   {
     "customer_id": "d71d5c0d-91bd-4cf7-a2c7-0330107bde56",
@@ -7394,7 +7962,8 @@ export const customersData = [
     "phone_2": "(540)298-5296x174",
     "email": "alejandroshaffer@nunez.com",
     "subscription_date": "2021-09-15",
-    "website": "http://www.jennings-ho.com/"
+    "website": "http://www.jennings-ho.com/",
+    "salary": 117000
   },
   {
     "customer_id": "c83f9fd0-1d0e-4583-99b0-a2b2bcfcde82",
@@ -7407,7 +7976,8 @@ export const customersData = [
     "phone_2": "372-119-3246x86462",
     "email": "wileylacey@hardin.org",
     "subscription_date": "2021-09-09",
-    "website": "https://barber.com/"
+    "website": "https://barber.com/",
+    "salary": 75000
   },
   {
     "customer_id": "2780830e-36d1-40c8-8c20-47e8314c42c4",
@@ -7420,7 +7990,8 @@ export const customersData = [
     "phone_2": "+1-654-037-5485",
     "email": "bushlisa@leblanc-boone.biz",
     "subscription_date": "2020-03-20",
-    "website": "http://schwartz-franklin.com/"
+    "website": "http://schwartz-franklin.com/",
+    "salary": 172000
   },
   {
     "customer_id": "a63f513b-dd1a-4b24-b4f2-86efefea0fdc",
@@ -7433,7 +8004,8 @@ export const customersData = [
     "phone_2": "(670)099-8100x83142",
     "email": "wandafaulkner@haynes.org",
     "subscription_date": "2021-06-05",
-    "website": "http://www.mcfarland.com/"
+    "website": "http://www.mcfarland.com/",
+    "salary": 79000
   },
   {
     "customer_id": "522f56e3-08ad-4658-ae43-0232a50714af",
@@ -7446,7 +8018,8 @@ export const customersData = [
     "phone_2": "001-063-281-8538x54210",
     "email": "anthony59@todd-stanton.com",
     "subscription_date": "2021-06-02",
-    "website": "http://www.haney.org/"
+    "website": "http://www.haney.org/",
+    "salary": 111000
   },
   {
     "customer_id": "837f69ff-b26e-4ed6-8ceb-5ebf83aa75aa",
@@ -7459,7 +8032,8 @@ export const customersData = [
     "phone_2": "517-509-2820",
     "email": "levinejeanne@boone.com",
     "subscription_date": "2021-03-19",
-    "website": "https://cowan-beasley.info/"
+    "website": "https://cowan-beasley.info/",
+    "salary": 135000
   },
   {
     "customer_id": "f4c92197-ee8d-408a-a90b-3903af8652f7",
@@ -7472,7 +8046,8 @@ export const customersData = [
     "phone_2": "(180)036-2471x855",
     "email": "todd66@douglas.info",
     "subscription_date": "2020-11-01",
-    "website": "https://www.castillo-taylor.net/"
+    "website": "https://www.castillo-taylor.net/",
+    "salary": 164000
   },
   {
     "customer_id": "2113f9dc-0f81-4d22-8806-8bd8e104b376",
@@ -7485,7 +8060,8 @@ export const customersData = [
     "phone_2": "782.011.7299",
     "email": "faithescobar@roman.info",
     "subscription_date": "2020-11-03",
-    "website": "https://werner.biz/"
+    "website": "https://werner.biz/",
+    "salary": 85000
   },
   {
     "customer_id": "5e1e526f-9699-4471-a0bf-20678cf980ce",
@@ -7498,7 +8074,8 @@ export const customersData = [
     "phone_2": "403-255-1879x171",
     "email": "mroy@cooke-gonzalez.com",
     "subscription_date": "2021-05-01",
-    "website": "http://www.ayers-mcbride.com/"
+    "website": "http://www.ayers-mcbride.com/",
+    "salary": 59000
   },
   {
     "customer_id": "875a043b-c390-4e64-98e5-775125602c14",
@@ -7511,7 +8088,8 @@ export const customersData = [
     "phone_2": "581.646.4207",
     "email": "vrandolph@lawson-moore.com",
     "subscription_date": "2021-04-17",
-    "website": "https://novak.com/"
+    "website": "https://novak.com/",
+    "salary": 40000
   },
   {
     "customer_id": "19df58e3-4325-4e82-a7a4-cf87016cff74",
@@ -7524,7 +8102,8 @@ export const customersData = [
     "phone_2": "(752)061-0028",
     "email": "gillbriana@maldonado-duarte.info",
     "subscription_date": "2020-06-04",
-    "website": "https://www.duran.com/"
+    "website": "https://www.duran.com/",
+    "salary": 110000
   },
   {
     "customer_id": "33191f1f-52ad-4592-885f-f9e045f71f61",
@@ -7537,7 +8116,8 @@ export const customersData = [
     "phone_2": "169-550-6894",
     "email": "caldwellsamantha@hammond.com",
     "subscription_date": "2020-07-19",
-    "website": "http://www.whitehead.com/"
+    "website": "http://www.whitehead.com/",
+    "salary": 106000
   },
   {
     "customer_id": "a9ba4c03-104f-49a8-88b2-b641805cd069",
@@ -7550,7 +8130,8 @@ export const customersData = [
     "phone_2": "(288)502-1055x37579",
     "email": "allenhuff@brooks.com",
     "subscription_date": "2020-05-14",
-    "website": "http://callahan.com/"
+    "website": "http://callahan.com/",
+    "salary": 171000
   },
   {
     "customer_id": "643bd026-a9f5-4250-a2c9-ef3bdb838ef1",
@@ -7563,7 +8144,8 @@ export const customersData = [
     "phone_2": "(560)184-9560",
     "email": "katrina88@shannon.com",
     "subscription_date": "2021-01-15",
-    "website": "https://www.dickson-meyers.biz/"
+    "website": "https://www.dickson-meyers.biz/",
+    "salary": 117000
   },
   {
     "customer_id": "c9f30f5b-5f64-4abe-9aa7-e5b4931552d1",
@@ -7576,7 +8158,8 @@ export const customersData = [
     "phone_2": "+1-524-645-2719",
     "email": "zacharyabbott@morse.com",
     "subscription_date": "2021-09-14",
-    "website": "http://www.golden.com/"
+    "website": "http://www.golden.com/",
+    "salary": 141000
   },
   {
     "customer_id": "00f9c7ce-cf2b-4ea9-9746-443d5072930a",
@@ -7589,7 +8172,8 @@ export const customersData = [
     "phone_2": "001-020-174-4562x124",
     "email": "keithcross@shannon-lane.com",
     "subscription_date": "2022-01-03",
-    "website": "http://www.aguirre-swanson.org/"
+    "website": "http://www.aguirre-swanson.org/",
+    "salary": 69000
   },
   {
     "customer_id": "63b8976a-93a0-4431-8414-1a8a796db5f6",
@@ -7602,7 +8186,8 @@ export const customersData = [
     "phone_2": "+1-944-152-9075x156",
     "email": "dawn84@wood.org",
     "subscription_date": "2020-01-13",
-    "website": "https://www.randall.com/"
+    "website": "https://www.randall.com/",
+    "salary": 60000
   },
   {
     "customer_id": "6096c28a-d9fb-4216-91e2-068eaf91cbfb",
@@ -7615,7 +8200,8 @@ export const customersData = [
     "phone_2": "(205)476-6076",
     "email": "maciasdylan@johnson.net",
     "subscription_date": "2020-07-25",
-    "website": "https://www.chan-bradford.biz/"
+    "website": "https://www.chan-bradford.biz/",
+    "salary": 103000
   },
   {
     "customer_id": "71eeb254-4d06-4f6d-bd4e-e1b7047506b7",
@@ -7628,7 +8214,8 @@ export const customersData = [
     "phone_2": "+1-319-528-4834x494",
     "email": "vreid@baird.com",
     "subscription_date": "2020-09-11",
-    "website": "http://fernandez.com/"
+    "website": "http://fernandez.com/",
+    "salary": 179000
   },
   {
     "customer_id": "0d445b67-99bc-414a-9835-0ec58615c00a",
@@ -7641,7 +8228,8 @@ export const customersData = [
     "phone_2": "002.199.4886x3092",
     "email": "phillipscaitlin@berry.com",
     "subscription_date": "2020-11-26",
-    "website": "https://www.jimenez-kaiser.com/"
+    "website": "https://www.jimenez-kaiser.com/",
+    "salary": 44000
   },
   {
     "customer_id": "c156c067-a2ab-4c71-bddd-dc0ba40f6b94",
@@ -7654,7 +8242,8 @@ export const customersData = [
     "phone_2": "(557)676-2170x0463",
     "email": "prestontracie@pearson-jordan.net",
     "subscription_date": "2022-05-20",
-    "website": "http://www.ritter.com/"
+    "website": "http://www.ritter.com/",
+    "salary": 68000
   },
   {
     "customer_id": "5688a264-9df2-4735-89e9-ab84207c4432",
@@ -7667,7 +8256,8 @@ export const customersData = [
     "phone_2": "+1-923-844-2847",
     "email": "isabellapittman@hardin-combs.com",
     "subscription_date": "2022-05-22",
-    "website": "https://www.morgan-gallagher.com/"
+    "website": "https://www.morgan-gallagher.com/",
+    "salary": 114000
   },
   {
     "customer_id": "b1c1cfac-a6b2-41f8-a6da-79805889919d",
@@ -7680,7 +8270,8 @@ export const customersData = [
     "phone_2": "+1-570-128-9962x8992",
     "email": "martha11@bruce-gay.com",
     "subscription_date": "2021-04-25",
-    "website": "http://www.willis.org/"
+    "website": "http://www.willis.org/",
+    "salary": 37000
   },
   {
     "customer_id": "863f1f23-21bf-4597-911f-e4e190b78572",
@@ -7693,7 +8284,8 @@ export const customersData = [
     "phone_2": "171-274-1970x252",
     "email": "garnold@russo.com",
     "subscription_date": "2020-08-04",
-    "website": "http://harrington.com/"
+    "website": "http://harrington.com/",
+    "salary": 122000
   },
   {
     "customer_id": "cef9ae67-79f7-4b18-846e-8acca8dba9b4",
@@ -7706,7 +8298,8 @@ export const customersData = [
     "phone_2": "+1-036-851-5810x849",
     "email": "kristy67@watkins.com",
     "subscription_date": "2020-11-13",
-    "website": "http://knox.com/"
+    "website": "http://knox.com/",
+    "salary": 127000
   },
   {
     "customer_id": "f8ed6b80-f4a8-4d90-ac7b-79e876d1a6ca",
@@ -7719,7 +8312,8 @@ export const customersData = [
     "phone_2": "+1-106-040-6171",
     "email": "pcastro@foley.com",
     "subscription_date": "2022-05-08",
-    "website": "http://soto-colon.com/"
+    "website": "http://soto-colon.com/",
+    "salary": 135000
   },
   {
     "customer_id": "19d08485-cb57-4011-ab89-d842c1a03bc3",
@@ -7732,7 +8326,8 @@ export const customersData = [
     "phone_2": "737.621.6770",
     "email": "woodwardnoah@waters-sexton.biz",
     "subscription_date": "2021-12-30",
-    "website": "https://perry.info/"
+    "website": "https://perry.info/",
+    "salary": 170000
   },
   {
     "customer_id": "667a52b2-ffc0-40f8-8b4a-c60bdd884d82",
@@ -7745,7 +8340,8 @@ export const customersData = [
     "phone_2": 7831502563,
     "email": "fitzpatrickedgar@mullins.com",
     "subscription_date": "2021-11-18",
-    "website": "https://meyer.info/"
+    "website": "https://meyer.info/",
+    "salary": 132000
   },
   {
     "customer_id": "38f27381-4932-44e2-8639-8b4d085d1fe6",
@@ -7758,7 +8354,8 @@ export const customersData = [
     "phone_2": "642.851.4926x05797",
     "email": "jhahn@gibson.info",
     "subscription_date": "2021-12-07",
-    "website": "http://www.rosales-livingston.com/"
+    "website": "http://www.rosales-livingston.com/",
+    "salary": 61000
   },
   {
     "customer_id": "201e8c85-ea00-4059-abc6-15b002d904a5",
@@ -7771,7 +8368,8 @@ export const customersData = [
     "phone_2": 7859189790,
     "email": "monique66@walter-davenport.com",
     "subscription_date": "2021-02-15",
-    "website": "https://branch.com/"
+    "website": "https://branch.com/",
+    "salary": 62000
   },
   {
     "customer_id": "ce8f9941-edbb-49ea-9555-30ce9034e348",
@@ -7784,7 +8382,8 @@ export const customersData = [
     "phone_2": 4541319417,
     "email": "lhull@cain.info",
     "subscription_date": "2020-02-02",
-    "website": "https://www.griffith.com/"
+    "website": "https://www.griffith.com/",
+    "salary": 140000
   },
   {
     "customer_id": "9f55ff05-4da1-45c3-a3d8-99eff725f738",
@@ -7797,7 +8396,8 @@ export const customersData = [
     "phone_2": "810-888-5430x6294",
     "email": "channa@silva.org",
     "subscription_date": "2021-09-19",
-    "website": "https://www.wilson.com/"
+    "website": "https://www.wilson.com/",
+    "salary": 32000
   },
   {
     "customer_id": "ad5dce4d-a1e7-4c6d-95f6-c225faa74ffa",
@@ -7810,7 +8410,8 @@ export const customersData = [
     "phone_2": 9589499218,
     "email": "boyerarthur@donaldson.com",
     "subscription_date": "2020-01-17",
-    "website": "https://lamb.org/"
+    "website": "https://lamb.org/",
+    "salary": 134000
   },
   {
     "customer_id": "ff333d83-7f54-4554-b499-3fee8c29cff6",
@@ -7823,7 +8424,8 @@ export const customersData = [
     "phone_2": "658.722.4699",
     "email": "nicole88@castro.org",
     "subscription_date": "2020-09-23",
-    "website": "https://steele.org/"
+    "website": "https://steele.org/",
+    "salary": 151000
   },
   {
     "customer_id": "d79757b1-7b07-4535-a030-19f375aa8df4",
@@ -7836,7 +8438,8 @@ export const customersData = [
     "phone_2": "001-549-331-4214x29365",
     "email": "phyllis76@fletcher-sanchez.org",
     "subscription_date": "2020-03-01",
-    "website": "http://www.ayala-pham.com/"
+    "website": "http://www.ayala-pham.com/",
+    "salary": 100000
   },
   {
     "customer_id": "2918c2ec-2913-45e9-be31-ae224610f009",
@@ -7849,7 +8452,8 @@ export const customersData = [
     "phone_2": "001-495-221-6771x146",
     "email": "aclements@mack.info",
     "subscription_date": "2021-01-05",
-    "website": "http://www.perez.net/"
+    "website": "http://www.perez.net/",
+    "salary": 140000
   },
   {
     "customer_id": "99e1bfe3-6037-4cfb-94f1-719e7be86944",
@@ -7862,7 +8466,8 @@ export const customersData = [
     "phone_2": "(891)061-5733",
     "email": "guerrerochristie@villa.net",
     "subscription_date": "2021-06-19",
-    "website": "https://russell.com/"
+    "website": "https://russell.com/",
+    "salary": 88000
   },
   {
     "customer_id": "568eb909-f35a-4815-a75a-57c2994a9fc8",
@@ -7875,7 +8480,8 @@ export const customersData = [
     "phone_2": "(254)769-5644x0858",
     "email": "snash@simon.com",
     "subscription_date": "2020-10-11",
-    "website": "http://www.madden.com/"
+    "website": "http://www.madden.com/",
+    "salary": 44000
   },
   {
     "customer_id": "d7e79494-9401-4224-8a83-812c743bf948",
@@ -7888,7 +8494,8 @@ export const customersData = [
     "phone_2": "+1-193-638-3175x087",
     "email": "lisa60@dominguez.com",
     "subscription_date": "2021-09-10",
-    "website": "https://www.parks.info/"
+    "website": "https://www.parks.info/",
+    "salary": 109000
   },
   {
     "customer_id": "94e5dbe7-f5ae-423e-ae79-65d3779b70f5",
@@ -7901,7 +8508,8 @@ export const customersData = [
     "phone_2": "001-793-827-7904",
     "email": "margaret64@fields-velez.com",
     "subscription_date": "2020-08-27",
-    "website": "https://sharp.com/"
+    "website": "https://sharp.com/",
+    "salary": 73000
   },
   {
     "customer_id": "0dd6e124-780f-42e9-b9a6-af21f174c75b",
@@ -7914,7 +8522,8 @@ export const customersData = [
     "phone_2": "0479346005",
     "email": "edwardscollin@guerrero.net",
     "subscription_date": "2022-05-02",
-    "website": "http://www.suarez-boyle.com/"
+    "website": "http://www.suarez-boyle.com/",
+    "salary": 33000
   },
   {
     "customer_id": "ca2e7e06-bf27-4fab-ad16-29a41a3d1aed",
@@ -7927,7 +8536,8 @@ export const customersData = [
     "phone_2": "(584)745-0111",
     "email": "anita86@maxwell-peters.info",
     "subscription_date": "2020-11-30",
-    "website": "https://patton-atkinson.com/"
+    "website": "https://patton-atkinson.com/",
+    "salary": 165000
   },
   {
     "customer_id": "2bd99b71-2a1c-437d-9d74-519e482bfab5",
@@ -7940,7 +8550,8 @@ export const customersData = [
     "phone_2": 6869944142,
     "email": "oquinn@ayala-oneill.com",
     "subscription_date": "2021-07-27",
-    "website": "http://oliver.com/"
+    "website": "http://oliver.com/",
+    "salary": 71000
   },
   {
     "customer_id": "5a85e32c-0925-4456-a032-be183b2033ef",
@@ -7953,7 +8564,8 @@ export const customersData = [
     "phone_2": "491-594-8358x7094",
     "email": "jean96@christian.com",
     "subscription_date": "2021-04-26",
-    "website": "https://www.bullock-ballard.info/"
+    "website": "https://www.bullock-ballard.info/",
+    "salary": 126000
   },
   {
     "customer_id": "2acb1978-004d-434b-81d8-1f1e503c1c93",
@@ -7966,7 +8578,8 @@ export const customersData = [
     "phone_2": "840-604-6206",
     "email": "lawrencecline@rollins-wall.com",
     "subscription_date": "2021-06-14",
-    "website": "http://adkins.com/"
+    "website": "http://adkins.com/",
+    "salary": 111000
   },
   {
     "customer_id": "65752dbb-40ef-4ccf-ab07-26d6ce9c8cb5",
@@ -7979,7 +8592,8 @@ export const customersData = [
     "phone_2": "103-611-7276x6162",
     "email": "gloriabeasley@wagner-holden.com",
     "subscription_date": "2022-02-03",
-    "website": "https://woodard-ewing.com/"
+    "website": "https://woodard-ewing.com/",
+    "salary": 113000
   },
   {
     "customer_id": "c5cc4359-459f-46b8-952b-3ae77da65a81",
@@ -7992,7 +8606,8 @@ export const customersData = [
     "phone_2": 5643202043,
     "email": "ballardmolly@monroe.biz",
     "subscription_date": "2021-11-09",
-    "website": "https://www.melendez.com/"
+    "website": "https://www.melendez.com/",
+    "salary": 140000
   },
   {
     "customer_id": "e3687ea3-0fe4-4967-892b-6175ea590d46",
@@ -8005,7 +8620,8 @@ export const customersData = [
     "phone_2": "0664278890",
     "email": "philipwilcox@malone-callahan.com",
     "subscription_date": "2020-04-15",
-    "website": "https://www.berg-stevenson.biz/"
+    "website": "https://www.berg-stevenson.biz/",
+    "salary": 57000
   },
   {
     "customer_id": "41e67ef5-9181-40e1-834b-49f8bad0ea8a",
@@ -8018,7 +8634,8 @@ export const customersData = [
     "phone_2": "(925)568-2835x4459",
     "email": "brendan69@roberson-diaz.net",
     "subscription_date": "2021-09-17",
-    "website": "http://www.miller.com/"
+    "website": "http://www.miller.com/",
+    "salary": 93000
   },
   {
     "customer_id": "0cca882b-176a-4d16-9fcb-96734f7305b4",
@@ -8031,7 +8648,8 @@ export const customersData = [
     "phone_2": "+1-880-857-3069",
     "email": "ellisonsherri@brady-mckenzie.com",
     "subscription_date": "2020-10-16",
-    "website": "https://www.tanner.com/"
+    "website": "https://www.tanner.com/",
+    "salary": 99000
   },
   {
     "customer_id": "37fb1877-524e-43b1-af41-b48e410e8f50",
@@ -8044,7 +8662,8 @@ export const customersData = [
     "phone_2": "(698)080-1139",
     "email": "nmelton@johnson.com",
     "subscription_date": "2022-03-25",
-    "website": "http://shepard.com/"
+    "website": "http://shepard.com/",
+    "salary": 73000
   },
   {
     "customer_id": "6d6bfddd-621b-4e5f-bc27-c88005f4306b",
@@ -8057,7 +8676,8 @@ export const customersData = [
     "phone_2": "001-615-249-1541x16097",
     "email": "travisjesus@wheeler-mejia.net",
     "subscription_date": "2022-03-27",
-    "website": "http://day.org/"
+    "website": "http://day.org/",
+    "salary": 60000
   },
   {
     "customer_id": "62ff1d33-d840-4fc3-aba8-60fb8086df91",
@@ -8070,7 +8690,8 @@ export const customersData = [
     "phone_2": "+1-077-127-0043x50737",
     "email": "udavies@hebert.net",
     "subscription_date": "2020-02-17",
-    "website": "https://shaffer-bond.biz/"
+    "website": "https://shaffer-bond.biz/",
+    "salary": 105000
   },
   {
     "customer_id": "5688cea5-8e22-4a31-afbf-fadbc62100a2",
@@ -8083,7 +8704,8 @@ export const customersData = [
     "phone_2": "034-192-4213",
     "email": "jorgerivera@parrish.com",
     "subscription_date": "2020-03-21",
-    "website": "http://fischer.com/"
+    "website": "http://fischer.com/",
+    "salary": 64000
   },
   {
     "customer_id": "7ec007d8-c1c2-44a4-9510-b4fa8a55a902",
@@ -8096,7 +8718,8 @@ export const customersData = [
     "phone_2": "095-570-2925x826",
     "email": "shelbygross@steele.com",
     "subscription_date": "2021-08-28",
-    "website": "http://hahn.com/"
+    "website": "http://hahn.com/",
+    "salary": 65000
   },
   {
     "customer_id": "c41771a4-564d-42c8-a72b-e7215db5f306",
@@ -8109,7 +8732,8 @@ export const customersData = [
     "phone_2": "(768)099-9792x59241",
     "email": "danielturner@herman-knight.com",
     "subscription_date": "2022-03-23",
-    "website": "http://www.hodge-garner.com/"
+    "website": "http://www.hodge-garner.com/",
+    "salary": 149000
   },
   {
     "customer_id": "e0a5552d-7a3e-4389-9445-ff239675b467",
@@ -8122,7 +8746,8 @@ export const customersData = [
     "phone_2": "039.534.5715",
     "email": "fischerbrianna@rojas-patel.org",
     "subscription_date": "2021-05-24",
-    "website": "http://www.dodson.info/"
+    "website": "http://www.dodson.info/",
+    "salary": 122000
   },
   {
     "customer_id": "30450a98-808b-4233-9085-971b26f216ca",
@@ -8135,7 +8760,8 @@ export const customersData = [
     "phone_2": "840.604.2724x77908",
     "email": "ehardy@barrera.biz",
     "subscription_date": "2020-02-07",
-    "website": "https://www.cummings.com/"
+    "website": "https://www.cummings.com/",
+    "salary": 144000
   },
   {
     "customer_id": "aa2c29ed-1cd8-4f60-9b54-2e3dbe93478a",
@@ -8148,7 +8774,8 @@ export const customersData = [
     "phone_2": "031-563-5072x729",
     "email": "sierra43@wheeler.com",
     "subscription_date": "2020-03-14",
-    "website": "http://fox.com/"
+    "website": "http://fox.com/",
+    "salary": 159000
   },
   {
     "customer_id": "14c2563a-698b-4240-a044-202221b7ecea",
@@ -8161,7 +8788,8 @@ export const customersData = [
     "phone_2": "(122)060-1425",
     "email": "jerrypark@burns-rosario.biz",
     "subscription_date": "2020-11-17",
-    "website": "http://gay-morse.com/"
+    "website": "http://gay-morse.com/",
+    "salary": 50000
   },
   {
     "customer_id": "9093f7d9-1ca8-40de-9e83-565afc33aca9",
@@ -8174,7 +8802,8 @@ export const customersData = [
     "phone_2": "001-641-265-6582x387",
     "email": "felicia33@huber.com",
     "subscription_date": "2021-05-04",
-    "website": "https://bridges-holt.com/"
+    "website": "https://bridges-holt.com/",
+    "salary": 101000
   },
   {
     "customer_id": "3dce6ee6-14a4-41fe-a92a-ceadfcd36b61",
@@ -8187,7 +8816,8 @@ export const customersData = [
     "phone_2": "697.328.2001x121",
     "email": "johnathanholloway@le.com",
     "subscription_date": "2021-07-29",
-    "website": "https://www.haynes-mcneil.com/"
+    "website": "https://www.haynes-mcneil.com/",
+    "salary": 40000
   },
   {
     "customer_id": "079711b4-75a7-4c4d-b4ec-ec4a22f799d9",
@@ -8200,7 +8830,8 @@ export const customersData = [
     "phone_2": "+1-974-712-0144x2079",
     "email": "yoderbrent@torres.com",
     "subscription_date": "2021-04-29",
-    "website": "https://vargas.com/"
+    "website": "https://vargas.com/",
+    "salary": 46000
   },
   {
     "customer_id": "49f334d2-402e-4905-b498-cec58282e525",
@@ -8213,7 +8844,8 @@ export const customersData = [
     "phone_2": "+1-395-166-4671x898",
     "email": "glindsey@steele.com",
     "subscription_date": "2020-07-13",
-    "website": "https://www.rubio.com/"
+    "website": "https://www.rubio.com/",
+    "salary": 54000
   },
   {
     "customer_id": "f512ef06-65fd-4f90-a68d-7ff03d15d70c",
@@ -8226,7 +8858,8 @@ export const customersData = [
     "phone_2": 9875505772,
     "email": "rshaw@hardy-jimenez.biz",
     "subscription_date": "2021-02-26",
-    "website": "https://hull.org/"
+    "website": "https://hull.org/",
+    "salary": 164000
   },
   {
     "customer_id": "7e5e6a23-ce12-48a2-9249-9766f8d83c58",
@@ -8239,7 +8872,8 @@ export const customersData = [
     "phone_2": "+1-962-784-4068",
     "email": "uclark@hudson.com",
     "subscription_date": "2021-10-24",
-    "website": "https://cordova.com/"
+    "website": "https://cordova.com/",
+    "salary": 80000
   },
   {
     "customer_id": "4bdc002d-7bef-42e5-aec5-b3758322292b",
@@ -8252,7 +8886,8 @@ export const customersData = [
     "phone_2": "+1-213-309-0124x905",
     "email": "brendakline@nguyen.info",
     "subscription_date": "2021-04-06",
-    "website": "http://merritt.com/"
+    "website": "http://merritt.com/",
+    "salary": 103000
   },
   {
     "customer_id": "4a341ca7-ee35-4237-ad3a-b5788fa62b6f",
@@ -8265,7 +8900,8 @@ export const customersData = [
     "phone_2": "825-626-8219",
     "email": "shirley78@rosario-heath.biz",
     "subscription_date": "2021-01-27",
-    "website": "https://www.brady.com/"
+    "website": "https://www.brady.com/",
+    "salary": 66000
   },
   {
     "customer_id": "f8626207-f359-4d22-bf13-0f8078efcc48",
@@ -8278,7 +8914,8 @@ export const customersData = [
     "phone_2": "561.369.9724",
     "email": "imercado@figueroa-oneal.org",
     "subscription_date": "2020-09-07",
-    "website": "http://www.cummings-bush.com/"
+    "website": "http://www.cummings-bush.com/",
+    "salary": 30000
   },
   {
     "customer_id": "aa3f5a19-8cad-44cd-abd9-18cf4788825e",
@@ -8291,7 +8928,8 @@ export const customersData = [
     "phone_2": "001-502-946-1751x6345",
     "email": "nixonkent@orr-robles.com",
     "subscription_date": "2021-06-12",
-    "website": "https://www.mahoney-brady.com/"
+    "website": "https://www.mahoney-brady.com/",
+    "salary": 69000
   },
   {
     "customer_id": "c4480cee-b0b6-4a18-a03a-9bea5940ae5f",
@@ -8304,7 +8942,8 @@ export const customersData = [
     "phone_2": "(943)598-3801",
     "email": "everettmorgan@mays-brady.com",
     "subscription_date": "2022-01-13",
-    "website": "http://edwards.com/"
+    "website": "http://edwards.com/",
+    "salary": 151000
   },
   {
     "customer_id": "07ab8c1f-836a-4c72-a193-647de04f2574",
@@ -8317,7 +8956,8 @@ export const customersData = [
     "phone_2": "(766)485-2514",
     "email": "josephcalvin@howard.com",
     "subscription_date": "2020-11-07",
-    "website": "https://stark.com/"
+    "website": "https://stark.com/",
+    "salary": 49000
   },
   {
     "customer_id": "5c002721-f87c-4b67-b2b8-e75c01d84480",
@@ -8330,7 +8970,8 @@ export const customersData = [
     "phone_2": "(519)570-1232x6384",
     "email": "zamoramisty@santana-wallace.com",
     "subscription_date": "2022-03-19",
-    "website": "https://ferrell.com/"
+    "website": "https://ferrell.com/",
+    "salary": 76000
   },
   {
     "customer_id": "5edd216d-40e0-46db-927b-8ef5edf9d381",
@@ -8343,7 +8984,8 @@ export const customersData = [
     "phone_2": "001-239-404-0450",
     "email": "emckee@young.com",
     "subscription_date": "2020-07-14",
-    "website": "https://www.harper.org/"
+    "website": "https://www.harper.org/",
+    "salary": 71000
   },
   {
     "customer_id": "2132f178-9ee3-4f41-adb8-a1916b482678",
@@ -8356,7 +8998,8 @@ export const customersData = [
     "phone_2": "+1-854-369-5625x363",
     "email": "mcphersonarthur@burke-house.com",
     "subscription_date": "2021-07-20",
-    "website": "https://www.olsen.com/"
+    "website": "https://www.olsen.com/",
+    "salary": 95000
   },
   {
     "customer_id": "56c5d8fd-a977-4ab1-9679-af0b1bf424db",
@@ -8369,7 +9012,8 @@ export const customersData = [
     "phone_2": "+1-664-243-6123x37271",
     "email": "johnathanfox@gould-jones.biz",
     "subscription_date": "2020-03-04",
-    "website": "http://www.carroll.com/"
+    "website": "http://www.carroll.com/",
+    "salary": 137000
   },
   {
     "customer_id": "9a344366-1745-46b2-a7e6-5ab31a47c349",
@@ -8382,7 +9026,8 @@ export const customersData = [
     "phone_2": "923-400-4012x56845",
     "email": "benitezalice@ibarra-crosby.com",
     "subscription_date": "2021-01-21",
-    "website": "http://www.reyes.com/"
+    "website": "http://www.reyes.com/",
+    "salary": 170000
   },
   {
     "customer_id": "cdee5dfc-e361-412e-b4c5-ad8fea719396",
@@ -8395,7 +9040,8 @@ export const customersData = [
     "phone_2": "254-472-6166x733",
     "email": "ymitchell@rojas.com",
     "subscription_date": "2021-10-10",
-    "website": "https://www.clements.com/"
+    "website": "https://www.clements.com/",
+    "salary": 102000
   },
   {
     "customer_id": "2f5bddea-9c93-4442-ab46-0a171d1d5d99",
@@ -8408,7 +9054,8 @@ export const customersData = [
     "phone_2": "105-030-9821x1062",
     "email": "sheila69@hurley.biz",
     "subscription_date": "2020-12-07",
-    "website": "https://www.price-madden.com/"
+    "website": "https://www.price-madden.com/",
+    "salary": 101000
   },
   {
     "customer_id": "571508fe-1cde-4a04-b1ad-5ce97d633c6d",
@@ -8421,7 +9068,8 @@ export const customersData = [
     "phone_2": "001-404-173-1416x15207",
     "email": "qhale@maynard.org",
     "subscription_date": "2021-03-13",
-    "website": "https://barron.com/"
+    "website": "https://barron.com/",
+    "salary": 139000
   },
   {
     "customer_id": "6e53008d-d78f-4e62-85e1-ba3a1643dbc7",
@@ -8434,7 +9082,8 @@ export const customersData = [
     "phone_2": "001-760-767-4962x7873",
     "email": "gail87@shields-juarez.net",
     "subscription_date": "2022-05-19",
-    "website": "http://www.faulkner.com/"
+    "website": "http://www.faulkner.com/",
+    "salary": 73000
   },
   {
     "customer_id": "25981af1-0b34-40be-b146-9793e994800f",
@@ -8447,7 +9096,8 @@ export const customersData = [
     "phone_2": "+1-007-643-8507x76008",
     "email": "shaunmartinez@wheeler-avila.com",
     "subscription_date": "2021-10-08",
-    "website": "https://www.velez-castro.info/"
+    "website": "https://www.velez-castro.info/",
+    "salary": 65000
   },
   {
     "customer_id": "a35d1fb3-d8c0-47f9-930e-d637c22dd917",
@@ -8460,7 +9110,8 @@ export const customersData = [
     "phone_2": "451.073.7258x701",
     "email": "seanforbes@frank.com",
     "subscription_date": "2022-04-27",
-    "website": "https://www.becker.org/"
+    "website": "https://www.becker.org/",
+    "salary": 53000
   },
   {
     "customer_id": "35441989-25fd-45ef-945d-88c2f3c247de",
@@ -8473,7 +9124,8 @@ export const customersData = [
     "phone_2": "(391)014-1569",
     "email": "billy74@espinoza.info",
     "subscription_date": "2020-11-21",
-    "website": "http://www.hensley.info/"
+    "website": "http://www.hensley.info/",
+    "salary": 95000
   },
   {
     "customer_id": "43753494-fe8e-4472-b7f7-46f3dfc1fba8",
@@ -8486,7 +9138,8 @@ export const customersData = [
     "phone_2": "318-394-6912",
     "email": "zwarren@jimenez.com",
     "subscription_date": "2021-07-08",
-    "website": "http://weeks.com/"
+    "website": "http://weeks.com/",
+    "salary": 130000
   },
   {
     "customer_id": "abdb3dc5-c5ae-475e-8589-c210e2e61cd9",
@@ -8499,7 +9152,8 @@ export const customersData = [
     "phone_2": "374.006.4619x6951",
     "email": "ann55@gallagher.com",
     "subscription_date": "2021-10-13",
-    "website": "https://www.horn.com/"
+    "website": "https://www.horn.com/",
+    "salary": 144000
   },
   {
     "customer_id": "07d3b3c5-c609-4fb4-8335-72f67d52caca",
@@ -8512,7 +9166,8 @@ export const customersData = [
     "phone_2": "+1-484-888-6290x73723",
     "email": "douglassara@lawrence.org",
     "subscription_date": "2022-01-11",
-    "website": "https://pineda.com/"
+    "website": "https://pineda.com/",
+    "salary": 60000
   },
   {
     "customer_id": "910a24a8-071d-468f-8d99-2c4bff89d233",
@@ -8525,7 +9180,8 @@ export const customersData = [
     "phone_2": "001-767-884-8388",
     "email": "sharposcar@golden.org",
     "subscription_date": "2020-03-04",
-    "website": "https://www.holmes.org/"
+    "website": "https://www.holmes.org/",
+    "salary": 108000
   },
   {
     "customer_id": "83c114eb-ed40-4f9d-aea2-1b563742d524",
@@ -8538,7 +9194,8 @@ export const customersData = [
     "phone_2": 9869261205,
     "email": "baileyfischer@moore.com",
     "subscription_date": "2022-01-28",
-    "website": "http://www.yu.com/"
+    "website": "http://www.yu.com/",
+    "salary": 34000
   },
   {
     "customer_id": "d80fbbff-6405-4a7f-bfba-e30ee3946cb0",
@@ -8551,7 +9208,8 @@ export const customersData = [
     "phone_2": 8750172490,
     "email": "curtis27@gallegos-kent.info",
     "subscription_date": "2020-01-01",
-    "website": "https://zavala.com/"
+    "website": "https://zavala.com/",
+    "salary": 153000
   },
   {
     "customer_id": "095e0df8-d303-42c7-9707-e55e395698c0",
@@ -8564,7 +9222,8 @@ export const customersData = [
     "phone_2": "091-821-7137",
     "email": "connor35@mccullough.com",
     "subscription_date": "2021-08-29",
-    "website": "http://www.weaver-finley.com/"
+    "website": "http://www.weaver-finley.com/",
+    "salary": 176000
   },
   {
     "customer_id": "6c3fa382-656e-49c2-b162-3a9d2f93cac7",
@@ -8577,7 +9236,8 @@ export const customersData = [
     "phone_2": "817.749.6684x386",
     "email": "zruiz@dillon.com",
     "subscription_date": "2021-12-17",
-    "website": "http://holt.net/"
+    "website": "http://holt.net/",
+    "salary": 96000
   },
   {
     "customer_id": "31088e0b-2712-49da-a363-1ae526c6d17d",
@@ -8590,7 +9250,8 @@ export const customersData = [
     "phone_2": "(267)260-0826x37915",
     "email": "terrencephelps@ponce-kerr.com",
     "subscription_date": "2021-08-22",
-    "website": "http://hardin.com/"
+    "website": "http://hardin.com/",
+    "salary": 76000
   },
   {
     "customer_id": "44e82296-510b-4a6d-ba5a-42afcf6d4698",
@@ -8603,7 +9264,8 @@ export const customersData = [
     "phone_2": "+1-606-344-8190",
     "email": "allisonstein@williams.net",
     "subscription_date": "2021-05-03",
-    "website": "http://richmond.com/"
+    "website": "http://richmond.com/",
+    "salary": 90000
   },
   {
     "customer_id": "46fd8d39-e16e-478c-aa9f-235913ecd04a",
@@ -8616,7 +9278,8 @@ export const customersData = [
     "phone_2": "+1-064-803-2802",
     "email": "hbond@curtis-bird.org",
     "subscription_date": "2021-10-15",
-    "website": "http://www.webb.net/"
+    "website": "http://www.webb.net/",
+    "salary": 141000
   },
   {
     "customer_id": "b99f1439-858e-4004-ad6e-633ebdb6659c",
@@ -8629,7 +9292,8 @@ export const customersData = [
     "phone_2": "105.316.7983x501",
     "email": "sophiaferrell@chambers-oneill.com",
     "subscription_date": "2020-06-17",
-    "website": "http://tate.com/"
+    "website": "http://tate.com/",
+    "salary": 60000
   },
   {
     "customer_id": "a7055f64-8652-4720-a01d-441d434020ba",
@@ -8642,7 +9306,8 @@ export const customersData = [
     "phone_2": "001-552-008-9245",
     "email": "michaellane@cowan.biz",
     "subscription_date": "2021-07-17",
-    "website": "http://www.pugh.biz/"
+    "website": "http://www.pugh.biz/",
+    "salary": 44000
   },
   {
     "customer_id": "14833ee2-6fb0-4032-b4f6-7b0f6438cd32",
@@ -8655,7 +9320,8 @@ export const customersData = [
     "phone_2": "(287)208-8044",
     "email": "maureen34@larsen.org",
     "subscription_date": "2021-06-04",
-    "website": "http://www.butler-mckee.biz/"
+    "website": "http://www.butler-mckee.biz/",
+    "salary": 39000
   },
   {
     "customer_id": "4e9cf09f-dc4d-4838-8754-aa5d18e66d47",
@@ -8668,7 +9334,8 @@ export const customersData = [
     "phone_2": "075-884-8366x2418",
     "email": "jasmin37@werner.org",
     "subscription_date": "2020-08-14",
-    "website": "https://www.crawford-small.org/"
+    "website": "https://www.crawford-small.org/",
+    "salary": 110000
   },
   {
     "customer_id": "d88f318e-2994-47a9-b20c-44b751418447",
@@ -8681,7 +9348,8 @@ export const customersData = [
     "phone_2": "599-688-8979x61101",
     "email": "xbrady@small.org",
     "subscription_date": "2020-08-25",
-    "website": "http://www.castaneda.com/"
+    "website": "http://www.castaneda.com/",
+    "salary": 169000
   },
   {
     "customer_id": "51c0e86c-4b3b-42e3-be23-19d5ac8cfc49",
@@ -8694,7 +9362,8 @@ export const customersData = [
     "phone_2": "(166)153-5010x2646",
     "email": "duanerush@hunt-whitaker.com",
     "subscription_date": "2021-02-02",
-    "website": "http://hickman.com/"
+    "website": "http://hickman.com/",
+    "salary": 122000
   },
   {
     "customer_id": "c8c5d741-fd04-44fc-ba03-58c099a81dc7",
@@ -8707,7 +9376,8 @@ export const customersData = [
     "phone_2": "332.374.7457x212",
     "email": "wmayer@avila-vazquez.com",
     "subscription_date": "2021-12-21",
-    "website": "http://acosta.com/"
+    "website": "http://acosta.com/",
+    "salary": 65000
   },
   {
     "customer_id": "3f6f4181-87ef-436a-9a55-c8a97d997de8",
@@ -8720,7 +9390,8 @@ export const customersData = [
     "phone_2": "001-599-394-0709",
     "email": "qhammond@may.com",
     "subscription_date": "2020-03-24",
-    "website": "https://www.webster.com/"
+    "website": "https://www.webster.com/",
+    "salary": 107000
   },
   {
     "customer_id": "f93d9da2-e9f9-47b2-8d1f-c120a8a33f34",
@@ -8733,7 +9404,8 @@ export const customersData = [
     "phone_2": "910.754.5066x435",
     "email": "mia38@dixon-munoz.biz",
     "subscription_date": "2020-09-08",
-    "website": "http://www.riddle.com/"
+    "website": "http://www.riddle.com/",
+    "salary": 101000
   },
   {
     "customer_id": "84029ef6-6899-4e37-9b2d-6381f1829e1c",
@@ -8746,7 +9418,8 @@ export const customersData = [
     "phone_2": "001-496-998-3742x452",
     "email": "mhunter@shields-wells.com",
     "subscription_date": "2020-07-18",
-    "website": "https://roberson.biz/"
+    "website": "https://roberson.biz/",
+    "salary": 72000
   },
   {
     "customer_id": "4d241c8e-9add-4fc9-ad97-08adb505ed84",
@@ -8759,7 +9432,8 @@ export const customersData = [
     "phone_2": "+1-874-099-5437x47424",
     "email": "amberford@hanson.com",
     "subscription_date": "2020-06-25",
-    "website": "https://powell.com/"
+    "website": "https://powell.com/",
+    "salary": 57000
   },
   {
     "customer_id": "1248ca90-377f-464a-b33b-4c0991c987af",
@@ -8772,7 +9446,8 @@ export const customersData = [
     "phone_2": "366-469-3728",
     "email": "rogersmelody@molina.org",
     "subscription_date": "2020-08-30",
-    "website": "http://www.crosby.com/"
+    "website": "http://www.crosby.com/",
+    "salary": 116000
   },
   {
     "customer_id": "293d29db-e09f-4d58-ae0c-1e71ec00fdc9",
@@ -8785,7 +9460,8 @@ export const customersData = [
     "phone_2": "592-060-7127x548",
     "email": "kim27@kelley-kemp.com",
     "subscription_date": "2021-12-24",
-    "website": "https://www.briggs.net/"
+    "website": "https://www.briggs.net/",
+    "salary": 65000
   },
   {
     "customer_id": "9af2280a-f950-40fb-9ab1-e640b6772d1e",
@@ -8798,7 +9474,8 @@ export const customersData = [
     "phone_2": "586-295-1029x598",
     "email": "runderwood@carter-robbins.info",
     "subscription_date": "2022-03-12",
-    "website": "https://www.turner.com/"
+    "website": "https://www.turner.com/",
+    "salary": 35000
   },
   {
     "customer_id": "4e8f38c4-196e-4b66-9d9d-40611f5b5337",
@@ -8811,7 +9488,8 @@ export const customersData = [
     "phone_2": "034.108.0616",
     "email": "blevinsterry@ferguson-schwartz.net",
     "subscription_date": "2021-11-27",
-    "website": "https://www.vargas-frazier.com/"
+    "website": "https://www.vargas-frazier.com/",
+    "salary": 178000
   },
   {
     "customer_id": "4cfd6853-c80a-4bdb-8ecf-5ed2c0b4c000",
@@ -8824,7 +9502,8 @@ export const customersData = [
     "phone_2": "098-236-1328x588",
     "email": "cassidygood@vasquez.com",
     "subscription_date": "2021-04-04",
-    "website": "https://pearson-beltran.com/"
+    "website": "https://pearson-beltran.com/",
+    "salary": 64000
   },
   {
     "customer_id": "b9a55c87-b691-4a8f-b49c-cb6a8a40ff59",
@@ -8837,7 +9516,8 @@ export const customersData = [
     "phone_2": "(282)690-6703x2434",
     "email": "richarddeanna@solomon.org",
     "subscription_date": "2022-04-03",
-    "website": "https://bentley.net/"
+    "website": "https://bentley.net/",
+    "salary": 47000
   },
   {
     "customer_id": "f82f1354-43a8-4409-89ff-7a97798896f6",
@@ -8850,7 +9530,8 @@ export const customersData = [
     "phone_2": "586.348.6860",
     "email": "stacy44@holden.com",
     "subscription_date": "2022-02-15",
-    "website": "https://www.compton.com/"
+    "website": "https://www.compton.com/",
+    "salary": 116000
   },
   {
     "customer_id": "a379c744-92da-4779-a4c9-8d07a5a8f9ab",
@@ -8863,7 +9544,8 @@ export const customersData = [
     "phone_2": "001-562-405-5620x480",
     "email": "howard74@kennedy-tran.com",
     "subscription_date": "2021-08-14",
-    "website": "http://dennis.org/"
+    "website": "http://dennis.org/",
+    "salary": 158000
   },
   {
     "customer_id": "7d4f75d9-a690-4f6b-867f-cd785e584e1b",
@@ -8876,7 +9558,8 @@ export const customersData = [
     "phone_2": "+1-179-888-4826x1834",
     "email": "twerner@friedman.biz",
     "subscription_date": "2022-03-25",
-    "website": "http://www.cervantes.org/"
+    "website": "http://www.cervantes.org/",
+    "salary": 165000
   },
   {
     "customer_id": "3190774c-33da-4189-9ded-52b5d64e339c",
@@ -8889,7 +9572,8 @@ export const customersData = [
     "phone_2": "(524)422-7331x3844",
     "email": "jim96@daugherty.com",
     "subscription_date": "2020-04-21",
-    "website": "https://www.melendez-griffith.info/"
+    "website": "https://www.melendez-griffith.info/",
+    "salary": 99000
   },
   {
     "customer_id": "3fa3a3df-1726-47b7-9837-25e2a66859b6",
@@ -8902,7 +9586,8 @@ export const customersData = [
     "phone_2": "(721)244-1624x378",
     "email": "mcguirefrancis@phelps.com",
     "subscription_date": "2020-09-02",
-    "website": "http://stuart-huerta.net/"
+    "website": "http://stuart-huerta.net/",
+    "salary": 129000
   },
   {
     "customer_id": "de293673-af7b-460a-8b4d-3d96ca69d87a",
@@ -8915,7 +9600,8 @@ export const customersData = [
     "phone_2": "322-004-7125x09151",
     "email": "melvindean@cantu.com",
     "subscription_date": "2020-06-30",
-    "website": "http://byrd-frazier.com/"
+    "website": "http://byrd-frazier.com/",
+    "salary": 130000
   },
   {
     "customer_id": "38af5a95-c63f-4b55-87e6-157db4a3b469",
@@ -8928,7 +9614,8 @@ export const customersData = [
     "phone_2": "358-935-3250x01080",
     "email": "arielchung@clay.org",
     "subscription_date": "2022-04-13",
-    "website": "https://patton-myers.net/"
+    "website": "https://patton-myers.net/",
+    "salary": 99000
   },
   {
     "customer_id": "f13fff47-560e-4635-95ab-3f7660b21f57",
@@ -8941,7 +9628,8 @@ export const customersData = [
     "phone_2": "(585)464-2490",
     "email": "mackenzie72@kaiser.biz",
     "subscription_date": "2021-09-02",
-    "website": "http://hensley.com/"
+    "website": "http://hensley.com/",
+    "salary": 107000
   },
   {
     "customer_id": "ab02ee89-bf4f-4ed4-8159-1ce493979468",
@@ -8954,7 +9642,8 @@ export const customersData = [
     "phone_2": "(150)051-9476",
     "email": "melody55@donovan.org",
     "subscription_date": "2021-10-23",
-    "website": "http://www.bonilla-huerta.com/"
+    "website": "http://www.bonilla-huerta.com/",
+    "salary": 161000
   },
   {
     "customer_id": "4eef5c93-769f-4ab6-b6ed-efb83d0755ee",
@@ -8967,7 +9656,8 @@ export const customersData = [
     "phone_2": "0223300542",
     "email": "duranmorgan@pearson.biz",
     "subscription_date": "2022-01-07",
-    "website": "http://www.wilcox-bird.com/"
+    "website": "http://www.wilcox-bird.com/",
+    "salary": 79000
   },
   {
     "customer_id": "bf5402cf-d68e-488b-a6cf-7e88163c1bd4",
@@ -8980,7 +9670,8 @@ export const customersData = [
     "phone_2": "001-603-385-9503x26133",
     "email": "tuckerannette@benjamin.info",
     "subscription_date": "2022-04-11",
-    "website": "https://wolfe.com/"
+    "website": "https://wolfe.com/",
+    "salary": 46000
   },
   {
     "customer_id": "76e4c301-55cb-41e5-ade9-5ce3a51fec48",
@@ -8993,7 +9684,8 @@ export const customersData = [
     "phone_2": "310.392.1135x25797",
     "email": "qmata@bird.net",
     "subscription_date": "2020-01-30",
-    "website": "https://lambert-andrews.org/"
+    "website": "https://lambert-andrews.org/",
+    "salary": 76000
   },
   {
     "customer_id": "23f7ebf2-3067-49ca-b3ff-50dce0eb8242",
@@ -9006,7 +9698,8 @@ export const customersData = [
     "phone_2": "+1-038-355-4636x81074",
     "email": "areilly@frank.com",
     "subscription_date": "2020-08-04",
-    "website": "http://www.finley.biz/"
+    "website": "http://www.finley.biz/",
+    "salary": 98000
   },
   {
     "customer_id": "ea04b2b1-a5f1-4fd6-bc69-b960199279b9",
@@ -9019,7 +9712,8 @@ export const customersData = [
     "phone_2": "298.136.3665x737",
     "email": "fuenteserica@walters-zamora.net",
     "subscription_date": "2021-10-28",
-    "website": "http://www.miranda.com/"
+    "website": "http://www.miranda.com/",
+    "salary": 33000
   },
   {
     "customer_id": "1b8a5241-1f90-47ac-8ae8-a999e140b35e",
@@ -9032,7 +9726,8 @@ export const customersData = [
     "phone_2": "001-034-061-8932x889",
     "email": "iescobar@chung.com",
     "subscription_date": "2020-09-30",
-    "website": "http://barron-briggs.com/"
+    "website": "http://barron-briggs.com/",
+    "salary": 57000
   },
   {
     "customer_id": "4953802e-ecd2-488f-afc6-48531d1873f3",
@@ -9045,7 +9740,8 @@ export const customersData = [
     "phone_2": "537-550-2279x00457",
     "email": "mdonovan@roth-huang.com",
     "subscription_date": "2020-04-18",
-    "website": "http://www.strickland.com/"
+    "website": "http://www.strickland.com/",
+    "salary": 145000
   },
   {
     "customer_id": "a29bfc8f-b7f7-496c-b1c5-0c0f05edba4f",
@@ -9058,7 +9754,8 @@ export const customersData = [
     "phone_2": "(458)082-2363x3896",
     "email": "nleonard@yates.com",
     "subscription_date": "2020-10-19",
-    "website": "http://jenkins.com/"
+    "website": "http://jenkins.com/",
+    "salary": 80000
   },
   {
     "customer_id": "20d5096c-2234-4e79-a0d4-ad4b15dcc8dc",
@@ -9071,7 +9768,8 @@ export const customersData = [
     "phone_2": "274-426-9511x899",
     "email": "ofarrell@sharp.org",
     "subscription_date": "2020-06-17",
-    "website": "http://www.willis-murillo.com/"
+    "website": "http://www.willis-murillo.com/",
+    "salary": 63000
   },
   {
     "customer_id": "15d6140b-137a-4e2e-9746-083920267ef6",
@@ -9084,7 +9782,8 @@ export const customersData = [
     "phone_2": "+1-115-918-0258",
     "email": "hendersonelijah@george.biz",
     "subscription_date": "2022-02-03",
-    "website": "https://parrish-bentley.biz/"
+    "website": "https://parrish-bentley.biz/",
+    "salary": 50000
   },
   {
     "customer_id": "48b6916e-4611-4abb-8e8a-0a870641f61f",
@@ -9097,7 +9796,8 @@ export const customersData = [
     "phone_2": "001-802-907-6932x74618",
     "email": "cassie44@horn-patterson.biz",
     "subscription_date": "2021-03-07",
-    "website": "http://wood.com/"
+    "website": "http://wood.com/",
+    "salary": 87000
   },
   {
     "customer_id": "ac59a47f-f65c-4c07-8f99-20a7c1a4583a",
@@ -9110,7 +9810,8 @@ export const customersData = [
     "phone_2": "001-033-185-2412",
     "email": "mtate@turner-moses.com",
     "subscription_date": "2021-07-17",
-    "website": "https://white.com/"
+    "website": "https://white.com/",
+    "salary": 60000
   },
   {
     "customer_id": "7c5bfb2f-8d5e-47b7-9862-e0a8c31811ba",
@@ -9123,7 +9824,8 @@ export const customersData = [
     "phone_2": "(480)262-1846x37067",
     "email": "alexandria36@harrington.com",
     "subscription_date": "2020-08-16",
-    "website": "https://www.irwin-barry.com/"
+    "website": "https://www.irwin-barry.com/",
+    "salary": 89000
   },
   {
     "customer_id": "72086a10-9d39-4a78-80a2-4852a4b2e83e",
@@ -9136,7 +9838,8 @@ export const customersData = [
     "phone_2": "790.145.3767x843",
     "email": "joseph46@navarro.com",
     "subscription_date": "2022-02-07",
-    "website": "http://ray.com/"
+    "website": "http://ray.com/",
+    "salary": 67000
   },
   {
     "customer_id": "214745b3-1024-4a4a-8e83-791523949ab3",
@@ -9149,7 +9852,8 @@ export const customersData = [
     "phone_2": "115-239-6722x56717",
     "email": "wlam@david.com",
     "subscription_date": "2021-12-11",
-    "website": "http://www.velez.com/"
+    "website": "http://www.velez.com/",
+    "salary": 111000
   },
   {
     "customer_id": "414bd738-61a8-42dc-9452-d739efd3f58e",
@@ -9162,7 +9866,8 @@ export const customersData = [
     "phone_2": "(311)751-6940x500",
     "email": "chad20@santiago-webb.com",
     "subscription_date": "2021-12-06",
-    "website": "https://hoffman-gamble.com/"
+    "website": "https://hoffman-gamble.com/",
+    "salary": 127000
   },
   {
     "customer_id": "b760d9dc-e512-4814-861d-0df69706b9d6",
@@ -9175,7 +9880,8 @@ export const customersData = [
     "phone_2": 6126304682,
     "email": "athomas@ray.com",
     "subscription_date": "2022-03-12",
-    "website": "https://woods-greene.com/"
+    "website": "https://woods-greene.com/",
+    "salary": 102000
   },
   {
     "customer_id": "8effd070-3947-45c0-aa0f-f0307d384084",
@@ -9188,7 +9894,8 @@ export const customersData = [
     "phone_2": 6298749227,
     "email": "btownsend@perkins.com",
     "subscription_date": "2020-12-13",
-    "website": "https://www.gregory.biz/"
+    "website": "https://www.gregory.biz/",
+    "salary": 52000
   },
   {
     "customer_id": "0b24776c-1d81-4d31-8778-f86e0fdfbc1c",
@@ -9201,7 +9908,8 @@ export const customersData = [
     "phone_2": "(663)199-3128x87258",
     "email": "timharvey@santana.com",
     "subscription_date": "2020-04-23",
-    "website": "http://www.good.biz/"
+    "website": "http://www.good.biz/",
+    "salary": 105000
   },
   {
     "customer_id": "df85f1fb-26e1-403d-a511-0e59bc23b120",
@@ -9214,7 +9922,8 @@ export const customersData = [
     "phone_2": "001-078-010-0731x516",
     "email": "carrie79@bray.com",
     "subscription_date": "2022-03-25",
-    "website": "http://daniels-ingram.org/"
+    "website": "http://daniels-ingram.org/",
+    "salary": 102000
   },
   {
     "customer_id": "1290ca78-ae86-4050-ba96-e449356a00ff",
@@ -9227,7 +9936,8 @@ export const customersData = [
     "phone_2": "294-769-1288x3161",
     "email": "egay@herrera-bauer.com",
     "subscription_date": "2021-09-02",
-    "website": "https://www.wright.biz/"
+    "website": "https://www.wright.biz/",
+    "salary": 124000
   },
   {
     "customer_id": "98b959d4-2339-418a-b01d-d4da30b61711",
@@ -9240,7 +9950,8 @@ export const customersData = [
     "phone_2": "(837)062-0390",
     "email": "kristen65@jarvis.net",
     "subscription_date": "2020-04-24",
-    "website": "https://mclaughlin-acevedo.com/"
+    "website": "https://mclaughlin-acevedo.com/",
+    "salary": 173000
   },
   {
     "customer_id": "39c9bd37-a695-499b-8b84-0148a8330499",
@@ -9253,7 +9964,8 @@ export const customersData = [
     "phone_2": "077-390-5676x1349",
     "email": "shane82@mathis.biz",
     "subscription_date": "2020-09-28",
-    "website": "https://www.gates.net/"
+    "website": "https://www.gates.net/",
+    "salary": 31000
   },
   {
     "customer_id": "63e1c253-97c5-4cb9-a092-0e2235bd947d",
@@ -9266,7 +9978,8 @@ export const customersData = [
     "phone_2": 7947213981,
     "email": "mirandadevin@dominguez.com",
     "subscription_date": "2020-07-27",
-    "website": "http://www.ballard.com/"
+    "website": "http://www.ballard.com/",
+    "salary": 90000
   },
   {
     "customer_id": "313e5582-beea-458e-b2f9-fa4df1963acb",
@@ -9279,7 +9992,8 @@ export const customersData = [
     "phone_2": 8076729555,
     "email": "jeanettecordova@roach.org",
     "subscription_date": "2021-09-22",
-    "website": "http://lynn.com/"
+    "website": "http://lynn.com/",
+    "salary": 137000
   },
   {
     "customer_id": "42345723-2c14-4f6c-b02e-7d705e0be8db",
@@ -9292,7 +10006,8 @@ export const customersData = [
     "phone_2": "281.918.1528x45001",
     "email": "dhouse@curry.com",
     "subscription_date": "2020-05-29",
-    "website": "http://greene.net/"
+    "website": "http://greene.net/",
+    "salary": 117000
   },
   {
     "customer_id": "129ef593-8f56-4b1d-a5d7-ba62e4e2d088",
@@ -9305,7 +10020,8 @@ export const customersData = [
     "phone_2": "(412)821-6924",
     "email": "avilajacqueline@andrews.com",
     "subscription_date": "2021-08-22",
-    "website": "http://www.lara.net/"
+    "website": "http://www.lara.net/",
+    "salary": 133000
   },
   {
     "customer_id": "539539ba-1f2f-45c2-bf47-260849452eeb",
@@ -9318,7 +10034,8 @@ export const customersData = [
     "phone_2": "+1-354-182-7523x809",
     "email": "jmendez@shah-ball.org",
     "subscription_date": "2021-03-07",
-    "website": "https://www.velez.com/"
+    "website": "https://www.velez.com/",
+    "salary": 179000
   },
   {
     "customer_id": "06a81fe5-6890-46c2-92e7-591f5bc839db",
@@ -9331,7 +10048,8 @@ export const customersData = [
     "phone_2": "001-673-327-7124x194",
     "email": "dakota80@delgado-lowe.com",
     "subscription_date": "2020-12-07",
-    "website": "http://www.bowers.com/"
+    "website": "http://www.bowers.com/",
+    "salary": 61000
   },
   {
     "customer_id": "031deeec-28e9-45dc-b2ef-0e4a86a94a6e",
@@ -9344,7 +10062,8 @@ export const customersData = [
     "phone_2": "+1-462-976-7937",
     "email": "ehull@hendricks-henson.com",
     "subscription_date": "2021-06-06",
-    "website": "http://steele.biz/"
+    "website": "http://steele.biz/",
+    "salary": 119000
   },
   {
     "customer_id": "88acafd3-7819-440f-87dd-78fcf513a508",
@@ -9357,7 +10076,8 @@ export const customersData = [
     "phone_2": "452.935.1063x6959",
     "email": "alishagray@walsh.org",
     "subscription_date": "2021-11-11",
-    "website": "https://www.bridges.com/"
+    "website": "https://www.bridges.com/",
+    "salary": 159000
   },
   {
     "customer_id": "e1f4ae39-1b6e-4f88-ab25-e01bf7ae4035",
@@ -9370,7 +10090,8 @@ export const customersData = [
     "phone_2": "(627)218-3922",
     "email": "ufarley@key-knox.net",
     "subscription_date": "2020-09-17",
-    "website": "https://www.stark.com/"
+    "website": "https://www.stark.com/",
+    "salary": 107000
   },
   {
     "customer_id": "38fb1dc7-3a3e-41d7-969a-48709346e020",
@@ -9383,7 +10104,8 @@ export const customersData = [
     "phone_2": "(532)280-5215",
     "email": "fowlerpenny@browning-bartlett.biz",
     "subscription_date": "2020-10-10",
-    "website": "https://www.bush.com/"
+    "website": "https://www.bush.com/",
+    "salary": 80000
   },
   {
     "customer_id": "16864020-5cae-40fe-93aa-81a392fbd184",
@@ -9396,7 +10118,8 @@ export const customersData = [
     "phone_2": "261.578.5338",
     "email": "sherri47@potter.org",
     "subscription_date": "2020-01-29",
-    "website": "http://www.gallagher.com/"
+    "website": "http://www.gallagher.com/",
+    "salary": 112000
   },
   {
     "customer_id": "4ea18cc1-1960-4fb4-9e86-f57023eea2ef",
@@ -9409,7 +10132,8 @@ export const customersData = [
     "phone_2": "864-171-9235x884",
     "email": "zclarke@gates-stevenson.com",
     "subscription_date": "2020-07-17",
-    "website": "http://donaldson.net/"
+    "website": "http://donaldson.net/",
+    "salary": 113000
   },
   {
     "customer_id": "39e5dc8d-a15a-49e6-8cad-eda076e5ce51",
@@ -9422,7 +10146,8 @@ export const customersData = [
     "phone_2": "385.447.3912x511",
     "email": "audreymaxwell@foley-padilla.com",
     "subscription_date": "2021-09-23",
-    "website": "https://boone-obrien.biz/"
+    "website": "https://boone-obrien.biz/",
+    "salary": 178000
   },
   {
     "customer_id": "b22aa1cb-53b6-4439-ba1f-0a8fa65f46de",
@@ -9435,7 +10160,8 @@ export const customersData = [
     "phone_2": "(788)572-4490",
     "email": "cindyknox@brady.net",
     "subscription_date": "2022-05-21",
-    "website": "https://duarte.net/"
+    "website": "https://duarte.net/",
+    "salary": 138000
   },
   {
     "customer_id": "b2fd255b-9bf5-4129-a35d-a0083b6bc208",
@@ -9448,7 +10174,8 @@ export const customersData = [
     "phone_2": "913-135-1076x00802",
     "email": "colemansheena@bautista.org",
     "subscription_date": "2020-07-09",
-    "website": "http://www.soto.org/"
+    "website": "http://www.soto.org/",
+    "salary": 126000
   },
   {
     "customer_id": "804f91fc-45bc-4535-b139-f30db5ec61c7",
@@ -9461,7 +10188,8 @@ export const customersData = [
     "phone_2": "001-898-832-0266",
     "email": "warnerallen@mcintosh.com",
     "subscription_date": "2022-02-11",
-    "website": "https://dixon-sexton.com/"
+    "website": "https://dixon-sexton.com/",
+    "salary": 130000
   },
   {
     "customer_id": "e6f6dd23-d1b8-4697-9d7e-b63d7fa7c67a",
@@ -9474,7 +10202,8 @@ export const customersData = [
     "phone_2": 8366095226,
     "email": "herbert32@francis-perez.biz",
     "subscription_date": "2020-09-01",
-    "website": "http://frey.info/"
+    "website": "http://frey.info/",
+    "salary": 171000
   },
   {
     "customer_id": "7e7f291d-f19e-4e62-826f-d9714f3c32c2",
@@ -9487,7 +10216,8 @@ export const customersData = [
     "phone_2": "619-723-0569x3685",
     "email": "kellercheryl@berger.com",
     "subscription_date": "2021-09-05",
-    "website": "http://www.arias.com/"
+    "website": "http://www.arias.com/",
+    "salary": 46000
   },
   {
     "customer_id": "2cb98b50-c18c-406b-8252-e3b6e0f261d0",
@@ -9500,7 +10230,8 @@ export const customersData = [
     "phone_2": 5119332035,
     "email": "vgregory@sanchez.com",
     "subscription_date": "2022-01-12",
-    "website": "https://www.whitney.info/"
+    "website": "https://www.whitney.info/",
+    "salary": 65000
   },
   {
     "customer_id": "357f619d-845c-43fa-aebd-c6738d456add",
@@ -9513,7 +10244,8 @@ export const customersData = [
     "phone_2": "001-684-704-8590x36172",
     "email": "trevor80@sutton.com",
     "subscription_date": "2021-06-17",
-    "website": "http://www.pittman-marks.org/"
+    "website": "http://www.pittman-marks.org/",
+    "salary": 169000
   },
   {
     "customer_id": "e65b2f6f-41f3-407c-9c80-92cec8767ced",
@@ -9526,7 +10258,8 @@ export const customersData = [
     "phone_2": "229.830.7205",
     "email": "perezsheri@hobbs-stone.org",
     "subscription_date": "2020-04-01",
-    "website": "https://goodman-brennan.com/"
+    "website": "https://goodman-brennan.com/",
+    "salary": 60000
   },
   {
     "customer_id": "6ebaa770-2332-409b-a5d9-42b6ab20dfd3",
@@ -9539,7 +10272,8 @@ export const customersData = [
     "phone_2": "(729)845-8153",
     "email": "hernandezkari@pratt-hicks.com",
     "subscription_date": "2020-11-11",
-    "website": "http://mathews.net/"
+    "website": "http://mathews.net/",
+    "salary": 80000
   },
   {
     "customer_id": "32fdee03-3a38-41a9-b505-853a3bdd4c36",
@@ -9552,7 +10286,8 @@ export const customersData = [
     "phone_2": "(535)354-8738",
     "email": "suttontanya@andrade.com",
     "subscription_date": "2020-08-01",
-    "website": "https://www.juarez-holloway.com/"
+    "website": "https://www.juarez-holloway.com/",
+    "salary": 116000
   },
   {
     "customer_id": "5942bcea-2ece-4ef8-846d-0f167441e165",
@@ -9565,7 +10300,8 @@ export const customersData = [
     "phone_2": "937-104-4828",
     "email": "nrichardson@james-hodge.com",
     "subscription_date": "2021-10-19",
-    "website": "http://www.ballard.info/"
+    "website": "http://www.ballard.info/",
+    "salary": 107000
   },
   {
     "customer_id": "7546f66c-3b95-43c3-9b82-4ff4f2d1706b",
@@ -9578,7 +10314,8 @@ export const customersData = [
     "phone_2": "(391)740-5760x25660",
     "email": "christina52@richmond.com",
     "subscription_date": "2021-06-14",
-    "website": "http://freeman.com/"
+    "website": "http://freeman.com/",
+    "salary": 67000
   },
   {
     "customer_id": "11385637-895d-4a3f-975c-9cfe15eef50b",
@@ -9591,7 +10328,8 @@ export const customersData = [
     "phone_2": "(743)934-7297x980",
     "email": "gguerra@bryant-warner.com",
     "subscription_date": "2020-09-24",
-    "website": "https://www.cross.net/"
+    "website": "https://www.cross.net/",
+    "salary": 115000
   },
   {
     "customer_id": "c0716b10-2eb3-4848-85b6-e006c591654b",
@@ -9604,7 +10342,8 @@ export const customersData = [
     "phone_2": "001-899-432-3367x1898",
     "email": "shari57@hunt-dickson.com",
     "subscription_date": "2021-09-08",
-    "website": "http://meza-ferrell.com/"
+    "website": "http://meza-ferrell.com/",
+    "salary": 174000
   },
   {
     "customer_id": "8dc9c135-efcb-4c09-a90d-67e09517585f",
@@ -9617,7 +10356,8 @@ export const customersData = [
     "phone_2": "+1-904-396-7788x41600",
     "email": "katelynfarrell@young-obrien.com",
     "subscription_date": "2020-10-27",
-    "website": "http://www.blair-dalton.com/"
+    "website": "http://www.blair-dalton.com/",
+    "salary": 141000
   },
   {
     "customer_id": "eb0823da-2f2a-472b-92e6-7a4d9cbee049",
@@ -9630,7 +10370,8 @@ export const customersData = [
     "phone_2": "462.959.4694",
     "email": "arthurhickman@yu.com",
     "subscription_date": "2021-02-11",
-    "website": "http://www.hogan.com/"
+    "website": "http://www.hogan.com/",
+    "salary": 54000
   },
   {
     "customer_id": "223b4eec-21e5-46ba-9bed-8f54ea4ad32e",
@@ -9643,7 +10384,8 @@ export const customersData = [
     "phone_2": "314.075.9670",
     "email": "lmclean@gonzales.biz",
     "subscription_date": "2021-09-13",
-    "website": "https://goodwin-atkins.com/"
+    "website": "https://goodwin-atkins.com/",
+    "salary": 89000
   },
   {
     "customer_id": "cac16edd-684b-48bb-b89a-e917c3cde2e1",
@@ -9656,7 +10398,8 @@ export const customersData = [
     "phone_2": "396-652-0359",
     "email": "lhanna@french.info",
     "subscription_date": "2021-03-24",
-    "website": "https://www.bird.net/"
+    "website": "https://www.bird.net/",
+    "salary": 88000
   },
   {
     "customer_id": "9716db50-b160-48e7-82ac-0870e3e71a7d",
@@ -9669,7 +10412,8 @@ export const customersData = [
     "phone_2": "136-705-3160x546",
     "email": "stephenmanning@valdez.net",
     "subscription_date": "2022-01-21",
-    "website": "http://lucero.com/"
+    "website": "http://lucero.com/",
+    "salary": 112000
   },
   {
     "customer_id": "f2d63894-8728-43b5-9fa0-ec2d1ed59a01",
@@ -9682,7 +10426,8 @@ export const customersData = [
     "phone_2": "180-892-6213",
     "email": "alexandra76@osborn.org",
     "subscription_date": "2020-10-14",
-    "website": "http://www.booker.info/"
+    "website": "http://www.booker.info/",
+    "salary": 157000
   },
   {
     "customer_id": "9f45b8a6-aa7e-41a4-90ee-0e1b60374bd2",
@@ -9695,7 +10440,8 @@ export const customersData = [
     "phone_2": "493-359-8648x6498",
     "email": "cgallagher@merritt.com",
     "subscription_date": "2021-03-25",
-    "website": "http://www.shea.net/"
+    "website": "http://www.shea.net/",
+    "salary": 87000
   },
   {
     "customer_id": "7bf80c8b-8cc3-4924-9818-e0a602c48188",
@@ -9708,7 +10454,8 @@ export const customersData = [
     "phone_2": "926.300.0499",
     "email": "parkervincent@dodson.org",
     "subscription_date": "2020-04-02",
-    "website": "http://www.bowers.com/"
+    "website": "http://www.bowers.com/",
+    "salary": 82000
   },
   {
     "customer_id": "d92cfe0b-67c7-4768-858c-ac602b7a58b5",
@@ -9721,7 +10468,8 @@ export const customersData = [
     "phone_2": "921.022.2213",
     "email": "gamblezachary@marquez.net",
     "subscription_date": "2021-05-08",
-    "website": "http://www.harrington.org/"
+    "website": "http://www.harrington.org/",
+    "salary": 79000
   },
   {
     "customer_id": "68cce342-a787-4b55-b438-857f2a29ec99",
@@ -9734,7 +10482,8 @@ export const customersData = [
     "phone_2": "850-980-0031x287",
     "email": "alfredvaughan@mahoney.org",
     "subscription_date": "2021-06-30",
-    "website": "http://davidson.com/"
+    "website": "http://davidson.com/",
+    "salary": 139000
   },
   {
     "customer_id": "f3ca0bce-ee89-4a14-888d-47ced5e586e8",
@@ -9747,7 +10496,8 @@ export const customersData = [
     "phone_2": "(160)406-2535x62883",
     "email": "gibsonbrent@buchanan.com",
     "subscription_date": "2020-09-08",
-    "website": "http://www.skinner-mcmillan.net/"
+    "website": "http://www.skinner-mcmillan.net/",
+    "salary": 52000
   },
   {
     "customer_id": "0058466c-f85d-43e2-a7f4-903895f0e76f",
@@ -9760,7 +10510,8 @@ export const customersData = [
     "phone_2": "(030)754-3304x675",
     "email": "stewartcristina@schmitt-rich.com",
     "subscription_date": "2022-01-19",
-    "website": "https://velazquez.com/"
+    "website": "https://velazquez.com/",
+    "salary": 152000
   },
   {
     "customer_id": "69864a0b-789f-4928-a7ad-7e5483cc4c94",
@@ -9773,7 +10524,8 @@ export const customersData = [
     "phone_2": "(001)024-2569",
     "email": "wintershunter@moreno.com",
     "subscription_date": "2021-12-15",
-    "website": "https://www.erickson.com/"
+    "website": "https://www.erickson.com/",
+    "salary": 137000
   },
   {
     "customer_id": "e71287f1-5a28-4f4a-a0bc-582ae1296838",
@@ -9786,7 +10538,8 @@ export const customersData = [
     "phone_2": "430-271-0547x62640",
     "email": "jacob75@yoder.com",
     "subscription_date": "2021-03-27",
-    "website": "http://www.greer.biz/"
+    "website": "http://www.greer.biz/",
+    "salary": 178000
   },
   {
     "customer_id": "0e5cad51-48ed-45a9-a643-fb56aef64d52",
@@ -9799,7 +10552,8 @@ export const customersData = [
     "phone_2": "200-959-0387x7302",
     "email": "reginald52@cooke-palmer.com",
     "subscription_date": "2022-03-12",
-    "website": "http://www.cook.com/"
+    "website": "http://www.cook.com/",
+    "salary": 105000
   },
   {
     "customer_id": "dc3aa857-53b9-4fbe-8f3e-2e5d041681f1",
@@ -9812,7 +10566,8 @@ export const customersData = [
     "phone_2": "+1-937-547-6083x76609",
     "email": "ufuentes@crane.com",
     "subscription_date": "2020-12-09",
-    "website": "http://adkins.com/"
+    "website": "http://adkins.com/",
+    "salary": 133000
   },
   {
     "customer_id": "768eeee3-f187-4077-af80-6ad292e2034b",
@@ -9825,7 +10580,8 @@ export const customersData = [
     "phone_2": "894.293.9339x2626",
     "email": "urandolph@burke-clark.com",
     "subscription_date": "2020-01-25",
-    "website": "http://andrews.com/"
+    "website": "http://andrews.com/",
+    "salary": 141000
   },
   {
     "customer_id": "7dfd509a-e59e-43e6-9632-dba1c1de2759",
@@ -9838,7 +10594,8 @@ export const customersData = [
     "phone_2": "001-353-205-9982x2685",
     "email": "rstanley@boyle.info",
     "subscription_date": "2020-05-21",
-    "website": "https://nash-weiss.com/"
+    "website": "https://nash-weiss.com/",
+    "salary": 52000
   },
   {
     "customer_id": "2418040a-3905-480f-8c87-b58030ce5327",
@@ -9851,7 +10608,8 @@ export const customersData = [
     "phone_2": "(789)135-1175",
     "email": "bookershelby@conley-saunders.com",
     "subscription_date": "2020-10-01",
-    "website": "https://lambert.com/"
+    "website": "https://lambert.com/",
+    "salary": 114000
   },
   {
     "customer_id": "56c973ec-bd75-4538-bc55-748497a2e23c",
@@ -9864,7 +10622,8 @@ export const customersData = [
     "phone_2": "209.643.4599",
     "email": "cameronhuffman@osborn.org",
     "subscription_date": "2020-09-23",
-    "website": "https://gillespie-lamb.net/"
+    "website": "https://gillespie-lamb.net/",
+    "salary": 33000
   },
   {
     "customer_id": "8433b3d3-7682-4d2b-9316-554f1062625e",
@@ -9877,7 +10636,8 @@ export const customersData = [
     "phone_2": "+1-830-946-1246x539",
     "email": "bjoseph@marsh-orozco.com",
     "subscription_date": "2021-10-02",
-    "website": "https://nash.com/"
+    "website": "https://nash.com/",
+    "salary": 85000
   },
   {
     "customer_id": "9b4f4969-1e55-488b-9463-953835f8ef5a",
@@ -9890,7 +10650,8 @@ export const customersData = [
     "phone_2": "001-149-187-4945",
     "email": "websterrebekah@payne.info",
     "subscription_date": "2020-09-25",
-    "website": "https://www.bright-whitney.com/"
+    "website": "https://www.bright-whitney.com/",
+    "salary": 156000
   },
   {
     "customer_id": "b6d6209d-ef08-46c0-bb6b-39f6efa0e027",
@@ -9903,7 +10664,8 @@ export const customersData = [
     "phone_2": "001-576-798-9281",
     "email": "nriddle@lindsey.org",
     "subscription_date": "2021-09-08",
-    "website": "https://hawkins.com/"
+    "website": "https://hawkins.com/",
+    "salary": 114000
   },
   {
     "customer_id": "5c0fbd2d-5aa3-475d-a605-7fbfae183ee0",
@@ -9916,7 +10678,8 @@ export const customersData = [
     "phone_2": "+1-733-946-9705x274",
     "email": "brockedwin@rice.com",
     "subscription_date": "2021-08-20",
-    "website": "http://www.vega-chen.com/"
+    "website": "http://www.vega-chen.com/",
+    "salary": 169000
   },
   {
     "customer_id": "d0a8848a-7a43-4823-b7bd-5bf3c8064c64",
@@ -9929,7 +10692,8 @@ export const customersData = [
     "phone_2": "125.123.1345",
     "email": "ggriffith@faulkner.org",
     "subscription_date": "2021-04-23",
-    "website": "http://www.mckinney-wright.com/"
+    "website": "http://www.mckinney-wright.com/",
+    "salary": 70000
   },
   {
     "customer_id": "b8cb6ed9-df63-4a06-925c-ceb101dc5465",
@@ -9942,7 +10706,8 @@ export const customersData = [
     "phone_2": "(518)626-0087x725",
     "email": "baxteryvonne@gaines.net",
     "subscription_date": "2022-02-24",
-    "website": "https://www.osborn-fox.com/"
+    "website": "https://www.osborn-fox.com/",
+    "salary": 171000
   },
   {
     "customer_id": "296f2062-54d9-4e25-8d4d-6f496dcae17b",
@@ -9955,7 +10720,8 @@ export const customersData = [
     "phone_2": "(721)568-8368x2613",
     "email": "wyattlloyd@mccormick-miller.com",
     "subscription_date": "2021-01-05",
-    "website": "http://www.villegas.net/"
+    "website": "http://www.villegas.net/",
+    "salary": 44000
   },
   {
     "customer_id": "1847e0a6-755c-44b1-a123-289d0e9cd7be",
@@ -9968,7 +10734,8 @@ export const customersData = [
     "phone_2": 5001396410,
     "email": "deborahmedina@soto.net",
     "subscription_date": "2021-10-01",
-    "website": "https://michael.org/"
+    "website": "https://michael.org/",
+    "salary": 165000
   },
   {
     "customer_id": "c7e5cc0c-b120-48a1-963d-ce7450364c5b",
@@ -9981,7 +10748,8 @@ export const customersData = [
     "phone_2": "+1-219-492-8138x425",
     "email": "hwoodward@avila-potter.com",
     "subscription_date": "2020-11-22",
-    "website": "https://www.lin.biz/"
+    "website": "https://www.lin.biz/",
+    "salary": 83000
   },
   {
     "customer_id": "01d75caf-1391-4408-a246-7b08469b826d",
@@ -9994,7 +10762,8 @@ export const customersData = [
     "phone_2": "(286)486-4451x3885",
     "email": "iadkins@robles-pope.biz",
     "subscription_date": "2022-01-14",
-    "website": "http://durham-dominguez.net/"
+    "website": "http://durham-dominguez.net/",
+    "salary": 155000
   },
   {
     "customer_id": "a3dcf2be-11f5-46ae-9c15-c4c55f39fc3f",
@@ -10007,7 +10776,8 @@ export const customersData = [
     "phone_2": "712-112-1005x3680",
     "email": "vsilva@barnes-drake.info",
     "subscription_date": "2020-01-28",
-    "website": "http://kaufman.biz/"
+    "website": "http://kaufman.biz/",
+    "salary": 117000
   },
   {
     "customer_id": "29b83844-8d5b-46c0-b18e-23ad8aa84537",
@@ -10020,7 +10790,8 @@ export const customersData = [
     "phone_2": "+1-192-945-3640x5203",
     "email": "robertowright@castaneda-klein.com",
     "subscription_date": "2020-09-09",
-    "website": "https://proctor-pugh.com/"
+    "website": "https://proctor-pugh.com/",
+    "salary": 60000
   },
   {
     "customer_id": "5dbdbcdc-c15a-430b-9b57-b900a7b50686",
@@ -10033,7 +10804,8 @@ export const customersData = [
     "phone_2": "(597)349-2870x025",
     "email": "uyoung@crane.com",
     "subscription_date": "2020-01-10",
-    "website": "http://browning.com/"
+    "website": "http://browning.com/",
+    "salary": 40000
   },
   {
     "customer_id": "2f9b17cd-3a84-498e-8565-ae9b2d0d4513",
@@ -10046,7 +10818,8 @@ export const customersData = [
     "phone_2": "001-625-515-0392x36708",
     "email": "bernardfrances@le.com",
     "subscription_date": "2022-02-15",
-    "website": "https://moon-ho.com/"
+    "website": "https://moon-ho.com/",
+    "salary": 82000
   },
   {
     "customer_id": "e18b21b1-5fa4-45f6-94be-03a845e898f9",
@@ -10059,7 +10832,8 @@ export const customersData = [
     "phone_2": 3924065572,
     "email": "greendean@arias.biz",
     "subscription_date": "2020-08-22",
-    "website": "https://www.malone.com/"
+    "website": "https://www.malone.com/",
+    "salary": 88000
   },
   {
     "customer_id": "4e51644e-4204-4219-ab9a-470989f4853a",
@@ -10072,7 +10846,8 @@ export const customersData = [
     "phone_2": "(460)557-1825x8533",
     "email": "qfrye@bolton.biz",
     "subscription_date": "2022-05-02",
-    "website": "http://www.tyler.info/"
+    "website": "http://www.tyler.info/",
+    "salary": 76000
   },
   {
     "customer_id": "51b744b3-d89f-4f38-a2f9-4c4bec791b59",
@@ -10085,7 +10860,8 @@ export const customersData = [
     "phone_2": "+1-491-198-1184x02800",
     "email": "gwendolynherring@lawrence.com",
     "subscription_date": "2021-01-05",
-    "website": "https://www.ritter.org/"
+    "website": "https://www.ritter.org/",
+    "salary": 81000
   },
   {
     "customer_id": "bec5df45-a936-46b4-9114-a62254e125cc",
@@ -10098,7 +10874,8 @@ export const customersData = [
     "phone_2": "+1-097-709-3777x4689",
     "email": "rosschan@guerrero.com",
     "subscription_date": "2021-08-14",
-    "website": "http://castillo.info/"
+    "website": "http://castillo.info/",
+    "salary": 34000
   },
   {
     "customer_id": "39165e53-1407-4eda-a579-9c0c8562fe03",
@@ -10111,7 +10888,8 @@ export const customersData = [
     "phone_2": "328.706.1920x3975",
     "email": "yorkmarvin@woodward.com",
     "subscription_date": "2021-03-17",
-    "website": "https://www.hudson.net/"
+    "website": "https://www.hudson.net/",
+    "salary": 137000
   },
   {
     "customer_id": "ee31cccd-a9bf-4fb4-8e9e-2aee790e9a6c",
@@ -10124,7 +10902,8 @@ export const customersData = [
     "phone_2": "987.976.2632",
     "email": "hollandalexander@glenn.com",
     "subscription_date": "2020-01-01",
-    "website": "https://www.joseph.biz/"
+    "website": "https://www.joseph.biz/",
+    "salary": 94000
   },
   {
     "customer_id": "4f729344-01cb-4b80-aafc-1d63ac7e1a67",
@@ -10137,7 +10916,8 @@ export const customersData = [
     "phone_2": "+1-684-978-1478",
     "email": "yesenia09@clayton.biz",
     "subscription_date": "2020-05-23",
-    "website": "http://matthews.com/"
+    "website": "http://matthews.com/",
+    "salary": 155000
   },
   {
     "customer_id": "81cd3217-327f-4a68-87a6-ab1fac61758b",
@@ -10150,7 +10930,8 @@ export const customersData = [
     "phone_2": 6375939485,
     "email": "robinsonjacqueline@noble.com",
     "subscription_date": "2020-06-22",
-    "website": "http://murillo.net/"
+    "website": "http://murillo.net/",
+    "salary": 39000
   },
   {
     "customer_id": "09033456-1ac7-4d18-a6a2-f0981b12eebe",
@@ -10163,7 +10944,8 @@ export const customersData = [
     "phone_2": "297.425.9604",
     "email": "bethpeters@medina.biz",
     "subscription_date": "2020-01-06",
-    "website": "http://www.grimes.biz/"
+    "website": "http://www.grimes.biz/",
+    "salary": 40000
   },
   {
     "customer_id": "3ee15707-0388-479f-a421-0c4911c24590",
@@ -10176,7 +10958,8 @@ export const customersData = [
     "phone_2": "902.367.9195",
     "email": "xmeza@cross.com",
     "subscription_date": "2022-04-21",
-    "website": "https://www.silva.com/"
+    "website": "https://www.silva.com/",
+    "salary": 40000
   },
   {
     "customer_id": "f414e10f-231b-4845-9a6e-56a20d46961b",
@@ -10189,7 +10972,8 @@ export const customersData = [
     "phone_2": 9874258078,
     "email": "chaneyrebekah@rice.com",
     "subscription_date": "2021-08-01",
-    "website": "https://www.salinas.net/"
+    "website": "https://www.salinas.net/",
+    "salary": 176000
   },
   {
     "customer_id": "8e4487e4-bfd8-4a62-bdfe-0db0e63ccb14",
@@ -10202,7 +10986,8 @@ export const customersData = [
     "phone_2": "406-631-9182x906",
     "email": "singletonmarie@gibson.com",
     "subscription_date": "2020-01-09",
-    "website": "https://mccormick.com/"
+    "website": "https://mccormick.com/",
+    "salary": 175000
   },
   {
     "customer_id": "6828bcbd-26cf-4df0-a56f-7a092c4a8048",
@@ -10215,7 +11000,8 @@ export const customersData = [
     "phone_2": "075.008.8328x1239",
     "email": "kmcpherson@gibson.info",
     "subscription_date": "2021-06-09",
-    "website": "https://quinn.biz/"
+    "website": "https://quinn.biz/",
+    "salary": 101000
   },
   {
     "customer_id": "64c32bd7-8df3-4ee6-9c06-e210d37f1241",
@@ -10228,7 +11014,8 @@ export const customersData = [
     "phone_2": 3158262200,
     "email": "stephanie32@hebert-shaffer.com",
     "subscription_date": "2020-08-09",
-    "website": "https://www.case.info/"
+    "website": "https://www.case.info/",
+    "salary": 156000
   },
   {
     "customer_id": "2b4b1344-9b4e-4258-8088-0653dad1857e",
@@ -10241,7 +11028,8 @@ export const customersData = [
     "phone_2": "+1-100-231-7220x8762",
     "email": "dpotter@bauer.com",
     "subscription_date": "2022-04-02",
-    "website": "http://www.baird.net/"
+    "website": "http://www.baird.net/",
+    "salary": 158000
   },
   {
     "customer_id": "0cf04309-fdcb-4bd4-8ff1-6706dcb87463",
@@ -10254,7 +11042,8 @@ export const customersData = [
     "phone_2": "(248)034-0763x64247",
     "email": "sergio63@suarez-bridges.com",
     "subscription_date": "2021-03-08",
-    "website": "https://boyd.biz/"
+    "website": "https://boyd.biz/",
+    "salary": 174000
   },
   {
     "customer_id": "b53d354f-559c-411e-9a1a-5e811c55eaaf",
@@ -10267,7 +11056,8 @@ export const customersData = [
     "phone_2": "206.196.1038x943",
     "email": "anthonygregory@hoover.org",
     "subscription_date": "2020-12-13",
-    "website": "http://robinson-richards.net/"
+    "website": "http://robinson-richards.net/",
+    "salary": 30000
   },
   {
     "customer_id": "ccefb3a9-3d50-4f16-9d6f-4b52e6f488f4",
@@ -10280,7 +11070,8 @@ export const customersData = [
     "phone_2": "+1-617-648-0965",
     "email": "kentgilbert@marks.info",
     "subscription_date": "2020-10-22",
-    "website": "https://www.crosby-gilmore.net/"
+    "website": "https://www.crosby-gilmore.net/",
+    "salary": 120000
   },
   {
     "customer_id": "a2eeedc8-9f24-4d4c-9629-13f1fc6aa1d8",
@@ -10293,7 +11084,8 @@ export const customersData = [
     "phone_2": "(742)233-4904",
     "email": "alfredfarrell@camacho.com",
     "subscription_date": "2020-11-14",
-    "website": "http://www.sawyer-fry.com/"
+    "website": "http://www.sawyer-fry.com/",
+    "salary": 93000
   },
   {
     "customer_id": "5539dd19-15c3-448d-a453-a6330956b9f9",
@@ -10306,7 +11098,8 @@ export const customersData = [
     "phone_2": "226-017-6456",
     "email": "rblair@irwin.biz",
     "subscription_date": "2020-09-11",
-    "website": "http://www.adams.com/"
+    "website": "http://www.adams.com/",
+    "salary": 73000
   },
   {
     "customer_id": "0e69a68c-c27f-41e5-a2e8-4fd9f93fbd15",
@@ -10319,7 +11112,8 @@ export const customersData = [
     "phone_2": "711.147.7586x80615",
     "email": "shannon64@soto.com",
     "subscription_date": "2021-03-20",
-    "website": "https://www.kirby.com/"
+    "website": "https://www.kirby.com/",
+    "salary": 76000
   },
   {
     "customer_id": "b08a3855-53f2-438d-bb33-f0790e658b63",
@@ -10332,7 +11126,8 @@ export const customersData = [
     "phone_2": "429-373-0448x7514",
     "email": "mmcguire@sweeney.com",
     "subscription_date": "2021-03-24",
-    "website": "https://stafford-lutz.com/"
+    "website": "https://stafford-lutz.com/",
+    "salary": 121000
   },
   {
     "customer_id": "4062373b-6751-440b-829e-070a1b0c25db",
@@ -10345,7 +11140,8 @@ export const customersData = [
     "phone_2": "+1-612-159-8355x39017",
     "email": "marcustrevino@pitts.info",
     "subscription_date": "2021-01-18",
-    "website": "https://www.rowe.com/"
+    "website": "https://www.rowe.com/",
+    "salary": 47000
   },
   {
     "customer_id": "575f9c69-a3e0-4516-ab18-adb4bb212a42",
@@ -10358,7 +11154,8 @@ export const customersData = [
     "phone_2": "435.234.2813",
     "email": "brettmonroe@mitchell.biz",
     "subscription_date": "2021-08-26",
-    "website": "http://www.beck-navarro.biz/"
+    "website": "http://www.beck-navarro.biz/",
+    "salary": 174000
   },
   {
     "customer_id": "5e19f7f3-055d-4731-a298-e4563e129624",
@@ -10371,7 +11168,8 @@ export const customersData = [
     "phone_2": "618-497-8667x883",
     "email": "xtrevino@pacheco.com",
     "subscription_date": "2021-04-10",
-    "website": "https://tran.biz/"
+    "website": "https://tran.biz/",
+    "salary": 61000
   },
   {
     "customer_id": "fa0bdcef-bb43-4041-be99-aceef5c26225",
@@ -10384,7 +11182,8 @@ export const customersData = [
     "phone_2": "658.274.3756",
     "email": "kathleen31@robles-matthews.com",
     "subscription_date": "2020-12-20",
-    "website": "https://www.eaton.com/"
+    "website": "https://www.eaton.com/",
+    "salary": 76000
   },
   {
     "customer_id": "6c476493-9f08-4d0e-82c6-f0d0e8c0194c",
@@ -10397,7 +11196,8 @@ export const customersData = [
     "phone_2": "+1-338-837-1722x8516",
     "email": "chodge@mayer-calderon.com",
     "subscription_date": "2020-04-08",
-    "website": "http://www.dennis.com/"
+    "website": "http://www.dennis.com/",
+    "salary": 57000
   },
   {
     "customer_id": "3f31ff27-b56b-4909-b3f3-1337af9fafb2",
@@ -10410,7 +11210,8 @@ export const customersData = [
     "phone_2": "743.672.2643x88621",
     "email": "swu@yoder.biz",
     "subscription_date": "2020-04-05",
-    "website": "https://manning-suarez.com/"
+    "website": "https://manning-suarez.com/",
+    "salary": 79000
   },
   {
     "customer_id": "2cf85828-b5ab-4cd1-a22a-328cfcd4b099",
@@ -10423,7 +11224,8 @@ export const customersData = [
     "phone_2": "(247)377-4061x637",
     "email": "bobstevenson@schaefer.com",
     "subscription_date": "2022-02-25",
-    "website": "http://lawrence.com/"
+    "website": "http://lawrence.com/",
+    "salary": 159000
   },
   {
     "customer_id": "267149e7-17b1-4c5f-aaae-51f7d394cc19",
@@ -10436,7 +11238,8 @@ export const customersData = [
     "phone_2": "606-534-6304x03529",
     "email": "mackenziemann@odonnell.net",
     "subscription_date": "2020-06-29",
-    "website": "http://www.hobbs-garner.com/"
+    "website": "http://www.hobbs-garner.com/",
+    "salary": 123000
   },
   {
     "customer_id": "ecf72ce8-88e6-40a3-8e94-4cfdfcc42a37",
@@ -10449,7 +11252,8 @@ export const customersData = [
     "phone_2": "(141)507-2753",
     "email": "richmondgregory@cardenas.org",
     "subscription_date": "2020-08-17",
-    "website": "https://www.black.net/"
+    "website": "https://www.black.net/",
+    "salary": 99000
   },
   {
     "customer_id": "145409ef-c317-4b52-8438-e9a6b1c09ed3",
@@ -10462,7 +11266,8 @@ export const customersData = [
     "phone_2": "001-781-967-7292",
     "email": "ryanshaffer@medina.com",
     "subscription_date": "2022-03-26",
-    "website": "http://daniels.biz/"
+    "website": "http://daniels.biz/",
+    "salary": 54000
   },
   {
     "customer_id": "4c30364a-2270-4e82-a37e-db94f7559f10",
@@ -10475,7 +11280,8 @@ export const customersData = [
     "phone_2": "781-314-0458x315",
     "email": "joycerusso@gallegos.com",
     "subscription_date": "2020-01-09",
-    "website": "https://gonzales-wells.com/"
+    "website": "https://gonzales-wells.com/",
+    "salary": 174000
   },
   {
     "customer_id": "7a3d4a11-5786-4948-af11-2d32ce7066d1",
@@ -10488,7 +11294,8 @@ export const customersData = [
     "phone_2": "124-409-5038x197",
     "email": "lonnie40@sutton.biz",
     "subscription_date": "2020-11-03",
-    "website": "https://jackson.net/"
+    "website": "https://jackson.net/",
+    "salary": 49000
   },
   {
     "customer_id": "c21da667-794c-4879-aee9-9bf770a0b4c5",
@@ -10501,7 +11308,8 @@ export const customersData = [
     "phone_2": "533-968-9228",
     "email": "curtisrichard@sims.com",
     "subscription_date": "2020-03-05",
-    "website": "http://kaiser.biz/"
+    "website": "http://kaiser.biz/",
+    "salary": 47000
   },
   {
     "customer_id": "53b07852-7c65-4fcd-893a-2b7375bc3f0a",
@@ -10514,7 +11322,8 @@ export const customersData = [
     "phone_2": "899.902.1361x89550",
     "email": "carolyn40@giles-cox.info",
     "subscription_date": "2021-12-14",
-    "website": "http://andersen.info/"
+    "website": "http://andersen.info/",
+    "salary": 58000
   },
   {
     "customer_id": "8b4b31fb-d8e8-478c-adf3-d609c74c8885",
@@ -10527,7 +11336,8 @@ export const customersData = [
     "phone_2": "758-847-8622x18460",
     "email": "monique53@palmer-garrett.com",
     "subscription_date": "2021-03-23",
-    "website": "https://zhang.com/"
+    "website": "https://zhang.com/",
+    "salary": 82000
   },
   {
     "customer_id": "7de84db0-1e33-4ec8-b2cd-c6864e4b2269",
@@ -10540,7 +11350,8 @@ export const customersData = [
     "phone_2": "+1-729-143-5521",
     "email": "jacksonjenkins@shaw.org",
     "subscription_date": "2020-08-19",
-    "website": "https://www.erickson.com/"
+    "website": "https://www.erickson.com/",
+    "salary": 146000
   },
   {
     "customer_id": "879d34a1-9bec-4f82-a932-ea1969953b7e",
@@ -10553,7 +11364,8 @@ export const customersData = [
     "phone_2": "219.537.1869",
     "email": "genewebster@boone.biz",
     "subscription_date": "2022-04-17",
-    "website": "https://www.lyons.com/"
+    "website": "https://www.lyons.com/",
+    "salary": 155000
   },
   {
     "customer_id": "074fa67f-a932-44d1-9f58-f3e5cf771898",
@@ -10566,7 +11378,8 @@ export const customersData = [
     "phone_2": "478-917-9261x3367",
     "email": "mckenziemorgan@parrish.org",
     "subscription_date": "2021-05-24",
-    "website": "https://www.greer.com/"
+    "website": "https://www.greer.com/",
+    "salary": 168000
   },
   {
     "customer_id": "7099add7-386e-4cbd-b843-6d81d37d0c1c",
@@ -10579,7 +11392,8 @@ export const customersData = [
     "phone_2": "001-285-653-4961",
     "email": "osbornkim@hoffman.com",
     "subscription_date": "2020-10-27",
-    "website": "https://shaw.org/"
+    "website": "https://shaw.org/",
+    "salary": 150000
   },
   {
     "customer_id": "c97c84eb-cecb-4ad4-b00d-b88d8be18458",
@@ -10592,7 +11406,8 @@ export const customersData = [
     "phone_2": "001-286-161-8069x4490",
     "email": "jillianwolf@huff.com",
     "subscription_date": "2020-11-05",
-    "website": "https://www.jarvis.biz/"
+    "website": "https://www.jarvis.biz/",
+    "salary": 145000
   },
   {
     "customer_id": "4b0429c6-4255-44f7-ba93-54c079f033c3",
@@ -10605,7 +11420,8 @@ export const customersData = [
     "phone_2": "008-390-0414",
     "email": "rita93@figueroa-simon.com",
     "subscription_date": "2020-03-18",
-    "website": "http://hampton.com/"
+    "website": "http://hampton.com/",
+    "salary": 93000
   },
   {
     "customer_id": "1efc0794-2244-4968-b6da-7fe55f3af23d",
@@ -10618,7 +11434,8 @@ export const customersData = [
     "phone_2": "(512)881-6170",
     "email": "zrollins@kent.org",
     "subscription_date": "2020-12-21",
-    "website": "https://griffin.com/"
+    "website": "https://griffin.com/",
+    "salary": 71000
   },
   {
     "customer_id": "8e3e95b6-a125-4afa-a7af-8fe3209eaa19",
@@ -10631,7 +11448,8 @@ export const customersData = [
     "phone_2": "180.693.3153",
     "email": "rickygarza@krause.com",
     "subscription_date": "2020-12-23",
-    "website": "https://avery.net/"
+    "website": "https://avery.net/",
+    "salary": 98000
   },
   {
     "customer_id": "41bdffaf-bbc7-4ac4-b3b3-94ddd1d6d339",
@@ -10644,7 +11462,8 @@ export const customersData = [
     "phone_2": "610.104.5915",
     "email": "javier35@hampton.com",
     "subscription_date": "2021-11-16",
-    "website": "https://www.vincent.biz/"
+    "website": "https://www.vincent.biz/",
+    "salary": 85000
   },
   {
     "customer_id": "03236f53-d4b7-43a4-841f-1626bef0fd6b",
@@ -10657,7 +11476,8 @@ export const customersData = [
     "phone_2": "089.344.1387",
     "email": "faithlamb@hebert-friedman.biz",
     "subscription_date": "2022-04-10",
-    "website": "https://bowen.com/"
+    "website": "https://bowen.com/",
+    "salary": 114000
   },
   {
     "customer_id": "0be9d63d-d692-4b14-8be5-3109b6da24bc",
@@ -10670,7 +11490,8 @@ export const customersData = [
     "phone_2": "116.060.5299x85222",
     "email": "billyhoffman@frank-mcmillan.com",
     "subscription_date": "2020-07-16",
-    "website": "http://www.cortez-frye.com/"
+    "website": "http://www.cortez-frye.com/",
+    "salary": 161000
   },
   {
     "customer_id": "d9038414-7e0d-4fda-8f14-a6e2b887fff8",
@@ -10683,7 +11504,8 @@ export const customersData = [
     "phone_2": "+1-680-366-8323x691",
     "email": "hardykurt@bradley.biz",
     "subscription_date": "2020-06-07",
-    "website": "http://garrett-washington.com/"
+    "website": "http://garrett-washington.com/",
+    "salary": 173000
   },
   {
     "customer_id": "31f933e3-bddc-4532-ac45-3b99c94d6c34",
@@ -10696,7 +11518,8 @@ export const customersData = [
     "phone_2": "704.906.7131",
     "email": "nina76@rhodes.net",
     "subscription_date": "2022-04-09",
-    "website": "http://www.cunningham.com/"
+    "website": "http://www.cunningham.com/",
+    "salary": 170000
   },
   {
     "customer_id": "279bea80-5e0c-4c4c-a8f6-f27038444f58",
@@ -10709,7 +11532,8 @@ export const customersData = [
     "phone_2": "001-585-225-6297x37200",
     "email": "jbright@herrera.net",
     "subscription_date": "2021-06-28",
-    "website": "https://gregory.info/"
+    "website": "https://gregory.info/",
+    "salary": 107000
   },
   {
     "customer_id": "ebd06ad4-5a67-47ec-b344-515b306c0611",
@@ -10722,7 +11546,8 @@ export const customersData = [
     "phone_2": "213-165-0529x96112",
     "email": "franklin65@espinoza-yates.biz",
     "subscription_date": "2020-03-02",
-    "website": "https://valentine-ramsey.com/"
+    "website": "https://valentine-ramsey.com/",
+    "salary": 30000
   },
   {
     "customer_id": "c50dd4c0-f833-482c-82fe-6a221ac990f6",
@@ -10735,7 +11560,8 @@ export const customersData = [
     "phone_2": 3657527592,
     "email": "susanibarra@sampson.com",
     "subscription_date": "2021-03-12",
-    "website": "https://villarreal-young.org/"
+    "website": "https://villarreal-young.org/",
+    "salary": 43000
   },
   {
     "customer_id": "d29372b5-8146-4850-b76b-a6e37745241f",
@@ -10748,7 +11574,8 @@ export const customersData = [
     "phone_2": "(848)865-6354x8090",
     "email": "marc80@bauer-houston.net",
     "subscription_date": "2020-12-31",
-    "website": "https://spears.info/"
+    "website": "https://spears.info/",
+    "salary": 89000
   },
   {
     "customer_id": "7abf352d-e646-408e-a46e-c80950028699",
@@ -10761,7 +11588,8 @@ export const customersData = [
     "phone_2": "+1-080-978-1186",
     "email": "kelliefuentes@michael-copeland.com",
     "subscription_date": "2021-02-08",
-    "website": "http://www.zavala.net/"
+    "website": "http://www.zavala.net/",
+    "salary": 97000
   },
   {
     "customer_id": "72985b0a-b0da-4b63-954a-2d0f41a47289",
@@ -10774,7 +11602,8 @@ export const customersData = [
     "phone_2": "537-751-4441",
     "email": "tina24@mcmillan.org",
     "subscription_date": "2021-05-21",
-    "website": "https://chaney-waller.net/"
+    "website": "https://chaney-waller.net/",
+    "salary": 82000
   },
   {
     "customer_id": "90bfee4a-9a8d-4683-a9cd-d0d502e4fb73",
@@ -10787,7 +11616,8 @@ export const customersData = [
     "phone_2": "(617)921-4963",
     "email": "alexaherman@edwards-rocha.biz",
     "subscription_date": "2021-03-26",
-    "website": "http://guerra.com/"
+    "website": "http://guerra.com/",
+    "salary": 60000
   },
   {
     "customer_id": "4edc1d58-3e8b-4304-81e1-26ec7eac0830",
@@ -10800,7 +11630,8 @@ export const customersData = [
     "phone_2": "001-550-562-6233x047",
     "email": "victorswanson@kidd-ritter.com",
     "subscription_date": "2022-05-22",
-    "website": "http://www.king-mueller.org/"
+    "website": "http://www.king-mueller.org/",
+    "salary": 53000
   },
   {
     "customer_id": "b34b9f09-f087-4885-827b-461d67592f67",
@@ -10813,7 +11644,8 @@ export const customersData = [
     "phone_2": "407-824-4900x886",
     "email": "clementsdave@coleman-shaffer.biz",
     "subscription_date": "2021-12-19",
-    "website": "http://shaffer-little.com/"
+    "website": "http://shaffer-little.com/",
+    "salary": 173000
   },
   {
     "customer_id": "cabcd40b-ceff-4b01-8481-3621bd71d37f",
@@ -10826,7 +11658,8 @@ export const customersData = [
     "phone_2": "(337)252-3143",
     "email": "martin66@barajas.com",
     "subscription_date": "2020-12-06",
-    "website": "http://www.swanson.com/"
+    "website": "http://www.swanson.com/",
+    "salary": 114000
   },
   {
     "customer_id": "a0a2c032-5ee4-42a8-881b-57f65a59bf70",
@@ -10839,7 +11672,8 @@ export const customersData = [
     "phone_2": "+1-664-032-9163x38629",
     "email": "juan80@benton.com",
     "subscription_date": "2020-11-20",
-    "website": "http://strong-thornton.com/"
+    "website": "http://strong-thornton.com/",
+    "salary": 67000
   },
   {
     "customer_id": "eff0ec84-a813-468d-bf11-4c8e09bb4ea9",
@@ -10852,7 +11686,8 @@ export const customersData = [
     "phone_2": "(478)336-3341",
     "email": "knapptami@delgado-lynn.biz",
     "subscription_date": "2021-04-20",
-    "website": "http://lucero.com/"
+    "website": "http://lucero.com/",
+    "salary": 36000
   },
   {
     "customer_id": "028c0695-d65a-4ff5-acc0-f5395d102022",
@@ -10865,7 +11700,8 @@ export const customersData = [
     "phone_2": "170.661.5540x08951",
     "email": "sabrina42@winters.info",
     "subscription_date": "2022-01-17",
-    "website": "http://www.ferguson.com/"
+    "website": "http://www.ferguson.com/",
+    "salary": 145000
   },
   {
     "customer_id": "9e8d63b2-94d9-4b4a-8a1c-371239654bce",
@@ -10878,7 +11714,8 @@ export const customersData = [
     "phone_2": "912.649.4558x49071",
     "email": "elizabeth24@bell-knox.com",
     "subscription_date": "2020-02-20",
-    "website": "http://www.welch-nolan.com/"
+    "website": "http://www.welch-nolan.com/",
+    "salary": 105000
   },
   {
     "customer_id": "9de460ff-4dc0-42ab-841f-557c8dc5ccc1",
@@ -10891,7 +11728,8 @@ export const customersData = [
     "phone_2": "+1-948-158-8769x768",
     "email": "madeline40@kidd-vaughn.com",
     "subscription_date": "2021-08-18",
-    "website": "https://www.jimenez.com/"
+    "website": "https://www.jimenez.com/",
+    "salary": 34000
   },
   {
     "customer_id": "47641f31-f1fe-415e-a81c-e235f9d2bdc0",
@@ -10904,7 +11742,8 @@ export const customersData = [
     "phone_2": "859.769.3506",
     "email": "harrisonsummer@terry-sheppard.org",
     "subscription_date": "2021-07-28",
-    "website": "http://www.mejia.com/"
+    "website": "http://www.mejia.com/",
+    "salary": 110000
   },
   {
     "customer_id": "a23f83a6-20f2-41ae-8a0d-e22172ec13b4",
@@ -10917,7 +11756,8 @@ export const customersData = [
     "phone_2": "247-002-1472",
     "email": "riggsjudy@krueger-peterson.com",
     "subscription_date": "2021-07-26",
-    "website": "http://www.hahn.com/"
+    "website": "http://www.hahn.com/",
+    "salary": 92000
   },
   {
     "customer_id": "44c52e08-d6d9-4237-916e-f28b93beefef",
@@ -10930,7 +11770,8 @@ export const customersData = [
     "phone_2": "001-012-399-2333",
     "email": "srocha@mcknight-walter.com",
     "subscription_date": "2022-04-13",
-    "website": "http://www.cuevas.com/"
+    "website": "http://www.cuevas.com/",
+    "salary": 81000
   },
   {
     "customer_id": "3c131288-b711-47ee-9d4a-4abed05325f7",
@@ -10943,7 +11784,8 @@ export const customersData = [
     "phone_2": "(372)273-7127",
     "email": "kpugh@guerra.com",
     "subscription_date": "2020-05-12",
-    "website": "http://www.mack-rosario.com/"
+    "website": "http://www.mack-rosario.com/",
+    "salary": 55000
   },
   {
     "customer_id": "8915222e-44bb-4091-85fb-d15ebeb8c68d",
@@ -10956,7 +11798,8 @@ export const customersData = [
     "phone_2": "509-079-8579x763",
     "email": "htrevino@reese.com",
     "subscription_date": "2020-05-02",
-    "website": "https://www.rogers.com/"
+    "website": "https://www.rogers.com/",
+    "salary": 76000
   },
   {
     "customer_id": "4052da4f-3780-4eb3-b2e4-f9968c30ce10",
@@ -10969,7 +11812,8 @@ export const customersData = [
     "phone_2": 3244949455,
     "email": "fschaefer@vincent.info",
     "subscription_date": "2020-03-19",
-    "website": "http://kelly-grant.biz/"
+    "website": "http://kelly-grant.biz/",
+    "salary": 106000
   },
   {
     "customer_id": "6adca607-a829-4455-bead-d0ab6a12bbc3",
@@ -10982,7 +11826,8 @@ export const customersData = [
     "phone_2": "001-781-114-0317x3741",
     "email": "rmartin@trevino-chan.com",
     "subscription_date": "2022-03-16",
-    "website": "https://solomon.net/"
+    "website": "https://solomon.net/",
+    "salary": 44000
   },
   {
     "customer_id": "3f31c5bb-f307-465e-864b-8c8389e8b3c7",
@@ -10995,7 +11840,8 @@ export const customersData = [
     "phone_2": "(745)589-0855x61323",
     "email": "gbraun@kent.com",
     "subscription_date": "2022-03-30",
-    "website": "http://www.odonnell-munoz.net/"
+    "website": "http://www.odonnell-munoz.net/",
+    "salary": 136000
   },
   {
     "customer_id": "f906f45f-4cf2-48c4-b627-bbff49e703e2",
@@ -11008,7 +11854,8 @@ export const customersData = [
     "phone_2": "(592)472-6639x3975",
     "email": "gabriela08@rasmussen-mcbride.com",
     "subscription_date": "2021-11-03",
-    "website": "https://meadows-hughes.com/"
+    "website": "https://meadows-hughes.com/",
+    "salary": 178000
   },
   {
     "customer_id": "9ab1b583-1af3-40f3-bb9d-eab207f6f9fa",
@@ -11021,7 +11868,8 @@ export const customersData = [
     "phone_2": "+1-498-842-7191",
     "email": "xburns@bush.org",
     "subscription_date": "2021-04-27",
-    "website": "http://kaiser.com/"
+    "website": "http://kaiser.com/",
+    "salary": 50000
   },
   {
     "customer_id": "bbd8ab47-3016-47b9-b96a-6e452f7451ef",
@@ -11034,7 +11882,8 @@ export const customersData = [
     "phone_2": "001-032-558-8846x942",
     "email": "stuartnichole@potts-lamb.com",
     "subscription_date": "2020-12-07",
-    "website": "https://pierce-tucker.biz/"
+    "website": "https://pierce-tucker.biz/",
+    "salary": 166000
   },
   {
     "customer_id": "43968570-8cca-49c4-a2db-c61a1c4f781d",
@@ -11047,7 +11896,8 @@ export const customersData = [
     "phone_2": "+1-963-239-8983x10538",
     "email": "traviscameron@lawrence-bradley.com",
     "subscription_date": "2020-12-01",
-    "website": "http://garner-leon.com/"
+    "website": "http://garner-leon.com/",
+    "salary": 97000
   },
   {
     "customer_id": "40c46141-b853-46d1-bb8e-df91f84c24d5",
@@ -11060,7 +11910,8 @@ export const customersData = [
     "phone_2": "+1-207-760-8873x4599",
     "email": "lrollins@rodgers-newman.com",
     "subscription_date": "2021-11-24",
-    "website": "http://www.caldwell-gay.com/"
+    "website": "http://www.caldwell-gay.com/",
+    "salary": 89000
   },
   {
     "customer_id": "f770800d-51b8-4452-bb81-1387e86a8ba8",
@@ -11073,7 +11924,8 @@ export const customersData = [
     "phone_2": "001-384-675-0371",
     "email": "mandyhays@gilbert.com",
     "subscription_date": "2021-08-08",
-    "website": "http://harrison.biz/"
+    "website": "http://harrison.biz/",
+    "salary": 120000
   },
   {
     "customer_id": "3794edd0-5efa-4948-867c-b4401b8d5018",
@@ -11086,7 +11938,8 @@ export const customersData = [
     "phone_2": 7142098421,
     "email": "malonefrancis@day-gould.net",
     "subscription_date": "2021-11-19",
-    "website": "https://sweeney.info/"
+    "website": "https://sweeney.info/",
+    "salary": 105000
   },
   {
     "customer_id": "a7d984ab-6f2a-4cec-95a7-db841f17f8db",
@@ -11099,7 +11952,8 @@ export const customersData = [
     "phone_2": "001-929-414-0403x44623",
     "email": "fstout@mendoza.info",
     "subscription_date": "2021-09-01",
-    "website": "https://www.whitaker.com/"
+    "website": "https://www.whitaker.com/",
+    "salary": 118000
   },
   {
     "customer_id": "8943d966-ceaf-42b5-969d-83c0a488ed32",
@@ -11112,7 +11966,8 @@ export const customersData = [
     "phone_2": "424-647-0366",
     "email": "bmontes@sanford.net",
     "subscription_date": "2021-02-21",
-    "website": "https://walter.org/"
+    "website": "https://walter.org/",
+    "salary": 109000
   },
   {
     "customer_id": "b3981699-d64a-46a0-8868-674410c3c43f",
@@ -11125,7 +11980,8 @@ export const customersData = [
     "phone_2": "360.695.8361x95070",
     "email": "rpotts@tanner-bartlett.com",
     "subscription_date": "2021-06-06",
-    "website": "http://howell-mccall.biz/"
+    "website": "http://howell-mccall.biz/",
+    "salary": 149000
   },
   {
     "customer_id": "fcec6be9-d216-4641-99ba-5b9f16dcb2e8",
@@ -11138,7 +11994,8 @@ export const customersData = [
     "phone_2": "(152)045-1794",
     "email": "nsutton@mason.com",
     "subscription_date": "2021-06-08",
-    "website": "http://www.mcclain.com/"
+    "website": "http://www.mcclain.com/",
+    "salary": 149000
   },
   {
     "customer_id": "0695ec1d-2895-4e14-9a68-1c6b7733a7e5",
@@ -11151,7 +12008,8 @@ export const customersData = [
     "phone_2": "723.472.7857",
     "email": "perrydorothy@hurley.com",
     "subscription_date": "2022-05-13",
-    "website": "https://mosley.net/"
+    "website": "https://mosley.net/",
+    "salary": 67000
   },
   {
     "customer_id": "1005a077-88d5-48bb-967e-c7a9b3a34c21",
@@ -11164,7 +12022,8 @@ export const customersData = [
     "phone_2": "301.579.7719x009",
     "email": "marvinallen@hayden.com",
     "subscription_date": "2020-09-01",
-    "website": "https://www.sanford.com/"
+    "website": "https://www.sanford.com/",
+    "salary": 62000
   },
   {
     "customer_id": "73ffa9db-2e6c-4398-829d-c61a4f1fb064",
@@ -11177,7 +12036,8 @@ export const customersData = [
     "phone_2": "219-698-3238",
     "email": "tabithapalmer@kim-mcdowell.info",
     "subscription_date": "2022-04-21",
-    "website": "https://velez.org/"
+    "website": "https://velez.org/",
+    "salary": 119000
   },
   {
     "customer_id": "acfec0fb-91a2-408d-b8e2-52726016ef70",
@@ -11190,7 +12050,8 @@ export const customersData = [
     "phone_2": "+1-508-910-0111",
     "email": "donaldsonbelinda@zimmerman.biz",
     "subscription_date": "2020-12-05",
-    "website": "http://www.wise-holt.com/"
+    "website": "http://www.wise-holt.com/",
+    "salary": 142000
   },
   {
     "customer_id": "31b1c1d2-0b74-4bd9-b458-92e1d3d556d4",
@@ -11203,7 +12064,8 @@ export const customersData = [
     "phone_2": "001-152-078-0019x199",
     "email": "kaufmanaaron@estrada.com",
     "subscription_date": "2022-01-07",
-    "website": "https://fritz.com/"
+    "website": "https://fritz.com/",
+    "salary": 31000
   },
   {
     "customer_id": "af9bb6be-f8cb-4f8a-b057-05d3f10ab1ad",
@@ -11216,7 +12078,8 @@ export const customersData = [
     "phone_2": "+1-302-474-7512x1255",
     "email": "griffithbeth@short.com",
     "subscription_date": "2020-03-14",
-    "website": "https://higgins-frazier.biz/"
+    "website": "https://higgins-frazier.biz/",
+    "salary": 59000
   },
   {
     "customer_id": "5e656208-8f70-4f49-94d7-934b41574736",
@@ -11229,7 +12092,8 @@ export const customersData = [
     "phone_2": "(756)670-9552x794",
     "email": "aprilwilliams@hutchinson.com",
     "subscription_date": "2020-01-22",
-    "website": "http://www.harper.com/"
+    "website": "http://www.harper.com/",
+    "salary": 122000
   },
   {
     "customer_id": "063ca87c-49df-46b5-85b5-5edd486503cc",
@@ -11242,7 +12106,8 @@ export const customersData = [
     "phone_2": "001-461-622-2995x74489",
     "email": "sandra79@young-cowan.biz",
     "subscription_date": "2021-07-31",
-    "website": "http://roman-zimmerman.com/"
+    "website": "http://roman-zimmerman.com/",
+    "salary": 108000
   },
   {
     "customer_id": "8c02dbf8-7565-44c4-8d28-b26050d36085",
@@ -11255,7 +12120,8 @@ export const customersData = [
     "phone_2": "708-167-4206x1654",
     "email": "franksilva@huffman.com",
     "subscription_date": "2020-11-02",
-    "website": "http://carney.org/"
+    "website": "http://carney.org/",
+    "salary": 135000
   },
   {
     "customer_id": "082c8808-191c-4827-b9ae-36db31b62eb4",
@@ -11268,7 +12134,8 @@ export const customersData = [
     "phone_2": "(550)234-2334x32044",
     "email": "derrickstephens@pennington.com",
     "subscription_date": "2021-09-27",
-    "website": "http://barrera.com/"
+    "website": "http://barrera.com/",
+    "salary": 156000
   },
   {
     "customer_id": "aa098bbb-505e-4942-82ce-7d0b394c5377",
@@ -11281,7 +12148,8 @@ export const customersData = [
     "phone_2": "001-069-159-4387",
     "email": "kellioneill@holmes.org",
     "subscription_date": "2022-05-19",
-    "website": "http://browning.com/"
+    "website": "http://browning.com/",
+    "salary": 175000
   },
   {
     "customer_id": "cd5b010f-c51d-40c5-abfb-866f6e8891e6",
@@ -11294,7 +12162,8 @@ export const customersData = [
     "phone_2": "001-134-540-2759",
     "email": "eguzman@schmidt.com",
     "subscription_date": "2020-04-15",
-    "website": "http://aguilar.org/"
+    "website": "http://aguilar.org/",
+    "salary": 176000
   },
   {
     "customer_id": "b9559941-4dc4-4fbf-9ff1-695f5b628ed0",
@@ -11307,7 +12176,8 @@ export const customersData = [
     "phone_2": "904.007.3809",
     "email": "kelleyangel@mayo.net",
     "subscription_date": "2021-01-14",
-    "website": "http://www.espinoza-medina.info/"
+    "website": "http://www.espinoza-medina.info/",
+    "salary": 38000
   },
   {
     "customer_id": "ba1e33f5-460a-4cc6-a34e-be7c63b97959",
@@ -11320,7 +12190,8 @@ export const customersData = [
     "phone_2": 6264448420,
     "email": "latasha60@terry-pitts.com",
     "subscription_date": "2021-07-21",
-    "website": "http://www.maldonado-maynard.com/"
+    "website": "http://www.maldonado-maynard.com/",
+    "salary": 130000
   },
   {
     "customer_id": "78ea69dc-f390-4bcc-8ebc-65baeb47a2db",
@@ -11333,7 +12204,8 @@ export const customersData = [
     "phone_2": 6868436179,
     "email": "xavier21@delgado.com",
     "subscription_date": "2021-09-07",
-    "website": "https://www.garrison-velasquez.info/"
+    "website": "https://www.garrison-velasquez.info/",
+    "salary": 74000
   },
   {
     "customer_id": "68d4c6c9-7287-454d-8d12-60dafe17c55d",
@@ -11346,7 +12218,8 @@ export const customersData = [
     "phone_2": "339.991.0646x60184",
     "email": "gkerr@liu.com",
     "subscription_date": "2022-03-16",
-    "website": "http://moss.info/"
+    "website": "http://moss.info/",
+    "salary": 30000
   },
   {
     "customer_id": "cec74292-0564-4b04-b8f9-be867457ce83",
@@ -11359,7 +12232,8 @@ export const customersData = [
     "phone_2": "023-186-3631",
     "email": "waynebooth@gamble.com",
     "subscription_date": "2021-08-13",
-    "website": "https://rich.info/"
+    "website": "https://rich.info/",
+    "salary": 41000
   },
   {
     "customer_id": "fd8efa6c-8811-42c2-b581-543ab6cf41f4",
@@ -11372,7 +12246,8 @@ export const customersData = [
     "phone_2": "166-734-9073x89504",
     "email": "munozedgar@horn-holder.biz",
     "subscription_date": "2020-12-05",
-    "website": "http://greer.com/"
+    "website": "http://greer.com/",
+    "salary": 168000
   },
   {
     "customer_id": "65db46eb-d78b-4273-aa73-57770194d649",
@@ -11385,7 +12260,8 @@ export const customersData = [
     "phone_2": "(795)777-9853",
     "email": "damonlara@aguirre-arellano.net",
     "subscription_date": "2021-04-18",
-    "website": "http://www.newman.com/"
+    "website": "http://www.newman.com/",
+    "salary": 163000
   },
   {
     "customer_id": "b7de3581-bbe5-410c-881d-dc2a0f4414f8",
@@ -11398,7 +12274,8 @@ export const customersData = [
     "phone_2": "001-601-607-1249",
     "email": "dan44@pham.org",
     "subscription_date": "2020-08-19",
-    "website": "https://www.santos-crane.com/"
+    "website": "https://www.santos-crane.com/",
+    "salary": 115000
   },
   {
     "customer_id": "ba7f4634-344c-4c5b-8ba8-b3b09b441546",
@@ -11411,7 +12288,8 @@ export const customersData = [
     "phone_2": "001-136-428-9838x026",
     "email": "gmcguire@sanders.com",
     "subscription_date": "2021-05-06",
-    "website": "https://www.savage-whitehead.com/"
+    "website": "https://www.savage-whitehead.com/",
+    "salary": 83000
   },
   {
     "customer_id": "4e675775-d248-4ad7-a8b7-301323a4a089",
@@ -11424,7 +12302,8 @@ export const customersData = [
     "phone_2": "001-929-555-0755x5038",
     "email": "wyatt12@simpson-davila.com",
     "subscription_date": "2021-12-05",
-    "website": "https://www.williams-santos.com/"
+    "website": "https://www.williams-santos.com/",
+    "salary": 174000
   },
   {
     "customer_id": "96e1140e-db7b-49cf-be4c-7580b909912a",
@@ -11437,7 +12316,8 @@ export const customersData = [
     "phone_2": "(296)478-7126",
     "email": "emma33@bridges-sutton.biz",
     "subscription_date": "2021-11-13",
-    "website": "http://sanford.com/"
+    "website": "http://sanford.com/",
+    "salary": 68000
   },
   {
     "customer_id": "8b68effa-363e-4c28-bac3-413f6fa19bdd",
@@ -11450,7 +12330,8 @@ export const customersData = [
     "phone_2": 4971559794,
     "email": "marilynlogan@byrd.info",
     "subscription_date": "2020-07-22",
-    "website": "http://www.trujillo-larson.biz/"
+    "website": "http://www.trujillo-larson.biz/",
+    "salary": 74000
   },
   {
     "customer_id": "e1465925-4d77-4472-abc8-ea77f4badbf6",
@@ -11463,7 +12344,8 @@ export const customersData = [
     "phone_2": "179.503.1124",
     "email": "reynoldscory@mathews.com",
     "subscription_date": "2021-07-09",
-    "website": "https://www.boone-molina.com/"
+    "website": "https://www.boone-molina.com/",
+    "salary": 137000
   },
   {
     "customer_id": "8ea97148-c7b1-4b57-b22a-8c80cc1b7343",
@@ -11476,7 +12358,8 @@ export const customersData = [
     "phone_2": "+1-526-073-2380",
     "email": "haleyduarte@austin-hawkins.org",
     "subscription_date": "2021-07-31",
-    "website": "https://www.whitney.net/"
+    "website": "https://www.whitney.net/",
+    "salary": 67000
   },
   {
     "customer_id": "be04166b-51c9-47b5-8b27-715721795fee",
@@ -11489,7 +12372,8 @@ export const customersData = [
     "phone_2": "001-093-289-5241",
     "email": "dwiggins@montes-hawkins.org",
     "subscription_date": "2020-09-17",
-    "website": "https://www.ferguson.com/"
+    "website": "https://www.ferguson.com/",
+    "salary": 86000
   },
   {
     "customer_id": "b70dcc6f-d03b-4751-9d14-7bb1e6383d3f",
@@ -11502,7 +12386,8 @@ export const customersData = [
     "phone_2": "505.368.4944",
     "email": "biancagalvan@webb.com",
     "subscription_date": "2020-12-21",
-    "website": "https://nicholson.com/"
+    "website": "https://nicholson.com/",
+    "salary": 149000
   },
   {
     "customer_id": "363a0a8d-a1c8-440c-92c9-bedb66e1771e",
@@ -11515,7 +12400,8 @@ export const customersData = [
     "phone_2": "(538)389-0863x6072",
     "email": "rachel55@sharp.com",
     "subscription_date": "2021-03-25",
-    "website": "https://mckay.com/"
+    "website": "https://mckay.com/",
+    "salary": 97000
   },
   {
     "customer_id": "20f802d8-4bcf-472a-b688-6f1246a5ae18",
@@ -11528,7 +12414,8 @@ export const customersData = [
     "phone_2": "650-853-9083x9042",
     "email": "shawalexandra@mccoy.com",
     "subscription_date": "2020-02-27",
-    "website": "https://nichols.com/"
+    "website": "https://nichols.com/",
+    "salary": 147000
   },
   {
     "customer_id": "ad64df9f-cebb-4974-bbd7-9cbdcd7d6109",
@@ -11541,7 +12428,8 @@ export const customersData = [
     "phone_2": "001-578-980-0996x65304",
     "email": "irogers@kerr.com",
     "subscription_date": "2020-10-01",
-    "website": "http://dyer.com/"
+    "website": "http://dyer.com/",
+    "salary": 124000
   },
   {
     "customer_id": "1c569e7e-f6ea-46ae-b20a-77052486dabf",
@@ -11554,7 +12442,8 @@ export const customersData = [
     "phone_2": "015.147.4090",
     "email": "kayla10@daniel-figueroa.org",
     "subscription_date": "2022-04-17",
-    "website": "https://petty-best.com/"
+    "website": "https://petty-best.com/",
+    "salary": 62000
   },
   {
     "customer_id": "cd656df1-f119-4c60-956c-df374e87526c",
@@ -11567,7 +12456,8 @@ export const customersData = [
     "phone_2": "+1-778-641-3911x8865",
     "email": "petergutierrez@le.com",
     "subscription_date": "2022-02-23",
-    "website": "https://calhoun.org/"
+    "website": "https://calhoun.org/",
+    "salary": 56000
   },
   {
     "customer_id": "aaa2ec71-5c8a-4857-8079-1f5edd9da7d5",
@@ -11580,7 +12470,8 @@ export const customersData = [
     "phone_2": "422-002-6903x7185",
     "email": "pmooney@fox.com",
     "subscription_date": "2020-11-03",
-    "website": "https://www.gilbert.com/"
+    "website": "https://www.gilbert.com/",
+    "salary": 171000
   },
   {
     "customer_id": "170b9468-27a4-4bd0-8b03-acf895d2ea2f",
@@ -11593,7 +12484,8 @@ export const customersData = [
     "phone_2": "925.655.6555",
     "email": "nicolas74@love.com",
     "subscription_date": "2021-07-27",
-    "website": "https://www.bright-wang.info/"
+    "website": "https://www.bright-wang.info/",
+    "salary": 95000
   },
   {
     "customer_id": "9ca0d3a2-ac58-4657-be10-2189e0a8fe2c",
@@ -11606,7 +12498,8 @@ export const customersData = [
     "phone_2": "001-380-292-6131",
     "email": "troymontgomery@lam.info",
     "subscription_date": "2020-07-31",
-    "website": "https://jefferson.com/"
+    "website": "https://jefferson.com/",
+    "salary": 133000
   },
   {
     "customer_id": "4747db55-2c44-4bb6-a6ba-68476a62ebdd",
@@ -11619,7 +12512,8 @@ export const customersData = [
     "phone_2": "+1-171-879-7178x97467",
     "email": "ruizkatie@richards.com",
     "subscription_date": "2020-11-05",
-    "website": "http://www.jacobs-brady.com/"
+    "website": "http://www.jacobs-brady.com/",
+    "salary": 171000
   },
   {
     "customer_id": "975e9a16-85e2-4f8b-8eb2-ad623f84caf1",
@@ -11632,7 +12526,8 @@ export const customersData = [
     "phone_2": "(612)494-5760x018",
     "email": "evelynlove@bradley.com",
     "subscription_date": "2020-04-26",
-    "website": "http://www.bean.org/"
+    "website": "http://www.bean.org/",
+    "salary": 88000
   },
   {
     "customer_id": "a154866f-7426-44c8-b1a2-6d47f77fe434",
@@ -11645,7 +12540,8 @@ export const customersData = [
     "phone_2": "001-755-149-7086x67582",
     "email": "hodgeschelsey@saunders.com",
     "subscription_date": "2020-03-04",
-    "website": "http://figueroa.net/"
+    "website": "http://figueroa.net/",
+    "salary": 82000
   },
   {
     "customer_id": "bb4aa6e3-53b2-477a-a28f-02928a58bb1e",
@@ -11658,7 +12554,8 @@ export const customersData = [
     "phone_2": "977-732-1298x262",
     "email": "kristie15@ritter.com",
     "subscription_date": "2021-12-24",
-    "website": "https://quinn-dunn.org/"
+    "website": "https://quinn-dunn.org/",
+    "salary": 55000
   },
   {
     "customer_id": "49879b05-1aa7-4810-a5e2-6b81a6dfdca6",
@@ -11671,7 +12568,8 @@ export const customersData = [
     "phone_2": "190-608-5830",
     "email": "suarezloretta@ware.info",
     "subscription_date": "2020-01-27",
-    "website": "http://www.pennington.com/"
+    "website": "http://www.pennington.com/",
+    "salary": 163000
   },
   {
     "customer_id": "1acb2dd9-d8c4-46b5-96b3-661f40a91924",
@@ -11684,7 +12582,8 @@ export const customersData = [
     "phone_2": "431-667-3175x4587",
     "email": "dan05@saunders.com",
     "subscription_date": "2020-09-02",
-    "website": "https://bender.com/"
+    "website": "https://bender.com/",
+    "salary": 132000
   },
   {
     "customer_id": "ca8c74d3-645d-424f-8f44-b862c58d7c29",
@@ -11697,7 +12596,8 @@ export const customersData = [
     "phone_2": "001-766-640-5050x40814",
     "email": "herbertgoodwin@hardy.com",
     "subscription_date": "2020-10-08",
-    "website": "http://yu.com/"
+    "website": "http://yu.com/",
+    "salary": 31000
   },
   {
     "customer_id": "3976e8c8-3542-4e82-a0c0-1260e5037273",
@@ -11710,7 +12610,8 @@ export const customersData = [
     "phone_2": "+1-335-842-1273x516",
     "email": "fheath@caldwell.info",
     "subscription_date": "2020-05-22",
-    "website": "http://bell.com/"
+    "website": "http://bell.com/",
+    "salary": 82000
   },
   {
     "customer_id": "f2b031c9-1c66-47bd-a721-3021e8bc9336",
@@ -11723,7 +12624,8 @@ export const customersData = [
     "phone_2": "353.085.3165",
     "email": "westterrance@castaneda-levine.com",
     "subscription_date": "2022-02-07",
-    "website": "http://www.saunders-robles.org/"
+    "website": "http://www.saunders-robles.org/",
+    "salary": 117000
   },
   {
     "customer_id": "c0290291-7d51-43fc-a5aa-8c9ce31c34fc",
@@ -11736,7 +12638,8 @@ export const customersData = [
     "phone_2": "+1-100-637-7045x920",
     "email": "woodwardlori@cuevas-joyce.com",
     "subscription_date": "2020-03-30",
-    "website": "https://rollins.biz/"
+    "website": "https://rollins.biz/",
+    "salary": 77000
   },
   {
     "customer_id": "3f56184a-d626-4f74-827e-a2b452ad610b",
@@ -11749,7 +12652,8 @@ export const customersData = [
     "phone_2": "(086)856-8017x71582",
     "email": "jimmyherrera@lawrence.org",
     "subscription_date": "2022-04-11",
-    "website": "https://singleton.com/"
+    "website": "https://singleton.com/",
+    "salary": 70000
   },
   {
     "customer_id": "a6ed6088-2330-40ec-acd6-f79e88ecb3a4",
@@ -11762,7 +12666,8 @@ export const customersData = [
     "phone_2": "001-716-647-3307x1581",
     "email": "ncopeland@strickland-raymond.com",
     "subscription_date": "2022-01-29",
-    "website": "http://boyer.com/"
+    "website": "http://boyer.com/",
+    "salary": 137000
   },
   {
     "customer_id": "489ab1d7-2f01-4f4c-9bbd-638d4fc1955a",
@@ -11775,7 +12680,8 @@ export const customersData = [
     "phone_2": "+1-987-180-4412x62207",
     "email": "mcfarlandjordan@gonzalez.com",
     "subscription_date": "2021-04-25",
-    "website": "http://lucas.com/"
+    "website": "http://lucas.com/",
+    "salary": 139000
   },
   {
     "customer_id": "cfbaff01-c346-48ee-9dbb-b31c6a26062e",
@@ -11788,7 +12694,8 @@ export const customersData = [
     "phone_2": "001-994-017-3421x1718",
     "email": "wcochran@fischer.info",
     "subscription_date": "2021-02-06",
-    "website": "https://marquez.com/"
+    "website": "https://marquez.com/",
+    "salary": 143000
   },
   {
     "customer_id": "a997380b-aa99-490a-a005-1c321ca12d80",
@@ -11801,7 +12708,8 @@ export const customersData = [
     "phone_2": "(818)649-1738",
     "email": "joseph71@garner.com",
     "subscription_date": "2020-10-08",
-    "website": "https://carney.org/"
+    "website": "https://carney.org/",
+    "salary": 91000
   },
   {
     "customer_id": "851103a3-d363-436f-8acb-d02018c6f675",
@@ -11814,7 +12722,8 @@ export const customersData = [
     "phone_2": "898.499.9961x41059",
     "email": "blankenshiprobert@guerrero.com",
     "subscription_date": "2021-10-21",
-    "website": "http://henson.net/"
+    "website": "http://henson.net/",
+    "salary": 89000
   },
   {
     "customer_id": "c9ea8d84-02ad-4db5-a725-bb077ab5be19",
@@ -11827,7 +12736,8 @@ export const customersData = [
     "phone_2": "639-648-8893x4293",
     "email": "ericaharding@hahn.com",
     "subscription_date": "2021-02-08",
-    "website": "https://fletcher.info/"
+    "website": "https://fletcher.info/",
+    "salary": 112000
   },
   {
     "customer_id": "0e0797d4-3f3e-40ec-b55a-7213e03ff472",
@@ -11840,7 +12750,8 @@ export const customersData = [
     "phone_2": "(182)702-6569x687",
     "email": "whitneylevi@valencia-osborne.com",
     "subscription_date": "2022-03-15",
-    "website": "http://hopkins.info/"
+    "website": "http://hopkins.info/",
+    "salary": 67000
   },
   {
     "customer_id": "5d43011c-9fa3-4915-91ed-09f16f196397",
@@ -11853,7 +12764,8 @@ export const customersData = [
     "phone_2": "532.637.0337x81433",
     "email": "fergusonkelsey@pennington.biz",
     "subscription_date": "2021-07-13",
-    "website": "https://www.bailey.com/"
+    "website": "https://www.bailey.com/",
+    "salary": 104000
   },
   {
     "customer_id": "2528b77d-06d1-471f-a762-6589f3d3f4e6",
@@ -11866,7 +12778,8 @@ export const customersData = [
     "phone_2": "079-903-5907",
     "email": "davidbrooks@rasmussen-mendez.net",
     "subscription_date": "2020-01-18",
-    "website": "http://www.vasquez-daniels.info/"
+    "website": "http://www.vasquez-daniels.info/",
+    "salary": 49000
   },
   {
     "customer_id": "34046d70-b135-4b69-9018-335f73300320",
@@ -11879,7 +12792,8 @@ export const customersData = [
     "phone_2": "(071)348-0203",
     "email": "theodore60@rangel.info",
     "subscription_date": "2021-08-21",
-    "website": "http://pittman-yoder.net/"
+    "website": "http://pittman-yoder.net/",
+    "salary": 43000
   },
   {
     "customer_id": "9ee871c6-06f7-4d33-9305-6752774429d1",
@@ -11892,7 +12806,8 @@ export const customersData = [
     "phone_2": "283.184.3876",
     "email": "wbooker@mcgrath-duarte.com",
     "subscription_date": "2021-01-17",
-    "website": "https://www.dodson.com/"
+    "website": "https://www.dodson.com/",
+    "salary": 139000
   },
   {
     "customer_id": "1eb6011e-aac1-4b96-a3be-850908a19ed1",
@@ -11905,7 +12820,8 @@ export const customersData = [
     "phone_2": "001-623-169-5462x316",
     "email": "austinlevine@hurley.biz",
     "subscription_date": "2022-04-29",
-    "website": "http://lozano.info/"
+    "website": "http://lozano.info/",
+    "salary": 146000
   },
   {
     "customer_id": "ba7ddb36-a084-44d2-9509-0bc3aaeb90eb",
@@ -11918,7 +12834,8 @@ export const customersData = [
     "phone_2": "115.522.4801",
     "email": "stevecherry@hess.org",
     "subscription_date": "2020-09-19",
-    "website": "http://harris.org/"
+    "website": "http://harris.org/",
+    "salary": 35000
   },
   {
     "customer_id": "1cb991e2-13c5-4261-bfd9-a85b5699a8b7",
@@ -11931,7 +12848,8 @@ export const customersData = [
     "phone_2": "001-526-610-7140",
     "email": "loretta69@steele.com",
     "subscription_date": "2020-12-02",
-    "website": "https://www.hoover-conway.com/"
+    "website": "https://www.hoover-conway.com/",
+    "salary": 178000
   },
   {
     "customer_id": "c5cd593d-8c00-4d11-9279-cae33964ff06",
@@ -11944,7 +12862,8 @@ export const customersData = [
     "phone_2": "270.270.2215x9128",
     "email": "huffmanmathew@knox.com",
     "subscription_date": "2022-04-20",
-    "website": "http://shah-fitzpatrick.biz/"
+    "website": "http://shah-fitzpatrick.biz/",
+    "salary": 131000
   },
   {
     "customer_id": "f62648f2-07f7-4449-b06b-325936152737",
@@ -11957,7 +12876,8 @@ export const customersData = [
     "phone_2": "+1-655-143-8580x392",
     "email": "colemandarius@richards-potts.net",
     "subscription_date": "2021-10-14",
-    "website": "https://www.allison.org/"
+    "website": "https://www.allison.org/",
+    "salary": 90000
   },
   {
     "customer_id": "e6c7a218-aa62-47d6-92ef-e25357215117",
@@ -11970,7 +12890,8 @@ export const customersData = [
     "phone_2": "317.424.9418x171",
     "email": "keith44@mccarthy.com",
     "subscription_date": "2021-03-30",
-    "website": "https://lowery-reilly.com/"
+    "website": "https://lowery-reilly.com/",
+    "salary": 30000
   },
   {
     "customer_id": "a1f57538-2d0b-46e0-8e5d-4e40216c5f84",
@@ -11983,7 +12904,8 @@ export const customersData = [
     "phone_2": "757.579.0334x346",
     "email": "joysaunders@wiley.com",
     "subscription_date": "2022-05-02",
-    "website": "http://www.bonilla-forbes.com/"
+    "website": "http://www.bonilla-forbes.com/",
+    "salary": 156000
   },
   {
     "customer_id": "7aaa0a2e-018b-43ed-959b-b55ef6e9c4cb",
@@ -11996,7 +12918,8 @@ export const customersData = [
     "phone_2": "(372)772-9987x37453",
     "email": "tyleraustin@mcfarland.com",
     "subscription_date": "2020-11-23",
-    "website": "http://www.harmon.com/"
+    "website": "http://www.harmon.com/",
+    "salary": 137000
   },
   {
     "customer_id": "38f53c2c-7125-4894-ac12-537b799c5b85",
@@ -12009,7 +12932,8 @@ export const customersData = [
     "phone_2": "(671)481-9510",
     "email": "pollardlouis@dean.net",
     "subscription_date": "2021-04-21",
-    "website": "http://mathews-salas.com/"
+    "website": "http://mathews-salas.com/",
+    "salary": 157000
   },
   {
     "customer_id": "784637b2-37d2-430f-8794-038655debc27",
@@ -12022,7 +12946,8 @@ export const customersData = [
     "phone_2": "520.107.3859x63291",
     "email": "hicksjocelyn@sutton-orr.com",
     "subscription_date": "2021-04-24",
-    "website": "http://www.love-benton.com/"
+    "website": "http://www.love-benton.com/",
+    "salary": 55000
   },
   {
     "customer_id": "c21cd010-f18d-4f14-9b59-e52c9f733783",
@@ -12035,7 +12960,8 @@ export const customersData = [
     "phone_2": "(315)267-2516",
     "email": "tsteele@rasmussen.net",
     "subscription_date": "2020-12-03",
-    "website": "https://www.yang.com/"
+    "website": "https://www.yang.com/",
+    "salary": 106000
   },
   {
     "customer_id": "2c20a43e-6f24-4f7e-8717-df85a0a59d94",
@@ -12048,7 +12974,8 @@ export const customersData = [
     "phone_2": "001-919-934-0661x669",
     "email": "juliamatthews@vance.net",
     "subscription_date": "2020-12-22",
-    "website": "https://livingston.org/"
+    "website": "https://livingston.org/",
+    "salary": 132000
   },
   {
     "customer_id": "e1c60869-55cb-4141-8aa7-697defe8a204",
@@ -12061,7 +12988,8 @@ export const customersData = [
     "phone_2": "(826)538-8568x700",
     "email": "kbell@logan.info",
     "subscription_date": "2020-02-04",
-    "website": "https://bradley.com/"
+    "website": "https://bradley.com/",
+    "salary": 88000
   },
   {
     "customer_id": "d17f1283-5aa9-465e-bf66-5cf1ab1d6bfc",
@@ -12074,7 +13002,8 @@ export const customersData = [
     "phone_2": "001-359-859-5831x18806",
     "email": "icurtis@vega-frazier.com",
     "subscription_date": "2021-03-14",
-    "website": "http://cooley.org/"
+    "website": "http://cooley.org/",
+    "salary": 179000
   },
   {
     "customer_id": "6233ac19-435d-4b02-a30c-ac5143de6dd2",
@@ -12087,7 +13016,8 @@ export const customersData = [
     "phone_2": "(683)312-6728x3250",
     "email": "dodsoncraig@hunt.com",
     "subscription_date": "2020-05-18",
-    "website": "http://kline-caldwell.com/"
+    "website": "http://kline-caldwell.com/",
+    "salary": 156000
   },
   {
     "customer_id": "0efd8082-2e7e-4a52-80cb-117a36449a31",
@@ -12100,7 +13030,8 @@ export const customersData = [
     "phone_2": "(492)760-6351x216",
     "email": "kristopher21@vasquez-torres.org",
     "subscription_date": "2021-12-19",
-    "website": "https://brandt.com/"
+    "website": "https://brandt.com/",
+    "salary": 136000
   },
   {
     "customer_id": "4eb6a50e-dca8-4a48-8eee-b4d948b04e1c",
@@ -12113,7 +13044,8 @@ export const customersData = [
     "phone_2": "001-809-278-4409x0455",
     "email": "yhamilton@vincent.net",
     "subscription_date": "2020-04-07",
-    "website": "https://harmon-burton.com/"
+    "website": "https://harmon-burton.com/",
+    "salary": 47000
   },
   {
     "customer_id": "6a325beb-a51d-49e7-bb19-a41829bebf43",
@@ -12126,7 +13058,8 @@ export const customersData = [
     "phone_2": "601-286-7115x26421",
     "email": "coreybuckley@yang.com",
     "subscription_date": "2020-11-28",
-    "website": "https://www.carson-dennis.org/"
+    "website": "https://www.carson-dennis.org/",
+    "salary": 137000
   },
   {
     "customer_id": "0611c8b1-14a3-44a4-934b-404f70149086",
@@ -12139,7 +13072,8 @@ export const customersData = [
     "phone_2": "001-602-904-3855x867",
     "email": "sherri81@phelps.org",
     "subscription_date": "2021-05-06",
-    "website": "https://kent-colon.biz/"
+    "website": "https://kent-colon.biz/",
+    "salary": 142000
   },
   {
     "customer_id": "e959af1f-180e-43e1-858c-b500935a1c17",
@@ -12152,7 +13086,8 @@ export const customersData = [
     "phone_2": 7907734670,
     "email": "marvinfleming@hurley-castaneda.org",
     "subscription_date": "2021-12-29",
-    "website": "http://www.lynn.com/"
+    "website": "http://www.lynn.com/",
+    "salary": 88000
   },
   {
     "customer_id": "9143d9f8-81cb-410e-91cb-1ed4a6572357",
@@ -12165,7 +13100,8 @@ export const customersData = [
     "phone_2": 1168814112,
     "email": "gloriacastaneda@patterson.biz",
     "subscription_date": "2021-08-02",
-    "website": "https://www.morton-paul.com/"
+    "website": "https://www.morton-paul.com/",
+    "salary": 112000
   },
   {
     "customer_id": "a4e34c18-ce0a-424e-a7d7-d34428894fd9",
@@ -12178,7 +13114,8 @@ export const customersData = [
     "phone_2": 6840327900,
     "email": "carsonariana@valencia.com",
     "subscription_date": "2021-09-23",
-    "website": "http://fox-vaughan.net/"
+    "website": "http://fox-vaughan.net/",
+    "salary": 36000
   },
   {
     "customer_id": "00bdcfb1-6aee-4894-9b6b-f259528c10c5",
@@ -12191,7 +13128,8 @@ export const customersData = [
     "phone_2": "+1-635-099-1194x62431",
     "email": "shawn73@russo-arellano.com",
     "subscription_date": "2020-08-25",
-    "website": "https://farley.com/"
+    "website": "https://farley.com/",
+    "salary": 119000
   },
   {
     "customer_id": "29becc30-b4c3-48b1-88de-13f1c83e9f73",
@@ -12204,7 +13142,8 @@ export const customersData = [
     "phone_2": "409-997-9075x95180",
     "email": "barralejandro@chaney-turner.biz",
     "subscription_date": "2020-05-26",
-    "website": "http://www.bryant.com/"
+    "website": "http://www.bryant.com/",
+    "salary": 105000
   },
   {
     "customer_id": "3f558ae8-1339-410d-8c6b-5fb29f8b5be6",
@@ -12217,7 +13156,8 @@ export const customersData = [
     "phone_2": 6474731834,
     "email": "juarezreginald@fuentes-farley.net",
     "subscription_date": "2020-07-27",
-    "website": "https://arellano.biz/"
+    "website": "https://arellano.biz/",
+    "salary": 166000
   },
   {
     "customer_id": "bd600e04-07ee-4fdb-ae9d-c9a621d7bae7",
@@ -12230,7 +13170,8 @@ export const customersData = [
     "phone_2": "724.682.0941x09575",
     "email": "mkhan@jenkins.net",
     "subscription_date": "2020-03-20",
-    "website": "https://richmond-nolan.net/"
+    "website": "https://richmond-nolan.net/",
+    "salary": 58000
   },
   {
     "customer_id": "b8793858-f1a1-4b79-bf58-85e3bbaeefdb",
@@ -12243,7 +13184,8 @@ export const customersData = [
     "phone_2": "001-336-875-4222x6517",
     "email": "glenda79@kline.com",
     "subscription_date": "2021-04-01",
-    "website": "http://www.jensen.biz/"
+    "website": "http://www.jensen.biz/",
+    "salary": 59000
   },
   {
     "customer_id": "252a0d44-ed0d-44af-aa0b-6102fe889a0e",
@@ -12256,7 +13198,8 @@ export const customersData = [
     "phone_2": "060.037.1253x83749",
     "email": "ublake@valdez-rocha.biz",
     "subscription_date": "2021-07-01",
-    "website": "http://cline-green.info/"
+    "website": "http://cline-green.info/",
+    "salary": 82000
   },
   {
     "customer_id": "5a43a929-0669-4035-bb5f-27b8d29fdb32",
@@ -12269,7 +13212,8 @@ export const customersData = [
     "phone_2": "(976)496-8947x40900",
     "email": "zesparza@cantrell-moran.info",
     "subscription_date": "2021-08-01",
-    "website": "http://www.price-gross.net/"
+    "website": "http://www.price-gross.net/",
+    "salary": 72000
   },
   {
     "customer_id": "dab6cb0e-2142-45dd-830d-0ac3bca07d88",
@@ -12282,7 +13226,8 @@ export const customersData = [
     "phone_2": "001-725-130-5303x808",
     "email": "joshuaguerrero@wilcox-carey.org",
     "subscription_date": "2020-09-30",
-    "website": "https://davidson-rosario.org/"
+    "website": "https://davidson-rosario.org/",
+    "salary": 115000
   },
   {
     "customer_id": "566af69c-aa62-4831-bb0e-f4179b83945c",
@@ -12295,7 +13240,8 @@ export const customersData = [
     "phone_2": "(466)049-4615x2671",
     "email": "jonathanmontes@estes-moyer.com",
     "subscription_date": "2021-01-15",
-    "website": "https://blackburn.com/"
+    "website": "https://blackburn.com/",
+    "salary": 102000
   },
   {
     "customer_id": "953e4071-7b04-4b16-b89c-465ca418a222",
@@ -12308,7 +13254,8 @@ export const customersData = [
     "phone_2": "(525)942-0877x5154",
     "email": "bernarddenise@murillo.com",
     "subscription_date": "2022-01-06",
-    "website": "https://goodwin.net/"
+    "website": "https://goodwin.net/",
+    "salary": 61000
   },
   {
     "customer_id": "b0333a28-189e-48e0-9fdd-cd727711bbf4",
@@ -12321,7 +13268,8 @@ export const customersData = [
     "phone_2": "218.480.6717x76674",
     "email": "cbuck@hebert.info",
     "subscription_date": "2021-07-06",
-    "website": "https://green.net/"
+    "website": "https://green.net/",
+    "salary": 93000
   },
   {
     "customer_id": "a0543e69-8938-4ccf-b453-45f864af0e34",
@@ -12334,7 +13282,8 @@ export const customersData = [
     "phone_2": "+1-796-371-9705x9792",
     "email": "cainangie@jacobson.com",
     "subscription_date": "2021-12-04",
-    "website": "http://cortez-simon.info/"
+    "website": "http://cortez-simon.info/",
+    "salary": 147000
   },
   {
     "customer_id": "d3becae4-7854-4656-9c85-cc0417d854ab",
@@ -12347,7 +13296,8 @@ export const customersData = [
     "phone_2": "+1-428-292-7081",
     "email": "deleonalisha@cabrera.com",
     "subscription_date": "2021-08-29",
-    "website": "http://moss.net/"
+    "website": "http://moss.net/",
+    "salary": 33000
   },
   {
     "customer_id": "d57937dd-6583-4fed-91dc-abae8a2eb462",
@@ -12360,7 +13310,8 @@ export const customersData = [
     "phone_2": "(227)229-4674",
     "email": "walshsummer@rangel.com",
     "subscription_date": "2021-06-11",
-    "website": "http://fischer.com/"
+    "website": "http://fischer.com/",
+    "salary": 170000
   },
   {
     "customer_id": "b8b847e7-6d5d-44a0-8b1d-acf600fa02f6",
@@ -12373,7 +13324,8 @@ export const customersData = [
     "phone_2": "253.218.8719x668",
     "email": "stewartannette@irwin.com",
     "subscription_date": "2020-08-03",
-    "website": "http://blackburn.org/"
+    "website": "http://blackburn.org/",
+    "salary": 165000
   },
   {
     "customer_id": "d95d08f7-35ef-4cfc-9066-36ccb5088ade",
@@ -12386,7 +13338,8 @@ export const customersData = [
     "phone_2": "+1-365-247-4395",
     "email": "petersenrick@maynard-murillo.com",
     "subscription_date": "2021-10-23",
-    "website": "http://www.zamora.com/"
+    "website": "http://www.zamora.com/",
+    "salary": 80000
   },
   {
     "customer_id": "9457185f-47d0-4bbc-ae24-30dd8002c952",
@@ -12399,7 +13352,8 @@ export const customersData = [
     "phone_2": "(947)901-1996x1655",
     "email": "william55@fletcher.com",
     "subscription_date": "2021-10-31",
-    "website": "http://www.francis.com/"
+    "website": "http://www.francis.com/",
+    "salary": 114000
   },
   {
     "customer_id": "2a3f7d68-8e78-4f32-bdea-fa2c96dc321f",
@@ -12412,7 +13366,8 @@ export const customersData = [
     "phone_2": "001-950-374-1092",
     "email": "pattonxavier@bailey.com",
     "subscription_date": "2020-05-07",
-    "website": "https://www.garner-wheeler.biz/"
+    "website": "https://www.garner-wheeler.biz/",
+    "salary": 136000
   },
   {
     "customer_id": "683c683a-9840-4886-9989-a1387594cc7d",
@@ -12425,7 +13380,8 @@ export const customersData = [
     "phone_2": "159.730.6903",
     "email": "hurleyjocelyn@buchanan.com",
     "subscription_date": "2021-12-27",
-    "website": "https://www.ellis.com/"
+    "website": "https://www.ellis.com/",
+    "salary": 172000
   },
   {
     "customer_id": "6151085a-9f55-419b-a9dc-d5086f43822a",
@@ -12438,7 +13394,8 @@ export const customersData = [
     "phone_2": "565-392-2876x9641",
     "email": "nicholas04@fischer-duran.org",
     "subscription_date": "2022-04-23",
-    "website": "http://adkins.com/"
+    "website": "http://adkins.com/",
+    "salary": 70000
   },
   {
     "customer_id": "6774d83c-d1f6-46bd-91c6-d5d01cf2a485",
@@ -12451,7 +13408,8 @@ export const customersData = [
     "phone_2": "+1-972-298-5181x359",
     "email": "riversstacey@martinez.biz",
     "subscription_date": "2020-06-25",
-    "website": "https://www.montoya.org/"
+    "website": "https://www.montoya.org/",
+    "salary": 154000
   },
   {
     "customer_id": "6cab3515-1e57-4daa-9955-00c4291cdf8f",
@@ -12464,7 +13422,8 @@ export const customersData = [
     "phone_2": "570-460-4168x0792",
     "email": "austinpace@robbins.com",
     "subscription_date": "2022-05-23",
-    "website": "https://www.kelley.org/"
+    "website": "https://www.kelley.org/",
+    "salary": 132000
   },
   {
     "customer_id": "b6a63549-edc0-4173-9f95-0e3cc6a5fa40",
@@ -12477,7 +13436,8 @@ export const customersData = [
     "phone_2": "(984)898-3464",
     "email": "tommybaxter@reyes.com",
     "subscription_date": "2021-02-04",
-    "website": "https://www.wong.biz/"
+    "website": "https://www.wong.biz/",
+    "salary": 68000
   },
   {
     "customer_id": "461ceaef-a36d-4c47-9f81-c13f65fb2110",
@@ -12490,7 +13450,8 @@ export const customersData = [
     "phone_2": "+1-461-332-1556x16166",
     "email": "harroyo@alvarez.com",
     "subscription_date": "2020-06-16",
-    "website": "https://barron.com/"
+    "website": "https://barron.com/",
+    "salary": 108000
   },
   {
     "customer_id": "b3ae8e82-5dfd-427e-a0f9-3c7668a81c4b",
@@ -12503,7 +13464,8 @@ export const customersData = [
     "phone_2": "(149)940-0490x20473",
     "email": "ronniemcconnell@bruce-fischer.biz",
     "subscription_date": "2020-04-09",
-    "website": "https://www.mclaughlin.com/"
+    "website": "https://www.mclaughlin.com/",
+    "salary": 93000
   },
   {
     "customer_id": "cfb71ca2-c630-4ffe-88c2-55f2399fb417",
@@ -12516,7 +13478,8 @@ export const customersData = [
     "phone_2": "(519)456-3298x2960",
     "email": "franklinriggs@hardin-bruce.biz",
     "subscription_date": "2021-04-02",
-    "website": "http://bryan-hurley.com/"
+    "website": "http://bryan-hurley.com/",
+    "salary": 174000
   },
   {
     "customer_id": "61b6dbe7-3e2e-4088-8a41-749c407b0ae5",
@@ -12529,7 +13492,8 @@ export const customersData = [
     "phone_2": "739.760.9729x4658",
     "email": "reevesclaire@gilbert-curtis.com",
     "subscription_date": "2020-05-23",
-    "website": "http://beard-brock.com/"
+    "website": "http://beard-brock.com/",
+    "salary": 145000
   },
   {
     "customer_id": "d33efb94-a43f-4e8d-9a37-66cdcfec102c",
@@ -12542,7 +13506,8 @@ export const customersData = [
     "phone_2": "+1-683-103-7499",
     "email": "owensergio@blake-zuniga.com",
     "subscription_date": "2022-01-30",
-    "website": "https://frye.biz/"
+    "website": "https://frye.biz/",
+    "salary": 75000
   },
   {
     "customer_id": "0a441efa-6c39-46a0-b3cc-c828cd597a81",
@@ -12555,7 +13520,8 @@ export const customersData = [
     "phone_2": "(332)028-5365x535",
     "email": "oconnorkaitlyn@waller.com",
     "subscription_date": "2021-07-19",
-    "website": "https://www.juarez-hood.com/"
+    "website": "https://www.juarez-hood.com/",
+    "salary": 43000
   },
   {
     "customer_id": "73dfa317-8470-42e2-b524-cbf606e11206",
@@ -12568,7 +13534,8 @@ export const customersData = [
     "phone_2": "+1-432-169-9399",
     "email": "amandamurillo@cox.com",
     "subscription_date": "2021-11-28",
-    "website": "https://proctor.com/"
+    "website": "https://proctor.com/",
+    "salary": 117000
   },
   {
     "customer_id": "f5a461ed-80a4-4ff6-b68a-b2c123f188ba",
@@ -12581,7 +13548,8 @@ export const customersData = [
     "phone_2": "425-908-1576x296",
     "email": "psalas@sellers-kline.com",
     "subscription_date": "2020-10-23",
-    "website": "http://solomon.com/"
+    "website": "http://solomon.com/",
+    "salary": 38000
   },
   {
     "customer_id": "17898db9-eb1c-4bb9-b38b-b118a2298f7f",
@@ -12594,7 +13562,8 @@ export const customersData = [
     "phone_2": "(061)744-7333",
     "email": "brittneysloan@ruiz-osborne.com",
     "subscription_date": "2020-07-21",
-    "website": "http://brown-dean.com/"
+    "website": "http://brown-dean.com/",
+    "salary": 76000
   },
   {
     "customer_id": "f4bf60f2-7f99-45bb-a8bd-bff6a1fc9c61",
@@ -12607,7 +13576,8 @@ export const customersData = [
     "phone_2": 3531358936,
     "email": "kelly39@dunn.net",
     "subscription_date": "2021-07-18",
-    "website": "http://collins-deleon.com/"
+    "website": "http://collins-deleon.com/",
+    "salary": 52000
   },
   {
     "customer_id": "a9934630-da1d-4a3a-b2bd-280d46fec05f",
@@ -12620,7 +13590,8 @@ export const customersData = [
     "phone_2": "661-917-3160x921",
     "email": "jodifry@hancock.net",
     "subscription_date": "2020-06-27",
-    "website": "https://www.gill.net/"
+    "website": "https://www.gill.net/",
+    "salary": 137000
   },
   {
     "customer_id": "72a1b6a5-7a2c-443e-b2bd-c56b57b49685",
@@ -12633,7 +13604,8 @@ export const customersData = [
     "phone_2": "001-615-826-5228x8629",
     "email": "wclay@mathis.com",
     "subscription_date": "2021-08-14",
-    "website": "http://ward-conway.info/"
+    "website": "http://ward-conway.info/",
+    "salary": 167000
   },
   {
     "customer_id": "d10407a9-a3d8-43c3-a1d5-b30b3691c44a",
@@ -12646,7 +13618,8 @@ export const customersData = [
     "phone_2": "(831)807-6770x142",
     "email": "pamwood@mcintosh.com",
     "subscription_date": "2021-02-19",
-    "website": "http://oconnor.org/"
+    "website": "http://oconnor.org/",
+    "salary": 141000
   },
   {
     "customer_id": "19465cc0-f21e-44b2-ad46-0c84782a508f",
@@ -12659,7 +13632,8 @@ export const customersData = [
     "phone_2": "(692)062-5717x4658",
     "email": "ernest36@mclean-dominguez.biz",
     "subscription_date": "2020-04-02",
-    "website": "https://www.jacobson.org/"
+    "website": "https://www.jacobson.org/",
+    "salary": 103000
   },
   {
     "customer_id": "17b64e88-ace9-46ba-bdd1-7b9c53f67bc9",
@@ -12672,7 +13646,8 @@ export const customersData = [
     "phone_2": "620.739.0057",
     "email": "martha59@dunlap.com",
     "subscription_date": "2020-08-08",
-    "website": "https://porter-sherman.org/"
+    "website": "https://porter-sherman.org/",
+    "salary": 72000
   },
   {
     "customer_id": "748f2dbe-b406-4bc7-a861-52638d69cc70",
@@ -12685,7 +13660,8 @@ export const customersData = [
     "phone_2": "(968)843-5737x49702",
     "email": "browningcristian@noble.com",
     "subscription_date": "2021-06-24",
-    "website": "https://page.com/"
+    "website": "https://page.com/",
+    "salary": 117000
   },
   {
     "customer_id": "2afdbc0c-f91f-4676-a2e2-8016b43c0e55",
@@ -12698,7 +13674,8 @@ export const customersData = [
     "phone_2": 7994452467,
     "email": "chaseyoung@nichols.com",
     "subscription_date": "2021-11-21",
-    "website": "https://www.brooks.com/"
+    "website": "https://www.brooks.com/",
+    "salary": 73000
   },
   {
     "customer_id": "20b4cb93-81f3-40b8-89c2-afab20aa184e",
@@ -12711,7 +13688,8 @@ export const customersData = [
     "phone_2": 9392686386,
     "email": "lindsaylopez@lucas.biz",
     "subscription_date": "2021-04-18",
-    "website": "http://www.everett.com/"
+    "website": "http://www.everett.com/",
+    "salary": 86000
   },
   {
     "customer_id": "3b795c94-4fb1-4c6f-b101-85a0d017e757",
@@ -12724,7 +13702,8 @@ export const customersData = [
     "phone_2": "(300)287-9819",
     "email": "fwilliamson@byrd.com",
     "subscription_date": "2021-10-19",
-    "website": "http://cross-booker.com/"
+    "website": "http://cross-booker.com/",
+    "salary": 49000
   },
   {
     "customer_id": "191e4e3b-e20d-4864-b372-f6f6b4e7662f",
@@ -12737,7 +13716,8 @@ export const customersData = [
     "phone_2": "961-880-5628x217",
     "email": "ivanhodge@acevedo-rose.org",
     "subscription_date": "2020-10-04",
-    "website": "https://www.arnold-lester.com/"
+    "website": "https://www.arnold-lester.com/",
+    "salary": 68000
   },
   {
     "customer_id": "07cfe907-6ebb-4698-8e1f-31593194564d",
@@ -12750,7 +13730,8 @@ export const customersData = [
     "phone_2": 8396123428,
     "email": "jeffbenitez@pope.com",
     "subscription_date": "2022-01-22",
-    "website": "http://www.guerra.com/"
+    "website": "http://www.guerra.com/",
+    "salary": 116000
   },
   {
     "customer_id": "1eaf268c-4717-4cf3-8ac0-e5ff1631eaf8",
@@ -12763,7 +13744,8 @@ export const customersData = [
     "phone_2": "(045)727-3384",
     "email": "djimenez@shields.com",
     "subscription_date": "2020-11-30",
-    "website": "http://www.sexton.info/"
+    "website": "http://www.sexton.info/",
+    "salary": 152000
   },
   {
     "customer_id": "f126267b-3203-4d84-9143-6ab0825247c4",
@@ -12776,7 +13758,8 @@ export const customersData = [
     "phone_2": "+1-828-691-6014",
     "email": "tammiehaas@thomas-molina.com",
     "subscription_date": "2022-02-17",
-    "website": "http://miranda-fritz.info/"
+    "website": "http://miranda-fritz.info/",
+    "salary": 72000
   },
   {
     "customer_id": "b23b57e0-8212-4c36-ac0d-bee91127380d",
@@ -12789,7 +13772,8 @@ export const customersData = [
     "phone_2": "888-872-7023x75993",
     "email": "carl70@sampson.net",
     "subscription_date": "2021-04-15",
-    "website": "https://fry.biz/"
+    "website": "https://fry.biz/",
+    "salary": 155000
   },
   {
     "customer_id": "28065053-7327-4471-b0db-e8042dc4a48d",
@@ -12802,7 +13786,8 @@ export const customersData = [
     "phone_2": "000-626-0732",
     "email": "petersonharold@mcneil.org",
     "subscription_date": "2022-03-21",
-    "website": "http://mcfarland.org/"
+    "website": "http://mcfarland.org/",
+    "salary": 154000
   },
   {
     "customer_id": "7b92c58a-70f1-42f1-b013-d1846ce1ea48",
@@ -12815,7 +13800,8 @@ export const customersData = [
     "phone_2": "(803)295-6802",
     "email": "tmichael@chen.biz",
     "subscription_date": "2021-07-13",
-    "website": "https://terrell.com/"
+    "website": "https://terrell.com/",
+    "salary": 33000
   },
   {
     "customer_id": "dfe8c13e-9e29-4dab-8bc9-cdb161a055e8",
@@ -12828,7 +13814,8 @@ export const customersData = [
     "phone_2": "976.524.9408x296",
     "email": "mdominguez@huber.com",
     "subscription_date": "2021-01-30",
-    "website": "http://www.pitts.com/"
+    "website": "http://www.pitts.com/",
+    "salary": 93000
   },
   {
     "customer_id": "cc6ad2ef-2321-463b-ad9f-ceee5543a1ab",
@@ -12841,7 +13828,8 @@ export const customersData = [
     "phone_2": "033.353.2379x454",
     "email": "dakota87@delgado.org",
     "subscription_date": "2020-09-25",
-    "website": "https://www.herring-estrada.biz/"
+    "website": "https://www.herring-estrada.biz/",
+    "salary": 71000
   },
   {
     "customer_id": "cf0c8ae8-dc41-4a72-aee1-b664a4c7d945",
@@ -12854,7 +13842,8 @@ export const customersData = [
     "phone_2": "001-370-701-9500x00355",
     "email": "ryankristine@rogers.info",
     "subscription_date": "2022-03-30",
-    "website": "https://peterson.com/"
+    "website": "https://peterson.com/",
+    "salary": 101000
   },
   {
     "customer_id": "de0efbf1-29d1-4fbc-9e59-a9cb6e278601",
@@ -12867,7 +13856,8 @@ export const customersData = [
     "phone_2": "001-408-851-8333x944",
     "email": "jasmin30@porter.info",
     "subscription_date": "2020-09-17",
-    "website": "http://scott.org/"
+    "website": "http://scott.org/",
+    "salary": 97000
   },
   {
     "customer_id": "b7420155-e0bc-4d80-9ad0-2fdd1623f87e",
@@ -12880,7 +13870,8 @@ export const customersData = [
     "phone_2": "+1-683-150-0909x877",
     "email": "marcomurphy@sweeney.com",
     "subscription_date": "2020-03-01",
-    "website": "https://www.hutchinson.com/"
+    "website": "https://www.hutchinson.com/",
+    "salary": 63000
   },
   {
     "customer_id": "d12b930a-076b-4630-96cc-cedc483854a7",
@@ -12893,7 +13884,8 @@ export const customersData = [
     "phone_2": "(283)709-6222",
     "email": "thowe@garrett.com",
     "subscription_date": "2021-05-13",
-    "website": "https://dixon.biz/"
+    "website": "https://dixon.biz/",
+    "salary": 122000
   },
   {
     "customer_id": "096c4ef1-d7de-46f4-9046-e7624310e093",
@@ -12906,7 +13898,8 @@ export const customersData = [
     "phone_2": "+1-166-489-6936x432",
     "email": "nfloyd@griffin.com",
     "subscription_date": "2021-07-28",
-    "website": "https://juarez-mathews.com/"
+    "website": "https://juarez-mathews.com/",
+    "salary": 149000
   },
   {
     "customer_id": "f19a81a1-de53-4c54-9db4-809e41388631",
@@ -12919,7 +13912,8 @@ export const customersData = [
     "phone_2": "376-147-4243x7827",
     "email": "shaunobrien@sims.info",
     "subscription_date": "2020-01-04",
-    "website": "https://www.strong.org/"
+    "website": "https://www.strong.org/",
+    "salary": 160000
   },
   {
     "customer_id": "b64e24ea-9a97-4e89-bd0a-fff1a45ef5f4",
@@ -12932,7 +13926,8 @@ export const customersData = [
     "phone_2": "(814)139-1498x31422",
     "email": "isimmons@bernard-curry.net",
     "subscription_date": "2020-09-08",
-    "website": "https://english-shepard.com/"
+    "website": "https://english-shepard.com/",
+    "salary": 164000
   },
   {
     "customer_id": "38883a1a-4b8b-44d2-b229-b29d90f972f2",
@@ -12945,7 +13940,8 @@ export const customersData = [
     "phone_2": "+1-901-498-9892",
     "email": "iblackwell@barrera.com",
     "subscription_date": "2021-12-17",
-    "website": "http://patton.com/"
+    "website": "http://patton.com/",
+    "salary": 161000
   },
   {
     "customer_id": "3a9e155e-7101-4a1c-b48f-4f8b37f00c4b",
@@ -12958,7 +13954,8 @@ export const customersData = [
     "phone_2": "(615)722-5147x301",
     "email": "abigail51@williamson-mercado.org",
     "subscription_date": "2021-03-15",
-    "website": "http://pierce.com/"
+    "website": "http://pierce.com/",
+    "salary": 128000
   },
   {
     "customer_id": "6a4a79a7-d775-4b61-a362-3a186d70814a",
@@ -12971,7 +13968,8 @@ export const customersData = [
     "phone_2": "(112)684-1838x05810",
     "email": "sfritz@parks-spears.org",
     "subscription_date": "2020-08-06",
-    "website": "https://www.travis.com/"
+    "website": "https://www.travis.com/",
+    "salary": 140000
   },
   {
     "customer_id": "2fad63cc-1728-46a5-b4b7-f8855a731324",
@@ -12984,7 +13982,8 @@ export const customersData = [
     "phone_2": "723-565-4150x948",
     "email": "brandon41@matthews.info",
     "subscription_date": "2021-02-10",
-    "website": "https://www.sloan.com/"
+    "website": "https://www.sloan.com/",
+    "salary": 55000
   },
   {
     "customer_id": "cbd7173a-a8dd-490b-b409-67b0eb2126f3",
@@ -12997,6 +13996,7 @@ export const customersData = [
     "phone_2": "(347)336-9115",
     "email": "theresa47@tate-rhodes.com",
     "subscription_date": "2020-06-22",
-    "website": "https://www.martinez.com/"
+    "website": "https://www.martinez.com/",
+    "salary": 121000
   }
 ];

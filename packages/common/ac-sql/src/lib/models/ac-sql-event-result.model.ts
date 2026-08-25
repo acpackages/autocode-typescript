@@ -50,7 +50,7 @@ export class AcSqlEventResult extends AcResult {
   }
 
   override fromJson({ jsonData }: { jsonData: Record<string, any> }): AcSqlEventResult {
-    if (jsonData.hasOwnProperty("operation")) {
+    if (jsonData["operation"] != undefined) {
       this.operation = jsonData["operation"];
     }
     Object.assign(this, jsonData);

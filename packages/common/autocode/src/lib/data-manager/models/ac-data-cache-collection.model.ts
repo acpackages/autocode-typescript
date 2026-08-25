@@ -115,8 +115,22 @@ export class AcDataCacheCollection {
         }
         else {
           const [min, max] = filterValue;
+          if (min == null || min === "" || max == null || max === "" || value == null) {
+            return true;
+          }
           const valNum = Number(value);
-          return valNum >= Number(min) && valNum <= Number(max);
+          const minNum = Number(min);
+          const maxNum = Number(max);
+          if (!isNaN(valNum) && !isNaN(minNum) && !isNaN(maxNum)) {
+            return valNum >= minNum && valNum <= maxNum;
+          }
+          const valDate = Date.parse(value);
+          const minDate = Date.parse(min);
+          const maxDate = Date.parse(max);
+          if (!isNaN(valDate) && !isNaN(minDate) && !isNaN(maxDate)) {
+            return valDate >= minDate && valDate <= maxDate;
+          }
+          return value >= min && value <= max;
         }
       case AcEnumConditionOperator.IsNull:
         return value === null || value === undefined;

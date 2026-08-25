@@ -1,6 +1,6 @@
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AcEnumPaginationEvent, AcPaginationElement, AcPaginationCssClassName, AC_PAGINATION_SVG_ICONS } from "../_ac-pagination.export";
+import { AcEnumPaginationEvent, AcPaginationElement, AcPaginationCssClassName, acPaginationElementHtml } from "../_ac-pagination.export";
 import { IAcPaginationPageChangeEvent } from "../interfaces/event-params/ac-page-change-event.interface";
 
 export class AcPaginationNavigationButtonsElement extends AcElementBase{
@@ -28,20 +28,23 @@ export class AcPaginationNavigationButtonsElement extends AcElementBase{
   private lastButton:HTMLElement;
   private nextButton:HTMLElement;
   private pageLabel:HTMLElement;
+  private rowsLabel:HTMLElement;
 
   constructor(){
     super();
     this.classList.add(AcPaginationCssClassName.acPaginationNavigationButtons);
     this.innerHTML = `
-      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-first-button><ac-svg-icon>${AC_PAGINATION_SVG_ICONS.first}</ac-svg-icon></button>
-      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-previous-button><ac-svg-icon>${AC_PAGINATION_SVG_ICONS.previous}</ac-svg-icon></button>
-      <div ac-pagination-page-label style="margin: 0 10px; font-size: 14px;"></div>
-      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-next-button><ac-svg-icon>${AC_PAGINATION_SVG_ICONS.next}</ac-svg-icon></button>
-      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-last-button><ac-svg-icon>${AC_PAGINATION_SVG_ICONS.last}</ac-svg-icon></button>
+      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton} ac-res-none ac-res-xs-block" ac-pagination-first-button>${acPaginationElementHtml.first}</button>
+      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-previous-button>${acPaginationElementHtml.previous}</button>
+      <div ac-pagination-rows-label style="margin: 0 5px; font-size: 14px;"></div>
+      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-next-button>${acPaginationElementHtml.next}</button>
+      <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton} ac-res-none ac-res-xs-block" ac-pagination-last-button>${acPaginationElementHtml.last}</button>
+      <div class="ac-res-none ac-res-sm-block" ac-pagination-page-label style="margin: 0 10px; font-size: 14px;"></div>
     `;
     this.firstButton = this.querySelector('[ac-pagination-first-button]') as HTMLButtonElement;
     this.previousButton = this.querySelector('[ac-pagination-previous-button]') as HTMLButtonElement;
     this.pageLabel = this.querySelector('[ac-pagination-page-label]') as HTMLElement;
+    this.rowsLabel = this.querySelector('[ac-pagination-rows-label]') as HTMLElement;
     this.nextButton = this.querySelector('[ac-pagination-next-button]') as HTMLButtonElement;
     this.lastButton = this.querySelector('[ac-pagination-last-button]') as HTMLButtonElement;
     this.registerListeners();
@@ -87,7 +90,8 @@ export class AcPaginationNavigationButtonsElement extends AcElementBase{
 
   renderPageLabel(){
     if (this.pagination) {
-    this.pageLabel.innerHTML = `Page <b>${this.pagination.activePage}</b> of <b>${this.pagination.totalPages}</b>`;
+      this.pageLabel.innerHTML = `Page <b>${this.pagination.activePage}</b> of <b>${this.pagination.totalPages}</b>`;
+      this.rowsLabel.innerHTML = `<div class="ac-pagination-rows-label"><b>${this.pagination.startRow}</b> to <b>${this.pagination.endRow}</b><span class="ac-res-none ac-res-xs-block"> of <b >${this.pagination.totalRows}</b></span></div>`;
     }
   }
 

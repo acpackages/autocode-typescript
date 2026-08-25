@@ -1,5 +1,5 @@
 export const dataDictionaryJson = {
-  "name": "Ecommerce",
+  "name": "Accountea Ecommerce",
   "version": 1,
   "tables": {
     "coupon_issue": {

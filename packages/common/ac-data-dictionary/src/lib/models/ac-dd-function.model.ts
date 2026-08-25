@@ -29,7 +29,7 @@ export class AcDDFunction {
   }): AcDDFunction {
     const result = new AcDDFunction();
     const acDataDictionary = AcDataDictionary.getInstance({ dataDictionaryName });
-    if (acDataDictionary.functions.hasOwnProperty(functionName)) {
+    if (acDataDictionary.functions[functionName] != undefined) {
       result.fromJson({ jsonData: acDataDictionary.functions[functionName] });
     }
     return result;

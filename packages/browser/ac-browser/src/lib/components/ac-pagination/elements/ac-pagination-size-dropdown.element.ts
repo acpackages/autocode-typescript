@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AcPaginationElement, AcEnumPaginationEvent } from "../_ac-pagination.export";
-import { AcPaginationCssClassName } from "../consts/ac-pagination-css-class-name.const";
+import { AcPaginationElement, AcEnumPaginationEvent, AcPaginationCssClassName } from "../_ac-pagination.export";
 
 export class AcPaginationSizeDropdownElement extends AcElementBase {
   private _pagination?: AcPaginationElement;

@@ -77,7 +77,7 @@ export class AcDataDictionaryAutoDelete {
       const response = new AcWebApiResponse();
       const key = this.acDDTable.getPrimaryKeyColumnName();
       try {
-        if (Object.prototype.hasOwnProperty.call(acWebRequest.pathParameters, key)) {
+        if (acWebRequest.post && acWebRequest.post[key] != undefined) {
           const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
           if (sqlDbTableResult.isSuccess()) {
             const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
@@ -141,7 +141,7 @@ export class AcDataDictionaryAutoDelete {
         logger.log(`Deleting row from table ${this.acDDTable.tableName}`);
         const key = this.acDDTable.getPrimaryKeyColumnName();
         logger.log(`Deleting for primary key field ${key}`);
-        if (Object.prototype.hasOwnProperty.call(acWebRequest.post, key)) {
+        if (acWebRequest.post && acWebRequest.post[key] != undefined) {
           logger.log(`Found primary key field ${key}`);
           const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
           if (sqlDbTableResult.isSuccess()) {

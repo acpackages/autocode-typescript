@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Web",
-  "version": 3,
+  "version": 5,
   "tables": {
     "accountees": {
       "tableName": "accountees",
@@ -45,7 +45,7 @@ export const dataDictionaryJson = {
         },
         "accountee_type": {
           "columnName": "accountee_type",
-          "columnType": "UUID",
+          "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
@@ -252,6 +252,85 @@ export const dataDictionaryJson = {
         "SQL_VIEW_NAME": {
           "propertyName": "SQL_VIEW_NAME",
           "propertyValue": "vw_developers"
+        }
+      }
+    },
+    "device_activity_logs": {
+      "tableName": "device_activity_logs",
+      "tableColumns": {
+        "activity_log_id": {
+          "columnName": "activity_log_id",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Log Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "activity_log_type": {
+          "columnName": "activity_log_type",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Log Type"
+            }
+          }
+        },
+        "activity_log_start_time": {
+          "columnName": "activity_log_start_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Start Time"
+            }
+          }
+        },
+        "activity_log_end_time": {
+          "columnName": "activity_log_end_time",
+          "columnType": "DATETIME",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "End Time"
+            }
+          }
+        },
+        "activity_log_key": {
+          "columnName": "activity_log_key",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Log Key"
+            }
+          }
+        },
+        "device_id": {
+          "columnName": "device_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Device Id"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "device_activity_logs"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "device_activity_log"
         }
       }
     },
@@ -518,6 +597,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Tags"
             }
           }
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Minimum Build Supported"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -675,6 +764,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Tags"
+            }
+          }
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Minimum Build Supported"
             }
           }
         }
@@ -1048,6 +1147,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Tags"
             }
           }
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Minimum Build Supported"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -1149,6 +1258,16 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Developer"
+            }
+          }
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Minimum Build Supported"
             }
           }
         }
@@ -1484,7 +1603,6 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_id"
@@ -1492,7 +1610,6 @@ export const dataDictionaryJson = {
         "accountee_name": {
           "columnName": "accountee_name",
           "columnType": "STRING",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_name"
@@ -1500,21 +1617,33 @@ export const dataDictionaryJson = {
         "accountee_profile_image_media_id": {
           "columnName": "accountee_profile_image_media_id",
           "columnType": "UUID",
-          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_profile_image_media_id"
         },
         "accountee_type": {
           "columnName": "accountee_type",
-          "columnType": "UUID",
-          "columnProperties": {},
+          "columnType": "",
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_type"
+        },
+        "name": {
+          "columnName": "name",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "users",
+          "columnSourceOriginalColumn": "name"
+        },
+        "mobile_number": {
+          "columnName": "mobile_number",
+          "columnType": "STRING",
+          "columnSource": "table",
+          "columnSourceName": "users",
+          "columnSourceOriginalColumn": "mobile_number"
         }
       },
-      "viewQuery": "SELECT * FROM accountees"
+      "viewQuery": "SELECT accountees.*, users.name, users.mobile_number FROM accountees LEFT JOIN user_accountees ON accountees.accountee_id = user_accountees.accountee_id LEFT JOIN users ON users.user_id = user_accountees.user_id;"
     },
     "vw_developers": {
       "viewName": "vw_developers",
@@ -1709,6 +1838,22 @@ export const dataDictionaryJson = {
           "columnSourceName": "extensions",
           "columnSourceOriginalColumn": "is_linux_supported"
         },
+        "extension_tags": {
+          "columnName": "extension_tags",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "extension_tags"
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "extensions",
+          "columnSourceOriginalColumn": "minimum_build_number"
+        },
         "developer_name": {
           "columnName": "developer_name",
           "columnType": "STRING",
@@ -1826,6 +1971,14 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "label_formats",
           "columnSourceOriginalColumn": "label_format_tags"
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "label_formats",
+          "columnSourceOriginalColumn": "minimum_build_number"
         },
         "developer_name": {
           "columnName": "developer_name",
@@ -1945,6 +2098,14 @@ export const dataDictionaryJson = {
           "columnSourceName": "print_formats",
           "columnSourceOriginalColumn": "print_format_tags"
         },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "print_formats",
+          "columnSourceOriginalColumn": "minimum_build_number"
+        },
         "developer_name": {
           "columnName": "developer_name",
           "columnType": "STRING",
@@ -2030,6 +2191,14 @@ export const dataDictionaryJson = {
           "columnSource": "table",
           "columnSourceName": "reports",
           "columnSourceOriginalColumn": "developer_id"
+        },
+        "minimum_build_number": {
+          "columnName": "minimum_build_number",
+          "columnType": "INTEGER",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "reports",
+          "columnSourceOriginalColumn": "minimum_build_number"
         },
         "developer_name": {
           "columnName": "developer_name",

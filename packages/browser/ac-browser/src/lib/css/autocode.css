@@ -1,0 +1,405 @@
+/* =========================================================
+   AutoCode Responsive Utilities
+   ---------------------------------------------------------
+   Responsive utilities are based on container width,
+   not viewport width.
+
+   Usage:
+     <div class="ac-res-container">
+       <div class="ac-res-sm-none">...</div>
+     </div>
+
+   Breakpoints:
+    xss:180px
+     xs: 350px
+     sm: 576px
+     md: 768px
+     lg: 992px
+     xl: 1200px
+     xxl: 1400px
+   ========================================================= */
+
+/* =========================================================
+   Container
+   ========================================================= */
+
+.ac-res-container {
+  container-type: inline-size;
+}
+
+/* =========================================================
+   Base Display Utilities
+   ---------------------------------------------------------
+   These apply regardless of container width.
+   ========================================================= */
+
+.ac-res-none {
+  display: none !important;
+}
+
+.ac-res-inline {
+  display: inline !important;
+}
+
+.ac-res-inline-block {
+  display: inline-block !important;
+}
+
+.ac-res-block {
+  display: block !important;
+}
+
+.ac-res-table {
+  display: table !important;
+}
+
+.ac-res-table-row {
+  display: table-row !important;
+}
+
+.ac-res-table-cell {
+  display: table-cell !important;
+}
+
+.ac-res-flex {
+  display: flex !important;
+}
+
+.ac-res-inline-flex {
+  display: inline-flex !important;
+}
+
+.ac-res-grid {
+  display: grid !important;
+}
+
+.ac-res-inline-grid {
+  display: inline-grid !important;
+}
+
+/* =========================================================
+   XSS >= 350px
+   ========================================================= */
+
+@container (min-width: 180px) {
+  .ac-res-xss-none {
+    display: none !important;
+  }
+
+  .ac-res-xss-inline {
+    display: inline !important;
+  }
+
+  .ac-res-xss-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-xss-block {
+    display: block !important;
+  }
+
+  .ac-res-xss-flex {
+    display: flex !important;
+  }
+
+  .ac-res-xss-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-xss-grid {
+    display: grid !important;
+  }
+
+  .ac-res-xss-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+
+/* =========================================================
+   XS >= 350px
+   ========================================================= */
+
+@container (min-width: 350px) {
+  .ac-res-xs-none {
+    display: none !important;
+  }
+
+  .ac-res-xs-inline {
+    display: inline !important;
+  }
+
+  .ac-res-xs-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-xs-block {
+    display: block !important;
+  }
+
+  .ac-res-xs-flex {
+    display: flex !important;
+  }
+
+  .ac-res-xs-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-xs-grid {
+    display: grid !important;
+  }
+
+  .ac-res-xs-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+/* =========================================================
+   SM >= 576px
+   ========================================================= */
+
+@container (min-width: 576px) {
+  .ac-res-sm-none {
+    display: none !important;
+  }
+
+  .ac-res-sm-inline {
+    display: inline !important;
+  }
+
+  .ac-res-sm-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-sm-block {
+    display: block !important;
+  }
+
+  .ac-res-sm-table {
+    display: table !important;
+  }
+
+  .ac-res-sm-table-row {
+    display: table-row !important;
+  }
+
+  .ac-res-sm-table-cell {
+    display: table-cell !important;
+  }
+
+  .ac-res-sm-flex {
+    display: flex !important;
+  }
+
+  .ac-res-sm-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-sm-grid {
+    display: grid !important;
+  }
+
+  .ac-res-sm-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+/* =========================================================
+   MD >= 768px
+   ========================================================= */
+
+@container (min-width: 768px) {
+  .ac-res-md-none {
+    display: none !important;
+  }
+
+  .ac-res-md-inline {
+    display: inline !important;
+  }
+
+  .ac-res-md-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-md-block {
+    display: block !important;
+  }
+
+  .ac-res-md-table {
+    display: table !important;
+  }
+
+  .ac-res-md-table-row {
+    display: table-row !important;
+  }
+
+  .ac-res-md-table-cell {
+    display: table-cell !important;
+  }
+
+  .ac-res-md-flex {
+    display: flex !important;
+  }
+
+  .ac-res-md-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-md-grid {
+    display: grid !important;
+  }
+
+  .ac-res-md-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+/* =========================================================
+   LG >= 992px
+   ========================================================= */
+
+@container (min-width: 992px) {
+  .ac-res-lg-none {
+    display: none !important;
+  }
+
+  .ac-res-lg-inline {
+    display: inline !important;
+  }
+
+  .ac-res-lg-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-lg-block {
+    display: block !important;
+  }
+
+  .ac-res-lg-table {
+    display: table !important;
+  }
+
+  .ac-res-lg-table-row {
+    display: table-row !important;
+  }
+
+  .ac-res-lg-table-cell {
+    display: table-cell !important;
+  }
+
+  .ac-res-lg-flex {
+    display: flex !important;
+  }
+
+  .ac-res-lg-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-lg-grid {
+    display: grid !important;
+  }
+
+  .ac-res-lg-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+/* =========================================================
+   XL >= 1200px
+   ========================================================= */
+
+@container (min-width: 1200px) {
+  .ac-res-xl-none {
+    display: none !important;
+  }
+
+  .ac-res-xl-inline {
+    display: inline !important;
+  }
+
+  .ac-res-xl-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-xl-block {
+    display: block !important;
+  }
+
+  .ac-res-xl-table {
+    display: table !important;
+  }
+
+  .ac-res-xl-table-row {
+    display: table-row !important;
+  }
+
+  .ac-res-xl-table-cell {
+    display: table-cell !important;
+  }
+
+  .ac-res-xl-flex {
+    display: flex !important;
+  }
+
+  .ac-res-xl-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-xl-grid {
+    display: grid !important;
+  }
+
+  .ac-res-xl-inline-grid {
+    display: inline-grid !important;
+  }
+}
+
+/* =========================================================
+   XXL >= 1400px
+   ========================================================= */
+
+@container (min-width: 1400px) {
+  .ac-res-xxl-none {
+    display: none !important;
+  }
+
+  .ac-res-xxl-inline {
+    display: inline !important;
+  }
+
+  .ac-res-xxl-inline-block {
+    display: inline-block !important;
+  }
+
+  .ac-res-xxl-block {
+    display: block !important;
+  }
+
+  .ac-res-xxl-table {
+    display: table !important;
+  }
+
+  .ac-res-xxl-table-row {
+    display: table-row !important;
+  }
+
+  .ac-res-xxl-table-cell {
+    display: table-cell !important;
+  }
+
+  .ac-res-xxl-flex {
+    display: flex !important;
+  }
+
+  .ac-res-xxl-inline-flex {
+    display: inline-flex !important;
+  }
+
+  .ac-res-xxl-grid {
+    display: grid !important;
+  }
+
+  .ac-res-xxl-inline-grid {
+    display: inline-grid !important;
+  }
+}

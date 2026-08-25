@@ -130,8 +130,25 @@ export function acEvaluateFilter({ filter, data }: { filter: IAcFilter, data: an
         result = true;
       } else {
         const [min, max] = filterValue;
-        const valNum = Number(value);
-        result = valNum >= Number(min) && valNum <= Number(max);
+        if (min == null || min === "" || max == null || max === "" || value == null) {
+          result = true;
+        } else {
+          const valNum = Number(value);
+          const minNum = Number(min);
+          const maxNum = Number(max);
+          if (!isNaN(valNum) && !isNaN(minNum) && !isNaN(maxNum)) {
+            result = valNum >= minNum && valNum <= maxNum;
+          } else {
+            const valDate = Date.parse(value);
+            const minDate = Date.parse(min);
+            const maxDate = Date.parse(max);
+            if (!isNaN(valDate) && !isNaN(minDate) && !isNaN(maxDate)) {
+              result = valDate >= minDate && valDate <= maxDate;
+            } else {
+              result = value >= min && value <= max;
+            }
+          }
+        }
       }
       break;
 

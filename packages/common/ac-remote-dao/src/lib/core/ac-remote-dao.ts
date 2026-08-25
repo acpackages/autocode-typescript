@@ -153,7 +153,7 @@ export class AcRemoteDao extends AcBaseSqlDao {
     const formattedRow = { ...row };
     for (const key in columnFormats) {
       const formats = columnFormats[key];
-      if (formattedRow.hasOwnProperty(key)) {
+      if (formattedRow[key] != undefined) {
         let value = formattedRow[key];
         if (typeof value === "string") {
           if (formats.includes(AcEnumDDColumnFormat.Encrypt)) {

@@ -1,5 +1,6 @@
 import { AcEnumDatagridColumnAggregateFunction, AcEnumDatagridColumnDataType, IAcDatagridColumnDefinition } from "@autocode-ts/ac-browser";
 import type { ColDef } from 'ag-grid-community';
+import { AcDatagridOnAgGridHeaderComponent } from "../elements/ac-datagrid-on-ag-grid-header.element";
 
 export function acGetAgDataTypeFromAcDataType(dataType: any) {
   let result: any = 'text';
@@ -23,62 +24,56 @@ export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridCo
   if (datagridColDef.allowEdit != undefined) {
     editable = datagridColDef.allowEdit;
   }
-  const colDef: ColDef|any = {
+  const colDef: ColDef | any = {
     field: datagridColDef.field,
     headerName: datagridColDef.title,
-    autoHeight:datagridColDef.autoHeight,
+    autoHeight: datagridColDef.autoHeight,
     width: datagridColDef.width,
     minWidth: datagridColDef.minWidth,
     maxWidth: datagridColDef.maxWidth,
     type: acGetAgDataTypeFromAcDataType(datagridColDef.dataType),
     editable: editable,
-    filter: datagridColDef.allowFilter == false ? false : true,
+    filter: false, // We use AcDataFilterPopup via AcDatagridOnAgGridHeaderComponent
     sortable: datagridColDef.allowSort == false ? false : true,
     cellClass: (datagridColDef.cellClass ?? ''),
     headerClass: datagridColDef.headerCellClass,
+    headerComponent: AcDatagridOnAgGridHeaderComponent,
     suppressHeaderMenuButton: true,
     hide: datagridColDef.visible == false,
     flex: datagridColDef.flexSize,
-    columnDefinition:datagridColDef,
-    suppressNavigable : datagridColDef.suppressFocus == true
+    columnDefinition: datagridColDef,
+    suppressNavigable: datagridColDef.suppressFocus == true
   };
-  if(datagridColDef.pinnedOn){
+  if (datagridColDef.pinnedOn) {
     colDef.pinned = datagridColDef.pinnedOn.toLowerCase();
   }
-  if(datagridColDef.isGroup){
+  if (datagridColDef.isGroup) {
     colDef.rowGroup = true;
     colDef.enableRowGroup = true;
   }
-  if(datagridColDef.groupAggregateFunction){
-    if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Average){
+  if (datagridColDef.groupAggregateFunction) {
+    if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Average) {
       colDef.aggFunc = "avg";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Count){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Count) {
       colDef.aggFunc = "count";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.First){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.First) {
       colDef.aggFunc = "first";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Last){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Last) {
       colDef.aggFunc = "last";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Min){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Min) {
       colDef.aggFunc = "min";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Max){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Max) {
       colDef.aggFunc = "max";
     }
-    else if(datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Sum){
+    else if (datagridColDef.groupAggregateFunction == AcEnumDatagridColumnAggregateFunction.Sum) {
       colDef.aggFunc = "sum";
     }
   }
-  if(colDef.filter){
-    colDef.filter = 'agTextColumnFilter';
-    colDef.filterParams = {
-      buttons:['apply','clear','reset'],
-      trimInput: true,
-      maxNumConditions:1
-    }
-  }
+
   return colDef;
 }

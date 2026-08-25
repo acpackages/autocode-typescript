@@ -249,7 +249,7 @@ export class AcBaseSqlDao {
       } else {
         let index = Object.keys(statementParametersMap!).length;
         let parameterKey = `parameter${index}`;
-        while (statementParametersMap!.hasOwnProperty(parameterKey)) {
+        while (statementParametersMap![parameterKey] != undefined) {
           index++;
           parameterKey = `parameter${index}`;
         }

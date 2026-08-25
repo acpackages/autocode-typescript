@@ -155,7 +155,7 @@ export class AcDataDictionaryAutoSelect {
           }
 
           for (const col of this.acDDTable.tableColumns) {
-            if (Object.prototype.hasOwnProperty.call(acWebRequest.get, col.columnName)) {
+            if (acWebRequest.post && acWebRequest.post[col.columnName] != undefined) {
               acDDSelectStatement.addCondition({
                 key: col.columnName,
                 operator: AcEnumConditionOperator.Contains,
@@ -358,7 +358,7 @@ export class AcDataDictionaryAutoSelect {
             if (table) {
               for (const colName of table.getColumnNames()) {
                 logger.log(`Checking request for column ${colName}`);
-                if (Object.prototype.hasOwnProperty.call(acWebRequest.post, colName)) {
+                if (acWebRequest.post && acWebRequest.post[colName] != undefined) {
                   acDDSelectStatement.conditionGroup.addCondition({ key: colName, operator: AcEnumConditionOperator.EqualTo, value: acWebRequest.post[colName] });
                 }
               }
@@ -368,7 +368,7 @@ export class AcDataDictionaryAutoSelect {
             if (view) {
               for (const colName of view.getColumnNames()) {
                 logger.log(`Checking request for column ${colName}`);
-                if (Object.prototype.hasOwnProperty.call(acWebRequest.post, colName)) {
+                if (acWebRequest.post && acWebRequest.post[colName] != undefined) {
                   acDDSelectStatement.conditionGroup.addCondition({ key: colName, operator: AcEnumConditionOperator.EqualTo, value: acWebRequest.post[colName] });
                 }
               }

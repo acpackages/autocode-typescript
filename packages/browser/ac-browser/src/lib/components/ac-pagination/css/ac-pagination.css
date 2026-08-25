@@ -1,73 +1,130 @@
+.ac-pagination {
+  container-type: inline-size;
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  padding: 8px;
+  flex-wrap: nowrap !important;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ac-pagination-displayed-rows {
+  display: block;
+}
+
+.ac-pagination-page-size-select {
+  border: solid 1px var(--ac-border-color, #ccc);
+  border-radius: 4px;
+  margin-left: 5px;
+  background: transparent;
+  height: 32px;
+  padding-bottom: 2px;
+}
+
+.ac-pagination-navigation-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.ac-pagination-navigation-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid var(--ac-border-color, #ccc);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.ac-pagination-rows-label{
+  display: flex;
+  gap:5px;
+}
+
+.ac-pagination-navigation-button:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+.ac-pagination-navigation-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Container query responsive */
+@container (max-width: 575.98px) {
   .ac-pagination {
-    display: flex !important;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 15px;
-    padding: 8px;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-
-  .ac-pagination-displayed-rows {
-    display: block;
-  }
-
-  .ac-pagination-page-size-select {
-    border: solid 1px var(--ac-border-color, #ccc);
-    border-radius: 4px;
-    margin-left: 5px;
-    background: transparent;
-  }
-
-  .ac-pagination-navigation-buttons {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .ac-pagination-navigation-button {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border: 1px solid var(--ac-border-color, #ccc);
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.2s;
-  }
-
-  .ac-pagination-navigation-button:hover:not(:disabled) {
-    background: #f0f0f0;
-  }
-
-  .ac-pagination-navigation-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* Container-based responsive: compact (<400px) */
-  .ac-pagination.compact {
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .ac-pagination.compact .ac-pagination-displayed-rows {
-    display: none !important;
-  }
-
-  .ac-pagination.compact [ac-pagination-page-label] {
-    display: none !important;
-  }
-
-  /* Container-based responsive: narrow (<250px) */
-  .ac-pagination.narrow {
     gap: 4px;
   }
 
-  .ac-pagination.narrow .ac-pagination-page-size-select {
+  .ac-pagination [ac-pagination-first-button],
+  .ac-pagination [ac-pagination-last-button] {
     display: none !important;
   }
+}
+
+@container (max-width: 400px) {
+  .ac-pagination {
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .ac-pagination .ac-pagination-displayed-rows,
+  .ac-pagination .ac-pagination-rows-label {
+    display: none !important;
+  }
+
+  .ac-pagination [ac-pagination-page-label] {
+    display: none !important;
+  }
+}
+
+@container (max-width: 250px) {
+  .ac-pagination {
+    gap: 2px;
+  }
+
+  .ac-pagination .ac-pagination-page-size-select {
+    display: none !important;
+  }
+}
+
+/* Fallback class-based responsive: compact (<400px) */
+.ac-pagination.compact {
+  justify-content: center;
+  gap: 8px;
+}
+
+.ac-pagination.compact .ac-pagination-displayed-rows,
+.ac-pagination.compact .ac-pagination-rows-label {
+  display: none !important;
+}
+
+.ac-pagination.compact [ac-pagination-page-label] {
+  display: none !important;
+}
+
+/* Fallback class-based responsive: narrow (<250px) */
+.ac-pagination.narrow {
+  gap: 4px;
+}
+
+.ac-pagination.narrow .ac-pagination-page-size-select {
+  display: none !important;
+}
+
+.ac-pagination-add-btn {
+  border: solid 1px #c2c2c2;
+  border-radius: 5px;
+  height: 32px;
+  background-color: inherit;
+}

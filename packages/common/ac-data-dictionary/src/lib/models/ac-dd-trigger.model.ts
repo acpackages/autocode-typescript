@@ -35,7 +35,7 @@ export class AcDDTrigger {
     const result = new AcDDTrigger();
     const acDataDictionary = AcDataDictionary.getInstance({ dataDictionaryName });
 
-    if (acDataDictionary.triggers.hasOwnProperty(triggerName)) {
+    if (acDataDictionary.triggers[triggerName] != undefined) {
       result.fromJson({ jsonData: acDataDictionary.triggers[triggerName] });
     }
 

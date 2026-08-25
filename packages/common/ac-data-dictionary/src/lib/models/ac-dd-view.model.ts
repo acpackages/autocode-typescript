@@ -30,7 +30,7 @@ export class AcDDView {
     const result = new AcDDView();
     const acDataDictionary = AcDataDictionary.getInstance({ dataDictionaryName });
 
-    if (acDataDictionary.views.hasOwnProperty(viewName)) {
+    if (acDataDictionary.views[viewName] != undefined) {
       result.fromJson({ jsonData: acDataDictionary.views[viewName] });
     }
 

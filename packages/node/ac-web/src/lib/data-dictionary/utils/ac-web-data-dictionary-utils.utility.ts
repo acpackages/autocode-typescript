@@ -96,7 +96,7 @@ export class AcWebDataDictionaryUtils {
         const acDDTable = AcDataDictionary.getTable({ tableName: ddSelectStatement.tableName, dataDictionaryName: ddSelectStatement.dataDictionaryName });
         if (acDDTable) {
           for (const columnName of acDDTable.getColumnNames()) {
-            if (Object.prototype.hasOwnProperty.call(request.post, columnName)) {
+            if (request.post && request.post[columnName] != undefined) {
               ddSelectStatement.conditionGroup.addCondition({ key: columnName, operator: AcEnumConditionOperator.EqualTo, value: request.post[columnName] });
             }
           }
@@ -105,7 +105,7 @@ export class AcWebDataDictionaryUtils {
         const acDDView = AcDataDictionary.getView({ viewName: ddSelectStatement.viewName, dataDictionaryName: ddSelectStatement.dataDictionaryName });
         if (acDDView) {
           for (const columnName of acDDView.getColumnNames()) {
-            if (Object.prototype.hasOwnProperty.call(request.post, columnName)) {
+            if (request.post && request.post[columnName] != undefined) {
               ddSelectStatement.conditionGroup.addCondition({ key: columnName, operator: AcEnumConditionOperator.EqualTo, value: request.post[columnName] });
             }
           }

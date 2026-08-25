@@ -82,12 +82,12 @@ export class AcDDConditionGroup {
   fromJson({ jsonData }: { jsonData: any }): this {
     const json = { ...jsonData };
 
-    if (json.hasOwnProperty(AcDDConditionGroup.KeyConditions)) {
+    if (json[AcDDConditionGroup.KeyConditions] != undefined) {
       for (const condition of json[AcDDConditionGroup.KeyConditions]) {
         if (condition && typeof condition === "object" && !Array.isArray(condition)) {
-          if (condition.hasOwnProperty(AcDDConditionGroup.KeyConditions)) {
+          if (condition[AcDDConditionGroup.KeyConditions] != undefined) {
             this.conditions.push(AcDDConditionGroup.instanceFromJson({ jsonData: condition }));
-          } else if (condition.hasOwnProperty(AcDDCondition.KeyKey)) {
+          } else if (condition[AcDDCondition.KeyKey] != undefined) {
             this.conditions.push(AcDDCondition.instanceFromJson({ jsonData: condition }));
           }
         } else {

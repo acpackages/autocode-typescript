@@ -51,13 +51,11 @@ export class AcDDViewColumn {
   fromJson({ jsonData }: { jsonData: Record<string, any> }): AcDDViewColumn {
     const json = { ...jsonData };
 
-    if (json.hasOwnProperty(AcDDViewColumn.KeyColumnProperties)) {
+    if (json[AcDDViewColumn.KeyColumnProperties] != undefined) {
       const props = json[AcDDViewColumn.KeyColumnProperties] as Record<string, any>;
       this.columnProperties = {};
       for (const key in props) {
-        if (Object.prototype.hasOwnProperty.call(props, key)) {
-          this.columnProperties[key] = AcDDTableColumnProperty.instanceFromJson({ jsonData: props[key] });
-        }
+        this.columnProperties[key] = AcDDTableColumnProperty.instanceFromJson({ jsonData: props[key] });
       }
       delete json[AcDDViewColumn.KeyColumnProperties];
     }

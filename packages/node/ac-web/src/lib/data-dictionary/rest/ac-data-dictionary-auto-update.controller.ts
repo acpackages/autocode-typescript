@@ -82,10 +82,10 @@ export class AcDataDictionaryAutoUpdate {
         const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
         if (sqlDbTableResult.isSuccess()) {
           const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
-          if (Object.prototype.hasOwnProperty.call(acWebRequest.post, 'row')) {
+          if (acWebRequest.post && acWebRequest.post['row'] != undefined) {
             const result = await acSqlDbTable.updateRow({ row: acWebRequest.post['row'] });
             response.setFromSqlDaoResult({ result });
-          } else if (Object.prototype.hasOwnProperty.call(acWebRequest.post, 'rows')) {
+          } else if (acWebRequest.post && acWebRequest.post['rows'] != undefined) {
             const result = await acSqlDbTable.updateRows({ rows: acWebRequest.post['rows'] });
             response.setFromSqlDaoResult({ result });
           } else {

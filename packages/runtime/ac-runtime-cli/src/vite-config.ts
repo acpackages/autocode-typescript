@@ -33,7 +33,7 @@ export async function importVite(projectRoot: string): Promise<typeof import('vi
 
 export type ServeOptions = {
     port: number;
-    host: boolean;
+    host: boolean | string;
     open: boolean;
 };
 
@@ -143,8 +143,9 @@ export function createViteConfig(
 
     if (mode === 'serve') {
         const serveOpts = (options || {}) as ServeOptions;
+        const host = serveOpts.host !== undefined ? (serveOpts.host === false ? 'localhost' : serveOpts.host) : true;
         viteConfig.server = {
-            host: serveOpts.host ? true : 'localhost',
+            host: host,
             port: serveOpts.port || 3000,
             open: serveOpts.open || false,
             fs: {

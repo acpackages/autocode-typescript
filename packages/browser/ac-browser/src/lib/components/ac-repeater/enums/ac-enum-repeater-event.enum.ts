@@ -39,5 +39,6 @@ export const AcEnumRepeaterEvent = {
   RowUpdate: 'ROW_UPDATE',
   StateChange: 'STATE_CHANGE',
   SortOrderChange: 'SORT_ORDER_CHANGE',
-  TotalRowsChange: 'TOTAL_ROWS_CHANGE'
+  TotalRowsChange: 'TOTAL_ROWS_CHANGE',
+  FieldsChange: 'FIELDS_CHANGE'
 }

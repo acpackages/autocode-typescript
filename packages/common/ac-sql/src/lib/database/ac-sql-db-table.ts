@@ -84,7 +84,7 @@ export class AcSqlDbTable extends AcSqlDbBase {
       for (const tableColumn of this.acDDTable.tableColumns) {
         let setAutoNumber = true;
         if (tableColumn.isAutoNumber()) {
-          if (row.hasOwnProperty(tableColumn.columnName) && row[tableColumn.columnName] !== null && row[tableColumn.columnName].toString() !== "") {
+          if (row[tableColumn.columnName] != undefined && row[tableColumn.columnName] !== null && row[tableColumn.columnName].toString() !== "") {
             setAutoNumber = false;
           }
           if (setAutoNumber) {
@@ -108,7 +108,7 @@ export class AcSqlDbTable extends AcSqlDbBase {
         if (checkColumns.length > 0) {
           for (const checkColumn of checkColumns) {
             checkCondition += ` AND ${checkColumn} = @checkColumn${checkColumn}`;
-            if (row.hasOwnProperty(checkColumn)) {
+            if (row[checkColumn] != undefined) {
               checkConditionValues[`@checkColumn${checkColumn}`] = row[checkColumn];
             }
           }
@@ -166,7 +166,7 @@ export class AcSqlDbTable extends AcSqlDbBase {
       const primaryKeyColumnName = this.acDDTable.getPrimaryKeyColumnName();
 
       if (primaryKeyColumnName) {
-        if (row.hasOwnProperty(primaryKeyColumnName) && Autocode.validPrimaryKey({ value: row[primaryKeyColumnName] })) {
+        if (row[primaryKeyColumnName] != undefined && Autocode.validPrimaryKey({ value: row[primaryKeyColumnName] })) {
           conditions.push(`${primaryKeyColumnName} != @primaryKeyValue`);
           parameters["@primaryKeyValue"] = row[primaryKeyColumnName];
         }
@@ -399,8 +399,8 @@ export class AcSqlDbTable extends AcSqlDbBase {
 
     if (continueOperation) {
       for (const column of this.acDDTable.tableColumns) {
-        if (row.hasOwnProperty(column.columnName) || insertMode) {
-          let setColumnValue = row.hasOwnProperty(column.columnName);
+        if (row[column.columnName] != undefined || insertMode) {
+          let setColumnValue = row[column.columnName] != undefined;
           const formats = column.getColumnFormats();
           const type: any = column.columnType;
           let value = row[column.columnName] ?? "";
@@ -1681,7 +1681,7 @@ export class AcSqlDbTable extends AcSqlDbBase {
         const value = row[column.columnName];
         if (continueOperation && column.isRequired() && isInsert) {
           let validRequired = true;
-          if (!row.hasOwnProperty(column.columnName)) {
+          if (row[column.columnName] == undefined) {
             validRequired = false;
           } else if ((typeof value === "string" && value.trim() === "") || value == null) {
             validRequired = false;

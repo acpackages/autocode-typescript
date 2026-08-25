@@ -37,7 +37,7 @@ export class AcApiDocResponse {
   fromJson({ jsonData }: { jsonData: Record<string, any> }): this {
     const json = { ...jsonData };
 
-    if (json.hasOwnProperty(AcApiDocResponse.KEY_CONTENT)) {
+    if (json[AcApiDocResponse.KEY_CONTENT] != undefined) {
       const contentMap = json[AcApiDocResponse.KEY_CONTENT] as Record<string, any>;
       for (const mime in contentMap) {
         this.content[mime] = AcApiDocContent.instanceFromJson({ jsonData: contentMap[mime] });
@@ -45,7 +45,7 @@ export class AcApiDocResponse {
       delete json[AcApiDocResponse.KEY_CONTENT];
     }
 
-    if (json.hasOwnProperty(AcApiDocResponse.KEY_HEADERS)) {
+    if (json[AcApiDocResponse.KEY_HEADERS] != undefined) {
       const headersMap = json[AcApiDocResponse.KEY_HEADERS] as Record<string, any>;
       for (const headerName in headersMap) {
         this.headers[headerName] = AcApiDocHeader.instanceFromJson({ jsonData: headersMap[headerName] });
@@ -53,7 +53,7 @@ export class AcApiDocResponse {
       delete json[AcApiDocResponse.KEY_HEADERS];
     }
 
-    if (json.hasOwnProperty(AcApiDocResponse.KEY_LINKS)) {
+    if (json[AcApiDocResponse.KEY_LINKS] != undefined) {
       const linksMap = json[AcApiDocResponse.KEY_LINKS] as Record<string, any>;
       for (const linkName in linksMap) {
         this.links[linkName] = AcApiDocLink.instanceFromJson({ jsonData: linksMap[linkName] });

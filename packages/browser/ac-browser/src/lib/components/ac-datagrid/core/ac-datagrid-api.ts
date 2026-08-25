@@ -213,20 +213,16 @@ export class AcDatagridApi {
       oldUsePagination: this._usePagination
     };
     this._usePagination = value;
-    if (this.datagrid && this.datagrid.datagridFooter) {
-      if (value) {
-        this.pagination = new AcPaginationElement();
-        this.pagination.bindDataManager({ dataManager: this.dataManager });
-        this.logger.log('Created and bound pagination');
-      } else {
-        this.logger.log('Pagination disabled, no action taken');
+    if (value) {
+      if (!this._pagination) {
+        this._pagination = new AcPaginationElement();
+        this._pagination.bindDataManager({ dataManager: this.dataManager });
       }
-      this.hooks.execute({ hook: AC_DATAGRID_HOOK.UsePaginationChange, args: hookArgs });
-      this.logger.log('Executed UsePaginationChange hook');
-      this.datagrid.datagridFooter.setPagination();
-      this.logger.log('Updated datagrid footer pagination');
     }
-
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.UsePaginationChange, args: hookArgs });
+    if (this.datagrid && this.datagrid.datagridFooter) {
+      this.datagrid.datagridFooter.setPagination();
+    }
   }
 
   private _useVirtualScrolling: boolean = false;
@@ -313,8 +309,17 @@ export class AcDatagridApi {
   hoverColumnId?: string;
   hoverRowId?: string;
   lastColumnIndex: number = 0;
-  logger: AcLogger = new AcLogger({ logMessages: false });
-  pagination?: AcPaginationElement;
+  private _pagination?: AcPaginationElement;
+  get pagination(): AcPaginationElement {
+    if (!this._pagination) {
+      this._pagination = new AcPaginationElement();
+      this._pagination.bindDataManager({ dataManager: this.dataManager });
+    }
+    return this._pagination;
+  }
+  set pagination(value: AcPaginationElement) {
+    this._pagination = value;
+  }
   rowValueChangeTimeoutDuration = 250;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {

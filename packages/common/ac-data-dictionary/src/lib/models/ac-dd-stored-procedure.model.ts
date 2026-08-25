@@ -24,7 +24,7 @@ export class AcDDStoredProcedure {
     const result = new AcDDStoredProcedure();
     const acDataDictionary = AcDataDictionary.getInstance({ dataDictionaryName });
 
-    if (acDataDictionary.storedProcedures.hasOwnProperty(storedProcedureName)) {
+    if (acDataDictionary.storedProcedures[storedProcedureName] != undefined) {
       result.fromJson({ jsonData: acDataDictionary.storedProcedures[storedProcedureName] });
     }
     return result;

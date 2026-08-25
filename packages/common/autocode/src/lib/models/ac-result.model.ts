@@ -149,8 +149,10 @@ export class AcResult {
   }): AcResult {
     this.code = AcResult.CodeException;
     this.exception = exception;
-    this.stackTrace = stackTrace ?? '';
-    this.message = message ?? (exception?.toString?.() ?? 'Unknown exception');
+    if(exception.stack){
+      this.stackTrace = exception.stack;
+    }
+    this.message = message ?? `Exception : ${exception.toString()}\nStacktrace: ${this.stackTrace}`;
 
     if (logException) {
       logger?.error?.([this.exception?.toString?.(), this.stackTrace]);

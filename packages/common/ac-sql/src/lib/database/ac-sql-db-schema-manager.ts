@@ -832,7 +832,7 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
   async initSchemaDataDictionary(): Promise<AcResult> {
     const result = new AcResult();
     try {
-      if (!AcDataDictionary.dataDictionaries.hasOwnProperty(AcSMDataDictionary.DataDictionaryName)) {
+      if (AcDataDictionary.dataDictionaries[AcSMDataDictionary.DataDictionaryName] == undefined) {
         this.logger.log("Registering schema data dictionary...");
         AcDataDictionary.registerDataDictionary({
           jsonData: AcSMDataDictionary.DataDictionary,

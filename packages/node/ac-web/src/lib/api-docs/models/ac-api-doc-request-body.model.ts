@@ -21,7 +21,7 @@ export class AcApiDocRequestBody {
 
   fromJson({ jsonData }: { jsonData: Record<string, any> }): this {
     const json = { ...jsonData };
-    if (json.hasOwnProperty(AcApiDocRequestBody.KEY_CONTENT)) {
+    if (json[AcApiDocRequestBody.KEY_CONTENT] != undefined) {
       const contentMap = json[AcApiDocRequestBody.KEY_CONTENT] as Record<string, any>;
       for (const mime in contentMap) {
         this.content[mime] = AcApiDocContent.instanceFromJson({ jsonData: contentMap[mime] });

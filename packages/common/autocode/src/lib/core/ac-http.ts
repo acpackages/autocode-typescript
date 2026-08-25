@@ -48,7 +48,7 @@ export class AcHttp {
     parentKey?: string;
   }): void {
     for (const key in data) {
-      if (data.hasOwnProperty(key)) {
+      if (data[key] != undefined) {
         const formKey = parentKey ? `${parentKey}[${key}]` : key;
         const isFileType = data[key] instanceof File || data[key] instanceof Blob;
         if (typeof data[key] === 'object' && !isFileType && data[key] !== null) {

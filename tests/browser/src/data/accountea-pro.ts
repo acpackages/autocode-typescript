@@ -1,6 +1,6 @@
 export const dataDictionaryJson = {
   "name": "Accountea - Pro",
-  "version": 25,
+  "version": 26,
   "tables": {
     "act_access_groups": {
       "tableName": "act_access_groups",
@@ -3773,6 +3773,10 @@ export const dataDictionaryJson = {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "SAC Code"
             },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
+              "propertyValue": true
+            },
             "REQUIRED": {
               "propertyName": "REQUIRED",
               "propertyValue": true
@@ -4027,6 +4031,23 @@ export const dataDictionaryJson = {
             "REQUIRED": {
               "propertyName": "REQUIRED",
               "propertyValue": true
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "value": "Regular",
+                  "label": "Regular"
+                },
+                {
+                  "value": "Special",
+                  "label": "Special"
+                },
+                {
+                  "value": "Occasional",
+                  "label": "Occasional"
+                }
+              ]
             }
           }
         },
@@ -9800,6 +9821,10 @@ export const dataDictionaryJson = {
               "propertyName": "REQUIRED",
               "propertyValue": true
             },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
+              "propertyValue": true
+            },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
               "propertyValue": true
@@ -11829,6 +11854,10 @@ export const dataDictionaryJson = {
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
+              "propertyValue": true
+            },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
               "propertyValue": true
             },
             "USE_FOR_ROW_LIKE_FILTER": {
@@ -27205,8 +27234,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "update_quantity": {
-          "columnName": "update_quantity",
+        "product_quantity": {
+          "columnName": "product_quantity",
           "columnType": "DOUBLE",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -27219,8 +27248,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "update_total_quantity": {
-          "columnName": "update_total_quantity",
+        "product_total_quantity": {
+          "columnName": "product_total_quantity",
           "columnType": "DOUBLE",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -27391,10 +27420,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "Location"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
             }
           }
         },
@@ -27520,6 +27545,51 @@ export const dataDictionaryJson = {
             "REQUIRED": {
               "propertyName": "REQUIRED",
               "propertyValue": true
+            },
+            "VALUE_OPTIONS": {
+              "propertyName": "VALUE_OPTIONS",
+              "propertyValue": [
+                {
+                  "label": "Opening Stock",
+                  "value": "OPENING_STOCK"
+                },
+                {
+                  "label": "Product brought into business as Opening Stock",
+                  "value": "OPENING_STOCK_CAPITAL"
+                },
+                {
+                  "label": "Loss by Theft",
+                  "value": "LOSS_BY_THEFT"
+                },
+                {
+                  "label": "Loss by Fire",
+                  "value": "LOSS_BY_FIRE"
+                },
+                {
+                  "label": "Loss by Damage / Expired",
+                  "value": "LOSS_BY_DAMAGE"
+                },
+                {
+                  "label": "Free Samples / Promotion",
+                  "value": "FREE_SAMPLE"
+                },
+                {
+                  "label": "Internal Consumption / Drawings",
+                  "value": "DRAWINGS"
+                },
+                {
+                  "label": "Stock Adjustment (Surplus)",
+                  "value": "STOCK_ADJUSTMENT_GAIN"
+                },
+                {
+                  "label": "Stock Adjustment (Shortage)",
+                  "value": "STOCK_ADJUSTMENT_LOSS"
+                },
+                {
+                  "label": "General Stock Adjustment",
+                  "value": "GENERAL_ADJUSTMENT"
+                }
+              ]
             }
           }
         },
@@ -27530,10 +27600,6 @@ export const dataDictionaryJson = {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
               "propertyValue": "User"
-            },
-            "REQUIRED": {
-              "propertyName": "REQUIRED",
-              "propertyValue": true
             }
           }
         },
@@ -51848,21 +51914,21 @@ export const dataDictionaryJson = {
           "columnSourceName": "act_stock_update_products",
           "columnSourceOriginalColumn": "stock_update_product_id"
         },
-        "update_quantity": {
-          "columnName": "update_quantity",
+        "product_quantity": {
+          "columnName": "product_quantity",
           "columnType": "DOUBLE",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_stock_update_products",
-          "columnSourceOriginalColumn": "update_quantity"
+          "columnSourceOriginalColumn": "product_quantity"
         },
-        "update_total_quantity": {
-          "columnName": "update_total_quantity",
+        "product_total_quantity": {
+          "columnName": "product_total_quantity",
           "columnType": "DOUBLE",
           "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "act_stock_update_products",
-          "columnSourceOriginalColumn": "update_total_quantity"
+          "columnSourceOriginalColumn": "product_total_quantity"
         },
         "product_description": {
           "columnName": "product_description",

@@ -49,9 +49,6 @@
   border-right: solid 1px hsla(0, 0%, 0%, 0.1)!important;
 }
 
-
-
-
 .ag-center-cols-viewport{
   min-height: max-content!important;
 }
@@ -68,4 +65,104 @@
 }
 .ag-row-last{
   border-bottom: solid 1px hsla(0,0,0,0.05)!important;
+}
+
+.ag-header-cell-comp-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.ac-aggrid-header-cell {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ac-aggrid-header-cell-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  overflow: hidden !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  order: 1 !important;
+}
+
+.ac-aggrid-header-cell-filter-container {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  order: 2 !important;
+}
+
+.ac-aggrid-header-filter-btn {
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  opacity: 0.75;
+  transition: opacity 0.2s, color 0.2s;
+  margin-left: auto !important;
+}
+
+.ac-aggrid-header-filter-btn:hover {
+  opacity: 1;
+  color: #fff !important;
+}
+
+.ac-aggrid-header-filter-btn.active {
+  color: #388bfd !important;
+  opacity: 1;
+}
+
+.ac-aggrid-header-filter-btn svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.ac-datagrid-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  flex-shrink: 0 !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e0e0e0 !important;
+  box-sizing: border-box !important;
+  padding: 0 4px !important;
+}
+
+.ac-datagrid-footer-left-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.ac-datagrid-footer-right-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.ac-datagrid-footer-left-container .ac-pagination {
+  padding: 2px 4px !important;
+  border: none !important;
 }

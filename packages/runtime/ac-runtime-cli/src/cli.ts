@@ -22,8 +22,27 @@ function getOption(name: string, defaultValue: string): string {
     const arg = args.find(a => a.startsWith(prefix));
     if (arg) return arg.substring(prefix.length);
     const idx = args.indexOf(`--${name}`);
-    if (idx >= 0 && idx + 1 < args.length) return args[idx + 1];
+    if (idx >= 0 && idx + 1 < args.length && !args[idx + 1].startsWith('--')) return args[idx + 1];
     return defaultValue;
+}
+
+function getHostOption(): boolean | string {
+    const prefix = '--host=';
+    const arg = args.find(a => a.startsWith(prefix));
+    if (arg) {
+        const val = arg.substring(prefix.length);
+        if (val === 'true' || val === '') return true;
+        if (val === 'false') return false;
+        return val;
+    }
+    const idx = args.indexOf('--host');
+    if (idx >= 0) {
+        if (idx + 1 < args.length && !args[idx + 1].startsWith('--')) {
+            return args[idx + 1];
+        }
+        return true;
+    }
+    return true;
 }
 
 if (!command || command === '--help' || command === '-h') {
@@ -36,7 +55,7 @@ if (!command || command === '--help' || command === '-h') {
 
   serve options:
     --port <n>  Port number (default: 3000)
-    --host      Expose to network
+    --host      Expose to network (IP address and localhost)
     --open      Open browser on start
 
   build options:
@@ -50,7 +69,7 @@ const config = loadConfig(process.cwd());
 if (command === 'serve') {
     serve(config, {
         port: parseInt(getOption('port', '3000'), 10),
-        host: getFlag('host'),
+        host: getHostOption(),
         open: getFlag('open'),
     });
 } else if (command === 'build') {

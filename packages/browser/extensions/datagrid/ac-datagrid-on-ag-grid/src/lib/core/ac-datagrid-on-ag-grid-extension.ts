@@ -60,11 +60,12 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         const pageSize: number = agGridRequest.endRow - agGridRequest.startRow;
         rowsCount = pageSize;
       }
-      const filterGroup: AcFilterGroup = new AcFilterGroup();
-      filterGroup.operator = AcEnumLogicalOperator.And;
+      let filterGroup: AcFilterGroup = this.datagridApi.dataManager.filterGroup ?? new AcFilterGroup();
       if (agGridRequest.filterModel) {
         const filterColumns: string[] = Object.keys(agGridRequest.filterModel);
         if (filterColumns.length > 0) {
+          filterGroup = new AcFilterGroup();
+          filterGroup.operator = AcEnumLogicalOperator.And;
           for (const column of filterColumns) {
             const filterModel = (agGridRequest.filterModel as any)[column];
             if (filterModel.conditions) {
@@ -79,18 +80,17 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
               filterGroup.addFilter({ key: column, value: filterModel.filter, operator: this.getConditionOperator({ agGridOperator: filterModel.type }) });
             }
           }
+          this.datagridApi.dataManager.filterGroup = filterGroup;
         }
       }
-      this.datagridApi.dataManager.filterGroup = filterGroup;
-      const sortOrder: AcSortOrder = new AcSortOrder();
-      if (agGridRequest.sortModel) {
-        if (agGridRequest.sortModel.length > 0) {
-          for (const sortModel of agGridRequest.sortModel) {
-            sortOrder.addSort({ key: sortModel.colId, order: (sortModel.sort as any) });
-          }
+      let sortOrder: AcSortOrder = this.datagridApi.dataManager.sortOrder ?? new AcSortOrder();
+      if (agGridRequest.sortModel && agGridRequest.sortModel.length > 0) {
+        sortOrder = new AcSortOrder();
+        for (const sortModel of agGridRequest.sortModel) {
+          sortOrder.addSort({ key: sortModel.colId, order: (sortModel.sort as any) });
         }
+        this.datagridApi.dataManager.sortOrder = sortOrder;
       }
-      this.datagridApi.dataManager.sortOrder = sortOrder;
       const rows = await this.datagridApi.dataManager.getData({ startIndex, rowsCount });
       params.success({ rowData: rows, rowCount: this.datagridApi.dataManager.totalRows });
     }
@@ -115,6 +115,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   isFirstDataRendered: boolean = false;
   leftFooterContainer?: HTMLElement;
   rightFooterContainer?: HTMLElement;
+
   delayedCallback: AcDelayedCallback = new AcDelayedCallback();
 
   private agGridEventHandler = new AcDatagridOnAgGridEventHandler();
@@ -489,14 +490,21 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
           if (this.isFirstDataRendered) {
             if (this.gridApi && args.datagridRow) {
               const datagridRow = args.datagridRow as IAcDatagridRow;
-              const pageSize = this.gridApi.paginationGetPageSize();
-              const page = Math.floor(datagridRow.index / pageSize);
-              this.gridApi.paginationGoToPage(page);
+              if (this.datagridApi?.usePagination && this.datagridApi?.pagination) {
+                const pageSize = this.datagridApi.pagination.activePageSize;
+                const page = Math.floor(datagridRow.index / pageSize) + 1;
+                this.datagridApi.pagination.activePage = page;
+              }
               if (this.delayedCallback) {
                 this.delayedCallback.add({
                   callback: () => {
                     if (this.gridApi) {
-                      this.gridApi!.ensureIndexVisible(datagridRow.index);
+                      const displayedIdx = (this.datagridApi?.dataManager.displayedRows ?? []).findIndex(
+                        (r: any) => r.rowId === datagridRow.rowId
+                      );
+                      if (displayedIdx >= 0) {
+                        this.gridApi!.ensureIndexVisible(displayedIdx);
+                      }
                     }
                   }
                 });
@@ -512,7 +520,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
               });
             }
           }
-        }
+        };
         handleEnsureRow();
       }
     }
@@ -533,7 +541,12 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         this.gridApi.refreshServerSide({ purge: true });
       }
     }
-    else if (stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.RefreshRows)) {
+    else if (
+      stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.RefreshRows) ||
+      stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.FilterGroupChange) ||
+      stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.DisplayedRowsChange) ||
+      stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.SortOrderChange)
+    ) {
       this.refreshRows();
     }
     else if (stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.RowAdd)) {
@@ -625,23 +638,31 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   }
 
   private handleRowFocus(args: IAcDatagridRowFocusHookArgs) {
-    if (!this.gridApi) return;
+    if (!this.gridApi || !this.datagridApi) return;
 
-    const pageSize = this.gridApi.paginationGetPageSize();
     const newIndex = args.index;
-    let targetPage = 1;
-    if (newIndex >= 0) {
-      targetPage = Math.floor(newIndex / pageSize);
+    if (this.datagridApi.usePagination && this.datagridApi.pagination) {
+      const pageSize = this.datagridApi.pagination.activePageSize;
+      let targetPage = 1;
+      if (newIndex >= 0) {
+        targetPage = Math.floor(newIndex / pageSize) + 1;
+      }
+      if (this.datagridApi.pagination.activePage !== targetPage) {
+        this.datagridApi.pagination.activePage = targetPage;
+      }
     }
-    const activePage = this.gridApi.paginationGetCurrentPage();
-    if (activePage != targetPage) {
-      this.gridApi.paginationGoToPage(targetPage);
-    }
-    this.gridApi.ensureIndexVisible(newIndex, 'middle');
-    if (args.highlightCells) {
-      const node = this.gridApi.getDisplayedRowAtIndex(newIndex);
-      if (node) {
-        this.gridApi.flashCells({ rowNodes: [node] });
+    const displayedIdx = this.datagridApi.usePagination
+      ? (this.datagridApi.dataManager.displayedRows ?? []).findIndex(
+          (r: any) => r.index === newIndex
+        )
+      : newIndex;
+    if (displayedIdx >= 0) {
+      this.gridApi.ensureIndexVisible(displayedIdx, 'middle');
+      if (args.highlightCells) {
+        const node = this.gridApi.getDisplayedRowAtIndex(displayedIdx);
+        if (node) {
+          this.gridApi.flashCells({ rowNodes: [node] });
+        }
       }
     }
   }
@@ -683,29 +704,30 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   }
 
   private handleUsePaginationChange() {
-    if (!this.datagridApi) return;
-
-    this.gridOptions['pagination'] = this.datagridApi.usePagination;
-    if (this.gridApi) {
-      this.gridApi.setGridOption('pagination', this.datagridApi.usePagination);
-    }
+    this.setPaginationDisplay();
+    this.refreshRows();
   }
 
   override init(): void {
     if (!this.datagridApi) return;
     const datagrid = this.datagridApi.datagrid;
     this.agGridElement = datagrid.ownerDocument.createElement('div');
-    this.agGridElement.style.display = 'contents';
     this.agGridElement.setAttribute('ag-grid-ext-el', 'true');
     datagrid.afterRowsContainer.setAttribute('style', "position:absolute;bottom:0px;height:0px;");
     this.datagridApi.dataManager.assignUniqueIdToData = true;
     this.rowKey = this.datagridApi.dataManager.uniqueIdKey;
     this.rowParentKey = this.datagridApi.dataManager.uniqueIdParentKey;
+
     this.leftFooterContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
     this.leftFooterContainer.style.display = 'flex';
+    this.leftFooterContainer.style.alignItems = 'center';
+    this.leftFooterContainer.style.gap = '10px';
     this.leftFooterContainer.classList.add("ac-datagrid-footer-left-container");
+
     this.rightFooterContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
     this.rightFooterContainer.style.display = 'flex';
+    this.rightFooterContainer.style.alignItems = 'center';
+    this.rightFooterContainer.style.gap = '5px';
     this.rightFooterContainer.classList.add("ac-datagrid-footer-right-container");
     datagrid.afterRowsContainer.classList.add("ac-datagrid-after-rows-container");
 
@@ -750,6 +772,13 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       });
     });
 
+    this.leftFooterContainer.append(this.addButtonContainer!);
+    this.leftFooterContainer.append(this.searchInputContainer!);
+    this.rightFooterContainer.append(this.downloadButtonContainer!);
+    this.rightFooterContainer.append(this.columnsCustomizerButtonContainer!);
+    this.footerElement.append(this.leftFooterContainer);
+    this.footerElement.append(this.rightFooterContainer);
+
     this.setDataSourceType();
     this.setDataExportXlsxExtension();
     this.setAfterRowsFooterExtension();
@@ -759,6 +788,33 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     this.setRowNumbersExtension();
     this.setAddButtonDisplay();
     this.setSearchInputDisplay();
+
+    this.datagridApi.dataManager.on({
+      event: 'FILTER_GROUP_CHANGE',
+      callback: () => this.refreshRows(),
+    });
+    this.datagridApi.dataManager.on({
+      event: 'DISPLAYED_ROWS_CHANGE',
+      callback: () => this.refreshRows(),
+    });
+    this.datagridApi.dataManager.on({
+      event: 'SORT_ORDER_CHANGE',
+      callback: () => this.refreshRows(),
+    });
+  }
+
+  setPaginationDisplay() {
+    if (!this.datagridApi || !this.leftFooterContainer) return;
+    const pagination = this.datagridApi.pagination;
+    if (this.datagridApi.usePagination && pagination) {
+      if (!this.leftFooterContainer.contains(pagination)) {
+        this.leftFooterContainer.prepend(pagination);
+      }
+      pagination.style.display = '';
+      pagination.updateDisplayedRows();
+    } else if (pagination) {
+      pagination.style.display = 'none';
+    }
   }
 
   initAgGrid() {
@@ -784,31 +840,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.registerModules();
       this.gridApi = createGrid(this.agGridElement, this.gridOptions);
       this.agGridTreeTableExt.gridApi = this.gridApi;
-      const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
-      if (pagingPanel) {
-        acClearElement({ element: this.leftFooterContainer });
-        const pageSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-summary-panel');
-        if(pageSummaryPanel){
-          this.leftFooterContainer?.appendChild(pageSummaryPanel);
-        }
-        const rowSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-row-summary-panel');
-        if(rowSummaryPanel){
-          this.leftFooterContainer?.appendChild(rowSummaryPanel);
-        }
-        const pageSizePanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-size');
-        if(pageSizePanel){
-          this.leftFooterContainer?.appendChild(pageSizePanel);
-        }
-        acClearElement({ element: pagingPanel });
-        this.leftFooterContainer!.append(this.addButtonContainer!);
-        this.leftFooterContainer!.append(this.searchInputContainer!);
-        this.rightFooterContainer!.append(this.downloadButtonContainer!);
-        this.rightFooterContainer!.append(this.columnsCustomizerButtonContainer!);
-        pagingPanel.append(this.leftFooterContainer!);
-        pagingPanel.append(this.rightFooterContainer!);
-      }
-      const fullWidthContainer:HTMLElement = this.agGridElement.querySelector('.ag-full-width-container');
-      if(fullWidthContainer){
+
         fullWidthContainer.append(this.datagridApi.datagrid.afterRowsContainer!);
       }
       this.agGridEventHandler.init({ agGridExtension: this });
@@ -823,14 +855,25 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         callback: () => {
           this.initAgGrid();
         }, key: 'initAgGrid', duration: 50
-      })
+      });
     }
   }
 
   private setAgGridElement() {
     if (this.datagridApi && this.datagridApi.datagrid.isConnected) {
       this.datagridApi.datagrid.innerHTML = '';
+      this.datagridApi.datagrid.style.display = 'flex';
+      this.datagridApi.datagrid.style.flexDirection = 'column';
+      this.datagridApi.datagrid.style.height = '100%';
+      this.agGridElement.style.flex = '1 1 auto';
+      this.agGridElement.style.minHeight = '0';
+      this.agGridElement.style.width = '100%';
+      this.agGridElement.style.height = '100%';
       this.datagridApi.datagrid.append(this.agGridElement);
+      this.setPaginationDisplay();
+      if (this.footerElement) {
+        this.datagridApi.datagrid.append(this.footerElement);
+      }
     }
     else {
       this.delayedCallback.add({
@@ -845,10 +888,18 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     if (!this.gridApi || !this.datagridApi) return;
 
     if (this.isClientSideData) {
-      this.gridApi.setGridOption('quickFilterText', this.datagridApi?.dataManager.searchQuery ?? '');
+      const dataManager = this.datagridApi.dataManager;
+      const rows = this.datagridApi.usePagination
+        ? dataManager.displayedRows
+        : dataManager.rows;
+      const filteredData = (rows ?? []).map((r: any) => r.data);
+      this.gridApi.setGridOption('rowData', filteredData);
+      if (dataManager.searchQuery) {
+        this.gridApi.setGridOption('quickFilterText', dataManager.searchQuery);
+      }
     }
     else {
-      this.datagridApi?.dataManager.reset();
+      this.datagridApi.dataManager.reset();
       this.gridApi.refreshServerSide({ purge: true });
     }
   }
@@ -904,7 +955,13 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         suppressHeaderMenuButton: true,
         filter: false,
         valueGetter: (params:any)=>{
-          return (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true)?params.node.rowIndex + 1:'';
+          if (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true) {
+            const pageOffset = (this.datagridApi?.usePagination && this.datagridApi?.pagination)
+              ? Math.max(0, this.datagridApi.pagination.startRow - 1)
+              : 0;
+            return params.node.rowIndex + 1 + pageOffset;
+          }
+          return '';
         },
         width: 32,
         pinned: 'left',
@@ -926,6 +983,11 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     if (this.datagridApi) {
       for (const column of this.datagridApi.datagridColumns) {
         const colDef: ColDef = acGetColDefFromAcDataGridColumn({ datagridColDef: column.columnDefinition });
+        colDef.headerComponentParams = {
+          agGridExtension: this,
+          datagridColumn: column,
+          datagridApi: this.datagridApi,
+        };
         if (column.columnDefinition.cellRendererElement || column.columnDefinition.cellRendererFunction) {
           if (column.columnDefinition.cellRendererFunction) {
             colDef.cellRenderer = (params: any) => {

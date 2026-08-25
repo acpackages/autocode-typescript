@@ -17,5 +17,6 @@ export const AcEnumRepeaterHook = {
   RowUpdate: 'ROW_UPDATE',
   RowRender: 'ROW_RENDER',
   TotalRowsChange: 'TOTAL_ROWS_CHANGE',
-  UsePaginationChange: 'USE_PAGINATION_CHANGE'
+  UsePaginationChange: 'USE_PAGINATION_CHANGE',
+  FieldsChange: 'FIELDS_CHANGE'
 }

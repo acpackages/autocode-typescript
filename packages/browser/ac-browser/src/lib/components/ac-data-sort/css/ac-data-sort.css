@@ -1,0 +1,92 @@
+.ac-data-sort-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  position: relative;
+}
+
+.ac-data-sort-btn:hover {
+  background: #f0f0f0;
+}
+
+.ac-data-sort-badge {
+  background: #007bff;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  border: 2px solid #fff;
+}
+
+.ac-data-sort-popup {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  z-index: 9999;
+  padding: 16px;
+  min-width: 300px;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-data-sort-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.ac-data-sort-popup-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.ac-data-sort-popup-close:hover {
+  color: #333;
+}
+
+.ac-data-sort-rows-container {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ac-data-sort-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ac-data-sort-row select,
+.ac-data-sort-row input {
+  padding: 4px;
+}
+
+.ac-data-sort-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
