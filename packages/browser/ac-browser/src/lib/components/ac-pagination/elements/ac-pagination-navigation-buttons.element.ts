@@ -30,9 +30,7 @@ export class AcPaginationNavigationButtonsElement extends AcElementBase{
   private pageLabel:HTMLElement;
   private rowsLabel:HTMLElement;
 
-  constructor(){
-    super();
-    this.classList.add(AcPaginationCssClassName.acPaginationNavigationButtons);
+  override connectedCallback(): void {
     this.innerHTML = `
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton} ac-res-none ac-res-xs-block" ac-pagination-first-button>${acPaginationElementHtml.first}</button>
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-previous-button>${acPaginationElementHtml.previous}</button>
@@ -47,13 +45,14 @@ export class AcPaginationNavigationButtonsElement extends AcElementBase{
     this.rowsLabel = this.querySelector('[ac-pagination-rows-label]') as HTMLElement;
     this.nextButton = this.querySelector('[ac-pagination-next-button]') as HTMLButtonElement;
     this.lastButton = this.querySelector('[ac-pagination-last-button]') as HTMLButtonElement;
+    this.classList.add(AcPaginationCssClassName.acPaginationNavigationButtons);
     this.registerListeners();
+    this.validateButtons();
+    this.renderPageLabel();
   }
 
   override init(){
     super.init();
-    this.validateButtons();
-    this.renderPageLabel();
   }
 
   handlePageChanged(event:IAcPaginationPageChangeEvent){

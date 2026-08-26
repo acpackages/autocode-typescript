@@ -1,9 +1,8 @@
 .ac-pagination {
-  container-type: inline-size;
   display: flex !important;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 5px;
   padding: 8px;
   flex-wrap: nowrap !important;
@@ -11,6 +10,14 @@
   box-sizing: border-box;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.ac-pagination-left-container{
+  display: flex;
+}
+
+.ac-pagination-right-container{
+  display: flex;
 }
 
 .ac-pagination-displayed-rows {
@@ -58,73 +65,4 @@
 .ac-pagination-navigation-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-/* Container query responsive */
-@container (max-width: 575.98px) {
-  .ac-pagination {
-    gap: 4px;
-  }
-
-  .ac-pagination [ac-pagination-first-button],
-  .ac-pagination [ac-pagination-last-button] {
-    display: none !important;
-  }
-}
-
-@container (max-width: 400px) {
-  .ac-pagination {
-    justify-content: center;
-    gap: 4px;
-  }
-
-  .ac-pagination .ac-pagination-displayed-rows,
-  .ac-pagination .ac-pagination-rows-label {
-    display: none !important;
-  }
-
-  .ac-pagination [ac-pagination-page-label] {
-    display: none !important;
-  }
-}
-
-@container (max-width: 250px) {
-  .ac-pagination {
-    gap: 2px;
-  }
-
-  .ac-pagination .ac-pagination-page-size-select {
-    display: none !important;
-  }
-}
-
-/* Fallback class-based responsive: compact (<400px) */
-.ac-pagination.compact {
-  justify-content: center;
-  gap: 8px;
-}
-
-.ac-pagination.compact .ac-pagination-displayed-rows,
-.ac-pagination.compact .ac-pagination-rows-label {
-  display: none !important;
-}
-
-.ac-pagination.compact [ac-pagination-page-label] {
-  display: none !important;
-}
-
-/* Fallback class-based responsive: narrow (<250px) */
-.ac-pagination.narrow {
-  gap: 4px;
-}
-
-.ac-pagination.narrow .ac-pagination-page-size-select {
-  display: none !important;
-}
-
-.ac-pagination-add-btn {
-  border: solid 1px #c2c2c2;
-  border-radius: 5px;
-  height: 32px;
-  background-color: inherit;
 }

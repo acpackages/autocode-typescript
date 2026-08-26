@@ -19,12 +19,16 @@ export class AcPaginationSizeDropdownElement extends AcElementBase {
 
   private selectInput: any = this.ownerDocument.createElement('select');
 
-  override init() {
-    super.init();
-    acAddClassToElement({ class_: AcPaginationCssClassName.acPaginationPageSizeSelect, element: this.selectInput });
+  override connectedCallback(): void {
+    super.connectedCallback();
     this.setSelectDropdownValues();
     acClearElement({element:this});
     this.append(this.selectInput);
+  }
+
+  override init() {
+    super.init();
+    acAddClassToElement({ class_: AcPaginationCssClassName.acPaginationPageSizeSelect, element: this.selectInput });
   }
 
   setSelectDropdownValues() {

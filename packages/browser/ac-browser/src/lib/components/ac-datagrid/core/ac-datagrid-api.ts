@@ -207,6 +207,7 @@ export class AcDatagridApi {
   }
   set usePagination(value: boolean) {
     this.logger.log('Setting usePagination', { oldValue: this._usePagination, newValue: value });
+    const oldValue = this._usePagination;
     const hookArgs: IAcDatagridUsePaginationChangeHookArgs = {
       usePagination: value,
       datagridApi: this,
@@ -214,12 +215,16 @@ export class AcDatagridApi {
     };
     this._usePagination = value;
     if (value) {
-      if (!this._pagination) {
-        this._pagination = new AcPaginationElement();
-        this._pagination.bindDataManager({ dataManager: this.dataManager });
-      }
+      this.pagination = new AcPaginationElement();
+            this.pagination.bindDataManager({ dataManager: this.dataManager });
+            this.pagination.showAddButton = this.showAddButton;
+            this.pagination.addEventListener('add',()=>{
+              // this.events.execute({event:Ac.AddClick});
+            });
     }
-    this.hooks.execute({ hook: AC_DATAGRID_HOOK.UsePaginationChange, args: hookArgs });
+    if(oldValue != value){
+      this.hooks.execute({ hook: AC_DATAGRID_HOOK.UsePaginationChange, args: hookArgs });
+    }
     if (this.datagrid && this.datagrid.datagridFooter) {
       this.datagrid.datagridFooter.setPagination();
     }

@@ -46,6 +46,7 @@ export class RepeaterOfflinePage {
       {key:'phone_2',label:'Phone 2',allowFilter:true,allowSort:true,type:'STRING'},
       {key:'email',label:'Email',allowFilter:true,allowSort:true,type:'STRING'},
       {key:'subscription_date',label:'Subscription Date',allowFilter:true,allowSort:true,type:'DATE'},
+      {key:'salary',label:'Salary',allowFilter:true,allowSort:true,type:'NUMBER'},
       {key:'website',label:'Website',allowFilter:true,allowSort:true,type:'STRING'}
     ]
     api.rowRendererFunction = (args: IAcRepeaterRowRendererElementArgs) => {

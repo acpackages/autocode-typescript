@@ -2,6 +2,7 @@ import { AcDataManager, AcEnumConditionOperator, AcFilter } from "@autocode-ts/a
 import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 import { acClearElement } from "../../../utils/ac-element-functions";
 import { AcDataFilterElement, IAcDataFilterField } from "./ac-data-filter.element";
+import { acDataFilterElementHtml } from "../_ac-data-filter.export";
 
 const NO_VALUE_OPS: AcEnumConditionOperator[] = [
   AcEnumConditionOperator.IsNull,
@@ -107,6 +108,7 @@ export class AcDataFilterPopup {
       this.clearFilters();
     });
     this.popupElement.querySelector('.ac-data-filter-apply-btn')?.addEventListener('click', () => {
+      console.log("applying filter");
       this.applyFilters();
       this.hide();
     });
@@ -167,55 +169,36 @@ export class AcDataFilterPopup {
   }
 
   private getOperatorsForField(fieldType: string): IOperatorDef[] {
-    if (fieldType === 'DATE' || fieldType === 'DATETIME') {
-      return [
-        { operator: AcEnumConditionOperator.EqualTo, label: "Equals" },
-        { operator: AcEnumConditionOperator.NotEqualTo, label: "Not Equals" },
-        { operator: AcEnumConditionOperator.GreaterThan, label: "After (>)" },
-        { operator: AcEnumConditionOperator.GreaterThanEqualTo, label: "On or After (>=)" },
-        { operator: AcEnumConditionOperator.LessThan, label: "Before (<)" },
-        { operator: AcEnumConditionOperator.LessThanEqualTo, label: "On or Before (<=)" },
-        { operator: AcEnumConditionOperator.Between, label: "Between" },
-        { operator: AcEnumConditionOperator.IsNull, label: "Is Null" },
-        { operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" },
-      ];
-    }
-
-    if (['NUMBER', 'INT', 'INTEGER', 'FLOAT', 'DECIMAL', 'NUMERIC'].includes(fieldType)) {
-      return [
-        { operator: AcEnumConditionOperator.EqualTo, label: "Equal To" },
-        { operator: AcEnumConditionOperator.NotEqualTo, label: "Not Equal To" },
-        { operator: AcEnumConditionOperator.GreaterThan, label: "Greater Than (>)" },
-        { operator: AcEnumConditionOperator.GreaterThanEqualTo, label: "Greater Than or Equal To (>=)" },
-        { operator: AcEnumConditionOperator.LessThan, label: "Less Than (<)" },
-        { operator: AcEnumConditionOperator.LessThanEqualTo, label: "Less Than or Equal To (<=)" },
-        { operator: AcEnumConditionOperator.Between, label: "Between" },
-        { operator: AcEnumConditionOperator.IsNull, label: "Is Null" },
-        { operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" },
-      ];
-    }
-
-    if (fieldType === 'BOOLEAN' || fieldType === 'BOOL') {
-      return [
-        { operator: AcEnumConditionOperator.EqualTo, label: "Equal To" },
-        { operator: AcEnumConditionOperator.NotEqualTo, label: "Not Equal To" },
-        { operator: AcEnumConditionOperator.IsNull, label: "Is Null" },
-        { operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" },
-      ];
-    }
-
-    return [
-      { operator: AcEnumConditionOperator.Contains, label: "Contains" },
-      { operator: AcEnumConditionOperator.NotContains, label: "Not Contains" },
+    let result: IOperatorDef[] = [
       { operator: AcEnumConditionOperator.EqualTo, label: "Equal To" },
       { operator: AcEnumConditionOperator.NotEqualTo, label: "Not Equal To" },
-      { operator: AcEnumConditionOperator.StartsWith, label: "Starts With" },
-      { operator: AcEnumConditionOperator.EndsWith, label: "Ends With" },
-      { operator: AcEnumConditionOperator.IsNull, label: "Is Null" },
-      { operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" },
-      { operator: AcEnumConditionOperator.IsEmpty, label: "Is Empty" },
-      { operator: AcEnumConditionOperator.IsNotEmpty, label: "Is Not Empty" },
     ];
+    if (['NUMBER', 'INT', 'INTEGER', 'FLOAT', 'DECIMAL', 'NUMERIC', "DATE", "DATETIME"].includes(fieldType)) {
+      result = [
+        ...result,
+        { operator: AcEnumConditionOperator.GreaterThan, label: "Greater Than" },
+        { operator: AcEnumConditionOperator.GreaterThanEqualTo, label: "Greater Than or Equal To" },
+        { operator: AcEnumConditionOperator.LessThan, label: "Less Than" },
+        { operator: AcEnumConditionOperator.LessThanEqualTo, label: "Less Than or Equal To" },
+        { operator: AcEnumConditionOperator.Between, label: "Between" }
+      ];
+    }
+    if (['STRING', "TEXT"].includes(fieldType)) {
+      result = [
+        ...result,
+        { operator: AcEnumConditionOperator.Contains, label: "Contains" },
+        { operator: AcEnumConditionOperator.NotContains, label: "Not Contains" },
+        { operator: AcEnumConditionOperator.StartsWith, label: "Starts With" },
+        { operator: AcEnumConditionOperator.EndsWith, label: "Ends With" },
+        { operator: AcEnumConditionOperator.IsEmpty, label: "Is Empty" },
+        { operator: AcEnumConditionOperator.IsNotEmpty, label: "Is Not Empty" },
+      ];
+    }
+
+
+    result.push({ operator: AcEnumConditionOperator.IsNull, label: "Is Null" });
+    result.push({ operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" });
+    return result;
   }
 
   private getInputType(fieldType: string): string {
@@ -231,8 +214,7 @@ export class AcDataFilterPopup {
     if (!container) return;
 
     const row = document.createElement('div');
-    row.className = 'ac-data-filter-row ac-repeater-filter-row';
-    row.style.marginBottom = '8px';
+    row.className = 'ac-data-filter-row';
 
     const isSingle = this.isSingleFieldMode;
     const initialFieldKey = isSingle
@@ -265,12 +247,15 @@ export class AcDataFilterPopup {
 
     if (isSingle) {
       row.innerHTML = `
-        <select class="filter-op" style="flex:1"></select>
-        <input type="${inputType}" class="filter-val" style="flex:1.5; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
-        <div class="filter-val-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1.5;">
-          <input type="${inputType}" class="filter-val-from" placeholder="From" style="flex: 1; min-width: 0; padding: 4px;" value="${fromVal}">
+        <div class="ac-data-filter-flex">
+          <select class="ac-data-filter-operator ac-data-filter-select ac-data-filter-flex-fill" style="flex:1"></select>
+          <button class="ac-data-filter-row-remove">${acDataFilterElementHtml.delete}</button>
+        </div>
+        <input type="${inputType}" class="ac-data-filter-value" style="flex:1.5; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
+        <div class="ac-data-filter-value-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1.5;">
+          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${fromVal}">
           <span style="font-size: 11px; color: #888;">to</span>
-          <input type="${inputType}" class="filter-val-to" placeholder="To" style="flex: 1; min-width: 0; padding: 4px;" value="${toVal}">
+          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${toVal}">
         </div>
       `;
     } else {
@@ -278,24 +263,26 @@ export class AcDataFilterPopup {
       const fieldsOptions = `<option value="">Select Field...</option>` + filterableFields.map(f => `<option value="${f.key}" ${initialFieldKey === f.key ? 'selected' : ''}>${f.label}</option>`).join('');
 
       row.innerHTML = `
-        <select class="filter-key" style="flex:1">${fieldsOptions}</select>
-        <select class="filter-op"></select>
-        <input type="${inputType}" class="filter-val" style="flex:1; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
-        <div class="filter-val-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1;">
-          <input type="${inputType}" class="filter-val-from" placeholder="From" style="flex: 1; min-width: 0; padding: 4px;" value="${fromVal}">
-          <span style="font-size: 11px; color: #888;">to</span>
-          <input type="${inputType}" class="filter-val-to" placeholder="To" style="flex: 1; min-width: 0; padding: 4px;" value="${toVal}">
+      <div class="ac-data-filter-flex">
+        <select class="ac-data-filter-key ac-data-filter-flex-fill">${fieldsOptions}</select>
+        <button class="ac-data-filter-row-remove">${acDataFilterElementHtml.delete}</button>
         </div>
-        <button class="remove-filter-row" type="button" style="background:none; border:none; cursor:pointer; color:red; font-size:16px;">&times;</button>
+        <select class="ac-data-filter-operator ac-data-filter-select"></select>
+        <input type="${inputType}" class="ac-data-filter-value" style="flex:1; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
+        <div class="ac-data-filter-value-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1;">
+          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${fromVal}">
+          <span style="font-size: 11px; color: #888;">to</span>
+          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${toVal}">
+        </div>
       `;
     }
 
-    const keySelect = row.querySelector('.filter-key') as HTMLSelectElement | null;
-    const opSelect = row.querySelector('.filter-op') as HTMLSelectElement;
-    const valInput = row.querySelector('.filter-val') as HTMLInputElement;
-    const betweenContainer = row.querySelector('.filter-val-between') as HTMLElement;
-    const fromInput = row.querySelector('.filter-val-from') as HTMLInputElement;
-    const toInput = row.querySelector('.filter-val-to') as HTMLInputElement;
+    const keySelect = row.querySelector('.ac-data-filter-key') as HTMLSelectElement | null;
+    const opSelect = row.querySelector('.ac-data-filter-operator') as HTMLSelectElement;
+    const valInput = row.querySelector('.ac-data-filter-value') as HTMLInputElement;
+    const betweenContainer = row.querySelector('.ac-data-filter-value-between') as HTMLElement;
+    const fromInput = row.querySelector('.ac-data-filter-value-from') as HTMLInputElement;
+    const toInput = row.querySelector('.ac-data-filter-value-to') as HTMLInputElement;
 
     const populateOperators = (selectedOp?: AcEnumConditionOperator) => {
       const currentKey = isSingle ? this.targetField!.key : (keySelect?.value ?? '');
@@ -359,19 +346,19 @@ export class AcDataFilterPopup {
       remainingFilters.forEach(f => this.dataManager?.filterGroup.addFilterModel({ filter: f }));
 
       rowEls.forEach((row) => {
-        const op = (row.querySelector('.filter-op') as HTMLSelectElement).value as AcEnumConditionOperator;
+        const op = (row.querySelector('.ac-data-filter-operator') as HTMLSelectElement).value as AcEnumConditionOperator;
         if (NO_VALUE_OPS.includes(op)) {
           this.dataManager?.filterGroup.addFilter({ key: targetKey, operator: op, value: '' });
           newFiltersForField.push(AcFilter.instanceWithValues({ key: targetKey, operator: op, value: '' }));
         } else if (op === AcEnumConditionOperator.Between) {
-          const fromVal = (row.querySelector('.filter-val-from') as HTMLInputElement).value;
-          const toVal = (row.querySelector('.filter-val-to') as HTMLInputElement).value;
+          const fromVal = (row.querySelector('.ac-data-filter-value-from') as HTMLInputElement).value;
+          const toVal = (row.querySelector('.ac-data-filter-value-to') as HTMLInputElement).value;
           if (fromVal !== '' || toVal !== '') {
             this.dataManager?.filterGroup.addFilter({ key: targetKey, operator: op, value: [fromVal, toVal] });
             newFiltersForField.push(AcFilter.instanceWithValues({ key: targetKey, operator: op, value: [fromVal, toVal] }));
           }
         } else {
-          const val = (row.querySelector('.filter-val') as HTMLInputElement).value;
+          const val = (row.querySelector('.ac-data-filter-value') as HTMLInputElement).value;
           if (val !== '') {
             this.dataManager?.filterGroup.addFilter({ key: targetKey, operator: op, value: val });
             newFiltersForField.push(AcFilter.instanceWithValues({ key: targetKey, operator: op, value: val }));
@@ -386,8 +373,8 @@ export class AcDataFilterPopup {
       this.dataManager.filterGroup.clear();
 
       rowEls.forEach((row) => {
-        const key = (row.querySelector('.filter-key') as HTMLSelectElement).value;
-        const op = (row.querySelector('.filter-op') as HTMLSelectElement).value as AcEnumConditionOperator;
+        const key = (row.querySelector('.ac-data-filter-key') as HTMLSelectElement).value;
+        const op = (row.querySelector('.ac-data-filter-operator') as HTMLSelectElement).value as AcEnumConditionOperator;
 
         if (!key) return;
 
@@ -395,14 +382,14 @@ export class AcDataFilterPopup {
           this.dataManager?.filterGroup.addFilter({ key, operator: op, value: '' });
           newFiltersForField.push(AcFilter.instanceWithValues({ key, operator: op, value: '' }));
         } else if (op === AcEnumConditionOperator.Between) {
-          const fromVal = (row.querySelector('.filter-val-from') as HTMLInputElement).value;
-          const toVal = (row.querySelector('.filter-val-to') as HTMLInputElement).value;
+          const fromVal = (row.querySelector('.ac-data-filter-value-from') as HTMLInputElement).value;
+          const toVal = (row.querySelector('.ac-data-filter-value-to') as HTMLInputElement).value;
           if (fromVal !== '' || toVal !== '') {
             this.dataManager?.filterGroup.addFilter({ key, operator: op, value: [fromVal, toVal] });
             newFiltersForField.push(AcFilter.instanceWithValues({ key, operator: op, value: [fromVal, toVal] }));
           }
         } else {
-          const val = (row.querySelector('.filter-val') as HTMLInputElement).value;
+          const val = (row.querySelector('.ac-data-filter-value') as HTMLInputElement).value;
           if (val !== '') {
             this.dataManager?.filterGroup.addFilter({ key, operator: op, value: val });
             newFiltersForField.push(AcFilter.instanceWithValues({ key, operator: op, value: val }));

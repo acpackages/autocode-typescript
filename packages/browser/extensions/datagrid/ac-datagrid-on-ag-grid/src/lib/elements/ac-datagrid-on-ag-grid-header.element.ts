@@ -1,5 +1,7 @@
 import { AcDataFilterPopup } from '@autocode-ts/ac-browser';
-import { IHeaderComp, IHeaderParams } from 'ag-grid-community';
+import { AcDatagridOnAgGridExtension } from '@autocode-ts/ac-datagrid-on-ag-grid';
+import { AcDelayedCallback } from '@autocode-ts/autocode';
+import { FilterModel, IHeaderComp, IHeaderParams, TextFilter } from 'ag-grid-community';
 
 export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
   private params!: IHeaderParams & { agGridExtension?: any; datagridColumn?: any; datagridApi?: any };
@@ -9,6 +11,18 @@ export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
   private sortIcon?: HTMLElement;
   private onSortChangedListener?: () => void;
   private onFilterChangeListener?: () => void;
+  private delayedCallback:AcDelayedCallback = new AcDelayedCallback();
+
+  destroy(): void {
+    this.delayedCallback.destroy();
+    if (this.onSortChangedListener) {
+      this.params.column.removeEventListener('sortChanged', this.onSortChangedListener);
+      if (this.params.api?.removeEventListener) {
+        this.params.api.removeEventListener('sortChanged', this.onSortChangedListener);
+      }
+    }
+    this.filterPopup?.destroy();
+  }
 
   init(params: any): void {
     this.params = params;
@@ -215,6 +229,7 @@ export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
       allowFilter: col.allowFilter !== false,
     }));
 
+    const extension:AcDatagridOnAgGridExtension = this.params.agGridExtension;
     this.filterPopup = new AcDataFilterPopup({
       dataManager: dataManager,
       fields: fields.length > 0 ? fields : [targetField],
@@ -222,9 +237,15 @@ export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
       anchorElement: this.filterBtn,
       onApply: () => {
         this.updateFilterBtn();
+        this.delayedCallback.add({callback:() => {
+          extension.refreshRows();
+        }, duration:100,key:'applyFlter'});
       },
       onClear: () => {
         this.updateFilterBtn();
+        this.delayedCallback.add({callback:() => {
+          extension.refreshRows();
+        }, duration:100,key:'applyFlter'});
       }
     });
 
@@ -242,13 +263,5 @@ export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
     return true;
   }
 
-  destroy(): void {
-    if (this.onSortChangedListener) {
-      this.params.column.removeEventListener('sortChanged', this.onSortChangedListener);
-      if (this.params.api?.removeEventListener) {
-        this.params.api.removeEventListener('sortChanged', this.onSortChangedListener);
-      }
-    }
-    this.filterPopup?.destroy();
-  }
+
 }

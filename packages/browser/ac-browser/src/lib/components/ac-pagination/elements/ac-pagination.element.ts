@@ -86,6 +86,8 @@ export class AcPaginationElement extends AcElementBase {
   pageSizes: number[] = [5, 20, 50, 100];
   startRow: number = 0;
   totalPages: number = 1;
+  leftContainer?:HTMLElement;
+  rightContainer?:HTMLElement;
 
   bindDataManager({ dataManager }: { dataManager: AcDataManager }) {
     this.dataManager = dataManager;
@@ -101,10 +103,18 @@ export class AcPaginationElement extends AcElementBase {
     });
   }
 
-  private resizeObserver?: ResizeObserver;
+  override connectedCallback(): void {
+    super.connectedCallback();
+    acClearElement({ element: this });
+    this.innerHTML = '<div class="ac-pagination-left-container"></div><div class="ac-pagination-right-container"></div>';
+    this.leftContainer = this.querySelector(".ac-pagination-left-container");
+    this.rightContainer = this.querySelector(".ac-pagination-right-container");
+    this.leftContainer.append(this.navigationButtons);
+    this.leftContainer.append(this.sizeDropdown);
+    this.handleShowAddButton();
+  }
 
   override destroy(): void {
-    this.resizeObserver?.disconnect();
     super.destroy();
   }
 
@@ -113,16 +123,8 @@ export class AcPaginationElement extends AcElementBase {
     super.init();
     this.navigationButtons.pagination = this;
     this.sizeDropdown.pagination = this;
-
     acAddClassToElement({ class_: AcPaginationCssClassName.acPagination, element: this });
     acAddClassToElement({ class_: 'ac-res-container', element: this });
-    acClearElement({ element: this });
-
-    this.append(this.navigationButtons);
-    this.append(this.sizeDropdown);
-    this.handleShowAddButton();
-
-    this.setupResizeObserver();
   }
 
   private handleShowAddButton() {
@@ -135,7 +137,7 @@ export class AcPaginationElement extends AcElementBase {
         this.addButton.addEventListener('click',()=>{
           this.dispatchEvent(new CustomEvent('add'));
         });
-        this.append(this.addButton);
+        this.leftContainer.append(this.addButton);
       }
     }
     else{
@@ -146,17 +148,6 @@ export class AcPaginationElement extends AcElementBase {
     }
 
 
-  }
-
-  private setupResizeObserver() {
-    this.resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const width = entry.contentRect.width;
-        this.classList.toggle('compact', width < 400);
-        this.classList.toggle('narrow', width < 250);
-      }
-    });
-    this.resizeObserver.observe(this);
   }
 
   updateDisplayedRows() {

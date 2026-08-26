@@ -70,7 +70,7 @@
   position: relative;
 }
 
-.ac-repeater-header-popup {
+/* .ac-repeater-header-popup {
   position: fixed;
   background: #fff;
   border: 1px solid #ccc;
@@ -126,7 +126,7 @@
 }
 
 /* Container-based responsive: compact mode (<500px) */
-.ac-repeater-header.compact {
+/* .ac-repeater-header.compact {
   gap: 8px;
 }
 
@@ -142,14 +142,14 @@
 .ac-repeater-header.compact .ac-repeater-filter-row input {
   min-width: 0;
   flex: 1 1 auto;
-}
+} */
 
 /* Container-based responsive: narrow mode (<350px) */
-.ac-repeater-header.narrow {
+/* .ac-repeater-header.narrow {
   flex-wrap: nowrap;
   gap: 4px;
 }
 
 .ac-repeater-header.narrow .ac-repeater-search-container {
   flex: 1;
-}
+}  */

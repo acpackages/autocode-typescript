@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType } from '@autocode-ts/ac-browser';
+import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType, AcPaginationElement, AcEnumPaginationEvent } from '@autocode-ts/ac-browser';
 import { ColDef, createGrid, ModuleRegistry, AllCommunityModule, GridApi, GetRowIdParams, GridOptions, IRowNode, IServerSideGetRowsParams, IServerSideDatasource, SuppressKeyboardEventParams, ClientSideRowModelModule, IServerSideGetRowsRequest, TextFilterModule, NumberFilterModule, DateFilterModule } from 'ag-grid-community';
-import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule,RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
+import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 import { AcDatagridRowSelectionExtensionOnAgGrid } from './ac-datagrid-row-selection-extension-on-ag-grid';
 import { IAcDatagriOnAgGridColDefsChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-col-defs-set-hook-args.interface';
 import { AcEnumDatagridOnAgGridHook } from '../enums/ac-enum-datagrid-on-ag-grid-hook.enum';
@@ -21,6 +21,7 @@ import { AcDatagridOnAgGridCellRenderer } from '../elements/ac-datagrid-on-ag-gr
 import { AcDatagridOnAgGridCellEditor } from '../elements/ac-datagrid-on-ag-grid-cell-editor.element';
 import { IAcDatagriOnAgGridDataChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-data-set-hook-args.interface';
 import { AcDatagridOnAgGridFixedEditorInput } from '../elements/ac-datagrid-on-ag-grid-fixed-editor-input.element';
+import { IAcPaginationPageChangeEvent } from 'packages/browser/ac-browser/src/lib/components/ac-pagination/interfaces/_interfaces.export';
 
 export function initAgGrid() {
   ModuleRegistry.registerModules([
@@ -113,6 +114,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   downloadButtonContainer?: HTMLElement;
   isColumnsCustomizerOpen: boolean = false;
   isFirstDataRendered: boolean = false;
+  paginationContainer?: HTMLElement;
   leftFooterContainer?: HTMLElement;
   rightFooterContainer?: HTMLElement;
   delayedCallback: AcDelayedCallback = new AcDelayedCallback();
@@ -123,6 +125,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   private agGridTreeTableExt = new AcDatagridTreeTableExtensionOnAgGrid();
 
   private state: any;
+  isPaginationBound: boolean = false;
 
   constructor() {
     super();
@@ -144,6 +147,36 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         this.setState({ state: this.state });
       }
     };
+  }
+
+  bindPagination() {
+    if (this.gridApi && this.datagridApi.pagination && !this.isPaginationBound) {
+      this.isPaginationBound = true;
+      const pagination: AcPaginationElement = this.datagridApi.pagination;
+      this.gridApi.addEventListener('paginationChanged', () => {
+        if (pagination.activePage != this.gridApi.paginationGetCurrentPage() + 1) {
+          pagination.activePage = this.gridApi.paginationGetCurrentPage() + 1;
+        }
+      });
+      pagination.events.subscribeAllEvents({
+        callback: (event: string, args: IAcPaginationPageChangeEvent) => {
+          if (stringEqualsIgnoreCase(event, AcEnumPaginationEvent.PageChange)) {
+            if (this.datagridApi.dataManager.totalRows == this.gridApi.paginationGetRowCount()) {
+              let newPage: number = pagination.activePage - 1;
+              if (newPage < 0) {
+                newPage = 0;
+              }
+              const currentPage = this.gridApi.paginationGetCurrentPage();
+              console.log("Updating page", newPage, currentPage);
+              if (newPage != currentPage) {
+                this.gridApi.paginationGoToPage(newPage);
+              }
+            }
+
+          }
+        }
+      });
+    }
   }
 
   override destroy(): void {
@@ -536,7 +569,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     else if (
       stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.RefreshRows) ||
       stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.FilterGroupChange) ||
-      stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.DisplayedRowsChange) ||
+      // stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.DisplayedRowsChange) ||
       stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.SortOrderChange)
     ) {
       this.refreshRows();
@@ -673,7 +706,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         this.gridApi.applyServerSideTransaction({ update: [data] });
       }
       // rowNode.setData(data);
-      this.syncRowData(rowNode,data);
+      this.syncRowData(rowNode, data);
       // rowNode.syn(data);
       if (args.forceRefresh) {
         this.gridApi.refreshCells({ rowNodes: [rowNode], force: true });
@@ -694,6 +727,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     if (this.gridApi) {
       this.gridApi.setGridOption('pagination', this.datagridApi.usePagination);
     }
+    this.setPaginationDisplay();
   }
 
   override init(): void {
@@ -780,16 +814,39 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   }
 
   setPaginationDisplay() {
-    if (!this.datagridApi || !this.leftFooterContainer) return;
+    if (!this.datagridApi) return;
+    let retry:boolean = true;
     const pagination = this.datagridApi.pagination;
-    if (this.datagridApi.usePagination && pagination) {
-      if (!this.leftFooterContainer.contains(pagination)) {
-        this.leftFooterContainer.prepend(pagination);
+    if(this.agGridElement){
+      if(this.paginationContainer){
+        if(!this.agGridElement.contains(this.paginationContainer)){
+          this.paginationContainer = undefined;
+        }
       }
-      pagination.style.display = '';
-      pagination.updateDisplayedRows();
-    } else if (pagination) {
-      pagination.style.display = 'none';
+    }
+    if (!this.paginationContainer && this.agGridElement) {
+      const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
+      console.log(pagingPanel);
+      if (pagingPanel && pagingPanel.isConnected) {
+        this.paginationContainer = this.agGridElement.ownerDocument.createElement("div");
+        pagingPanel.parentElement.insertBefore(this.paginationContainer, pagingPanel);
+      }
+    }
+      if (this.paginationContainer && pagination) {
+          console.log(pagination);
+          if (!this.paginationContainer.contains(pagination)) {
+            this.paginationContainer.append(pagination);
+          }
+        // } else if (pagination) {
+        //   pagination.style.display = 'none';
+        // }
+        retry = false;
+        this.bindPagination();
+      }
+    if(retry){
+      this.delayedCallback.add({key:'paginationDisplay',callback:()=>{
+        this.setPaginationDisplay();
+      },duration:100});
     }
   }
 
@@ -816,19 +873,20 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.registerModules();
       this.gridApi = createGrid(this.agGridElement, this.gridOptions);
       this.agGridTreeTableExt.gridApi = this.gridApi;
+      this.setPaginationDisplay();
       const pagingPanel = this.agGridElement.querySelector('.ag-paging-panel') as HTMLElement;
       if (pagingPanel) {
         acClearElement({ element: this.leftFooterContainer });
-        const pageSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-summary-panel');
-        if(pageSummaryPanel){
+        const pageSummaryPanel: HTMLElement = pagingPanel.querySelector('.ag-paging-page-summary-panel');
+        if (pageSummaryPanel) {
           this.leftFooterContainer?.appendChild(pageSummaryPanel);
         }
-        const rowSummaryPanel:HTMLElement = pagingPanel.querySelector('.ag-paging-row-summary-panel');
-        if(rowSummaryPanel){
+        const rowSummaryPanel: HTMLElement = pagingPanel.querySelector('.ag-paging-row-summary-panel');
+        if (rowSummaryPanel) {
           this.leftFooterContainer?.appendChild(rowSummaryPanel);
         }
-        const pageSizePanel:HTMLElement = pagingPanel.querySelector('.ag-paging-page-size');
-        if(pageSizePanel){
+        const pageSizePanel: HTMLElement = pagingPanel.querySelector('.ag-paging-page-size');
+        if (pageSizePanel) {
           this.leftFooterContainer?.appendChild(pageSizePanel);
         }
         acClearElement({ element: pagingPanel });
@@ -839,8 +897,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         pagingPanel.append(this.leftFooterContainer!);
         pagingPanel.append(this.rightFooterContainer!);
       }
-      const fullWidthContainer:HTMLElement = this.agGridElement.querySelector('.ag-full-width-container');
-      if(fullWidthContainer){
+      const fullWidthContainer: HTMLElement = this.agGridElement.querySelector('.ag-full-width-container');
+      if (fullWidthContainer) {
         fullWidthContainer.append(this.datagridApi.datagrid.afterRowsContainer!);
       }
       this.agGridEventHandler.init({ agGridExtension: this });
@@ -878,14 +936,17 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
 
     if (this.isClientSideData) {
       const dataManager = this.datagridApi.dataManager;
-      const rows = this.datagridApi.usePagination
-        ? dataManager.displayedRows
-        : dataManager.rows;
-      const filteredData = (rows ?? []).map((r: any) => r.data);
-      this.gridApi.setGridOption('rowData', filteredData);
+      const rows = dataManager.rows;
+      let rowData: any[] = [];
+      if (rows.length > 0) {
+        rowData = (rows).map((r: any) => r.data);
+      }
+
       if (dataManager.searchQuery) {
         this.gridApi.setGridOption('quickFilterText', dataManager.searchQuery);
       }
+      this.gridApi.setGridOption('rowData', rowData);
+      this.gridApi.refreshClientSideRowModel();
     }
     else {
       this.datagridApi.dataManager.reset();
@@ -935,7 +996,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
 
   setColumnDefs() {
     const colDefs: ColDef[] = [];
-    if ((this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true)||this.agGridRowDragExt.allowRowDragging) {
+    if ((this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true) || this.agGridRowDragExt.allowRowDragging) {
       colDefs.push({
         field: '__internal_ac_datagrid__',
         headerName: '',
@@ -943,8 +1004,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         sortable: false,
         suppressHeaderMenuButton: true,
         filter: false,
-        valueGetter: (params:any)=>{
-          return (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true)?params.node.rowIndex + 1:'';
+        valueGetter: (params: any) => {
+          return (this.rowNumbersExtension && this.rowNumbersExtension.showRowNumbers == true) ? params.node.rowIndex + 1 : '';
         },
         width: 32,
         pinned: 'left',
@@ -955,7 +1016,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         lockVisible: true,
         suppressNavigable: true,
         suppressMovable: true,
-        rowDrag:this.agGridRowDragExt.allowRowDragging,
+        rowDrag: this.agGridRowDragExt.allowRowDragging,
         cellStyle: { paddingLeft: 0, paddingRight: 0 }
       });
     }
@@ -1186,61 +1247,60 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     ]);
 
 
-    const renderedColumns:string[] = [];
+    const renderedColumns: string[] = [];
     const rowEls = this.agGridElement.querySelectorAll(
       `.ag-row[row-id="${rowNode.id}"]`
     );
-    for(const rowEl of Array.from(rowEls)){
-       const cells = rowEl?.querySelectorAll('.ag-cell');
+    for (const rowEl of Array.from(rowEls)) {
+      const cells = rowEl?.querySelectorAll('.ag-cell');
       cells?.forEach(cell => {
-        if(cell.hasAttribute('col-id')){
+        if (cell.hasAttribute('col-id')) {
           renderedColumns.push(cell.getAttribute('col-id'));
         }
       });
     }
 
-    const refreshColumns:string[] = [];
+    const refreshColumns: string[] = [];
     for (const key of keys) {
       if (!(key in newData)) {
         rowNode.setDataValue(key, undefined);
         delete currentData[key];
         refreshColumns.push(key);
-        if(renderedColumns.includes(key)){
-          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
+        if (renderedColumns.includes(key)) {
+          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({ rowId: rowNode.id, key }) });
         }
       } else if (!Object.is(currentData[key], newData[key])) {
         rowNode.setDataValue(key, newData[key]);
         refreshColumns.push(key);
-        if(renderedColumns.includes(key)){
-          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({rowId:rowNode.id,key}) });
+        if (renderedColumns.includes(key)) {
+          this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridApi.getCell({ rowId: rowNode.id, key }) });
         }
       }
     }
 
     this.gridApi.refreshCells({
-      columns:refreshColumns,
-      force:true,
-      rowNodes:[rowNode]
+      columns: refreshColumns,
+      force: true,
+      rowNodes: [rowNode]
     })
   }
 
-  private syncRowsFromAgGrid(){
-    if(this.datagridApi && this.gridApi){
-       this.gridApi.forEachNode((node)=>{
-        const row = this.datagridApi.getRow({rowId:node.data['__ac_row_id__']});
-        if(row){
-          if(!row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]){
+  private syncRowsFromAgGrid() {
+    if (this.datagridApi && this.gridApi) {
+      this.gridApi.forEachNode((node) => {
+        const row = this.datagridApi.getRow({ rowId: node.data['__ac_row_id__'] });
+        if (row) {
+          if (!row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]) {
             row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] = {};
           }
-          if(node.rowIndex != undefined && node.rowIndex != null){
+          if (node.rowIndex != undefined && node.rowIndex != null) {
             row.index = node.rowIndex;
             row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected = node.isSelected();
           }
-          else{
+          else {
             row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected = false;
             row.index = -1;
           }
-
         }
       });
     }

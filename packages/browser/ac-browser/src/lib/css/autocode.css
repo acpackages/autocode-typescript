@@ -24,7 +24,7 @@
    ========================================================= */
 
 .ac-res-container {
-  container-type: inline-size;
+  container-type: inline-size!important;
 }
 
 /* =========================================================
