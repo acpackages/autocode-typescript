@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDataDictionary, AcDDTable, AcDDTableColumn, AcDDView, AcDDViewColumn, AcEnumDDColumnType } from '@autocode-ts/ac-data-dictionary';
-import { AcEnumDatagridColumnDataType,IAcRepeaterField } from '@autocode-ts/ac-browser';
+import { AcEnumDatagridColumnDataType,IAcRepeaterField,IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
 
 export class AcDDRepeaterFieldManager {
   static fieldResolver?: Function;
+
+
+  static getFieldsFromDatagridColDefs({colDefs}:{colDefs:IAcDatagridColumnDefinition[]}){
+    const result: IAcRepeaterField[] = [];
+    for(const col of colDefs){
+      const resultField = { key: col.field,label:col.title!,allowFilter:col.allowFilter,allowSort:col.allowSort,type:col.dataType };
+      result.push(resultField);
+    }
+    return result;
+  }
 
   static getTableColumnFields({ tableName, excludeColumns, includeColumns, fields ,dataDictionaryName = 'default' }: { tableName: string, excludeColumns?: string[], includeColumns?: string[], fields?: IAcRepeaterField[],dataDictionaryName?:string }):IAcRepeaterField[] {
     if (fields == undefined) {

@@ -12,15 +12,141 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../../node_modules/.vite/packages/browser/ac-browser',
     plugins: [
       nxViteTsPaths(),
-      nxCopyAssetsPlugin(['*.md',
+      nxCopyAssetsPlugin([
+        '*.md',
+        {
+          input: 'src/lib/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/icons/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-accordion/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-collapse/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-data-filter/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-data-sort/css',
+          glob: '*.css',
+          output: 'css',
+        },
         {
           input: 'src/lib/components/ac-datagrid/css',
-          glob: '**/*.css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-draggable/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-drawer/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-dropdown/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-file-preview/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-filterable-elements/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-form/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-inputs/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-message/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-modal/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-pagination/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-popover/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-repeater/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-resizable/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-scroll-track/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-scrollable/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-slides/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-svg-icon/css',
+          glob: '*.css',
           output: 'css',
         },
         {
           input: 'src/lib/components/ac-tabs/css',
-          glob: '**/*.css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-tooltip/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-virtual-scrolling/css',
+          glob: '*.css',
           output: 'css',
         }
       ]),

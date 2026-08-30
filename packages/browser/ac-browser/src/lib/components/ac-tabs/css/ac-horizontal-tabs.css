@@ -1,0 +1,23 @@
+.horizontal-tabs-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-tabs-list {
+  z-index: 100;
+  display: inline-flex;
+  width: fit-content;
+  position: relative;
+}
+
+.horizontal-tabs-content {
+  margin-top: 1px;
+  z-index: 1;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-grow: 1;
+}

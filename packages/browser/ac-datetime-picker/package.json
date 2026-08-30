@@ -9,5 +9,17 @@
     "@autocode-ts/ac-browser": "^0.0.1",
     "@popperjs/core": "^2.11.8",
     "air-datepicker": "^3.6.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "./css/*": {
+      "default": "./css/*"
+    },
+    "./css/ac-datetime-picker.css": {
+      "default": "./css/ac-datetime-picker.css"
+    }
   }
 }

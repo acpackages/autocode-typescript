@@ -22,5 +22,17 @@
     "@tiptap/extension-underline": "^3.10.1",
     "@tiptap/pm": "^3.10.1",
     "@tiptap/starter-kit": "^3.10.1"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "./css/*": {
+      "default": "./css/*"
+    },
+    "./css/ac-tiptap-editor-simple-editor.css": {
+      "default": "./css/ac-tiptap-editor-simple-editor.css"
+    }
   }
 }

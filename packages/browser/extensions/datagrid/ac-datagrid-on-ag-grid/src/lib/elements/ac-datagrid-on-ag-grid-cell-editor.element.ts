@@ -37,35 +37,20 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   }
 
   handleBlur: Function = () => {
-    // console.log("[AcDatagridOnAgGridCellEditor] Cell Blur",this);
     this.isFocused = false;
 
     this.delayedCallback.add({
       callback: () => {
         if (!this.isFocused) {
-          // console.log("[AcDatagridOnAgGridCellEditor] Editing element is not in focus");
           if (this.datagridRow && this.datagridColumn && this.datagridApi) {
             if (this.datagridColumn.columnDefinition.useCellEditorForRenderer) {
-              console.log("[AcDatagridOnAgGridCellEditor] Handle Blur");
               if (this.isValueChanged) {
                 this.isValueChanged = false;
                 this.updateCurrentData();
                 this.datagridApi.eventHandler.handleCellValueChange({ datagridCell: this.datagridCell! });
               }
-              else {
-                // console.log(`[AcDatagridOnAgGridCellEditor] Value is not changed or old or current value not same | Value Changed : ${this.isValueChanged}, New Value : ${currentValue} | Old Value : ${previousValue}`);
-              }
-            }
-            else {
-              // console.log("[AcDatagridOnAgGridCellEditor] Not using editor for renderer");
             }
           }
-          else {
-            // console.log("[AcDatagridOnAgGridCellEditor] Datagrid row,column or api not set");
-          }
-        }
-        else {
-          // console.log("[AcDatagridOnAgGridCellEditor] Editing element is in focus");
         }
       }, duration: 10
     });
@@ -317,7 +302,6 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
     }
     this.element.value = value ?? '';
     this.previousValue = value;
-    console.log("Refresh value",value,this.datagridColumn.columnKey)
     return true;
   }
 

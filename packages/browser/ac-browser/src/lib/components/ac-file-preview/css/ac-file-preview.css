@@ -1,0 +1,21 @@
+ac-file-preview {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+ac-file-preview img {
+  margin: auto;
+  object-fit: contain;
+}
+
+.ac-upload-file-preview {
+  padding: 5px;
+  border: solid var(--ac-border-color, #ccc) 1px;
+  border-radius: 6px;
+}
+
+.ac-upload-file-preview ac-file-preview-extension {
+  font-size: 15px !important;
+}

@@ -5,6 +5,7 @@ import { acGetParentElementWithTag, acRegisterCustomElement } from "../../../uti
 import { AC_DATA_FILTER_TAG } from "../consts/ac-data-filter-tag.const";
 import { AcDataFilterPopup } from "./ac-data-filter-popup";
 import "../css/ac-data-filter.css";
+import { acDataFilterElementHtml } from "../_ac-data-filter.export";
 
 export interface IAcDataFilterField {
   key: string;
@@ -73,13 +74,13 @@ export class AcDataFilterElement extends AcElementBase {
 
   private render() {
     this.innerHTML = `
-      <button class="ac-data-filter-btn ac-repeater-header-button" type="button">
-        <ac-svg-icon size="18px">${ACI_SVG_SOLID.filter}</ac-svg-icon>
-        <span class="ac-data-filter-badge ac-repeater-badge" style="display:none">0</span>
+      <button class="ac-data-filter-btn ac-data-filter-toggle-btn" type="button">
+        ${acDataFilterElementHtml.filter}
+        <span class="ac-data-filter-badge" style="display:none">0</span>
       </button>
     `;
 
-    this.buttonElement = this.querySelector('.ac-data-filter-btn') as HTMLButtonElement;
+    this.buttonElement = this.querySelector('.ac-data-filter-toggle-btn') as HTMLButtonElement;
     this.badgeElement = this.querySelector('.ac-data-filter-badge') as HTMLElement;
 
     this.buttonElement?.addEventListener('click', (e) => {
@@ -153,7 +154,7 @@ export class AcDataFilterElement extends AcElementBase {
       : allFilters.length;
 
     this.badgeElement.innerText = count.toString();
-    this.badgeElement.style.display = count > 0 ? 'block' : 'none';
+    this.badgeElement.style.display = count > 0 ? 'flex' : 'none';
   }
 
   override destroy(): void {

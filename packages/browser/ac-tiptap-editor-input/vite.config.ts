@@ -11,7 +11,14 @@ export default defineConfig(() => ({
     '../../../node_modules/.vite/packages/browser/ac-tiptap-editor-input',
   plugins: [
     nxViteTsPaths(),
-    nxCopyAssetsPlugin(['*.md']),
+    nxCopyAssetsPlugin([
+      '*.md',
+      {
+        input: 'src/lib/css',
+        glob: '*.css',
+        output: 'css',
+      }
+    ]),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),

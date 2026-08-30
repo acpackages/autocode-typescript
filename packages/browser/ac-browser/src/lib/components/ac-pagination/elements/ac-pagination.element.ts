@@ -105,10 +105,6 @@ export class AcPaginationElement extends AcElementBase {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    acClearElement({ element: this });
-    this.innerHTML = '<div class="ac-pagination-left-container"></div><div class="ac-pagination-right-container"></div>';
-    this.leftContainer = this.querySelector(".ac-pagination-left-container");
-    this.rightContainer = this.querySelector(".ac-pagination-right-container");
     this.leftContainer.append(this.navigationButtons);
     this.leftContainer.append(this.sizeDropdown);
     this.handleShowAddButton();
@@ -125,6 +121,10 @@ export class AcPaginationElement extends AcElementBase {
     this.sizeDropdown.pagination = this;
     acAddClassToElement({ class_: AcPaginationCssClassName.acPagination, element: this });
     acAddClassToElement({ class_: 'ac-res-container', element: this });
+    acClearElement({ element: this });
+    this.innerHTML = '<div class="ac-pagination-left-container"></div><div class="ac-pagination-right-container"></div>';
+    this.leftContainer = this.querySelector(".ac-pagination-left-container");
+    this.rightContainer = this.querySelector(".ac-pagination-right-container");
   }
 
   private handleShowAddButton() {

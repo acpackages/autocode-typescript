@@ -75,7 +75,7 @@ export class AcDatagridState {
         for (const extensionName of Object.keys(state[AcDatagridState.KeyExtensionStates])) {
           if (this.datagridApi.extensions) {
             if (this.datagridApi.extensions[extensionName]) {
-              this.datagridApi.extensions[extensionName].setState({ state: state[AcDatagridState.KeyExtensionStates][extensionName] });
+              this.datagridApi.extensions[extensionName].setState({ state:this,extensionState:state[AcDatagridState.KeyExtensionStates][extensionName] });
             }
           }
         }
@@ -125,6 +125,7 @@ export class AcDatagridState {
         field: datagridColumn.columnDefinition.field,
         width: datagridColumn.width,
         index: datagridColumn.index,
+        isVisible:datagridColumn.visible
       };
       columns.push(columnState)
     }
@@ -135,7 +136,7 @@ export class AcDatagridState {
     const extensions: any = {};
     for (const extensionName of Object.keys(this.datagridApi.extensions)) {
       const extensionInstance = this.datagridApi.extensions[extensionName];
-      const extensionState = extensionInstance.getState();
+      const extensionState = extensionInstance.getState({state:this});
       if (extensionState != undefined) {
         extensions[extensionName] = extensionState;
       }

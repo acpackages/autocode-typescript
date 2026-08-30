@@ -85,7 +85,7 @@ export class AcDataManager {
   }
 
   get displayedRows(): IAcDataRow[] {
-    return this.allRows.filter((row) => {
+    return this.rows.filter((row) => {
       return row && row.index >= this.displayStartIndex && row.index <= this.displayEndIndex;
     });
   }

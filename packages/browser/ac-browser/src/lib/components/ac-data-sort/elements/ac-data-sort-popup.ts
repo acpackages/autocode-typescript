@@ -2,6 +2,7 @@ import { AcDataManager, AcEnumSortOrder, AcSort } from "@autocode-ts/autocode";
 import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 import { acClearElement } from "../../../utils/ac-element-functions";
 import { AcDataSortElement, IAcDataSortField } from "./ac-data-sort.element";
+import { acDataSortElementHtml } from "../_ac-data-sort.export";
 
 export interface IAcDataSortPopupOptions {
   sortElement?: AcDataSortElement;
@@ -58,17 +59,17 @@ export class AcDataSortPopup {
     const title = this.options.title ?? (this.targetField ? `Sort: ${this.targetField.label || this.targetField.key}` : 'Sort Order');
 
     this.popupElement = document.createElement('div');
-    this.popupElement.className = 'ac-data-sort-popup ac-repeater-header-popup';
+    this.popupElement.className = 'ac-data-sort-popup';
     this.popupElement.innerHTML = `
-      <div class="ac-data-sort-popup-header ac-repeater-popup-header">
+      <div class="ac-data-sort-popup-header">
         <span>${title}</span>
-        <button class="ac-data-sort-popup-close ac-repeater-popup-close" type="button">&times;</button>
+        <button class="ac-data-sort-popup-close" type="button">&times;</button>
       </div>
-      <div class="ac-data-sort-rows-container ac-repeater-sort-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
-      <div class="ac-data-sort-actions ac-repeater-filter-actions">
-        ${this.isSingleFieldMode ? '' : '<button class="ac-data-sort-btn ac-repeater-header-button ac-data-sort-add-btn" type="button">Add</button>'}
-        <button class="ac-data-sort-btn ac-repeater-header-button ac-data-sort-clear-btn" type="button">Clear</button>
-        <button class="ac-data-sort-btn ac-repeater-header-button ac-data-sort-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
+      <div class="ac-data-sort-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
+      <div class="ac-data-sort-actions">
+        ${this.isSingleFieldMode ? '' : '<button class="ac-data-sort-btn ac-data-sort-add-btn" type="button">Add</button>'}
+        <button class="ac-data-sort-btn ac-data-sort-clear-btn" type="button">Clear</button>
+        <button class="ac-data-sort-btn ac-data-sort-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
       </div>
     `;
 
@@ -152,14 +153,13 @@ export class AcDataSortPopup {
     if (!container) return;
 
     const row = document.createElement('div');
-    row.className = 'ac-data-sort-row ac-repeater-filter-row';
-    row.style.marginBottom = '8px';
+    row.className = 'ac-data-sort-row';
 
     const isSingle = this.isSingleFieldMode;
 
     if (isSingle) {
       row.innerHTML = `
-        <select class="sort-order" style="flex:1">
+        <select class="ac-data-sort-order">
           <option value="${AcEnumSortOrder.Ascending}" ${sort?.order === AcEnumSortOrder.Ascending ? 'selected' : ''}>Ascending</option>
           <option value="${AcEnumSortOrder.Descending}" ${sort?.order === AcEnumSortOrder.Descending ? 'selected' : ''}>Descending</option>
           <option value="${AcEnumSortOrder.None}" ${sort?.order === AcEnumSortOrder.None ? 'selected' : ''}>None</option>
@@ -170,15 +170,15 @@ export class AcDataSortPopup {
       const fieldsOptions = `<option value="">Select Field...</option>` + sortableFields.map(f => `<option value="${f.key}" ${sort?.key === f.key ? 'selected' : ''}>${f.label}</option>`).join('');
 
       row.innerHTML = `
-        <select class="sort-key" style="flex:1">${fieldsOptions}</select>
-        <select class="sort-order">
+        <select class="ac-data-sort-key">${fieldsOptions}</select>
+        <select class="ac-data-sort-order">
           <option value="${AcEnumSortOrder.Ascending}" ${sort?.order === AcEnumSortOrder.Ascending ? 'selected' : ''}>Asc</option>
           <option value="${AcEnumSortOrder.Descending}" ${sort?.order === AcEnumSortOrder.Descending ? 'selected' : ''}>Desc</option>
         </select>
-        <button class="remove-sort-row" type="button" style="background:none; border:none; cursor:pointer; color:red;">&times;</button>
+        <button class="ac-data-sort-row-remove" type="button">${acDataSortElementHtml.delete}</button>
       `;
 
-      row.querySelector('.remove-sort-row')?.addEventListener('click', () => {
+      row.querySelector('.ac-data-sort-row-remove')?.addEventListener('click', () => {
         row.remove();
       });
     }
@@ -200,7 +200,7 @@ export class AcDataSortPopup {
       this.dataManager.sortOrder.sortOrders = remainingSorts;
 
       rowEls.forEach((row) => {
-        const order = (row.querySelector('.sort-order') as HTMLSelectElement).value as AcEnumSortOrder;
+        const order = (row.querySelector('.ac-data-sort-order') as HTMLSelectElement).value as AcEnumSortOrder;
         if (order && order !== AcEnumSortOrder.None) {
           this.dataManager?.sortOrder.addSort({ key: targetKey, order });
           newSorts.push(AcSort.instanceWithValues({ key: targetKey, order }));
@@ -214,8 +214,8 @@ export class AcDataSortPopup {
       this.dataManager.sortOrder.sortOrders = [];
 
       rowEls.forEach((row) => {
-        const key = (row.querySelector('.sort-key') as HTMLSelectElement).value;
-        const order = (row.querySelector('.sort-order') as HTMLSelectElement).value as AcEnumSortOrder;
+        const key = (row.querySelector('.ac-data-sort-key') as HTMLSelectElement).value;
+        const order = (row.querySelector('.ac-data-sort-order') as HTMLSelectElement).value as AcEnumSortOrder;
 
         if (key) {
           this.dataManager?.sortOrder.addSort({ key, order });

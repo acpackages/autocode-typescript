@@ -11,7 +11,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Access Group Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -110,7 +110,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Access Right Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -167,7 +167,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -232,7 +232,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Bank Account Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -311,7 +311,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Email Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -376,7 +376,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Fax Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -455,7 +455,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Legal Document Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -520,7 +520,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -585,7 +585,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Phone Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -650,7 +650,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Setting Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -664,7 +664,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Setting Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -682,7 +682,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Numeric Value"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -696,7 +696,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Text Value"
             }
           }
         },
@@ -769,7 +769,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Social Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -889,7 +889,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Website Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -940,7 +940,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Accountee Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -964,7 +964,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Accountee Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -1038,7 +1038,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Accountee Type"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -1144,7 +1144,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Taxing Scheme"
+              "propertyValue": "Taxing Type"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -1209,7 +1209,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -1223,7 +1223,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Address Label"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -1459,7 +1459,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Asset Attribute Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -1642,7 +1642,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Asset Depreciation Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -1821,7 +1821,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Asset Legal Document Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -1874,7 +1874,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Asset Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -1971,7 +1971,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Asset Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2144,7 +2144,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Automated Task Log Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2298,7 +2298,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Automated Task Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2445,7 +2445,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Automation Flag Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2498,7 +2498,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Account Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -2516,7 +2516,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Number"
+              "propertyValue": "Account Number"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -2534,7 +2534,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Account Type"
             }
           }
         },
@@ -2544,7 +2544,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Bank Account Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2568,7 +2568,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Bank"
+              "propertyValue": "Bank Name"
             }
           }
         },
@@ -2588,7 +2588,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Branch"
+              "propertyValue": "Branch Name"
             }
           }
         },
@@ -2632,7 +2632,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "IBAN"
+              "propertyValue": "IBAN No."
             }
           }
         },
@@ -2642,7 +2642,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "IFSC"
+              "propertyValue": "IFSC No."
             }
           }
         },
@@ -2704,7 +2704,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Bank Label"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -2718,7 +2718,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Bank Remarks"
             }
           }
         }
@@ -2747,7 +2747,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Category Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2761,7 +2761,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Category Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -2831,7 +2831,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Image"
+              "propertyValue": "Category Image"
             }
           }
         },
@@ -2871,7 +2871,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Accountee"
+              "propertyValue": "Accountee Id"
             }
           }
         },
@@ -2938,7 +2938,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Charge Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -2952,7 +2952,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Charge Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3088,7 +3088,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Charge Remarks"
             }
           }
         },
@@ -3206,7 +3206,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Chargeable Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3245,7 +3245,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Detail Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3259,7 +3259,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Purchase Detail Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3277,7 +3277,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "UOM"
+              "propertyValue": "Purchase UOM"
             }
           }
         },
@@ -3329,7 +3329,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Price"
+              "propertyValue": "Charge"
             }
           }
         },
@@ -3350,7 +3350,12 @@ export const dataDictionaryJson = {
         "chargeable_service_purchase_detail_remarks": {
           "columnName": "chargeable_service_purchase_detail_remarks",
           "columnType": "TEXT",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Purchase Detail Remarks"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -3377,7 +3382,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Detail Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3391,7 +3396,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Sale Detail Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3423,7 +3428,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "UOM"
+              "propertyValue": "Sale UOM"
             }
           }
         },
@@ -3461,7 +3466,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Price"
+              "propertyValue": "Sale Charge"
             }
           }
         },
@@ -3485,7 +3490,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Sale Detail Remarks"
             }
           }
         }
@@ -3528,7 +3533,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "UOM Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3685,7 +3690,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3709,7 +3714,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Service Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3789,7 +3794,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Category"
+              "propertyValue": "Service Category"
             }
           }
         },
@@ -3799,7 +3804,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Tags"
+              "propertyValue": "Service Tags"
             }
           }
         }
@@ -3828,7 +3833,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Contact Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3852,7 +3857,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Contact Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3884,7 +3889,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Contact Remarks"
             }
           }
         },
@@ -3937,7 +3942,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Currency Code"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -3955,7 +3960,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Currency Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -3969,7 +3974,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Symbol"
+              "propertyValue": "Currency Symbol"
             }
           }
         },
@@ -4026,7 +4031,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Category"
+              "propertyValue": "Customer Category"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -4057,7 +4062,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Customer Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -4085,7 +4090,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Customer Remarks"
             }
           }
         },
@@ -4134,7 +4139,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Chargeable Service"
+              "propertyValue": "Service"
             }
           }
         },
@@ -4168,7 +4173,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -4196,7 +4201,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Note Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -4469,7 +4474,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Note Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -4773,7 +4778,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Sale Invoice"
+              "propertyValue": "Delivery Note"
             }
           }
         },
@@ -4807,7 +4812,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Note Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -4999,7 +5004,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Note Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5114,7 +5119,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Delivery Note Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5232,7 +5237,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Finalized"
+              "propertyValue": "Is Finalized?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -5285,7 +5290,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Device Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5396,7 +5401,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Email Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5410,7 +5415,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Email Label"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -5428,7 +5433,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Email Address"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -5474,7 +5479,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Email Remarks"
             }
           }
         }
@@ -5517,7 +5522,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Employee Attendance Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5626,7 +5631,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Employee Contract Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5817,7 +5822,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Employee Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5922,7 +5927,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Fax Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -5936,7 +5941,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Fax Label"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -5954,7 +5959,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Fax Number "
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -6000,7 +6005,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Fax Remarks"
             }
           }
         }
@@ -6043,7 +6048,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "In Quantity"
+              "propertyValue": "In Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -6067,7 +6072,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Entry Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6105,7 +6110,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Out Quantity"
+              "propertyValue": "Out Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -6254,7 +6259,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Inventory Tracking Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6404,7 +6409,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Mapping Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6526,7 +6531,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Type Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6540,7 +6545,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Type Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -6568,7 +6573,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Type Remarks"
             }
           }
         },
@@ -6578,7 +6583,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Description"
+              "propertyValue": "Type Description"
             }
           }
         },
@@ -6725,7 +6730,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Ledger Account Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6739,7 +6744,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Account Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -6757,7 +6762,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Account Type"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -6771,7 +6776,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Account Remarks"
             }
           }
         },
@@ -6809,7 +6814,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Description"
+              "propertyValue": "Account Description"
             }
           }
         },
@@ -6819,7 +6824,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Related to Purchase?"
+              "propertyValue": "Is Related to Purchase?"
             }
           }
         },
@@ -6829,7 +6834,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Related to Sale?"
+              "propertyValue": "Is Related to Sale?"
             }
           }
         },
@@ -6886,7 +6891,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Document Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -6967,7 +6972,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "is_expired"
+              "propertyValue": "Is Expired?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -6995,7 +7000,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Legal DocumentId"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7009,7 +7014,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Document Value"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -7027,7 +7032,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Document Label"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
@@ -7041,7 +7046,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Document Remarks"
             }
           }
         }
@@ -7084,7 +7089,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7145,7 +7150,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Email Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7206,7 +7211,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Fax Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7281,7 +7286,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Legal Document Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7328,7 +7333,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7389,7 +7394,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Phone Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7450,7 +7455,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Website Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7525,7 +7530,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7630,7 +7635,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7644,7 +7649,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Media Name"
             }
           }
         },
@@ -7654,7 +7659,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Path"
+              "propertyValue": "Media Path"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -7668,7 +7673,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Size"
+              "propertyValue": "Media Size"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -7682,7 +7687,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Media Type"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -7696,7 +7701,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Media Remarks"
             }
           }
         },
@@ -7706,7 +7711,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "For"
+              "propertyValue": "Media For"
             }
           }
         },
@@ -7779,7 +7784,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Menu Item Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7884,7 +7889,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Menu Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7951,7 +7956,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Details"
+              "propertyValue": "Notification Details"
             }
           }
         },
@@ -7961,7 +7966,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "For"
+              "propertyValue": "Notification For"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -7975,7 +7980,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Icon"
+              "propertyValue": "Notification Icon"
             }
           }
         },
@@ -7985,7 +7990,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Notification Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -7999,7 +8004,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Message"
+              "propertyValue": "Notification Message"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -8013,7 +8018,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Title"
+              "propertyValue": "Notification Title"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -8027,7 +8032,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Notification Type"
             }
           }
         },
@@ -8037,7 +8042,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Status"
+              "propertyValue": "Notification Status"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -8118,7 +8123,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Details"
+              "propertyValue": "Party Details"
             }
           }
         },
@@ -8128,7 +8133,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8142,7 +8147,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Party Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -8300,7 +8305,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Party Remarks"
             }
           }
         }
@@ -8343,7 +8348,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8414,7 +8419,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Bank Account Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8465,7 +8470,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Contact Person Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8530,7 +8535,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Email Address Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8595,7 +8600,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Fax Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8674,7 +8679,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Legal Document Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8739,7 +8744,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8804,7 +8809,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Phone Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8861,7 +8866,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Social Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -8912,7 +8917,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Party Website Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9019,7 +9024,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Payment Method Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9033,7 +9038,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Profile Image"
+              "propertyValue": "Method Image"
             }
           }
         },
@@ -9043,7 +9048,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Payment Method Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -9057,7 +9062,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Use For Expenses"
+              "propertyValue": "Use For Expenses?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9071,7 +9076,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Use For Incomes"
+              "propertyValue": "Use For Incomes?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9085,7 +9090,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Use For Purchase"
+              "propertyValue": "Use For Purchase?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9099,7 +9104,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Use For Sales"
+              "propertyValue": "Use For Sales?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9188,7 +9193,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Phone Number Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9202,7 +9207,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Phone Label"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -9216,7 +9221,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Phone Number"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -9297,7 +9302,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Price Change Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9402,7 +9407,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Price Change Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9546,7 +9551,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Numeric Value"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9564,7 +9569,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Attribute Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9578,7 +9583,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Attribute Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -9596,7 +9601,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Text Value"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
@@ -9675,7 +9680,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Attribute Remarks"
             }
           }
         }
@@ -9700,7 +9705,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Barcode Link Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9754,7 +9759,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Link Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9786,7 +9791,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Link Remarks"
             }
           }
         }
@@ -9815,7 +9820,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Barcode"
+              "propertyValue": "Barcode Value"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -9851,7 +9856,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Barcode Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -9879,7 +9884,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Barcode Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -9911,7 +9916,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Barcode Remarks"
             }
           }
         }
@@ -10111,7 +10116,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Category Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10125,7 +10130,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Profile Image"
+              "propertyValue": "Category Image"
             }
           }
         },
@@ -10149,7 +10154,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Category Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -10221,7 +10226,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Category Remarks"
             }
           }
         }
@@ -10379,7 +10384,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Location Data Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10460,7 +10465,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10595,7 +10600,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Price Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10641,7 +10646,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Price Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -10677,7 +10682,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Price Remarks"
             }
           }
         }
@@ -10702,7 +10707,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Detail Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10796,7 +10801,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Purchase Detail Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -10842,7 +10847,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Purchase Detail Remarks"
             }
           }
         }
@@ -10903,7 +10908,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Reference Url Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -10970,7 +10975,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Detail Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11036,7 +11041,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Sale Detail Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -11082,7 +11087,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Sale Detail Remarks"
             }
           }
         }
@@ -11111,7 +11116,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Stock Detail Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11247,7 +11252,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Stock Detail Name"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -11283,7 +11288,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Stock Detail Remarks"
             }
           }
         }
@@ -11326,7 +11331,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Storage Location Data Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11435,7 +11440,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "UOM Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11489,7 +11494,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "UOM Remarks"
             }
           }
         }
@@ -11556,7 +11561,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Variant Group Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11669,7 +11674,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Variant Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11722,7 +11727,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Delivery Available"
+              "propertyValue": "Is Delivery Available?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -11736,7 +11741,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Pickup Available"
+              "propertyValue": "Is Pickup Available?"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -11798,7 +11803,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -11822,7 +11827,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Product Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -11872,7 +11877,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Tags"
+              "propertyValue": "Product Tags"
             }
           }
         },
@@ -11882,7 +11887,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Stock"
+              "propertyValue": "Stock Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -11924,7 +11929,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Brand"
+              "propertyValue": "Brand Name"
             },
             "IS_SELECT_DISTINCT": {
               "propertyName": "IS_SELECT_DISTINCT",
@@ -12069,7 +12074,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -12143,7 +12148,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -12374,7 +12379,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -12567,6 +12572,10 @@ export const dataDictionaryJson = {
           "columnName": "purchase_invoice_media_id",
           "columnType": "UUID",
           "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Purchase Invoice Media Id"
+            },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
               "propertyValue": true
@@ -12576,12 +12585,22 @@ export const dataDictionaryJson = {
         "purchase_invoice_id": {
           "columnName": "purchase_invoice_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Purchase Invouice"
+            }
+          }
         },
         "media_id": {
           "columnName": "media_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Media"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -12718,7 +12737,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -12992,7 +13011,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -13016,7 +13035,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -13277,7 +13296,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Invice Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -13747,7 +13766,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -13821,7 +13840,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Order Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -14066,7 +14085,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Order Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -14406,7 +14425,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Order Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -14629,7 +14648,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -14653,7 +14672,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Order Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -14848,7 +14867,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Order Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -14926,7 +14945,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Status"
             }
           }
         },
@@ -15115,7 +15134,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -15185,7 +15204,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -15396,7 +15415,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -15734,7 +15753,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -15957,7 +15976,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -15971,7 +15990,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -16226,7 +16245,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Return Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -16240,7 +16259,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Note#"
+              "propertyValue": "Return#"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
@@ -16333,8 +16352,8 @@ export const dataDictionaryJson = {
             }
           }
         },
-        "purchase_rerurn_type": {
-          "columnName": "purchase_rerurn_type",
+        "purchase_return_type": {
+          "columnName": "purchase_return_type",
           "columnType": "STRING",
           "columnProperties": {
             "COLUMN_TITLE": {
@@ -16527,7 +16546,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Purchase Term Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -16638,7 +16657,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Coupon Issue Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -16725,7 +16744,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Coupon Use Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -16840,7 +16859,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Coupon Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -17019,7 +17038,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -17089,7 +17108,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -17357,7 +17376,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -17539,6 +17558,10 @@ export const dataDictionaryJson = {
           "columnName": "sale_invoice_media_id",
           "columnType": "UUID",
           "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice Media Id"
+            },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
               "propertyValue": true
@@ -17548,12 +17571,22 @@ export const dataDictionaryJson = {
         "sale_invoice_id": {
           "columnName": "sale_invoice_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Invoice"
+            }
+          }
         },
         "media_id": {
           "columnName": "media_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Media"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -17694,7 +17727,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -17926,7 +17959,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -17950,7 +17983,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -18252,7 +18285,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Invoice Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -18702,7 +18735,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -18772,7 +18805,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Maintenance Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -19003,7 +19036,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Maintenance Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -19337,7 +19370,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Maintenance Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -19540,7 +19573,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -19564,7 +19597,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Maintenance Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -19851,7 +19884,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Maintenance Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -20183,7 +20216,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Offer Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -20407,7 +20440,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Offer Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -20595,7 +20628,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -20665,7 +20698,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Proforma Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -20933,7 +20966,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Proforma Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -21115,6 +21148,10 @@ export const dataDictionaryJson = {
           "columnName": "sale_proforma_invoice_media_id",
           "columnType": "UUID",
           "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Proforma Invoice Media Id"
+            },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
               "propertyValue": true
@@ -21124,12 +21161,22 @@ export const dataDictionaryJson = {
         "sale_proforma_invoice_id": {
           "columnName": "sale_proforma_invoice_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Sale Proforma Invoice"
+            }
+          }
         },
         "media_id": {
           "columnName": "media_id",
           "columnType": "UUID",
-          "columnProperties": {}
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Media"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -21270,7 +21317,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Proforma Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -21502,7 +21549,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -21526,7 +21573,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Proforma Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -21828,7 +21875,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Proforma Invoice Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -22348,7 +22395,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Quotation Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -22575,7 +22622,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Quotation Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -22905,7 +22952,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Quotation Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -23127,7 +23174,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -23151,7 +23198,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Quotation Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -23386,7 +23433,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Quotation Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -23633,7 +23680,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -23703,7 +23750,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -23930,7 +23977,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Expense Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -24264,7 +24311,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Payment Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -24463,7 +24510,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -24487,7 +24534,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Return Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -24744,7 +24791,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Return Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -24758,7 +24805,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Note#"
+              "propertyValue": "Return#"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
@@ -25035,7 +25082,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Sale Term Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25122,7 +25169,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Signature Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25209,7 +25256,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Social Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25383,7 +25430,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Audit Product Storage Location Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25607,7 +25654,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Audit Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25793,7 +25840,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Stock Audit id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -25930,7 +25977,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Transfer Packing Item Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -26102,7 +26149,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Transfer Packing id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -26604,7 +26651,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Transfer Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -26947,7 +26994,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Stock transfer Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -27099,7 +27146,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "New Stock Quantity"
+              "propertyValue": "Total New Stock Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -27127,7 +27174,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Old Stock Quantity"
+              "propertyValue": "Total Old Stock Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -27226,7 +27273,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Update Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -27240,7 +27287,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Update Quantity"
+              "propertyValue": "Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -27254,7 +27301,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Update Quantity"
+              "propertyValue": "Total Quantity"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -27498,7 +27545,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Update Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -27823,7 +27870,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Storage Location Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28040,7 +28087,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Supplier Chargeable Service Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28219,7 +28266,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Supplier Product Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28262,7 +28309,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Details"
+              "propertyValue": "Supplier Details"
             }
           }
         },
@@ -28272,7 +28319,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Supplier Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28286,7 +28333,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Supplier Type"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -28325,7 +28372,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Remarks"
+              "propertyValue": "Supplier Remarks"
             }
           }
         },
@@ -28396,7 +28443,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Tax Part Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28410,7 +28457,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Part Name"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",
@@ -28438,7 +28485,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Part Type"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -28536,7 +28583,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Tax Rate Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28550,7 +28597,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Rate Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -28610,7 +28657,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Type"
+              "propertyValue": "Rate Type"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -28712,7 +28759,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Taxing Scheme Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -28726,7 +28773,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Name"
+              "propertyValue": "Taxing Scheme Name"
             },
             "REQUIRED": {
               "propertyName": "REQUIRED",
@@ -28847,7 +28894,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Entry Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -29014,7 +29061,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Transaction Entry Media Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -29141,7 +29188,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Trasnsaction Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -29290,7 +29337,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Trigger Flag Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -29367,7 +29414,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Id"
+              "propertyValue": "Website Id"
             },
             "PRIMARY_KEY": {
               "propertyName": "PRIMARY_KEY",
@@ -29381,7 +29428,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Label"
+              "propertyValue": "Website Label"
             },
             "DEFAULT_VALUE": {
               "propertyName": "DEFAULT_VALUE",
@@ -29395,7 +29442,7 @@ export const dataDictionaryJson = {
           "columnProperties": {
             "COLUMN_TITLE": {
               "propertyName": "COLUMN_TITLE",
-              "propertyValue": "Value"
+              "propertyValue": "Website Url"
             },
             "USE_FOR_ROW_LIKE_FILTER": {
               "propertyName": "USE_FOR_ROW_LIKE_FILTER",

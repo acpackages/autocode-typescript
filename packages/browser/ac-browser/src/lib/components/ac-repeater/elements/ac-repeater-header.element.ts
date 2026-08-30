@@ -7,6 +7,7 @@ import { AcRepeaterElement } from "./ac-repeater.element";
 import { ACI_SVG_SOLID } from "@autocode-ts/ac-icons";
 import { AC_DATA_FILTER_TAG } from "../../ac-data-filter/_ac-data-filter.export";
 import { AC_DATA_SORT_TAG } from "../../ac-data-sort/_ac-data-sort.export";
+import { acRepeaterElementHtml } from "../_ac-repeater.export";
 
 export class AcRepeaterHeaderElement extends AcElementBase {
   private repeaterApi: AcRepeaterApi;
@@ -65,7 +66,7 @@ export class AcRepeaterHeaderElement extends AcElementBase {
     this.innerHTML = `
       <div class="ac-repeater-header">
         <div class="ac-repeater-search-container">
-          <ac-svg-icon size="16px" style="color:#888">${ACI_SVG_SOLID.magnifyingGlass}</ac-svg-icon>
+          ${acRepeaterElementHtml.searchIcon}
           <input type="text" class="ac-repeater-search-input" placeholder="Search...">
           <button class="ac-repeater-clear-search-btn" type="button" style="display:none">&times;</button>
         </div>

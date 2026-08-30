@@ -1,0 +1,11 @@
+ac-filterable-elements {
+  display: block;
+}
+
+[ac-filter-element-hidden] {
+  display: none !important;
+}
+
+[ac-filter-element-group-hidden] {
+  display: none !important;
+}

@@ -68,20 +68,20 @@ export class AcDataFilterPopup {
   show(anchorElement?: HTMLElement) {
     if (this.popupElement) return;
 
-    const title = this.options.title ?? (this.targetField ? `Filter: ${this.targetField.label || this.targetField.key}` : 'Advanced Filters');
+    const title = this.options.title ?? (this.targetField ? `${this.targetField.label || this.targetField.key}` : 'Filters');
 
     this.popupElement = document.createElement('div');
-    this.popupElement.className = 'ac-data-filter-popup ac-repeater-header-popup';
+    this.popupElement.className = 'ac-data-filter-popup';
     this.popupElement.innerHTML = `
-      <div class="ac-data-filter-popup-header ac-repeater-popup-header">
+      <div class="ac-data-filter-popup-header">
         <span>${title}</span>
-        <button class="ac-data-filter-popup-close ac-repeater-popup-close" type="button">&times;</button>
+        <button class="ac-data-filter-popup-close" type="button">&times;</button>
       </div>
-      <div class="ac-data-filter-rows-container ac-repeater-filter-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
-      <div class="ac-data-filter-actions ac-repeater-filter-actions">
-        ${this.isSingleFieldMode ? '' : '<button class="ac-data-filter-btn ac-repeater-header-button ac-data-filter-add-btn" type="button">Add</button>'}
-        <button class="ac-data-filter-btn ac-repeater-header-button ac-data-filter-clear-btn" type="button">Clear</button>
-        <button class="ac-data-filter-btn ac-repeater-header-button ac-data-filter-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
+      <div class="ac-data-filter-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
+      <div class="ac-data-filter-actions">
+        ${this.isSingleFieldMode ? '' : '<button class="ac-data-filter-btn ac-data-filter-add-btn" type="button">Add</button>'}
+        <button class="ac-data-filter-btn ac-data-filter-clear-btn" type="button">Clear</button>
+        <button class="ac-data-filter-btn ac-data-filter-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
       </div>
     `;
 
@@ -323,11 +323,13 @@ export class AcDataFilterPopup {
       updateInputVisibility();
     });
 
-    row.querySelector('.remove-filter-row')?.addEventListener('click', () => {
+    row.querySelector('.ac-data-filter-row-remove')?.addEventListener('click', () => {
       row.remove();
+      this.filterRowsCountChange();
     });
 
     container.appendChild(row);
+    this.filterRowsCountChange();
   }
 
   applyFilters() {
@@ -419,6 +421,24 @@ export class AcDataFilterPopup {
     this.dataManager.refreshRows();
     this.options.onClear?.();
     this.refreshFilterRows();
+  }
+
+  filterRowsCountChange(){
+    if (!this.popupElement) return;
+    const container = this.popupElement.querySelector('.ac-data-filter-rows-container') as HTMLElement;
+    if(container){
+      const removeButtons = container.querySelectorAll(".ac-data-filter-row-remove");
+      if(removeButtons.length > 1){
+        for(const el of removeButtons){
+          (el as HTMLElement).style.display = "";
+        }
+      }
+      else{
+        for(const el of removeButtons){
+          (el as HTMLElement).style.display = "none";
+        }
+      }
+    }
   }
 
   destroy() {

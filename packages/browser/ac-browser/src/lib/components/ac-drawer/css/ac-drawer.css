@@ -1,0 +1,7 @@
+ac-drawer,
+.ac-drawer {
+  position: fixed;
+  z-index: 1050;
+  background: #fff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}

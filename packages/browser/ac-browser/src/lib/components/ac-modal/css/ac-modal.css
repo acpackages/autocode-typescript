@@ -1,0 +1,32 @@
+ac-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.ac-modal-backdrop {
+  background: transparent !important;
+}
+
+.ac-modal-body {
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #fff;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 12px 12px 3px;
+}
+
+.modal-body {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

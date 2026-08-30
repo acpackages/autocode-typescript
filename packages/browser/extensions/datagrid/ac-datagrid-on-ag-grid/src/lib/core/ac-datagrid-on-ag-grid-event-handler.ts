@@ -60,7 +60,6 @@ export class AcDatagridOnAgGridEventHandler {
   };
 
   private onAsyncTransactionsFlushed = (event: AsyncTransactionsFlushedEvent) => {
-    console.log("Async Transaction Flushed");
   };
 
   private onCellDoubleClicked = (event: CellDoubleClickedEvent) => {
@@ -212,7 +211,6 @@ export class AcDatagridOnAgGridEventHandler {
   };
 
   private onDisplayedRowsChanged = (event: DisplayedRowsChangedEvent) => {
-    console.log('Displayed rows updated');
   }
 
   private onFilterChanged = (event: FilterChangedEvent) => {
@@ -326,7 +324,6 @@ export class AcDatagridOnAgGridEventHandler {
   };
 
   private onViewportChanged = (event: ViewportChangedEvent) => {
-    console.log("Viewport updated");
     if (this.datagridApi) {
       this.datagridApi.datagrid.afterRowsContainer.style.visibility = '';
     }

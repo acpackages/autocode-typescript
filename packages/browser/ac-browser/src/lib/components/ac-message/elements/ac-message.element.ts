@@ -3,6 +3,7 @@
 
 import { ACI_SVG_SOLID } from "@autocode-ts/ac-icons";
 import { AcDelayedCallback } from "@autocode-ts/autocode";
+import { acMessageElementHtml } from "../_ac-message.export";
 
 // ac-message.ts
 type ToastPosition =
@@ -15,7 +16,7 @@ interface BaseOptions {
   title?: string;
   message?: string;
   html?: string;
-  iconSvg?: string;
+  iconHtml?: string;
   timer?: number; // ms, 0 = no auto close
   toast?: boolean; // true => toast style; false => modal
   position?: ToastPosition;
@@ -272,22 +273,22 @@ export class AcMessage {
   private static getIconHtml(opts:BaseOptions){
     let result:string = "";
     if(opts.type && opts.type != "none"){
-      let svgCode:string = opts.iconSvg ?? "";
-      if(svgCode == ""){
+      let msgIcon:string = opts.iconHtml ?? "";
+      if(msgIcon == ""){
         if(opts.type == "success"){
-          svgCode = ACI_SVG_SOLID.check;
+          msgIcon = acMessageElementHtml.successIcon;
         }
         else if(opts.type == "error"){
-          svgCode = ACI_SVG_SOLID.ban;
+          msgIcon = acMessageElementHtml.errorIcon;
         }
         else if(opts.type == "warning"){
-          svgCode = ACI_SVG_SOLID.exclamation;
+          msgIcon = acMessageElementHtml.warningIcon;
         }
         else if(opts.type == "info"){
-          svgCode = ACI_SVG_SOLID.info;
+          msgIcon = acMessageElementHtml.infoIcon;
         }
       }
-      result = `<span class="acmsg-modal-icon acmsg-icon-${opts.type}"><ac-svg-icon class="acmsg-svg-icon">${svgCode}</ac-svg-icon></span>`
+      result = `<span class="acmsg-modal-icon acmsg-icon-${opts.type}">${msgIcon}</span>`
     }
     return result;
   }

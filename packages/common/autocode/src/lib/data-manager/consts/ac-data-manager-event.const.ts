@@ -7,6 +7,7 @@ export const AC_DATA_MANAGER_EVENT = {
   DataFoundForFirstTime : 'dataFoundForFirstTime',
   DataRowInstanceCreate : 'dataSourceInstanceCreate',
   DisplayedRowsChange : 'displayedRowsChange',
+  FilterGroupChange:'filterGroupChange',
   GetOnDemandDataSuccessCallback : 'getOnDemandDataSuccessCallback',
   OnDemandFunctionSet : 'onDemandFunctionSet',
   RefreshRows : 'refreshRows',
@@ -16,6 +17,7 @@ export const AC_DATA_MANAGER_EVENT = {
   RowDelete : 'rowDelete',
   RowUpdate : 'rowUpdate',
   SearchQueryChange : 'searchQueryChange',
+  SortOrderChange:'sortOrderChange',
   TotalRowsChange : 'totalRowsChange',
   Unknown : 'unknown',
 }

@@ -23,7 +23,6 @@ export class AcDatagridOnAgGridFixedEditorInput implements FloatingFilterDisplay
   }
 
   getGui(): HTMLElement {
-    console.log('Returning from element');
     return this.element;
   }
 
@@ -35,15 +34,12 @@ export class AcDatagridOnAgGridFixedEditorInput implements FloatingFilterDisplay
       const fixedEditorDetails = this.datagridColumn.columnDefinition.extensionData['fixedEditor'];
       this.datagridApi = params.datagridApi;
       this.element.style.display = 'contents';
-      console.log(this);
       if (this.datagridColumn) {
         let newElement;
         if (fixedEditorDetails.inputElement) {
-          console.log('Creating input from element');
           newElement = new fixedEditorDetails.inputElement();
         }
         else if (fixedEditorDetails.inputElementFunction) {
-          console.log('Creating input from function');
           newElement = fixedEditorDetails.inputElementFunction();
         }
         if(newElement){
@@ -64,9 +60,6 @@ export class AcDatagridOnAgGridFixedEditorInput implements FloatingFilterDisplay
             (this.element as any)[key] = attrs[key];
           }
         }
-      }
-      else {
-        console.warn(`Datagrid Row and Datagrid Column Not Found`, params);
       }
     });
   }

@@ -5,6 +5,7 @@ import { acGetParentElementWithTag, acRegisterCustomElement } from "../../../uti
 import { AC_DATA_SORT_TAG } from "../consts/ac-data-sort-tag.const";
 import { AcDataSortPopup } from "./ac-data-sort-popup";
 import "../css/ac-data-sort.css";
+import { acDataSortElementHtml } from "../_ac-data-sort.export";
 
 export interface IAcDataSortField {
   key: string;
@@ -73,9 +74,9 @@ export class AcDataSortElement extends AcElementBase {
 
   private render() {
     this.innerHTML = `
-      <button class="ac-data-sort-btn ac-repeater-header-button" type="button">
-        <ac-svg-icon size="18px">${ACI_SVG_SOLID.sort}</ac-svg-icon>
-        <span class="ac-data-sort-badge ac-repeater-badge" style="display:none">0</span>
+      <button class="ac-data-sort-btn ac-data-sort-toggle-btn" type="button">
+        ${acDataSortElementHtml.sort}
+        <span class="ac-data-sort-badge" style="display:none">0</span>
       </button>
     `;
 
@@ -153,7 +154,7 @@ export class AcDataSortElement extends AcElementBase {
       : allSorts.length;
 
     this.badgeElement.innerText = count.toString();
-    this.badgeElement.style.display = count > 0 ? 'block' : 'none';
+    this.badgeElement.style.display = count > 0 ? 'flex' : 'none';
   }
 
   override destroy(): void {

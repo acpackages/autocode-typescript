@@ -1,5 +1,6 @@
 import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AcDatagridApi } from "./ac-datagrid-api";
+import { AcDatagridState } from "../models/ac-datagrid-state.model";
 
 export abstract class AcDatagridExtension{
   datagridApi?:AcDatagridApi;
@@ -13,7 +14,7 @@ export abstract class AcDatagridExtension{
     // Init implementation in child
   }
 
-  getState():any{
+  getState({state}:{state:AcDatagridState}):any{
     // Get state implementation
   }
 
@@ -21,7 +22,7 @@ export abstract class AcDatagridExtension{
     // Hooks implementation
   }
 
-  setState({state}:{state:any}){
+  setState({extensionState,state}:{extensionState?:any,state:AcDatagridState}){
     // Set state implementation
   }
 }

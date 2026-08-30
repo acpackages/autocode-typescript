@@ -194,11 +194,6 @@ export class AcDatagridRowDraggingExtensionOnAgGrid {
 
   setAllowRowDragging() {
     if (this.rowDraggingExtension) {
-
-    //   console.log(this.rowDraggingExtension,this.gridApi,this);
-    //   this.allowRowDragging = this.rowDraggingExtension.allowRowDragging;
-    //   if (this.allowRowDragging && this.gridApi) {
-    //     console.log("Set Row Dragging",this);
         this.gridApi.setGridOption('rowDragManaged', true);
         this.gridApi.setGridOption('rowDragEntireRow', true);
         this.gridApi.setGridOption('suppressMoveWhenRowDragging', true);

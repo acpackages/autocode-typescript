@@ -14,10 +14,12 @@
 
 .ac-pagination-left-container{
   display: flex;
+  gap:4px;
 }
 
 .ac-pagination-right-container{
   display: flex;
+  gap:4px;
 }
 
 .ac-pagination-displayed-rows {
@@ -39,7 +41,7 @@
   align-items: center;
 }
 
-.ac-pagination-navigation-button {
+.ac-pagination-navigation-button, .ac-pagination-add-btn {
   width: 32px;
   height: 32px;
   display: flex;
