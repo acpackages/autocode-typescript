@@ -271,3 +271,17 @@
   font-size: 13px;
   color: #333;
 }
+
+.ac-datagrid-footer-btn{
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid var(--ac-border-color, #ccc);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+}

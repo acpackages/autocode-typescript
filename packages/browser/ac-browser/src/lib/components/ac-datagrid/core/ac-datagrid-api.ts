@@ -214,15 +214,7 @@ export class AcDatagridApi {
       oldUsePagination: this._usePagination
     };
     this._usePagination = value;
-    if (value) {
-      this.pagination = new AcPaginationElement();
-            this.pagination.bindDataManager({ dataManager: this.dataManager });
-            this.pagination.showAddButton = this.showAddButton;
-            this.pagination.addEventListener('add',()=>{
-              // this.events.execute({event:Ac.AddClick});
-            });
-    }
-    if(oldValue != value){
+    if (oldValue != value) {
       this.hooks.execute({ hook: AC_DATAGRID_HOOK.UsePaginationChange, args: hookArgs });
     }
     if (this.datagrid && this.datagrid.datagridFooter) {
@@ -245,6 +237,7 @@ export class AcDatagridApi {
   set showAddButton(value: boolean) {
     if (this._showAddButton != value) {
       this._showAddButton = value;
+      this.pagination.showAddButton = value;
       this.hooks.execute({
         hook: AC_DATAGRID_HOOK.ShowAddButtonChange, args: {
           showAddButton: value,
@@ -254,7 +247,7 @@ export class AcDatagridApi {
     }
   }
 
-   private _showRowNumbers: boolean = true;
+  private _showRowNumbers: boolean = true;
   get showRowNumbers(): boolean {
     return this._showRowNumbers;
   }
@@ -315,7 +308,7 @@ export class AcDatagridApi {
   hoverRowId?: string;
   lastColumnIndex: number = 0;
   logger: AcLogger = new AcLogger({ logMessages: false });
-  pagination?: AcPaginationElement;
+  pagination: AcPaginationElement = new AcPaginationElement();
   rowValueChangeTimeoutDuration = 250;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {
@@ -417,6 +410,11 @@ export class AcDatagridApi {
     this.datagridState = new AcDatagridState({ datagridApi: this });
     this.eventHandler = new AcDatagridEventHandler();
     this.eventHandler.init({ datagridApi: this });
+    this.pagination.bindDataManager({ dataManager: this.dataManager });
+      this.pagination.showAddButton = this.showAddButton;
+      this.pagination.addEventListener('add', () => {
+        // this.events.execute({event:Ac.AddClick});
+      });
     AcDatagridExtensionManager.registerBuiltInExtensions();
   }
 

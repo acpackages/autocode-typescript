@@ -42,7 +42,11 @@ export class AcElementBase extends HTMLElement {
 
   disconnectedCallback(): void {
     if(this.autoDestroyOnDisconnect){
-      this.destroy();
+      this.delayedCallback.add({callback:()=>{
+        if(!this.isConnected){
+          this.destroy();
+        }
+      },duration:1500,key:'disconnectDestroy'});
     }
   }
 

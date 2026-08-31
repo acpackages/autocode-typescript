@@ -64,7 +64,7 @@ export class AcPaginationElement extends AcElementBase {
   set showAddButton(value: boolean) {
     if (value != this._showAddButton) {
       this._showAddButton = value;
-      this.handleShowAddButton();
+      this.setAddButtonDisplay();
     }
   }
 
@@ -86,8 +86,8 @@ export class AcPaginationElement extends AcElementBase {
   pageSizes: number[] = [5, 20, 50, 100];
   startRow: number = 0;
   totalPages: number = 1;
-  leftContainer?:HTMLElement;
-  rightContainer?:HTMLElement;
+  leftContainer?: HTMLElement;
+  rightContainer?: HTMLElement;
 
   bindDataManager({ dataManager }: { dataManager: AcDataManager }) {
     this.dataManager = dataManager;
@@ -105,9 +105,19 @@ export class AcPaginationElement extends AcElementBase {
 
   override connectedCallback(): void {
     super.connectedCallback();
+    if (!this.addButton) {
+      this.addButton = this.ownerDocument.createElement('button');
+      this.addButton.setAttribute('type', 'button');
+      this.addButton.setAttribute('class', 'ac-pagination-add-btn');
+      this.addButton.innerHTML = acPaginationElementHtml.add;
+      this.addButton.addEventListener('click', () => {
+        this.dispatchEvent(new CustomEvent('add'));
+      });
+    }
     this.leftContainer.append(this.navigationButtons);
     this.leftContainer.append(this.sizeDropdown);
-    this.handleShowAddButton();
+    this.leftContainer.append(this.addButton);
+    this.setAddButtonDisplay();
   }
 
   override destroy(): void {
@@ -127,27 +137,15 @@ export class AcPaginationElement extends AcElementBase {
     this.rightContainer = this.querySelector(".ac-pagination-right-container");
   }
 
-  private handleShowAddButton() {
-    if (this.showAddButton) {
-      if (!this.addButton) {
-        this.addButton = this.ownerDocument.createElement('button');
-        this.addButton.setAttribute('type', 'button');
-        this.addButton.setAttribute('class','ac-pagination-add-btn');
-        this.addButton.innerHTML = acPaginationElementHtml.add;
-        this.addButton.addEventListener('click',()=>{
-          this.dispatchEvent(new CustomEvent('add'));
-        });
-        this.leftContainer.append(this.addButton);
+  private setAddButtonDisplay() {
+    if (this.addButton) {
+      if (this.showAddButton) {
+        this.addButton.style.display = "";
+      }
+      else {
+        this.addButton.style.display = "none";
       }
     }
-    else{
-       if (!this.addButton) {
-        this.addButton.remove();
-        this.addButton = null;
-       }
-    }
-
-
   }
 
   updateDisplayedRows() {

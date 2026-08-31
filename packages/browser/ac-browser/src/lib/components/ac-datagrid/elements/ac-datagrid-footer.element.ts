@@ -26,7 +26,7 @@ export class AcDatagridFooterElement extends AcElementBase {
     this.searchContainer = this.ownerDocument.createElement('div');
     this.append(this.paginationContainer);
     this.append(this.searchContainer);
-    
+
     const settingsBtn = this.ownerDocument.createElement('i');
     settingsBtn.setAttribute('class', AC_DATAGRID_ICON_CLASS.settings);
     settingsBtn.style.cursor = 'pointer';
@@ -45,11 +45,11 @@ export class AcDatagridFooterElement extends AcElementBase {
   setPagination() {
     acClearElement({element:this.paginationContainer});
     if (this.datagridApi && this.datagridApi.usePagination && this.datagridApi.pagination) {
-      this.datagridApi.pagination.style.paddingRight = '10px';
-      this.datagridApi.pagination.style.marginRight = '5px';
-      this.datagridApi.pagination.style.borderRight = 'solid 1px #ccc';
-      acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooterPaginationContainer, element: this.paginationContainer });
-      this.paginationContainer.append(this.datagridApi.pagination);
+      // this.datagridApi.pagination.style.paddingRight = '10px';
+      // this.datagridApi.pagination.style.marginRight = '5px';
+      // this.datagridApi.pagination.style.borderRight = 'solid 1px #ccc';
+      // acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooterPaginationContainer, element: this.paginationContainer });
+      // this.paginationContainer.append(this.datagridApi.pagination);
     }
   }
 

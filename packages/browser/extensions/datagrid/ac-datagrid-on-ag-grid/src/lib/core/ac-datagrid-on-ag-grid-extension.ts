@@ -1126,7 +1126,6 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       const rightContainer = pagination.rightContainer;
       if (rightContainer) {
         if (!rightContainer.contains(this.columnsCustomizerButtonContainer)) {
-          console.log("Added column customizer button container");
           rightContainer.append(this.columnsCustomizerButtonContainer!);
         }
       }
@@ -1145,7 +1144,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.downloadButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
     }
     acClearElement({ element: this.downloadButtonContainer });
-    this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn btn-ac-datagrid-download"><i class="fa fa-download"></i></button>`;
+    this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn ac-datagrid-download-btn"><i class="fa fa-download"></i></button>`;
     (this.downloadButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
       this.handleDataExportXlsx();
     });
@@ -1153,9 +1152,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     if (pagination) {
       const rightContainer = pagination.rightContainer;
       if (rightContainer) {
-        console.log("Found right container");
         if (!rightContainer.contains(this.downloadButtonContainer)) {
-          console.log("Added download button container");
           rightContainer.append(this.downloadButtonContainer!);
         }
       }
@@ -1212,8 +1209,6 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.setDataExportButton();
       this.setColumnsCustomizerButton();
       this.datagridApi.events.execute({ event: 'AG_GRID_PAGINATION_SET', args: { agGridExtension: this } });
-
-      console.log("Adding customize and download button");
       retry = false;
     }
     if (retry) {

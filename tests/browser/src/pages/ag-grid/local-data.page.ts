@@ -130,6 +130,7 @@ export class AggridLocalPage {
       this.rowSelectionExtension.allowSelection = true;
       this.rowSelectionExtension.allowMultipleSelection = true;
       this.autoAddRowExtension.autoAddNewRow = true;
+      this.datagridApi.showAddButton = true;
 
       this.datagridApi.columnDefinitions = [
         // { field: 'action', title: "", allowSort: false, cellRendererElement: ActionsDatagridColumn, width: 65,pinnedOn:'LEFT' },
