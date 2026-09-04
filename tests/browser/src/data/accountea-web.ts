@@ -184,6 +184,93 @@ export const dataDictionaryJson = {
         }
       }
     },
+    "conversation_entities": {
+      "tableName": "conversation_entities",
+      "tableColumns": {
+        "conversation_entity_id": {
+          "columnName": "conversation_entity_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entity Id"
+            },
+            "PRIMARY_KEY": {
+              "propertyName": "PRIMARY_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "conversation_entity_identifier": {
+          "columnName": "conversation_entity_identifier",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entity Idntifier"
+            },
+            "UNIQUE_KEY": {
+              "propertyName": "UNIQUE_KEY",
+              "propertyValue": true
+            }
+          }
+        },
+        "conversation_entity_name": {
+          "columnName": "conversation_entity_name",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entity Name"
+            }
+          }
+        },
+        "conversation_entity_image_url": {
+          "columnName": "conversation_entity_image_url",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entity Image Url"
+            }
+          }
+        },
+        "conversation_entity_type": {
+          "columnName": "conversation_entity_type",
+          "columnType": "TEXT",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Entity Type"
+            }
+          }
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "User Id"
+            }
+          }
+        }
+      },
+      "tableProperties": {
+        "PLURAL_NAME": {
+          "propertyName": "PLURAL_NAME",
+          "propertyValue": "conversation_entities"
+        },
+        "SINGULAR_NAME": {
+          "propertyName": "SINGULAR_NAME",
+          "propertyValue": "conversation_entity"
+        },
+        "SQL_VIEW_NAME": {
+          "propertyName": "SQL_VIEW_NAME",
+          "propertyValue": "vw_conversation_entities"
+        }
+      }
+    },
     "developers": {
       "tableName": "developers",
       "tableColumns": {
@@ -1582,6 +1669,16 @@ export const dataDictionaryJson = {
               "propertyValue": "Mobile Verified On"
             }
           }
+        },
+        "user_profile_image_url": {
+          "columnName": "user_profile_image_url",
+          "columnType": "STRING",
+          "columnProperties": {
+            "COLUMN_TITLE": {
+              "propertyName": "COLUMN_TITLE",
+              "propertyValue": "Profile Image"
+            }
+          }
         }
       },
       "tableProperties": {
@@ -1603,6 +1700,7 @@ export const dataDictionaryJson = {
         "accountee_id": {
           "columnName": "accountee_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_id"
@@ -1610,6 +1708,7 @@ export const dataDictionaryJson = {
         "accountee_name": {
           "columnName": "accountee_name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_name"
@@ -1617,13 +1716,15 @@ export const dataDictionaryJson = {
         "accountee_profile_image_media_id": {
           "columnName": "accountee_profile_image_media_id",
           "columnType": "UUID",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_profile_image_media_id"
         },
         "accountee_type": {
           "columnName": "accountee_type",
-          "columnType": "",
+          "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "accountees",
           "columnSourceOriginalColumn": "accountee_type"
@@ -1631,6 +1732,7 @@ export const dataDictionaryJson = {
         "name": {
           "columnName": "name",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "users",
           "columnSourceOriginalColumn": "name"
@@ -1638,12 +1740,83 @@ export const dataDictionaryJson = {
         "mobile_number": {
           "columnName": "mobile_number",
           "columnType": "STRING",
+          "columnProperties": {},
           "columnSource": "table",
           "columnSourceName": "users",
           "columnSourceOriginalColumn": "mobile_number"
         }
       },
       "viewQuery": "SELECT accountees.*, users.name, users.mobile_number FROM accountees LEFT JOIN user_accountees ON accountees.accountee_id = user_accountees.accountee_id LEFT JOIN users ON users.user_id = user_accountees.user_id;"
+    },
+    "vw_conversation_entities": {
+      "viewName": "vw_conversation_entities",
+      "viewColumns": {
+        "conversation_entity_id": {
+          "columnName": "conversation_entity_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "conversation_entity_id"
+        },
+        "conversation_entity_identifier": {
+          "columnName": "conversation_entity_identifier",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "conversation_entity_identifier"
+        },
+        "conversation_entity_name": {
+          "columnName": "conversation_entity_name",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "conversation_entity_name"
+        },
+        "conversation_entity_image_url": {
+          "columnName": "conversation_entity_image_url",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "conversation_entity_image_url"
+        },
+        "conversation_entity_type": {
+          "columnName": "conversation_entity_type",
+          "columnType": "TEXT",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "conversation_entity_type"
+        },
+        "user_id": {
+          "columnName": "user_id",
+          "columnType": "UUID",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "conversation_entities",
+          "columnSourceOriginalColumn": "user_id"
+        },
+        "name": {
+          "columnName": "name",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "users",
+          "columnSourceOriginalColumn": "name"
+        },
+        "user_profile_image_url": {
+          "columnName": "user_profile_image_url",
+          "columnType": "STRING",
+          "columnProperties": {},
+          "columnSource": "table",
+          "columnSourceName": "users",
+          "columnSourceOriginalColumn": "user_profile_image_url"
+        }
+      },
+      "viewQuery": "SELECT conversation_entities.*, users.name, users.user_profile_image_url FROM conversation_entities \nLEFT JOIN users ON conversation_entities.user_id = users.user_id"
     },
     "vw_developers": {
       "viewName": "vw_developers",
@@ -2323,6 +2496,12 @@ export const dataDictionaryJson = {
       "destinationTable": "label_formats",
       "sourceColumn": "developer_id",
       "sourceTable": "developers"
+    },
+    {
+      "destinationColumn": "user_id",
+      "destinationTable": "conversation_entities",
+      "sourceColumn": "user_id",
+      "sourceTable": "users"
     }
   ]
 };

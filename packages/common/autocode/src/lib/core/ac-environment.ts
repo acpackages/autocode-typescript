@@ -16,4 +16,9 @@ export class AcEnvironment {
   static isStaging(): boolean {
     return this.environment === AcEnumEnvironment.Staging;
   }
+
+  static isLocal(): boolean {
+    return this.environment === AcEnumEnvironment.Local;
+  }
 }
+

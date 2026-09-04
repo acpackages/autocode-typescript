@@ -413,7 +413,7 @@ export class AcDatagridApi {
     this.pagination.bindDataManager({ dataManager: this.dataManager });
       this.pagination.showAddButton = this.showAddButton;
       this.pagination.addEventListener('add', () => {
-        // this.events.execute({event:Ac.AddClick});
+        this.dataManager.addRow();
       });
     AcDatagridExtensionManager.registerBuiltInExtensions();
   }

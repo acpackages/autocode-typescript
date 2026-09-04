@@ -83,10 +83,10 @@ export class DataDictionaryEditorPage {
     // api.setDataDictionaryJson({ dataDictionaryJson: actExtEcommerce });
     // api.setDataDictionaryJson({ dataDictionaryJson: actExtMatchTheLedgers });
     // api.setDataDictionaryJson({ dataDictionaryJson: actExtWhatsappWebApi });
-    api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProAi });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProInternal });
-    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
+    api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeTalk });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSchema });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSync });

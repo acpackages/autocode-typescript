@@ -1,6 +1,8 @@
 import { AcWebSocket } from '@autocode-ts/ac-web-socket';
 import { AcWeb, AcWebRequest, AcWebResponse, AcWebRouteDefinition, AcWebFile } from '@autocode-ts/ac-web';
 import { AcLogger, AcEnumLogType } from '@autocode-ts/autocode';
+import { AcWebOnWsParams } from './models/ac-web-on-ws-params.model';
+
 
 export class AcWebOnWs {
   public socket: AcWebSocket;
@@ -60,6 +62,41 @@ export class AcWebOnWs {
           }
 
           if (!routeDefinition) {
+            // Check dynamic resolvers if available on app
+            const runtimeResolvers = (this.app as any).runtimeRouteResolvers;
+            if (runtimeResolvers && typeof runtimeResolvers === 'object') {
+              let resolverDefinition: any;
+              for (const entry of Object.values(runtimeResolvers) as any[]) {
+                const routeMethod = (entry.method?.value || entry.method || '').toLowerCase();
+                const routePath = entry.prefix || '';
+                const cleanRoutePath = routePath.startsWith('/') ? routePath.substring(1) : routePath;
+
+                if (routeMethod === method && cleanUrl.startsWith(cleanRoutePath)) {
+                  resolverDefinition = entry;
+                  break;
+                }
+              }
+
+              if (resolverDefinition) {
+                const acWebRequest = this._createAcWebRequestFromWsData(requestData, this.socket);
+                acWebRequest.pathParameters = pathParams;
+                acWebRequest.internalParams['ac_web_on_ws'] = new AcWebOnWsParams({ socket: this.socket });
+                acWebRequest.internalParams['socket'] = this.socket;
+
+                const webResponse = await resolverDefinition.resolver({
+                  path: cleanUrl,
+                  method: resolverDefinition.method,
+                  webRequest: acWebRequest,
+                });
+
+                if (callback) {
+                  const response = webResponse || AcWebResponse.notFound();
+                  callback({ response: this._createWsResponseFromAcWebResponse(response) });
+                }
+                return;
+              }
+            }
+
             this.logger.error({ message: `Route not found: ${method}>${url}` });
             if (callback) {
               const response = AcWebResponse.notFound();
@@ -70,12 +107,14 @@ export class AcWebOnWs {
 
           const acWebRequest = this._createAcWebRequestFromWsData(requestData, this.socket);
           acWebRequest.pathParameters = pathParams;
+          acWebRequest.internalParams['ac_web_on_ws'] = new AcWebOnWsParams({ socket: this.socket });
           acWebRequest.internalParams['socket'] = this.socket;
 
           const webResponse = await this.app.handleWebRequest({ request: acWebRequest, routeDefinition });
           if (callback) {
             callback({ response: this._createWsResponseFromAcWebResponse(webResponse) });
           }
+
         } catch (e: any) {
           this.logger.error({ message: `Error handling ${this.eventName}: ${e}` });
           if (callback) {

@@ -310,11 +310,140 @@ export class AcWebSocket {
     }
   }
 
+  public async transfer({
+    event = 'file',
+    name,
+    data,
+    chunkSize = 64 * 1024,
+    metadata,
+    onProgress,
+  }: {
+    event?: string;
+    name: string;
+    data: Uint8Array | number[] | ArrayBuffer;
+    chunkSize?: number;
+    metadata?: Record<string, any>;
+    onProgress?: (progress: number) => void;
+  }): Promise<void> {
+    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+    const totalSize = bytes.length;
+    const transferId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    // 1. Send start
+    await this.emit({
+      event,
+      data: {
+        action: 'start',
+        transferId,
+        name,
+        size: totalSize,
+        metadata,
+      }
+    });
+
+    // 2. Send chunks
+    let sent = 0;
+    while (sent < totalSize) {
+      const length = Math.min(chunkSize, totalSize - sent);
+      const chunkBytes = bytes.subarray(sent, sent + length);
+      let binaryStr = '';
+      for (let i = 0; i < chunkBytes.length; i++) {
+        binaryStr += String.fromCharCode(chunkBytes[i]);
+      }
+      const base64Data = typeof btoa === 'function' ? btoa(binaryStr) : Buffer.from(chunkBytes).toString('base64');
+
+      await this.emit({
+        event,
+        data: {
+          action: 'chunk',
+          transferId,
+          data: base64Data,
+        }
+      });
+
+      sent += length;
+      if (onProgress) {
+        onProgress(sent / totalSize);
+      }
+    }
+
+    // 3. Send end
+    await this.emit({
+      event,
+      data: {
+        action: 'end',
+        transferId,
+      }
+    });
+  }
+
+  public onFile({
+    event = 'file',
+    handler,
+  }: {
+    event?: string;
+    handler: (args: {
+      transferId: string;
+      name: string;
+      totalSize: number;
+      chunks: Uint8Array[];
+      metadata?: Record<string, any>;
+    }) => void;
+  }) {
+    const activeTransfers: Record<string, { name: string; size: number; chunks: Uint8Array[]; metadata?: any }> = {};
+
+    this.on({
+      event,
+      handler: ({ data, callback }) => {
+        const payload = typeof data === 'string' ? JSON.parse(data) : data;
+        const action = payload.action;
+        const transferId = payload.transferId;
+
+        if (action === 'start') {
+          activeTransfers[transferId] = {
+            name: payload.name,
+            size: payload.size,
+            chunks: [],
+            metadata: payload.metadata,
+          };
+        } else if (action === 'chunk') {
+          const base64Str = payload.data;
+          let bytes: Uint8Array;
+          if (typeof atob === 'function') {
+            const bin = atob(base64Str);
+            bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          } else {
+            bytes = new Uint8Array(Buffer.from(base64Str, 'base64'));
+          }
+          activeTransfers[transferId]?.chunks.push(bytes);
+        } else if (action === 'end') {
+          const item = activeTransfers[transferId];
+          if (item) {
+            delete activeTransfers[transferId];
+            handler({
+              transferId,
+              name: item.name,
+              totalSize: item.size,
+              chunks: item.chunks,
+              metadata: item.metadata,
+            });
+          }
+        }
+
+        if (callback) {
+          callback({ response: { success: true } });
+        }
+      }
+    });
+  }
+
   public get isConnected(): boolean {
     // ws uses numeric states, browser uses numeric states. 1 is OPEN.
     return this._webSocket.readyState === 1;
   }
 }
+
 
 export class AcWsVolatileSocket {
   constructor(private _socket: AcWebSocket) { }
