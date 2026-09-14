@@ -1,5 +1,5 @@
-export type EventHandler = ({ data, callback }: { data?: any; callback?: ({ response }: { response?: any }) => void }) => void;
-export type AnyEventHandler = ({ event, data, callback }: { event: string; data?: any; callback?: ({ response }: { response?: any }) => void }) => void;
+export type EventHandler = ({ data, callback }: { data?: any; callback?: ({ response }: { response?: any }) => void }) => Promise<void>|void;
+export type AnyEventHandler = ({ event, data, callback }: { event: string; data?: any; callback?: ({ response }: { response?: any }) => void }) => Promise<void>|void;
 
 export type MessageInterceptor = ({ message, callback, abort }: {
   message: any;

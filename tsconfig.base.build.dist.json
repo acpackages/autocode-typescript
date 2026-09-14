@@ -39,6 +39,7 @@
       "@autocode-ts/ac-dde-browser-storage": ["dist/packages/browser/extensions/data-dictionary-editor/ac-dde-browser-storage"],
       "@autocode-ts/ac-dde-code-generator": ["dist/packages/browser/extensions/data-dictionary-editor/ac-dde-code-generator"],
       "@autocode-ts/ac-extensions": ["dist/packages/common/ac-extensions"],
+      "@autocode-ts/ac-exceptor-server": ["dist/packages/node/ac-exceptor-server"],
       "@autocode-ts/ac-icons": ["dist/packages/browser/ac-icons"],
       "@autocode-ts/ac-ng-data-bridge-ui": ["dist/packages/angular/ac-ng-data-bridge-ui"],
       "@autocode-ts/ac-ng-report-engine": ["dist/packages/angular/ac-ng-report-engine"],

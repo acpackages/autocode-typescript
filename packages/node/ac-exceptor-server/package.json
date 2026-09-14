@@ -1,0 +1,32 @@
+{
+  "name": "@autocode-ts/ac-exceptor-server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./ac-exceptor-server.js",
+  "module": "./ac-exceptor-server.js",
+  "types": "./ac-exceptor-server.d.ts",
+  "dependencies": {
+    "@autocode-ts/autocode": "^0.0.1",
+    "@autocode-ts/ac-web": "^0.0.1",
+    "@autocode-ts/ac-data-dictionary": "^0.0.1",
+    "@autocode-ts/ac-sql": "^0.0.1",
+    "@autocode-ts/ac-sql-node": "^0.0.1",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.50"
+  },
+  "exports": {
+    ".": {
+      "types": "./ac-exceptor-server.d.ts",
+      "import": "./ac-exceptor-server.js",
+      "require": "./ac-exceptor-server.cjs"
+    }
+  },
+  "files": [
+    "ac-exceptor-server.js",
+    "ac-exceptor-server.cjs",
+    "ac-exceptor-server.d.ts"
+  ]
+}

@@ -78,6 +78,9 @@
       "@autocode-ts/ac-extensions": [
         "packages/common/ac-extensions/src/ac-extensions.ts"
       ],
+      "@autocode-ts/ac-exceptor-server": [
+        "packages/node/ac-exceptor-server/src/ac-exceptor-server.ts"
+      ],
       "@autocode-ts/ac-icons": [
         "packages/browser/ac-icons/src/ac-icons.ts"
       ],
@@ -145,6 +148,7 @@
         "packages/common/ac-sql-core/src/index.ts"
       ],
       "@autocode-ts/ac-sql-node": [
+        "packages/node/ac-sql-node/src/ac-sql-node.ts",
         "packages/node/ac-sql-node/ac-sql-node.ts"
       ],
       "@autocode-ts/ac-sql-parser": [

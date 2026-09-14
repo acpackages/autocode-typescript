@@ -27,7 +27,7 @@ import { dataDictionaryJson as communityDataDictionary } from './../../data/sst-
 import { dataDictionaryJson as unifiDataDictionary } from './../../data/unifi-data-dictionary';
 import { dataDictionaryJson as ddeDataDictionary } from './../../data/dde-data-dictionary';
 import { dataDictionaryJson as autocodeSchema } from './../../data/autocode-schema';
-import { dataDictionaryJson as autocodeTalk } from './../../data/autocode-talk';
+import { dataDictionaryJson as acChat } from './../../data/ac-chat';
 import { dataDictionaryJson as autocodeSync } from './../../data/autocode-sync';
 import { dataDictionaryJson as sagDataDictionary } from './../../data/scoresandgames';
 import { IAppMenuItem } from "src/_app.export";
@@ -86,8 +86,8 @@ export class DataDictionaryEditorPage {
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaPro });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProAi });
     // api.setDataDictionaryJson({ dataDictionaryJson: accounteaProInternal });
-    api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
-    // api.setDataDictionaryJson({ dataDictionaryJson: autocodeTalk });
+    // api.setDataDictionaryJson({ dataDictionaryJson: accounteaWeb });
+    api.setDataDictionaryJson({ dataDictionaryJson: acChat });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSchema });
     // api.setDataDictionaryJson({ dataDictionaryJson: autocodeSync });
     // api.setDataDictionaryJson({ dataDictionaryJson: sagDataDictionary });
