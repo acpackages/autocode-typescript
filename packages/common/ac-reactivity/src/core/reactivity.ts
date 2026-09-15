@@ -598,40 +598,76 @@ function createArrayProxy(target: any[]): object {
                 const originalMethod = (t as any)[key];
                 return function (this: any, ...args: any[]) {
                     const meta = getOrCreateMetadata(t);
-                    const snapshot = [...receiver]; // Pre-mutation state via proxy
+                    const prevLen = t.length;
+                    // Pre-mutation snapshot from raw target t, NOT receiver (avoids N proxy get traps)
+                    const snapshot = t.slice();
 
                     // Set the isMutating semaphore to suppress per-element set trap notifications
                     meta.isMutating = (meta.isMutating || 0) + 1;
                     try {
-                        return Reflect.apply(originalMethod, t, args);
-                    } finally {
-                        meta.isMutating!--;
-                        if (meta.isMutating === 0) {
-                            // Clear all numeric child subscriptions — indexes may have shifted
-                            for (const sub of meta.subscriptions) {
-                                for (const [subKey, unsub] of sub.childUnsubs) {
-                                    if (!isNaN(Number(subKey))) {
-                                        unsub();
-                                        sub.childUnsubs.delete(subKey);
+                        const result = Reflect.apply(originalMethod, t, args);
+
+                        if (meta.isMutating === 1) {
+                            if (key === "push") {
+                                // For push, existing indices do not shift. Only subscribe new reactive items.
+                                for (let i = 0; i < args.length; i++) {
+                                    const item = args[i];
+                                    if (item && canBeReactive(item)) {
+                                        const rawItem = (item as any)[RAW_TARGET] || item;
+                                        subscribeChildForParent(t, rawItem, String(prevLen + i));
+                                    }
+                                }
+                            } else if (key === "pop") {
+                                // For pop, only the last index was removed.
+                                if (prevLen > 0) {
+                                    const lastIdxStr = String(prevLen - 1);
+                                    for (const sub of meta.subscriptions) {
+                                        const unsub = sub.childUnsubs.get(lastIdxStr);
+                                        if (unsub) {
+                                            unsub();
+                                            sub.childUnsubs.delete(lastIdxStr);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Check if any subscription has numeric child subscriptions
+                                let hasChildSubs = false;
+                                for (const sub of meta.subscriptions) {
+                                    if (sub.childUnsubs.size > 0) {
+                                        hasChildSubs = true;
+                                        break;
+                                    }
+                                }
+
+                                if (hasChildSubs) {
+                                    // Clear all numeric child subscriptions — indexes shifted
+                                    for (const sub of meta.subscriptions) {
+                                        for (const [subKey, unsub] of sub.childUnsubs) {
+                                            if (!isNaN(Number(subKey))) {
+                                                unsub();
+                                                sub.childUnsubs.delete(subKey);
+                                            }
+                                        }
+                                    }
+
+                                    // Eagerly subscribe all reactive items with correct indexes.
+                                    for (let i = 0; i < t.length; i++) {
+                                        const item = t[i];
+                                        if (item && canBeReactive(item)) {
+                                            const rawItem = (item as any)[RAW_TARGET] || item;
+                                            subscribeChildForParent(t, rawItem, String(i));
+                                        }
                                     }
                                 }
                             }
 
-                            // Eagerly subscribe all reactive items with correct indexes.
-                            // This ensures newly pushed/unshifted/spliced objects are
-                            // immediately subscribed to the parent root(s).
-                            for (let i = 0; i < t.length; i++) {
-                                const item = t[i];
-                                if (item && canBeReactive(item)) {
-                                    const rawItem = (item as any)[RAW_TARGET] || item;
-                                    subscribeChildForParent(t, rawItem, String(i));
-                                }
-                            }
-
                             // Emit a single change notification with the method name as operation
-                            // localKey = "" means the array itself changed
                             notifySubscribers(t, "", snapshot, receiver, key as AcReactiveOperation, "array", "array");
                         }
+
+                        return result;
+                    } finally {
+                        meta.isMutating!--;
                     }
                 };
             }

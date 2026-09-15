@@ -579,17 +579,17 @@ export class TemplateCompiler {
     const isContainer = el.tagName === 'ac-container';
 
     // ═══════════════════════════════════════════════════════════════════
-    // STRUCTURAL DIRECTIVE: ac:for
+    // STRUCTURAL DIRECTIVE: ac:for / *for / *acFor
     // ═══════════════════════════════════════════════════════════════════
-    const acFor = el.attribs['ac:for'];
+    const acFor = el.attribs['ac:for'] ?? el.attribs['*for'] ?? el.attribs['*acFor'] ?? el.attribs['*acfor'];
     if (acFor) {
       return this.processForDirective(el, acFor, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // STRUCTURAL DIRECTIVE: ac:if
+    // STRUCTURAL DIRECTIVE: ac:if / *if / *acIf
     // ═══════════════════════════════════════════════════════════════════
-    const acIf = el.attribs['ac:if'];
+    const acIf = el.attribs['ac:if'] ?? el.attribs['*if'] ?? el.attribs['*acIf'] ?? el.attribs['*acif'];
     if (acIf) {
       return this.processIfDirective(el, acIf, bindings, idMap, isContainer, reactiveProperties, localVars, classProperties, topLevelVars, resolvedConstants, activeLoopVars);
     }
@@ -644,25 +644,32 @@ export class TemplateCompiler {
     activeLoopVars: Set<string> = new Set(),
   ): string {
     delete el.attribs['ac:for'];
+    delete el.attribs['*for'];
+    delete el.attribs['*acfor'];
+    delete el.attribs['*acFor'];
 
-    // Parse "item of items" or "let item of items; let i = index"
+    // Parse "item of items" or "let item of items; let i = index" or "let item of items; index as i"
     const [itemPart, rest] = acFor.split(' of ').map(s => s.trim());
-    const itemVar = itemPart.replace(/^(let|const|var)\s+/, '');
+    const itemVar = itemPart.replace(/^(let|const|var)\s+/, '').trim();
 
     let listExpr = rest;
     let indexVar: string | undefined;
 
-    // Handle optional index: "items; let i = index"
+    // Handle optional index: "items; let i = index" or "items; index as i"
     if (rest.includes(';')) {
       const parts = rest.split(';').map(s => s.trim());
       listExpr = parts[0];
       for (let i = 1; i < parts.length; i++) {
         const part = parts[i];
-        if (part.includes('=')) {
-          const [v, alias] = part.split('=').map(s => s.trim());
-          if (alias === 'index') {
-            indexVar = v.replace(/^(let|const|var)\s+/, '');
-          }
+        const indexAsMatch = part.match(/\bindex\s+as\s+(\w+)/i);
+        const letIndexMatch = part.match(/\b(?:let\s+)?(\w+)\s*=\s*index\b/i);
+        const letAsIndexMatch = part.match(/\b(?:let\s+)?(\w+)\s+as\s+index\b/i);
+        if (indexAsMatch) {
+          indexVar = indexAsMatch[1];
+        } else if (letIndexMatch) {
+          indexVar = letIndexMatch[1];
+        } else if (letAsIndexMatch) {
+          indexVar = letAsIndexMatch[1];
         }
       }
     }
@@ -769,6 +776,9 @@ export class TemplateCompiler {
     activeLoopVars: Set<string> = new Set(),
   ): string {
     delete el.attribs['ac:if'];
+    delete el.attribs['*if'];
+    delete el.attribs['*acif'];
+    delete el.attribs['*acIf'];
 
     const placeholderId = `ac-if-${this.generateHexId()}`;
 

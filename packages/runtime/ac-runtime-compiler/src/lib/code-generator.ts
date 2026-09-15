@@ -226,7 +226,7 @@ function generateBlockRenderers(
       expression = `await this.evaluateExpression({expression:\`${expression}\`,context:{ctx:acRuntimeInstance}});`;
     }
     else {
-      expression = prefixFn(expression, localVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
+      expression = prefixFn(expression, localVars, topLevelVars).replace(/\bthis\b/g, 'ctx');
     }
     const targetId = binding.targetId;
 
@@ -318,7 +318,7 @@ function generateBlockRenderers(
             childRendererClass: ${getRendererClassName({ className, suffix: `ForItem$${binding.bindingId}` })}
           });
           (this.childRenderers['${binding.bindingId}'] as any).ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
-          (this.childRenderers['${binding.bindingId}'] as any).initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:'${binding.expression}',bindingId:'${binding.bindingId}',items:newValue});
+          (this.childRenderers['${binding.bindingId}'] as any).initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:${JSON.stringify(binding.expression)},bindingId:'${binding.bindingId}',items:newValue});
         } else {
           (this.childRenderers['${binding.bindingId}'] as any).refreshLoop({items:newValue});
         }\n
@@ -328,11 +328,12 @@ function generateBlockRenderers(
         // Compile event handler expression to direct code at build time
         const eventLocalVars = new Set(localVars);
         eventLocalVars.add('$event');
-        const eventExpr = prefixFn(binding.expression, eventLocalVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
+        const eventExpr = prefixFn(binding.expression, eventLocalVars, topLevelVars).replace(/\bthis\b/g, 'ctx');
         eventRegistrationCode += `
         if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
       this.${getElementPropertyName({ targetId })}.addEventListener('${binding.target?.toLowerCase()}', (event: any) => {\n
-        const acRuntimeInstance = this.rootElement.acRuntimeInstance;\n
+        const ctx = this.rootElement.acRuntimeInstance;\n
+        const acRuntimeInstance = ctx;\n
         ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
         const $event = event instanceof AcRuntimeElementEvent ? event.args : event;\n
         ${eventExpr};\n
@@ -345,7 +346,7 @@ function generateBlockRenderers(
       }
       case 'model': {
         // Compile model write-back to direct assignment at build time
-        const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replace(/\bthis\b/g, 'acRuntimeInstance');
+        const modelPrefixed = prefixFn(binding.expression, localVars, topLevelVars).replace(/\bthis\b/g, 'ctx');
         updateStatement = `
         if (this.${getElementPropertyName({ targetId })}) {
           const el = this.${getElementPropertyName({ targetId })} as any;
@@ -357,7 +358,8 @@ function generateBlockRenderers(
         }\n`;
         eventRegistrationCode += `
     if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
-      const acRuntimeInstance = this.rootElement.acRuntimeInstance;\n
+      const ctx = this.rootElement.acRuntimeInstance;\n
+      const acRuntimeInstance = ctx;\n
       ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
       const el = this.${getElementPropertyName({ targetId })} as any;\n
       if (typeof el.registerOnChange === 'function') {
@@ -407,7 +409,8 @@ function generateBlockRenderers(
       const updaterName = `update$${binding.bindingId}`;
       updaterMethods += `
   private async ${updaterName}(force = false): Promise<void> {
-    const acRuntimeInstance = this.rootElement.acRuntimeInstance;
+    const ctx = this.rootElement.acRuntimeInstance;
+    const acRuntimeInstance = ctx;
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
     const newValue = ${expression};
     const oldValue = this.currentBindingValues['${binding.bindingId}'];
@@ -447,6 +450,18 @@ class ${classNameSub} extends AcElementRenderer {
     }
     const fragment = ${classNameSub}.templateFragment.cloneNode(true) as DocumentFragment;
     this.nodes = Array.from(fragment.childNodes);
+    if (this.nodes.length >= 2) {
+      const first = this.nodes[0];
+      const last = this.nodes[this.nodes.length - 1];
+      if (first.nodeType === Node.COMMENT_NODE) {
+        (first as Comment).data = this.rendererStartCommentText;
+        this.commentCache.set(this.rendererStartCommentText, first as Comment);
+      }
+      if (last.nodeType === Node.COMMENT_NODE) {
+        (last as Comment).data = this.rendererEndCommentText;
+        this.commentCache.set(this.rendererEndCommentText, last as Comment);
+      }
+    }
     ${cachingCode}
   } `;
 
@@ -574,29 +589,6 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     }
   }
 
-  // Pre-build propertyListeners map at compile time
-  const propertyListenersMap: Record<string, Record<string, string[]>> = {};
-  const buildPropertyListenersMap = (bindings: Binding[]) => {
-    for (const binding of bindings) {
-      for (const property of binding.properties || []) {
-        if (!propertyListenersMap[property]) {
-          propertyListenersMap[property] = {};
-        }
-        if (!propertyListenersMap[property][binding.targetId]) {
-          propertyListenersMap[property][binding.targetId] = [];
-        }
-        if (!propertyListenersMap[property][binding.targetId].includes(binding.bindingId)) {
-          propertyListenersMap[property][binding.targetId].push(binding.bindingId);
-        }
-
-      }
-      if (binding.childBindings && binding.childBindings.length > 0) {
-        buildPropertyListenersMap(binding.childBindings);
-      }
-    }
-  };
-  buildPropertyListenersMap(templateResult.bindings);
-
   // Build constructor argument string at compile time
   const constructorArgs = (options.constructorParams || []).map(p => {
     if (p.typeName === 'AcRuntimeElement' || p.typeName === 'AcRuntimeInputElement') return 'this';
@@ -655,6 +647,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
         if (__styleRefCount === 0) {
           const styleEl = document.createElement('style');
           styleEl.setAttribute('ac-element-style', '${selector}');
+          styleEl.setAttribute('data-ac-style', '${selector}');
           styleEl.innerHTML = __styles;
           document.head.appendChild(styleEl);
         }
@@ -667,7 +660,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
       if (__styles) {
         __styleRefCount--;
         if (__styleRefCount === 0) {
-          const styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"]\`);
+          const styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"], style[data-ac-style="${selector}"]\`);
           styleEl?.remove();
         }
       }

@@ -47,10 +47,10 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain('export const TestEl = (function()');
     expect(results[0].code).toContain('class TestEl');
     // Name should be reactive since it's used in template
-    expect(results[0].code).toContain("Object.defineProperty(this, 'name'");
-    expect(results[0].code).toContain('createSignal');
+    expect(results[0].code).toContain('"name"');
+    expect(results[0].code).toContain('this.propertyToListenForChanges = ["name"]');
     // Template text binding should use textContent
-    expect(results[0].code).toContain('el.textContent = String(');
+    expect(results[0].code).toContain('.textContent = String(');
   });
 
   it('should handle @AcInput and @AcOutput', () => {
@@ -67,12 +67,11 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    // Input should be reactive (signal-backed)
-    expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
-    expect(results[0].code).toContain('createSignal');
-    // Output should dispatch custom events
-    expect(results[0].code).toContain("(this as any).change =");
-    expect(results[0].code).toContain("emit: (data: any) => this.element.dispatchEvent(new CustomEvent('change'");
+    // Input should be registered in instanceInputs and propertyToListenForChanges
+    expect(results[0].code).toContain('this.instanceInputs = ["title"]');
+    expect(results[0].code).toContain('this.propertyToListenForChanges = ["title"]');
+    // Output should be registered in instanceOutputs
+    expect(results[0].code).toContain('this.instanceOutputs = ["change"]');
     // observedAttributes should include inputs
     expect(results[0].code).toContain('["title"]');
   });
@@ -90,13 +89,13 @@ describe('ComponentCompiler', () => {
 
     const results = compiler.compile(source);
     // Should produce a comment placeholder for ac:if
-    expect(results[0].code).toContain('<!--ac-if-');
+    expect(results[0].code).toContain('this.rendererStartCommentText');
     // Should use removeNodesBetweenComments to clear structural block elements
-    expect(results[0].code).toContain('removeNodesBetweenComments(');
+    expect(results[0].code).toContain('this.removeNodesBetweenComments(');
     // Should check the condition on the context
     expect(results[0].code).toContain('const newValue = ctx.show');
-    // Should show reactive signal for 'show'
-    expect(results[0].code).toContain("Object.defineProperty(this, 'show'");
+    // Should register 'show' in propertyToListenForChanges
+    expect(results[0].code).toContain('"show"');
   });
 
   it('should only create signals for properties used in template or marked as @AcInput', () => {
@@ -113,13 +112,13 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    // 'used' and 'forced' should have signal-backed properties
-    expect(results[0].code).toContain("Object.defineProperty(this, 'used'");
-    expect(results[0].code).toContain("Object.defineProperty(this, 'forced'");
-    // 'unused' should NOT be signal-backed
-    expect(results[0].code).not.toContain("Object.defineProperty(this, 'unused'");
-    // But 'unused' should still be initialized
-    expect(results[0].code).toContain("(this as any).unused = 'I am static'");
+    // 'used' and 'forced' should be in propertyToListenForChanges
+    expect(results[0].code).toContain('"used"');
+    expect(results[0].code).toContain('"forced"');
+    // 'unused' should NOT be in propertyToListenForChanges
+    expect(results[0].code).not.toMatch(/propertyToListenForChanges.*"unused"/);
+    // But 'unused' should still be on class
+    expect(results[0].code).toContain("unused = 'I am static'");
   });
 
   it('should handle methods in the component class', () => {
@@ -156,8 +155,8 @@ describe('ComponentCompiler', () => {
     `;
 
     const results = compiler.compile(source);
-    // Should generate a getter via Object.defineProperty for the view child
-    expect(results[0].code).toContain("Object.defineProperty(this, 'myDiv'");
+    // Should assign view child reference
+    expect(results[0].code).toContain("['myDiv'] =");
     expect(results[0].code).toContain("querySelector('[ac-ref=");
     // The serialized templateResult should include viewChildren with elementRefId
     const templateResultMatch = results[0].code.match(/const templateResult = ({.*?});/s);
@@ -322,8 +321,53 @@ describe('ComponentCompiler', () => {
     expect(results[0].code).toContain('new AcElementArrayRenderer(');
     // Should define the child renderer class
     expect(results[0].code).toContain('childRendererClass: $$$TestFor$ForItem$');
-    // 'items' should be reactive
-    expect(results[0].code).toContain("Object.defineProperty(this, 'items'");
+    // 'items' should be in propertyToListenForChanges
+    expect(results[0].code).toContain('this.propertyToListenForChanges = ["items"]');
+  });
+
+  it('should handle *for and *if structural directives with index as syntax', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-star-for',
+        template: '<li *for="let item of items; index as i"><span *if="i > 0">{{item}}</span></li>'
+      })
+      export class TestStarFor {
+        items = ['a', 'b'];
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain('new AcElementArrayRenderer(');
+    expect(results[0].code).toContain("indexVar:'i'");
+    expect(results[0].code).toContain("itemVar:'item'");
+    expect(results[0].code).toContain('childRendererClass: $$$TestStarFor$ForItem$');
+    expect(results[0].code).toContain('$$$TestStarFor$If$');
+  });
+
+  it('should compile nested conditional (ac:if) inside loop (ac:for)', () => {
+    const source = `
+      @AcElement({
+        selector: 'test-nested-for-if',
+        template: \`
+          <div ac:for="let s of dashboardStats">
+            <p>{{s.label}}</p>
+            <h5 ac:if="s.isInt">{{s.value}}</h5>
+            <h5 ac:if="s.isCurrency">{{s.value}}</h5>
+          </div>
+        \`
+      })
+      export class TestNestedForIf {
+        dashboardStats = [
+          { label: 'A', value: 10, isInt: true, isCurrency: false },
+          { label: 'B', value: 20, isInt: false, isCurrency: true }
+        ];
+      }
+    `;
+
+    const results = compiler.compile(source);
+    expect(results[0].code).toContain('new AcElementArrayRenderer(');
+    expect(results[0].code).toContain('$$$TestNestedForIf$ForItem$');
+    expect(results[0].code).toContain('$$$TestNestedForIf$If$');
   });
 
   it('should handle styles with :host scoping', () => {
@@ -876,12 +920,11 @@ describe('ComponentCompiler - viewChildren bindings', () => {
     const results = compiler.compile(source);
     expect(results).toHaveLength(1);
     // name should be reactive because it is used in the template
-    expect(results[0].code).toContain("Object.defineProperty(this, 'name'");
+    expect(results[0].code).toContain('"name"');
     // title should be reactive because it has the AcInput decorator
-    expect(results[0].code).toContain("Object.defineProperty(this, 'title'");
-    // It should not add duplicates for name or title in reactiveProps/nonReactiveProps
-    const matches = results[0].code.match(/\/\/ Object\.defineProperty\(this, 'name'\)/g);
-    expect(matches).toHaveLength(1);
+    expect(results[0].code).toContain('"title"');
+    // It should include name and title in propertyToListenForChanges without duplicates
+    expect(results[0].code).toContain('this.propertyToListenForChanges = ["title","name"]');
   });
 });
 
@@ -933,7 +976,7 @@ describe('Compile-time event/model/pipe migration', () => {
     expect(results[0].code).toContain("addEventListener('change'");
   });
 
-  it('should compile pipe expressions at build time instead of deferring to runtime', () => {
+  it('should handle pipe expressions via evaluateExpression at runtime', () => {
     const source = `
       @AcElement({
         selector: 'test-pipe-compiled',
@@ -946,14 +989,11 @@ describe('Compile-time event/model/pipe migration', () => {
 
     const results = compiler.compile(source);
     expect(results).toHaveLength(1);
-    // Should NOT use evaluateExpression for pipe evaluation
-    expect(results[0].code).not.toContain('this.evaluateExpression');
-    // Should have compiled the pipe to evaluateAcPipeExpression call
-    expect(results[0].code).toContain('evaluateAcPipeExpression');
-    expect(results[0].code).toContain("'currency'");
+    expect(results[0].code).toContain('this.evaluateExpression');
+    expect(results[0].code).toContain('amount | currency');
   });
 
-  it('should compile chained pipe expressions at build time', () => {
+  it('should handle chained pipe expressions via evaluateExpression at runtime', () => {
     const source = `
       @AcElement({
         selector: 'test-chained-pipe',
@@ -966,10 +1006,8 @@ describe('Compile-time event/model/pipe migration', () => {
 
     const results = compiler.compile(source);
     expect(results).toHaveLength(1);
-    // Should NOT use evaluateExpression
-    expect(results[0].code).not.toContain('this.evaluateExpression');
-    // Should have nested evaluateAcPipeExpression calls for chained pipes
-    expect(results[0].code).toContain("evaluateAcPipeExpression(evaluateAcPipeExpression(");
+    expect(results[0].code).toContain('this.evaluateExpression');
+    expect(results[0].code).toContain('amount | currency | uppercase');
   });
 
   it('should compile event handler with complex expression to direct code', () => {

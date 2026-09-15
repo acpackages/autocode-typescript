@@ -54,14 +54,11 @@ export class AcRuntimeElement extends HTMLElement {
     (this.elementRenderer as any) = null;
   }
 
+  private static hexIdCounter = 0;
+
   generateHexId(): string {
-    const bytes = new Uint8Array(4);
-
-    crypto.getRandomValues(bytes);
-
-    return Array.from(bytes, b =>
-      b.toString(16).padStart(2, '0')
-    ).join('');
+    const id = (++AcRuntimeElement.hexIdCounter) & 0xffffffff;
+    return id.toString(16).padStart(8, '0');
   }
 
   init() {
@@ -342,8 +339,8 @@ export class AcRuntimeElement extends HTMLElement {
       this.isBatchScheduled = true;
       queueMicrotask(() => {
         this.isBatchScheduled = false;
-        const updates = Array.from(this.pendingUpdates);
-        this.pendingUpdates.clear();
+        const updates = this.pendingUpdates;
+        this.pendingUpdates = new Set();
         for (const update of updates) {
           update();
         }
