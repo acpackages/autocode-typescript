@@ -6,6 +6,10 @@ ac-form-field {
   display: block;
 }
 
+ac-form-field-error-message {
+  display: none;
+}
+
 ac-form-field[is-valid=false] label {
   color: #dc3545;
   font-weight: bold;

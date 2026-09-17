@@ -147,6 +147,17 @@ export class AcDDInputElement extends AcInputBase {
     this.setInputElement();
   }
 
+  override isInputElementValidHtmlInput: boolean = true;
+
+  override setValue({ value, emitEvent = true}:{ value:any, emitEvent?: boolean }): void {
+    // console.log("[AcDDInputElement] Setting value",value);
+    if (this.inputElement) {
+      // console.log("[AcDDInputElement] Setting input elment value",value);
+      (this.inputElement as any).value = value;
+    }
+    super.setValue({ value, emitEvent });
+  }
+
   override get validity() {
     if (this.inputElement) {
       return this.inputElement.validity;
@@ -201,10 +212,12 @@ export class AcDDInputElement extends AcInputBase {
 
   override init(): void {
     super.init();
+    // console.log("[AcDDInputElement] Creating input element",this._value);
     this.setInputElement();
   }
 
   private setInputElement() {
+    // console.log("[AcDDInputElement] Setting input element",this._value);
     if ((this.tableName && this.columnName) || this.inputName) {
       let inputDefinition: IAcDDInputDefinition | undefined;
       if (this.tableName && this.columnName) {
@@ -218,6 +231,8 @@ export class AcDDInputElement extends AcInputBase {
         inputDefinition = AcDDInputManager.getInputDefinition({ name: this.inputName });
       }
       if (inputDefinition) {
+        const preservedValue = this._value !== undefined ? this._value : this.value;
+        // console.log("[AcDDInputElement] preserved value",this._value);
         acClearElement({ element: this });
         if(inputDefinition.inputElement){
           this.inputElement = new inputDefinition.inputElement();
@@ -230,25 +245,21 @@ export class AcDDInputElement extends AcInputBase {
             this.inputElement[key] = inputDefinition.defaultProperties[key];
           }
         }
+        // console.log("[AcDDInputElement] Created input elment",this.inputElement,this._value);
+        this.inputElement.value = this._value;
         if (this.ddTableColumn) {
           if (this.ddTableColumn.isRequired()) {
             this.setAttribute('required', `true`);
           }
         }
         this.appendChild(this.inputElement);
-        this.inputElement.addEventListener('input', () => {
-          this.value = this.inputElement.value;
-        });
-        this.inputElement.addEventListener('change', () => {
-          this.value = this.inputElement.value;
-        });
-        if (this.value != undefined) {
-          this.inputElement.value = this.value;
+        if (preservedValue != undefined) {
+          this.inputElement.value = preservedValue;
         }
         else {
           if (this.ddTableColumn) {
             const defaultValue: any = this.ddTableColumn.getDefaultValue();
-            if (defaultValue && !this.value) {
+            if (defaultValue) {
               this.inputElement.value = defaultValue;
             }
           }
@@ -257,6 +268,23 @@ export class AcDDInputElement extends AcInputBase {
           this.inputElement.disabled = this.disabled;
         }
         this.inputElement.required = this.required;
+
+        this.inputElement.addEventListener('input', (e: Event) => {
+          e.stopPropagation();
+          const newVal = (this.inputElement as any).value;
+          // console.log("[AcDDInputElement] input element value input event",this._value,newVal);
+          if (this._value !== newVal) {
+            super.setValue({ value: newVal, emitEvent: false });
+          }
+        });
+        this.inputElement.addEventListener('change', (e: Event) => {
+          e.stopPropagation();
+          const newVal = (this.inputElement as any).value;
+          // console.log("[AcDDInputElement] input element value change event",this._value,newVal);
+          if (this._value !== newVal) {
+            super.setValue({ value: newVal, emitEvent: true });
+          }
+        });
         this.setInputElementClass();
         this.setInputElementName();
         this.setInputElementPlaceholder();

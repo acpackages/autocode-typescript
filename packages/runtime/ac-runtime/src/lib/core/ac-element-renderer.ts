@@ -19,7 +19,7 @@ export class AcElementRenderer {
   ownedTargetIds: string[] = [];
   childRendererClass?: any;
   private subscriptions: (() => void)[] = [];
-  protected commentCache: Map<string, Comment> = new Map();
+  commentCache: Map<string, Comment> = new Map();
 
   constructor({ targetId, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
     this.rendererId = rootElement.generateHexId();

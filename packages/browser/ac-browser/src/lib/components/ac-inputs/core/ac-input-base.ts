@@ -6,21 +6,27 @@
 import { AcHooks } from "@autocode-ts/autocode";
 import { AcEnumInputEvent } from "../enums/ac-enum-input-event.enum";
 import { AcElementBase } from "../../../core/ac-element-base";
-import { acClearElement, acAddElementEventsListener } from "../../../utils/ac-element-functions";
+import { acAddElementEventsListener, acCloneEvent } from "../../../utils/ac-element-functions";
 
 export class AcInputBase extends AcElementBase {
   static formAssociated = true;
   static get observedAttributes() {
     return ['ac-context', 'ac-context-key', 'class', 'value', 'placeholder', 'disabled', 'readonly', 'name', 'style', 'required'];
   }
-  value: any;
+
+  get value(): any {
+    return this._value;
+  }
+  set value(val: any) {
+    this.setValue({ value: val, emitEvent: false });
+  }
 
   get inputReflectedAttributes() {
-    return ['class', 'value', 'placeholder', 'disabled', 'readonly', 'required'];
+    return ['class', 'placeholder', 'disabled', 'readonly', 'required'];
   }
 
   get disabled(): boolean {
-    return this.getAttribute('disabled') == 'true';
+    return this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false';
   }
   set disabled(value: boolean) {
     if (value) {
@@ -41,7 +47,7 @@ export class AcInputBase extends AcElementBase {
       this.setAttribute('name', value);
     }
     else {
-      this.removeAttribute(value);
+      this.removeAttribute('name');
     }
   }
 
@@ -53,12 +59,12 @@ export class AcInputBase extends AcElementBase {
       this.setAttribute('placeholder', value);
     }
     else {
-      this.removeAttribute(value);
+      this.removeAttribute('placeholder');
     }
   }
 
   get readonly(): boolean {
-    return this.getAttribute('readonly') == 'true';
+    return this.hasAttribute('readonly') && this.getAttribute('readonly') !== 'false';
   }
   set readonly(value: boolean) {
     if (value) {
@@ -70,7 +76,7 @@ export class AcInputBase extends AcElementBase {
   }
 
   get required(): boolean {
-    return this.getAttribute('required') == 'true';
+    return this.hasAttribute('required') && this.getAttribute('required') !== 'false';
   }
   set required(value: boolean) {
     if (value) {
@@ -79,14 +85,40 @@ export class AcInputBase extends AcElementBase {
     else {
       this.removeAttribute('required');
     }
+    if (this.inputElement && typeof this.inputElement.setAttribute === 'function') {
+      if (value) {
+        this.inputElement.setAttribute('required', 'true');
+      } else {
+        this.inputElement.removeAttribute('required');
+      }
+    }
+    this.validate();
   }
 
-  get validity() { return this.inputElement.validity; }
+  get validity(): ValidityState | any {
+    if (this.isInputElementValidHtmlInput && this.inputElement && this.inputElement.validity) {
+      return {
+        ...this.validityStateFlags.flags,
+        valid: this.validityStateFlags.valid
+      };
+    }
+    return this.elementInternals?.validity || {
+      ...this.validityStateFlags.flags,
+      valid: this.validityStateFlags.valid
+    };
+  }
 
   get isValidRequired(): boolean {
     let value = this._value ?? '';
     if (typeof value == 'string') {
       value = value.trim();
+    } else if (typeof value === 'object' && value !== null) {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      if ('start' in value || 'end' in value) {
+        return !!(value.start && value.end);
+      }
     }
     if (this.hasAttribute('required') && !value) {
       return false;
@@ -94,21 +126,28 @@ export class AcInputBase extends AcElementBase {
     return true;
   }
   get validityStateFlags(): { valid: boolean; flags: Partial<ValidityState>; message: string } {
-    if (this.isInputElementValidHtmlInput) {
-      const validityState: ValidityState = this.inputElement.validity;
+    if (this.isInputElementValidHtmlInput && this.inputElement) {
+      const validityState: ValidityState = this.inputElement.validity || {};
+      const isReqValid = this.isValidRequired;
+      const valueMissing = (validityState.valueMissing ?? false) || !isReqValid;
       const validityFlags = {
-        badInput: validityState.badInput,
-        customError: validityState.customError,
-        patternMismatch: validityState.patternMismatch,
-        rangeOverflow: validityState.rangeOverflow,
-        rangeUnderflow: validityState.rangeUnderflow,
-        stepMismatch: validityState.stepMismatch,
-        tooLong: validityState.tooLong,
-        tooShort: validityState.tooShort,
-        typeMismatch: validityState.typeMismatch,
-        valueMissing: validityState.valueMissing
+        badInput: validityState.badInput ?? false,
+        customError: validityState.customError ?? false,
+        patternMismatch: validityState.patternMismatch ?? false,
+        rangeOverflow: validityState.rangeOverflow ?? false,
+        rangeUnderflow: validityState.rangeUnderflow ?? false,
+        stepMismatch: validityState.stepMismatch ?? false,
+        tooLong: validityState.tooLong ?? false,
+        tooShort: validityState.tooShort ?? false,
+        typeMismatch: validityState.typeMismatch ?? false,
+        valueMissing: valueMissing
       };
-      return { valid: this.inputElement.validity.valid, flags: validityFlags, message: this.getValidationMessageFromValidityState(validityState) };
+      const valid = (validityState.valid !== false) && isReqValid &&
+        !validityFlags.badInput && !validityFlags.customError && !validityFlags.patternMismatch &&
+        !validityFlags.rangeOverflow && !validityFlags.rangeUnderflow && !validityFlags.stepMismatch &&
+        !validityFlags.tooLong && !validityFlags.tooShort && !validityFlags.typeMismatch && !valueMissing;
+      const message = this.getValidationMessageFromValidityState(validityFlags as any) || this.inputElement.validationMessage || (valid ? '' : 'This field is required.');
+      return { valid, flags: validityFlags, message };
     }
     else {
       const validityFlags: Partial<ValidityState> | any = {};
@@ -121,7 +160,15 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  get validationMessage() { return this.elementInternals ? this.elementInternals.validationMessage : ''; }
+  get validationMessage(): string {
+    if (this.isInputElementValidHtmlInput && this.inputElement && this.inputElement.validationMessage) {
+      return this.inputElement.validationMessage;
+    }
+    if (this.elementInternals && this.elementInternals.validationMessage) {
+      return this.elementInternals.validationMessage;
+    }
+    return this.validityStateFlags.message || '';
+  }
 
   protected _value: any;
 
@@ -137,31 +184,34 @@ export class AcInputBase extends AcElementBase {
     super();
     this.elementInternals = this.attachInternals();
     this.inputElement.formAssociated = false;
-    this.setValueListener();
   }
 
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     if (!this.isDestroyed) {
       if (oldValue === newValue) return;
       switch (name) {
-        case 'value':
-          this.setValue(newValue);
+        case 'value': {
+          const currentValStr = typeof this._value === 'object' && this._value !== null ? JSON.stringify(this._value) : (this._value != null ? `${this._value}` : null);
+          if (newValue !== currentValStr) {
+            this.setValue({ value: newValue, emitEvent: false });
+          }
           break;
+        }
         case 'placeholder':
           this.placeholder = newValue;
           break;
         case 'disabled':
-          this.disabled = newValue == 'true';
+          this.disabled = newValue !== null && newValue !== 'false';
           break;
         case 'class':
           this.className = newValue;
           this.inputElement.className = newValue;
           break;
         case 'readonly':
-          this.readonly = newValue == 'true';
+          this.readonly = newValue !== null && newValue !== 'false';
           break;
         case 'required':
-          this.required = newValue == 'true';
+          this.required = newValue !== null && newValue !== 'false';
           break;
         case 'name':
           this.name = newValue;
@@ -176,29 +226,64 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  connectedCallback(): void {
+  override connectedCallback(): void {
     super.connectedCallback();
-    this.inputElement.addEventListener('input', this.handleInput);
-    this.inputElement.addEventListener('change', this.handleChange);
-    this.innerHTML = '';
-    this.appendChild(this.inputElement);
-    this.eventListenerRemover = acAddElementEventsListener({
-      element: this.inputElement, callback: ({ name, event }: { name: string, event: Event }) => {
-        if (this.dispatchEvent) {
-          this.dispatchEvent(event);
-        }
-      }, mouse: true, keyboard: true, pointer: true, focus: true, form: true, touch: true, viewport: true
-    });
+    if (this.isInputElementValidHtmlInput && this.inputElement) {
+      this.inputElement.removeEventListener('input', this.handleInput);
+      this.inputElement.removeEventListener('change', this.handleChange);
+      this.inputElement.addEventListener('input', this.handleInput);
+      this.inputElement.addEventListener('change', this.handleChange);
+      if (!this.contains(this.inputElement)) {
+        this.innerHTML = '';
+        this.appendChild(this.inputElement);
+      }
+      if (!this.eventListenerRemover) {
+        this.eventListenerRemover = acAddElementEventsListener({
+          element: this.inputElement,
+          callback: ({ name, event }: { name: string, event: Event }) => {
+            if (this.events) {
+              this.events.execute({ event: name, args: event });
+            }
+            if (this.dispatchEvent) {
+              if (this.contains(this.inputElement) && event.bubbles) {
+                // Event is already bubbling up to this element naturally through the DOM tree.
+                // Re-dispatching would cause duplicate events on this and parent elements.
+                return;
+              }
+              this.dispatchEvent(acCloneEvent(event));
+            }
+          },
+          mouse: true,
+          keyboard: true,
+          pointer: true,
+          focus: true,
+          form: true,
+          touch: true,
+          viewport: true
+        });
+      }
+    }
   }
 
-  checkValidity() { return this.elementInternals ? this.elementInternals.checkValidity() : false; }
+  checkValidity(): boolean {
+    this.validate();
+    if (this.isInputElementValidHtmlInput && this.inputElement && typeof this.inputElement.checkValidity === 'function') {
+      return this.inputElement.checkValidity() && this.isValidRequired;
+    }
+    if (this.elementInternals && typeof this.elementInternals.checkValidity === 'function') {
+      return this.elementInternals.checkValidity();
+    }
+    return this.validityStateFlags.valid;
+  }
 
-  disconnectedCallback(): void {
-    this.innerHTML = '';
-    this.inputElement.removeEventListener('input', this.handleInput);
-    this.inputElement.removeEventListener('change', this.handleChange);
+  override disconnectedCallback(): void {
+    if (this.isInputElementValidHtmlInput && this.inputElement) {
+      this.inputElement.removeEventListener('input', this.handleInput);
+      this.inputElement.removeEventListener('change', this.handleChange);
+    }
     if (this.eventListenerRemover) {
       this.eventListenerRemover();
+      this.eventListenerRemover = undefined;
     }
     super.disconnectedCallback();
   }
@@ -253,15 +338,21 @@ export class AcInputBase extends AcElementBase {
   }
 
   handleChange(e: Event) {
-    this.setValue(this.inputElement.value);
+    let dispatch:boolean = true;
+    if(e && e.target == this){
+      dispatch = false;
+    }
+    if(dispatch){
+      this.setValue({ value: this.inputElement.value, emitEvent: false });
     if (this.dispatchEvent) {
       this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     }
     this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+    }
   }
 
   handleInput(e: Event) {
-    this.setValue(this.inputElement.value);
+    this.setValue({ value: this.inputElement.value, emitEvent: false });
     if (this.dispatchEvent) {
       this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     }
@@ -271,13 +362,13 @@ export class AcInputBase extends AcElementBase {
   override init(): void {
     super.init();
     if (this.hasAttribute('required')) {
-      this.required = true;
+      this.required = this.getAttribute('required') !== 'false';
     }
     if (this.hasAttribute('disabled')) {
-      this.disabled = true;
+      this.disabled = this.getAttribute('disabled') !== 'false';
     }
     if (this.hasAttribute('readonly')) {
-      this.readonly = true;
+      this.readonly = this.getAttribute('readonly') !== 'false';
     }
     if (this.elementInternals && this.elementInternals.form) {
       this.elementInternals.form.addEventListener('submit', () => {
@@ -289,22 +380,25 @@ export class AcInputBase extends AcElementBase {
     this.handleChange = this.handleChange.bind(this);
 
     this.refreshReflectedAttributes();
-
   }
 
   refreshReflectedAttributes({ attribute }: { attribute?: string } = {}) {
     const setAttributeFromThis = (attributeName: string) => {
+      if (!this.inputElement || typeof this.inputElement.setAttribute !== 'function') return;
       if (this.hasAttribute(attributeName)) {
-        this.inputElement.setAttribute(attributeName, this.getAttribute(attributeName)!);
+        const val = this.getAttribute(attributeName)!;
+        if (this.inputElement.getAttribute(attributeName) !== val) {
+          this.inputElement.setAttribute(attributeName, val);
+        }
       }
       else {
-        this.inputElement.removeAttribute(attributeName);
+        if (this.inputElement.hasAttribute(attributeName)) {
+          this.inputElement.removeAttribute(attributeName);
+        }
       }
     };
     if (attribute) {
-      for (const attributeName of this.inputReflectedAttributes) {
-        setAttributeFromThis(attribute);
-      }
+      setAttributeFromThis(attribute);
     }
     else {
       for (const attributeName of this.inputReflectedAttributes) {
@@ -313,70 +407,87 @@ export class AcInputBase extends AcElementBase {
     }
   }
 
-  reportValidity() { return this.elementInternals ? this.elementInternals.reportValidity():false; }
+  reportValidity(): boolean {
+    this.validate();
+    let valid = this.validityStateFlags.valid;
+    if (this.isInputElementValidHtmlInput && this.inputElement && typeof this.inputElement.reportValidity === 'function') {
+      valid = this.inputElement.reportValidity() && this.isValidRequired;
+    } else if (this.elementInternals && typeof this.elementInternals.reportValidity === 'function') {
+      valid = this.elementInternals.reportValidity();
+    }
+    if (!valid) {
+      if (this.dispatchEvent) {
+        this.dispatchEvent(new CustomEvent('invalid', {
+          detail: { message: this.validationMessage, validity: this.validity },
+          bubbles: false,
+          cancelable: true
+        }));
+      }
+    }
+    return valid;
+  }
 
-  setValue(value: any) {
+  setValue({value,emitEvent = true}:{value: any, emitEvent?: boolean}): void {
+
     if (!this.isDestroyed) {
       const oldValue: any = this._value;
       if (oldValue != value) {
         this._value = value;
         if (this.inputElement) {
-          const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
-          if (value == undefined) {
-            inputElement.value = null;
-          }
-          else {
-            inputElement.value = value;
+          if (typeof (this.inputElement as any).setValue === 'function') {
+            if ((this.inputElement as any).value !== value) {
+              (this.inputElement as any).setValue({ value: value, emitEvent: false });
+            }
+          } else {
+            const inputElement: HTMLInputElement = this.inputElement as HTMLInputElement;
+            if (value == undefined) {
+              inputElement.value = '';
+            }
+            else if (typeof value === 'object') {
+              inputElement.value = '';
+            }
+            else {
+              inputElement.value = value;
+            }
           }
         }
         if (this.reflectValueAttribute) {
-          this.setAttribute('value', value);
+          const newAttrVal = typeof value === 'object' && value !== null ? JSON.stringify(value) : (value !== undefined && value !== null ? `${value}` : null);
+          const currentAttrVal = this.getAttribute('value');
+          if (newAttrVal === null) {
+            if (this.hasAttribute('value')) {
+              this.removeAttribute('value');
+            }
+          } else if (currentAttrVal !== newAttrVal) {
+            this.setAttribute('value', newAttrVal);
+          }
         }
-        if(this.elementInternals){
-          this.elementInternals.setFormValue(this._value);
+        if (this.elementInternals) {
+          if (typeof value === 'object' && value !== null) {
+            this.elementInternals.setFormValue(JSON.stringify(value));
+          } else {
+            this.elementInternals.setFormValue(this._value ?? '');
+          }
         }
         if (this.dispatchEvent) {
-          this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-        }
-        this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+            this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+          }
+          this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
         this.validate();
       }
     }
-  }
-
-  protected setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
-
-      set(value) {
-        if(!this.isDestroyed){
-          this.setValue(value);
-        }
-      },
-      enumerable: true,
-      configurable: true
-    });
   }
 
   validate() {
     if (!this.isDestroyed && this.elementInternals) {
       const validityState = this.validityStateFlags;
       if (validityState) {
-        this.elementInternals.setValidity(
-          validityState.valid ? {} : validityState.flags,
-          validityState.message,
-          this
-        );
-        if (!validityState.valid) {
-          if (this.dispatchEvent) {
-            this.dispatchEvent(new CustomEvent('invalid', {
-              detail: { message: this.validationMessage, validity: this.validity },
-              bubbles: true,
-              composed: true
-            }));
-          }
+        const flags = validityState.valid ? {} : validityState.flags;
+        const message = validityState.valid ? '' : (validityState.message || 'Invalid value');
+        try {
+          this.elementInternals.setValidity(flags, message);
+        } catch (e) {
+          // Ignore browser or mock environment specific setValidity errors
         }
       }
     }

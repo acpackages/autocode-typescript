@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType, AcPaginationElement, AcEnumPaginationEvent, AcDatagridState } from '@autocode-ts/ac-browser';
+import { AcDatagridExtension, AC_DATAGRID_EXTENSION_NAME, AC_DATAGRID_HOOK, IAcDatagridColumn, IAcDatagridExtension, IAcDatagridExtensionEnabledHookArgs, AcDatagridRowNumbersExtension, AcEnumDatagridRowNumbersHook, AcDatagridColumnsCustomizerExtension, AcEnumDatagridColumnsCustomizerHook, AcDatagridColumnDraggingExtension, AcEnumDatagridColumnDraggingHook, IAcDatagridColumnsCustomizerHookArgs, AcDatagridDataExportXlsxExtension, AcEnumDatagridDataExportXlsxHook, IAcDatagridRowFocusHookArgs, IAcDatagridRowUpdateHookArgs, IAcDatagridRowDeleteHookArgs, AcDatagridApi, IAcDatagridCell, IAcDatagridRow, IAcDatagridDataSourceTypeChangeHookArgs, AcEnumDataSourceType, IAcDatagridBeforeGetOnDemandDataHookArgs, IAcDatagridGetOnDemandDataSuccessCallbackHookArgs, AC_DATAGRID_CLASS_NAME, AcDatagridAfterRowsFooterExtension, IAcDatagridDataExportXlsxExportCallHookArgs, IAcDatagridRowAddHookArgs, AcDatagridTreeTableExtension, IAcDatagridCellElementArgs, acClearElement, AcEnumDatagridColumnDataType, AcPaginationElement, AcEnumPaginationEvent, AcDatagridState, IAcPaginationPageChangeEvent } from '@autocode-ts/ac-browser';
 import { ColDef, createGrid, ModuleRegistry, AllCommunityModule, GridApi, GetRowIdParams, GridOptions, IRowNode, IServerSideGetRowsParams, IServerSideDatasource, SuppressKeyboardEventParams, ClientSideRowModelModule, IServerSideGetRowsRequest, TextFilterModule, NumberFilterModule, DateFilterModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ServerSideRowModelModule, TreeDataModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 import { AcDatagridRowSelectionExtensionOnAgGrid } from './ac-datagrid-row-selection-extension-on-ag-grid';
@@ -21,21 +21,15 @@ import { AcDatagridOnAgGridCellRenderer } from '../elements/ac-datagrid-on-ag-gr
 import { AcDatagridOnAgGridCellEditor } from '../elements/ac-datagrid-on-ag-grid-cell-editor.element';
 import { IAcDatagriOnAgGridDataChangeHookArgs } from '../interfaces/ac-datagrid-on-ag-grid-data-set-hook-args.interface';
 import { AcDatagridOnAgGridFixedEditorInput } from '../elements/ac-datagrid-on-ag-grid-fixed-editor-input.element';
-import { IAcPaginationPageChangeEvent } from 'packages/browser/ac-browser/src/lib/components/ac-pagination/interfaces/_interfaces.export';
 
+let agGridInitialized = false;
 export function initAgGrid() {
+  if (agGridInitialized) return;
   ModuleRegistry.registerModules([
     AllCommunityModule,
     AllEnterpriseModule,
-    ClientSideRowModelModule,
-    ServerSideRowModelModule,
-    TextFilterModule,
-    NumberFilterModule,
-    DateFilterModule,
-    TreeDataModule,
-    RowGroupingModule,
-    RowGroupingPanelModule
   ]);
+  agGridInitialized = true;
 }
 
 export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
@@ -238,10 +232,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         KEY_PAGE_END,
       ];
       if (event.ctrlKey || event.metaKey) {
-        keysToSuppress.push(KEY_A);
-        keysToSuppress.push(KEY_V);
-        keysToSuppress.push(KEY_C);
-        keysToSuppress.push(KEY_D);
+        return false;
       }
       if (this.navigate) {
         keysToSuppress = keysToSuppress.concat(editingKeys);

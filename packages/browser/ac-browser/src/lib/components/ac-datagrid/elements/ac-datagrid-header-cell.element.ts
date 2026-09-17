@@ -10,6 +10,7 @@ import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_DATAGRID_ICON_CLASS, AC_DATAGRID_TAG } from "../_ac-datagrid.export";
 import { createPopper, Instance as PopperInstance } from '@popperjs/core';
 import { AcEnumConditionOperator, AcEnumLogicalOperator, AcFilter } from "@autocode-ts/autocode";
+import { AcDataFilterPopup } from "../../ac-data-filter/elements/ac-data-filter-popup";
 
 
 export class AcDatagridHeaderCellElement extends AcElementBase {
@@ -22,7 +23,7 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
   originalUserSelect: any;
 
   private filterPopper?: PopperInstance;
-  private filterPopup?: HTMLElement;
+  private filterPopup?: AcDataFilterPopup;
   private outsideClickHandler?: (e: MouseEvent) => void;
 
   applyPinning() {

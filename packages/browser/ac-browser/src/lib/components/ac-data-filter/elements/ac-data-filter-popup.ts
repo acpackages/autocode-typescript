@@ -108,7 +108,6 @@ export class AcDataFilterPopup {
       this.clearFilters();
     });
     this.popupElement.querySelector('.ac-data-filter-apply-btn')?.addEventListener('click', () => {
-      console.log("applying filter");
       this.applyFilters();
       this.hide();
     });
@@ -427,7 +426,7 @@ export class AcDataFilterPopup {
     if (!this.popupElement) return;
     const container = this.popupElement.querySelector('.ac-data-filter-rows-container') as HTMLElement;
     if(container){
-      const removeButtons = container.querySelectorAll(".ac-data-filter-row-remove");
+      const removeButtons = Array.from(container.querySelectorAll(".ac-data-filter-row-remove"));
       if(removeButtons.length > 1){
         for(const el of removeButtons){
           (el as HTMLElement).style.display = "";

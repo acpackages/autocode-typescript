@@ -210,7 +210,7 @@ export class AcDatagridOnAgGridHeaderComponent implements IHeaderComp {
     }
 
     const colDef = this.params.column.getColDef();
-    const columnDefinition = colDef.columnDefinition || {};
+    const columnDefinition = (colDef as any).columnDefinition || {};
     const datagridApi = this.params.agGridExtension?.datagridApi ?? this.params.datagridApi;
     const dataManager = this.getDataManager();
     if (!dataManager || !this.filterBtn) return;

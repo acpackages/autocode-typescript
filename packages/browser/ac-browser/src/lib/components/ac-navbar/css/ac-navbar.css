@@ -1,0 +1,75 @@
+ac-navbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+}
+
+ac-navbar[theme="light"] {
+  background-color: #f8f9fa;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+ac-navbar[theme="dark"] {
+  background-color: #212529;
+  color: #fff;
+}
+
+ac-navbar-brand {
+  padding-top: 0.3125rem;
+  padding-bottom: 0.3125rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: bold;
+  color: inherit;
+  display: inline-block;
+  cursor: pointer;
+}
+
+ac-navbar-nav {
+  display: flex;
+  flex-direction: row;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+ac-navbar-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.5rem;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out;
+}
+
+ac-navbar[theme="dark"] ac-navbar-item {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+ac-navbar-item:hover,
+ac-navbar-item[active] {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+ac-navbar[theme="dark"] ac-navbar-item:hover,
+ac-navbar[theme="dark"] ac-navbar-item[active] {
+  color: #fff;
+}
+
+ac-navbar-item[disabled] {
+  color: rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+ac-navbar[theme="dark"] ac-navbar-item[disabled] {
+  color: rgba(255, 255, 255, 0.3);
+}

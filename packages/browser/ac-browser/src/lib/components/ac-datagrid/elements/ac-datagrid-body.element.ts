@@ -13,7 +13,7 @@ import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_DATAGRID_TAG, AcDatagridElement, AcScrollable } from "../../_components.export";
 
 export class AcDatagridBody extends AcElementBase {
-  private datagridApi?: AcDatagridApi;
+  datagridApi?: AcDatagridApi;
   currentRows: AcDatagridRowElement[] = [];
 
   private autoBindDatagrid() {

@@ -5,7 +5,6 @@ import { stringIsJson } from "@autocode-ts/ac-extensions";
 import { IAcOnDemandRequestArgs, AcDataManager, AcEnumConditionOperator, IAcDataRow, AC_DATA_MANAGER_HOOK } from "@autocode-ts/autocode";
 import { createPopper } from '@popperjs/core';
 import { acClearElement, acIsElementVisibleInContainer, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-// import { AcScrollable } from "../../_components.export";
 import { AcInputBase, AC_INPUT_TAG } from "../_ac-inputs.export";
 
 export class AcSelectInputElement extends AcInputBase {
@@ -77,6 +76,15 @@ export class AcSelectInputElement extends AcInputBase {
       }
     }
     return result;
+  }
+
+  override get value(): any {
+    return this._value;
+  }
+
+  override set value(val: any) {
+    this.setValue({ value: val, emitEvent: false });
+    this.setValueLabel();
   }
 
   dataManager: AcDataManager = new AcDataManager();
@@ -444,34 +452,14 @@ export class AcSelectInputElement extends AcInputBase {
   }
 
   setValueLabel() {
-    if (this.value) {
+    if (this.value !== undefined && this.value !== null && this.value !== '') {
       const matchRow = this.dataManager.getRow({ key: this.valueKey, value: this.value });
       if (matchRow) {
         this.textInputElement.value = matchRow.data[this.labelKey];
       }
-      else {
-        // this.dataManager.data = [{
-        //   [this.labelKey]: super.value, [this.valueKey]: super.value
-        // }];
-      }
+    } else {
+      this.textInputElement.value = '';
     }
-  }
-
-  protected setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
-
-      set(value) {
-        this.previousValue = value;
-        this.setValue(value);
-        this.setValueLabel();
-      },
-
-      enumerable: true,
-      configurable: true
-    });
   }
 
   toggleDropdown() {

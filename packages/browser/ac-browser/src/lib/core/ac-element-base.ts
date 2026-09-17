@@ -11,50 +11,56 @@ export class AcElementBase extends HTMLElement {
   protected delayedCallback:AcDelayedCallback = new AcDelayedCallback();
   isDestroyed:boolean = false;
 
-  constructor(){
+  constructor() {
     super();
     const originalDispatch = this.dispatchEvent;
     this.dispatchEvent = (event: Event): boolean => {
-      const e = acCloneEvent(event);
-      if(this.events){
-        this.events.execute({event:event.type,args:event});
+      if (!event) return false;
+      if (this.events) {
+        this.events.execute({ event: event.type, args: event });
       }
-      return originalDispatch.call(this, e);
+      try {
+        const isBeingDispatched = typeof Event !== 'undefined' && event.eventPhase !== Event.NONE;
+        const eventToDispatch = isBeingDispatched ? acCloneEvent(event) : event;
+        return originalDispatch.call(this, eventToDispatch);
+      } catch (err: any) {
+        if (err && err.name === 'InvalidStateError') {
+          try {
+            return originalDispatch.call(this, acCloneEvent(event));
+          } catch {
+            return false;
+          }
+        }
+        throw err;
+      }
     };
   }
 
-  connectedCallback(){
-    if(!this.isInitialized){
+  connectedCallback(): void {
+    if (!this.isInitialized) {
       this.isInitialized = true;
       this.init();
-      const event:CustomEvent = new CustomEvent('init');
-      this.dispatchEvent(event)
+      const event: CustomEvent = new CustomEvent('init');
+      this.dispatchEvent(event);
     }
   }
 
-  destroy(){
+  destroy(): void {
+    if (this.isDestroyed) return;
     this.isDestroyed = true;
     this.events.destroy();
     this.delayedCallback.destroy();
-    acClearElement({element:this});
-    acNullifyInstanceProperties({instance:this});
   }
 
   disconnectedCallback(): void {
-    if(this.autoDestroyOnDisconnect){
-      this.delayedCallback.add({callback:()=>{
-        if(!this.isConnected){
-          this.destroy();
-        }
-      },duration:1500,key:'disconnectDestroy'});
-    }
+    // Derived classes can perform cleanup in disconnectedCallback
   }
 
-  init(){
+  init(): void {
     //
   }
 
-  off({ event, callback, subscriptionId }: { event?: string, callback?: Function, subscriptionId?: string }): void {
+  off({ event, callback, subscriptionId }: { event?: string; callback?: Function; subscriptionId?: string }): void {
     this.events.unsubscribe({ event, callback, subscriptionId });
   }
 

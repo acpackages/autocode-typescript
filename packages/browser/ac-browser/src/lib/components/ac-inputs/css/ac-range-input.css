@@ -1,0 +1,72 @@
+ac-range-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+ac-range-input input[type="range"] {
+  width: 100%;
+  height: 1.5rem;
+  padding: 0;
+  background-color: transparent;
+  appearance: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+ac-range-input input[type="range"]:focus {
+  outline: 0;
+}
+
+ac-range-input input[type="range"]::-webkit-slider-track {
+  width: 100%;
+  height: 0.5rem;
+  color: transparent;
+  cursor: pointer;
+  background-color: #dee2e6;
+  border-color: transparent;
+  border-radius: 1rem;
+}
+
+ac-range-input input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 0.5rem;
+  color: transparent;
+  cursor: pointer;
+  background-color: #dee2e6;
+  border-color: transparent;
+  border-radius: 1rem;
+}
+
+ac-range-input input[type="range"]::-webkit-slider-thumb {
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.25rem;
+  background-color: #0d6efd;
+  border: 0;
+  border-radius: 1rem;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}
+
+ac-range-input input[type="range"]::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  background-color: #0d6efd;
+  border: 0;
+  border-radius: 1rem;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}
+
+ac-range-input input[type="range"]:disabled {
+  pointer-events: none;
+}
+
+ac-range-input input[type="range"]:disabled::-webkit-slider-thumb {
+  background-color: #adb5bd;
+}
+
+ac-range-input input[type="range"]:disabled::-moz-range-thumb {
+  background-color: #adb5bd;
+}

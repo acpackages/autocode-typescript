@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AC_DATAGRID_EVENT, AC_INPUT_TAG, acCloneEvent, AcDatagridElement, AcInputBase, acRegisterCustomElement, IAcDatagridCell } from "../../../../ac-browser";
+import { AcInputBase } from "../core/ac-input-base";
+import { AC_INPUT_TAG } from "../consts/ac-input-tags.const";
+import { acCloneEvent, acRegisterCustomElement } from "../../../utils/ac-element-functions";
+import { AcDatagridElement } from "../../ac-datagrid/elements/ac-datagrid.element";
+import { AC_DATAGRID_EVENT } from "../../ac-datagrid/consts/ac-datagrid-event.const";
+import { IAcDatagridCell } from "../../ac-datagrid/interfaces/ac-datagrid-cell.interface";
 import { AcEnumConditionOperator, AcFilterGroup, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 import { createPopper, Instance as PopperInstance, Placement } from '@popperjs/core';
 
@@ -297,11 +302,9 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     }
     const event: CustomEvent = new CustomEvent('dropdownClose', {});
     this.dispatchEvent(event);
-    console.log(this.datagrid.datagridApi);
   }
 
   override destroy(): void {
-    console.log("Destroying select input");
     this.closeDropdown();
     if (this.datagrid) {
       this.datagrid.destroy();
@@ -335,7 +338,6 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
   override init() {
     super.init();
-    console.log("Initializing datagrid element")
     this.datagrid.autoDestroyOnDisconnect = false;
 
   }
@@ -560,20 +562,16 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     }
   }
 
-  override setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
+  override get value(): any {
+    return this._value;
+  }
+  override set value(val: any) {
+    this.setValue({ value: val, emitEvent: false });
+  }
 
-      set(value) {
-        this.setValue(value);
-        this.setSelectedRowsFromValue();
-      },
-
-      enumerable: true,
-      configurable: true
-    });
+  override setValue({ value, emitEvent = false }:{ value: any, emitEvent?: boolean }): void {
+    super.setValue({value,emitEvent});
+    this.setSelectedRowsFromValue();
   }
 
   toggleDropdown() {

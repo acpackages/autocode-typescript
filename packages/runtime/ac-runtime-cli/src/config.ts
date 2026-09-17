@@ -48,6 +48,8 @@ export type AcRuntimeConfig = {
   buildFormats?: ('es' | 'cjs' | 'umd' | 'iife')[];
   /** Optional mapping of external package names to global variables. */
   externalGlobals?: Record<string, string>;
+  /** Additional directories to watch for changes during development. Resolved to absolute paths. Default: []. */
+  watchDirectories: string[];
 };
 
 /**
@@ -222,6 +224,36 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     }
   }
 
+  // --- Watch directories validation ---
+  const watchDirectories: string[] = [];
+  const rawWatchDirs = raw.watchDirectories ?? raw.watchDirs;
+  if (rawWatchDirs !== undefined) {
+    if (!Array.isArray(rawWatchDirs)) {
+      console.error('ERROR: ac-runtime.json: "watchDirectories" must be an array of directory paths');
+      process.exit(1);
+    }
+    for (let i = 0; i < rawWatchDirs.length; i++) {
+      const entry = rawWatchDirs[i];
+      if (!entry || typeof entry !== 'string') {
+        console.error(`ERROR: ac-runtime.json: watchDirectories[${i}] must be a non-empty string`);
+        process.exit(1);
+      }
+      const absDir = path.resolve(projectRoot, entry);
+      if (!fs.existsSync(absDir)) {
+        console.error(`ERROR: ac-runtime.json: watch directory does not exist: ${absDir} (specified as "${entry}")`);
+        process.exit(1);
+      }
+      const stat = fs.statSync(absDir);
+      if (!stat.isDirectory()) {
+        console.error(`ERROR: ac-runtime.json: watch path is not a directory: ${absDir} (specified as "${entry}")`);
+        process.exit(1);
+      }
+      if (!watchDirectories.includes(absDir) && absDir !== projectRoot) {
+        watchDirectories.push(absDir);
+      }
+    }
+  }
+
   return {
     projectRoot,
     name: raw.name,
@@ -236,6 +268,7 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     buildFile,
     buildFormats,
     externalGlobals,
+    watchDirectories,
   };
 }
 

@@ -41,7 +41,6 @@ export default defineConfig(() => ({
         '@autocode-ts/ac-browser',
         '@autocode-ts/autocode',
         '@popperjs/core',
-        'air-datepicker',
       ],
     },
   },

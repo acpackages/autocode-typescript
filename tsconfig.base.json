@@ -19,6 +19,7 @@
     ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "ignoreDeprecations":"6.0",
     "baseUrl": ".",
     "paths": {
       "@autocode-ts/ac-angular": [
@@ -148,8 +149,7 @@
         "packages/common/ac-sql-core/src/index.ts"
       ],
       "@autocode-ts/ac-sql-node": [
-        "packages/node/ac-sql-node/src/ac-sql-node.ts",
-        "packages/node/ac-sql-node/ac-sql-node.ts"
+        "packages/node/ac-sql-node/src/ac-sql-node.ts"
       ],
       "@autocode-ts/ac-sql-parser": [
         "packages/common/ac-sql-parser/src/index.ts"
@@ -159,6 +159,9 @@
       ],
       "@autocode-ts/ac-tiptap-editor-input": [
         "packages/browser/ac-tiptap-editor-input/src/index.ts"
+      ],
+      "@autocode-ts/ac-tom-select-input": [
+        "packages/browser/ac-tom-select-input/src/index.ts"
       ],
       "@autocode-ts/ac-vue": [
         "packages/vue/ac-vue/index.ts"

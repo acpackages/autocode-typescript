@@ -1,0 +1,101 @@
+ac-tom-select-input {
+  display: block;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+ac-tom-select-input .ts-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+ac-tom-select-input .ts-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box;
+  cursor: text;
+}
+
+ac-tom-select-input .ts-control.focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+ac-tom-select-input[readonly] .ts-control,
+ac-tom-select-input .ts-control.disabled {
+  background-color: #e9ecef;
+  opacity: 1;
+  pointer-events: none;
+  cursor: default;
+}
+
+.ts-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1055;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.175);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  margin: 0.125rem 0 0 0;
+  padding: 0.25rem 0;
+}
+
+.ts-dropdown .ts-dropdown-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 280px;
+}
+
+.ts-dropdown .option {
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.ts-dropdown .option.active,
+.ts-dropdown .option:hover {
+  background-color: #e9ecef;
+  color: #1e2125;
+}
+
+.ts-dropdown .option.selected {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.ts-dropdown .no-results {
+  padding: 0.5rem 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.ts-dropdown .ts-dropdown-resizer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  cursor: se-resize;
+  z-index: 10000;
+  background: linear-gradient(135deg, transparent 5px, #bbb 5px, #bbb 6px, transparent 6px, transparent 8px, #bbb 8px, #bbb 9px, transparent 9px, transparent 11px, #bbb 11px, #bbb 12px, transparent 12px);
+}

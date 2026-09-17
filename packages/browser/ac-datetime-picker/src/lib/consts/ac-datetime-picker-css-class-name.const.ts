@@ -29,6 +29,7 @@ export const AC_DATETIME_PICKER_CSS_CLASS = {
   calRight: 'ac-dtp__cal ac-dtp__cal--right',
   // Footer
   footer: 'ac-dtp__footer',
+  btn: 'ac-dtp__btn',
   btnCancel: 'ac-dtp__btn ac-dtp__btn--cancel',
   btnClear: 'ac-dtp__btn ac-dtp__btn--clear',
   btnApply: 'ac-dtp__btn ac-dtp__btn--apply',

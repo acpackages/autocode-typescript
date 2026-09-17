@@ -102,13 +102,16 @@ export function createViteConfig(
         }
     }
 
-    // --- Collect all fs.allow paths from aliases ---
+    // --- Collect all fs.allow paths from aliases and watched directories ---
     const allowPaths = new Set<string>();
     allowPaths.add(projectRoot);
     for (const aliasPath of Object.values(aliases)) {
         // Allow the drive root or parent directory of the alias
         const parsed = path.parse(aliasPath);
         allowPaths.add(parsed.root || path.dirname(aliasPath));
+    }
+    for (const watchDir of config.watchDirectories) {
+        allowPaths.add(watchDir);
     }
 
     // --- Build InlineConfig ---

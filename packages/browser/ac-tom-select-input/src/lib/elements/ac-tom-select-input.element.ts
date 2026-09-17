@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcInputBase, acRegisterCustomElement } from "@autocode-ts/ac-browser";
 import TomSelect from "tom-select";
 import { AcDataManager, AC_DATA_MANAGER_HOOK } from "@autocode-ts/autocode";
 import { stringIsJson } from "@autocode-ts/ac-extensions";
+import { AcFilterGroup, AcEnumConditionOperator, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 
-export class AcTomSelectInput extends AcInputBase {
-  override isInputElementValidHtmlInput = false;
-
+export class AcTomSelectInputElement extends AcInputBase {
   static override get observedAttributes() {
-    return [...super.observedAttributes, "placeholder", "readonly", "label-key", "value-key", "select-options"];
+    return [...super.observedAttributes, "placeholder", "readonly", "label-key", "value-key", "select-options", "add-row"];
   }
 
   override get inputReflectedAttributes() {
-    return [...super.inputReflectedAttributes, "placeholder", "readonly", "label-key", "value-key", "select-options"];
+    return [...super.inputReflectedAttributes, "placeholder", "readonly", "label-key", "value-key", "select-options", "add-row"];
   }
+
+  // ── Properties ──────────────────────────────────────────────────────
 
   override get placeholder(): string | null {
     return this.getAttribute("placeholder");
@@ -24,13 +26,22 @@ export class AcTomSelectInput extends AcInputBase {
       this.setAttribute("placeholder", value);
       if (this.tomSelect) {
         (this.tomSelect as any).settings.placeholder = value;
+        this.tomSelect.inputState();
       }
     } else {
       this.removeAttribute("placeholder");
       if (this.tomSelect) {
         (this.tomSelect as any).settings.placeholder = "";
+        this.tomSelect.inputState();
       }
     }
+  }
+
+  get addRow(): boolean {
+    return this.getAttribute('add-row') ? this.getAttribute('add-row') === 'true' : true;
+  }
+  set addRow(value: boolean) {
+    this.setAttribute('add-row', `${value}`);
   }
 
   private _options: any[] = [];
@@ -52,8 +63,16 @@ export class AcTomSelectInput extends AcInputBase {
     this._options = valueOptions;
     this.dataManager.data = valueOptions;
     if (this.tomSelect) {
-      this.refreshOptions();
+      this.tomSelect.addOptions(this._options);
+      this.refreshTomSelectOptions();
     }
+  }
+
+  get data(): any[] {
+    return this.options;
+  }
+  set data(value: any[]) {
+    this.options = value;
   }
 
   override get readonly(): boolean {
@@ -82,8 +101,8 @@ export class AcTomSelectInput extends AcInputBase {
   set labelKey(value: string) {
     if (value) {
       this.setAttribute("label-key", value);
-      if (this.tomSelect && this.dataManager?.type === "offline") {
-        this.refreshOptions();
+      if (this._value) {
+        this.value = this._value;
       }
     } else {
       this.removeAttribute("label-key");
@@ -96,39 +115,249 @@ export class AcTomSelectInput extends AcInputBase {
   set valueKey(value: string) {
     if (value) {
       this.setAttribute("value-key", value);
-      if (this.tomSelect && this.dataManager?.type === "offline") {
-        this.refreshOptions();
+      if (this._value) {
+        this.value = this._value;
       }
     } else {
       this.removeAttribute("value-key");
     }
   }
 
-  private dataManager: AcDataManager = new AcDataManager();
-  private selectEl!: HTMLSelectElement;
-  private dropdownEl!: HTMLElement;
-  private tomSelect!: TomSelect;
-  private tsWrapper!: HTMLElement;
-  private subscriptionId?: string;
-
-  override setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
-
-      set(value) {
-        if (this._value !== value) {
-          this.setValue(value);
-          if (this.tomSelect) {
-            this.tomSelect.setValue(value, false); // Don't trigger change event
-          }
-        }
-      },
-      enumerable: true,
-      configurable: true
-    });
+  get searchKeys(): string {
+    return this.getAttribute("search-keys") ?? "";
   }
+  set searchKeys(value: string) {
+    if (value) {
+      this.setAttribute("search-keys", value);
+    } else {
+      this.removeAttribute("search-keys");
+    }
+  }
+
+  get onDemandFunction(): any {
+    return this.dataManager.onDemandFunction;
+  }
+  set onDemandFunction(value: (args: IAcOnDemandRequestArgs) => void) {
+    this.dataManager.type = 'ondemand';
+    this.dataManager.onDemandFunction = value;
+    if (this.tomSelect) {
+      this.setupOnDemandLoad();
+    }
+    if (this.value) {
+      this.setSelectedRowsFromValue();
+    }
+  }
+
+  initialValueOption?: any;
+
+  private _searchQuery: string = '';
+  get searchQuery(): string { return this._searchQuery; }
+  set searchQuery(val: string) {
+    val = (val || '').trim();
+    this._searchQuery = val;
+    const event: CustomEvent = new CustomEvent('searchQueryChange', { detail: { searchQuery: this.searchQuery } });
+    this.dispatchEvent(event);
+  }
+
+  selectedRows: any[] = [];
+  previousState: any = {};
+  dropdownSize: { height: number, width: number } = { height: 250, width: 400 };
+  hasCustomSize: boolean = false;
+  isFocused: boolean = false;
+  isDropdownOpenedOnce: boolean = false;
+  rendererFunction?:({item}:{item:any})=>any;
+
+  addRowCallback: (({ query, callback }: { query: string, callback: Function }) => void) = ({ query, callback }: { query: string, callback: Function }): void => {
+    const newOption = { [this.labelKey]: query, [this.valueKey]: query };
+    callback(newOption);
+  };
+
+  dataManager: AcDataManager = new AcDataManager();
+  private selectEl!: HTMLSelectElement;
+  private tomSelect!: TomSelect;
+  private subscriptionId?: string;
+  private isDropdownOpen: boolean = false;
+
+  // ── Value management ────────────────────────────────────────────────
+
+  override get value(): any {
+    return this._value;
+  }
+
+  override set value(val: any) {
+    this.setValue({ value: val });
+    this.setSelectedRowsFromValue();
+  }
+
+  setValue({ value, emitEvent = true}:{ value:any, emitEvent?: boolean }): void {
+    console.log("[AcTomSelectInputElement] Setting value",value);
+    console.trace();
+    super.setValue({ value: value, emitEvent });
+
+    if (this.tomSelect) {
+      if (value === null || value === undefined || value === '') {
+        if (this.tomSelect.getValue() !== '') {
+          this.tomSelect.clear(true);
+        }
+      } else {
+        const optKey = String(value);
+        if (this.tomSelect.getValue() !== optKey) {
+          if (!this.tomSelect.options[optKey] && this.selectedRows.length > 0) {
+            this.tomSelect.addOption(this.selectedRows[0]);
+          }
+          this.tomSelect.setValue(optKey, true);
+        }
+      }
+    }
+  }
+
+  private setSelectedRows({ rows }: { rows: any[] }) {
+    this.selectedRows = rows;
+    if (rows.length > 0) {
+      if (this.tomSelect) {
+        const row = rows[0];
+        const optKey = String(row[this.valueKey]);
+        if (!this.tomSelect.options[optKey]) {
+          this.tomSelect.addOption({
+            [this.valueKey]: row[this.valueKey],
+            [this.labelKey]: row[this.labelKey]
+          });
+        }
+        this.tomSelect.setValue(optKey, true);
+      }
+    }
+  }
+
+  private async setSelectedRowsFromValue(): Promise<void> {
+    if (!this.value || this.value === 'null' || this.value === 'undefined') {
+      this.selectedRows = [];
+      if (this.tomSelect && this.tomSelect.getValue() !== '') {
+        this.tomSelect.clear(true);
+      }
+      return;
+    }
+
+    if(!this.tomSelect){
+      return;
+    }
+
+    if (!this.isDropdownOpenedOnce && this.initialValueOption) {
+      if (this.labelKey && this.valueKey) {
+        if (this.value == this.initialValueOption[this.valueKey]) {
+          const optKey = String(this.value);
+          this.selectedRows = [this.initialValueOption];
+          this.tomSelect.addOption(this.initialValueOption);
+          this.tomSelect.setValue(optKey, true);
+        }
+      }
+      return;
+    }
+
+    // Already selected?
+    if (this.selectedRows.length > 0 && this.selectedRows[0][this.valueKey] === this.value) {
+      // Ensure tom-select is in sync
+      if (this.tomSelect) {
+        const optKey = String(this.value);
+        if (!this.tomSelect.options[optKey]) {
+          this.tomSelect.addOption({
+            [this.valueKey]: this.selectedRows[0][this.valueKey],
+            [this.labelKey]: this.selectedRows[0][this.labelKey]
+          });
+        }
+        this.tomSelect.setValue(optKey, true);
+      }
+      return;
+    }
+
+    // Search in existing data
+    const allData = this.dataManager.data || [];
+    const valueRow = allData.find((row: any) => row && row[this.valueKey] === this.value);
+    if (valueRow) {
+      this.setSelectedRows({ rows: [valueRow] });
+      return;
+    }
+
+    // On-demand fetch
+    if (this.onDemandFunction && this.value != null && this.value != undefined) {
+      const filterGroup = new AcFilterGroup();
+      filterGroup.addFilter({
+        key: this.valueKey,
+        operator: AcEnumConditionOperator.EqualTo,
+        value: this.value
+      });
+
+      try {
+        const response = await new Promise<IAcOnDemandResponseArgs>((resolve) => {
+          this.onDemandFunction({
+            filterGroup,
+            successCallback: resolve
+          });
+        });
+
+        if (response && response.totalCount > 0 && response.data && response.data.length > 0) {
+          const rowData = response.data[0];
+          this.setSelectedRows({ rows: [rowData] });
+          return;
+        }
+      } catch (err) {
+        console.error("Error fetching selected option on-demand:", err);
+      }
+    }
+
+    this.setSelectedRows({ rows: [{ [this.valueKey]: this.value, [this.labelKey]: this.value }] });
+
+  }
+
+  // ── Dropdown management ─────────────────────────────────────────────
+
+  openDropdown() {
+    if (this.tomSelect && !this.isDropdownOpen) {
+      this.tomSelect.open();
+    }
+  }
+
+  closeDropdown() {
+    if (this.tomSelect && this.isDropdownOpen) {
+      this.tomSelect.close();
+    }
+  }
+
+  toggleDropdown() {
+    if (this.isDropdownOpen) {
+      this.closeDropdown();
+    } else {
+      this.openDropdown();
+    }
+  }
+
+  // ── State management ────────────────────────────────────────────────
+
+  getState() {
+    const state = {
+      dropdownSize: this.dropdownSize,
+      hasCustomSize: this.hasCustomSize
+    };
+    return state;
+  }
+
+  setState({ state }: { state: any }) {
+    if (state && state.dropdownSize) {
+      this.dropdownSize = state.dropdownSize;
+      this.hasCustomSize = state.hasCustomSize || false;
+    }
+  }
+
+  private notifyState() {
+    const currentState = this.getState();
+    const currentStateJson = JSON.stringify(currentState);
+    if (this.previousState != currentStateJson) {
+      this.previousState = currentStateJson;
+      const event: CustomEvent = new CustomEvent('stateChange', { detail: { state: currentState } });
+      this.dispatchEvent(event);
+    }
+  }
+
+  // ── Attribute handling ──────────────────────────────────────────────
 
   override attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     if (oldValue === newValue) return;
@@ -141,6 +370,8 @@ export class AcTomSelectInput extends AcInputBase {
       this.labelKey = newValue;
     } else if (name === "value-key") {
       this.valueKey = newValue;
+    } else if (name === "add-row") {
+      this.addRow = newValue === "true";
     } else if (name === "select-options") {
       if (newValue) {
         if (stringIsJson(newValue)) {
@@ -151,54 +382,61 @@ export class AcTomSelectInput extends AcInputBase {
       } else {
         this.options = [];
       }
+    } else if (name === 'class') {
+      // Propagate class to the wrapper if needed
     } else {
       super.attributeChangedCallback(name, oldValue, newValue);
     }
   }
 
-  override init() {
-    super.init();
+  // ── Lifecycle ───────────────────────────────────────────────────────
+
+  override connectedCallback() {
+    super.connectedCallback();
     this.innerHTML = `<select class="ac-tomselect"></select>`;
     this.selectEl = this.querySelector(".ac-tomselect")!;
-    const tomOptions: any = {
-      placeholder: this.placeholder || "",
-      dropdownParent: this.ownerDocument.body,
-      maxOptions: 1000, // Limit for performance
-      onDropdownOpen: (element: HTMLElement) => {
-        this.dropdownEl = element;
-        this.positionDropdown();
-      },
-      onChange: (value: string | string[]) => {
-        this.value = Array.isArray(value) ? value[0] || "" : (value || "");
-      },
-    };
-    this.tomSelect = new TomSelect(this.selectEl, tomOptions);
-    this.tsWrapper = this.querySelector('.ts-wrapper') as HTMLElement;
-    if (this.readonly) {
-      this.tomSelect.disable();
-    }
-    if (this.dataManager) {
-      if (this.dataManager.type === "offline") {
-        this.refreshOptions();
-      } else if (this.dataManager.type === "ondemand") {
-        this.setupAjaxLoad();
-      }
 
+    this.initTomSelect();
+
+    // Subscribe to data changes for offline mode
+    if (this.dataManager) {
       this.subscriptionId = this.dataManager.hooks.subscribe({
         hook: AC_DATA_MANAGER_HOOK.DataChange,
         callback: () => {
           if (this.dataManager.type === "offline") {
-            this.refreshOptions();
+            this.refreshTomSelectOptions();
           }
         }
       });
     }
+
+    // Restore value if already set before connected
     if (this.value) {
-      this.tomSelect.setValue(this.value, false);
+      this.setSelectedRowsFromValue();
     }
   }
 
+  private resizerCleanups: Array<() => void> = [];
+  private onDemandSequence: number = 0;
+
+  private onWindowScrollOrResize = () => {
+    if (this.isDropdownOpen && this.tomSelect) {
+      this.tomSelect.position();
+    }
+  };
+
+  private cleanupResizer(): void {
+    for (const cleanup of this.resizerCleanups) {
+      cleanup();
+    }
+    this.resizerCleanups = [];
+  }
+
   override disconnectedCallback() {
+    window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
+    window.removeEventListener('resize', this.onWindowScrollOrResize);
+    this.cleanupResizer();
+
     if (this.subscriptionId && this.dataManager) {
       this.dataManager.hooks.unsubscribe({ subscriptionId: this.subscriptionId });
     }
@@ -208,134 +446,415 @@ export class AcTomSelectInput extends AcInputBase {
     super.disconnectedCallback();
   }
 
-  override focus(options?: FocusOptions): void {
-    this.tomSelect.focus();
+  override destroy(): void {
+    window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
+    window.removeEventListener('resize', this.onWindowScrollOrResize);
+    this.cleanupResizer();
+
+    if (this.tomSelect) {
+      this.tomSelect.destroy();
+    }
+    super.destroy();
   }
 
-  private positionDropdown() {
-    const rect = this.tsWrapper.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - rect.bottom;
-    const spaceAbove = rect.top;
+  private setupCustomResizer({ resizer, dropdown }: { resizer: HTMLElement; dropdown: HTMLElement }): void {
+    const handleDrag = (startX: number, startY: number, startWidth: number, startHeight: number, clientX: number, clientY: number) => {
+      const newWidth = Math.max(150, startWidth + (clientX - startX));
+      const newHeight = Math.max(100, startHeight + (clientY - startY));
 
-    let currentHeight = parseFloat(this.dropdownEl.style.height) || this.dropdownEl.getBoundingClientRect().height;
-    if (!currentHeight || currentHeight < 50) {
-      currentHeight = 250;
-    }
+      this.dropdownSize = { width: newWidth, height: newHeight };
+      this.hasCustomSize = true;
+      dropdown.style.width = `${newWidth}px`;
+      dropdown.style.height = `${newHeight}px`;
 
-    const showAbove = spaceBelow < currentHeight && spaceAbove > spaceBelow;
+      this.notifyState();
+    };
 
-    if (!this.dropdownEl.style.width) {
-      this.dropdownEl.style.width = rect.width + "px";
-    }
-    this.dropdownEl.style.position = 'fixed';
-    this.dropdownEl.style.left = rect.left + "px";
-    this.dropdownEl.style.top = showAbove ? (rect.top - currentHeight) + "px" : rect.bottom + "px";
-    this.dropdownEl.style.height = currentHeight + "px";
-    this.dropdownEl.style.overflowY = "auto";
-    this.dropdownEl.style.border = "1px solid #ccc";
-    this.dropdownEl.style.background = "#fff";
+    const onMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    let handle = this.dropdownEl.querySelector('.ts-resize-handle') as HTMLElement;
-    if (!handle) {
-      handle = this.ownerDocument.createElement('div');
-      handle.className = 'ts-resize-handle';
-      handle.style.cssText = `
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 12px;
-        height: 12px;
-        cursor: se-resize;
-        background: linear-gradient(135deg, transparent 50%, #888 50%);
-        z-index: 10000;
-      `;
-      this.dropdownEl.appendChild(handle);
+      const startWidth = dropdown.offsetWidth;
+      const startHeight = dropdown.offsetHeight;
+      const startX = e.clientX;
+      const startY = e.clientY;
 
-      handle.addEventListener('mousedown', (e: MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        handleDrag(startX, startY, startWidth, startHeight, moveEvent.clientX, moveEvent.clientY);
+      };
 
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const startWidth = this.dropdownEl.getBoundingClientRect().width;
-        const startHeight = this.dropdownEl.getBoundingClientRect().height;
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
 
-        const onMouseMove = (moveEvent: MouseEvent) => {
-          const deltaX = moveEvent.clientX - startX;
-          const deltaY = moveEvent.clientY - startY;
-
-          const newWidth = Math.max(150, startWidth + deltaX);
-          const newHeight = Math.max(100, startHeight + deltaY);
-
-          this.dropdownEl.style.width = newWidth + 'px';
-          this.dropdownEl.style.height = newHeight + 'px';
-
-          this.dispatchEvent(new CustomEvent('dropdown-resize', {
-            detail: { width: newWidth, height: newHeight },
-            bubbles: true,
-            composed: true
-          }));
-
-          if (showAbove) {
-            this.dropdownEl.style.top = (rect.top - newHeight) + 'px';
-          }
-        };
-
-        const onMouseUp = () => {
-          this.ownerDocument.removeEventListener('mousemove', onMouseMove);
-          this.ownerDocument.removeEventListener('mouseup', onMouseUp);
-        };
-
-        this.ownerDocument.addEventListener('mousemove', onMouseMove);
-        this.ownerDocument.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      this.resizerCleanups.push(() => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
       });
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const touch = e.touches[0];
+      const startWidth = dropdown.offsetWidth;
+      const startHeight = dropdown.offsetHeight;
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+
+      const onTouchMove = (moveEvent: TouchEvent) => {
+        const touchMove = moveEvent.touches[0];
+        handleDrag(startX, startY, startWidth, startHeight, touchMove.clientX, touchMove.clientY);
+      };
+
+      const onTouchEnd = () => {
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+      };
+
+      document.addEventListener('touchmove', onTouchMove, { passive: false });
+      document.addEventListener('touchend', onTouchEnd);
+      this.resizerCleanups.push(() => {
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+      });
+    };
+
+    resizer.addEventListener('mousedown', onMouseDown);
+    resizer.addEventListener('touchstart', onTouchStart);
+
+    this.resizerCleanups.push(() => {
+      resizer.removeEventListener('mousedown', onMouseDown);
+      resizer.removeEventListener('touchstart', onTouchStart);
+    });
+  }
+
+  // ── Focus/Blur ──────────────────────────────────────────────────────
+
+  override focus(options?: FocusOptions): void {
+    super.focus(options);
+    this.isFocused = true;
+    if (this.tomSelect) {
+      this.tomSelect.focus();
     }
   }
+
+  override blur(): void {
+    super.blur();
+    this.isFocused = false;
+    if (this.tomSelect) {
+      this.tomSelect.blur();
+    }
+  }
+
+  // ── Compatibility methods ───────────────────────────────────────────
 
   refresh(): void {
-    this.refreshOptions();
+    this.refreshTomSelectOptions();
   }
 
-  private refreshOptions(): void {
+  // ── Tom-select initialization ───────────────────────────────────────
+
+  private initTomSelect() {
+    const self = this;
+
+    const tomOptions: any = {
+      valueField: this.valueKey,
+      labelField: this.labelKey,
+      searchField: this.searchKeys == ''? [this.labelKey]:this.searchKeys.split(","),
+      placeholder: this.placeholder || "",
+      maxOptions: 200,
+      openOnFocus: true,
+      highlight: true,
+      closeAfterSelect: true,
+      loadThrottle: 350,
+      dropdownParent: 'body',
+      controlClass:'ac-tom-select-control',
+
+      plugins: ['restore_on_backspace'],
+
+      // On-demand load function (set up later if needed)
+      load: undefined as any,
+
+      // Create new option support
+      create: this.addRow ? (input: string, callback: Function) => {
+        this.addRowCallback({
+          query: input,
+          callback: (newOption: any) => {
+            const valueOptions = [...this._options, newOption];
+            this._options = valueOptions;
+            this.dataManager.data = valueOptions;
+            callback({
+              [self.valueKey]: newOption[self.valueKey],
+              [self.labelKey]: newOption[self.labelKey]
+            });
+          }
+        });
+      } : false,
+
+      onChange: (value: string | string[]) => {
+        const newVal = Array.isArray(value) ? value[0] || "" : (value || "");
+        if (newVal !== this._value) {
+          this.setValue({value:newVal || null});
+
+          // Update selectedRows from the selected option
+          if (newVal && this.tomSelect && this.tomSelect.options[newVal]) {
+            const optData = this.tomSelect.options[newVal];
+            this.selectedRows = [optData];
+          } else if (!newVal) {
+            this.selectedRows = [];
+          }
+        }
+      },
+
+      onFocus: () => {
+        this.isFocused = true;
+      },
+
+      onBlur: () => {
+        this.isFocused = false;
+      },
+
+      onInitialize() {
+        // this.wrapper.classList.add('my-tom-select');
+        const inputClass:string|null = self.getAttribute('class');
+        if(inputClass){
+          for(const _class of Array.from(self.classList)){
+            this.control.classList.add(_class);
+          }
+        }
+        // this.control.classList.remove('ts-control');
+      },
+
+      onDropdownOpen: () => {
+        this.isDropdownOpen = true;
+        this.isDropdownOpenedOnce = true;
+
+        const beforeEvent: CustomEvent = new CustomEvent('beforeDropdownOpen', {});
+        this.dispatchEvent(beforeEvent);
+
+        if (this.tomSelect && this.tomSelect.dropdown) {
+          const dropdown = this.tomSelect.dropdown;
+
+          let width = this.dropdownSize.width;
+          if (!this.hasCustomSize && this.tomSelect.control) {
+            width = this.tomSelect.control.offsetWidth;
+          }
+
+          dropdown.style.width = `${width}px`;
+          dropdown.style.maxHeight = 'none';
+          dropdown.style.display = 'flex';
+          dropdown.style.flexDirection = 'column';
+          dropdown.style.position = 'absolute';
+
+          // Make sure it doesn't use browser's native resize
+          dropdown.style.resize = 'none';
+          dropdown.style.overflow = 'hidden';
+
+          if (this.hasCustomSize) {
+            dropdown.style.height = `${this.dropdownSize.height}px`;
+          } else {
+            dropdown.style.height = 'auto';
+          }
+
+          const content = dropdown.querySelector('.ts-dropdown-content') as HTMLElement;
+          if (content) {
+            content.style.flex = '1 1 auto';
+            content.style.overflowY = 'auto';
+            if (this.hasCustomSize) {
+              content.style.maxHeight = 'none';
+            } else {
+              content.style.maxHeight = '280px'; // Approx 8 items (35px each)
+            }
+          }
+
+          // Create/Retrieve custom resize grip
+          let resizer = dropdown.querySelector('.ts-dropdown-resizer') as HTMLElement;
+          if (!resizer) {
+            resizer = document.createElement('div');
+            resizer.className = 'ts-dropdown-resizer';
+            resizer.style.cssText = `
+              position: absolute;
+              right: 0;
+              bottom: 0;
+              width: 14px;
+              height: 14px;
+              cursor: se-resize;
+              z-index: 10000;
+              background: linear-gradient(135deg, transparent 5px, #bbb 5px, #bbb 6px, transparent 6px, transparent 8px, #bbb 8px, #bbb 9px, transparent 9px, transparent 11px, #bbb 11px, #bbb 12px, transparent 12px);
+            `;
+            dropdown.appendChild(resizer);
+            this.setupCustomResizer({ resizer, dropdown });
+          }
+        }
+
+        window.addEventListener('scroll', this.onWindowScrollOrResize, true);
+        window.addEventListener('resize', this.onWindowScrollOrResize);
+
+        const event: CustomEvent = new CustomEvent('dropdownOpen', {});
+        this.dispatchEvent(event);
+      },
+
+      onDropdownClose: () => {
+        this.isDropdownOpen = false;
+        window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
+        window.removeEventListener('resize', this.onWindowScrollOrResize);
+        const event: CustomEvent = new CustomEvent('dropdownClose', {});
+        this.dispatchEvent(event);
+        this.notifyState();
+      },
+
+      onType: (query: string) => {
+        this._searchQuery = query;
+        const event: CustomEvent = new CustomEvent('searchQueryChange', { detail: { searchQuery: query } });
+        this.dispatchEvent(event);
+      },
+
+      render: {
+        option: (data: any, escape: (str: string) => string) => {
+          if(this.rendererFunction){
+            return this.rendererFunction({item:data});
+          }
+          const label = data[this.labelKey] || data.text || '';
+          return `<div class="option">${escape(String(label))}</div>`;
+        },
+        item: (data: any, escape: (str: string) => string) => {
+          // if(this.rendererFunction){
+          //   return this.rendererFunction({item:data});
+          // }
+          const label = data[this.labelKey] || data.text || '';
+          return `<div class="item">${escape(String(label))}</div>`;
+        },
+        no_results: () => {
+          return `<div class="no-results">No results found</div>`;
+        }
+      }
+    };
+
+    this.tomSelect = new TomSelect(this.selectEl, tomOptions);
+
+    const originalPosition = this.tomSelect.position;
+    this.tomSelect.position = function () {
+      originalPosition.apply(this);
+      if (self.isDropdownOpen && self.tomSelect && self.tomSelect.dropdown) {
+        const dropdown = self.tomSelect.dropdown;
+
+        let width = self.dropdownSize.width;
+        if (!self.hasCustomSize && self.tomSelect.control) {
+          width = self.tomSelect.control.offsetWidth;
+        }
+
+        dropdown.style.width = `${width}px`;
+        dropdown.style.maxHeight = 'none';
+
+        if (self.hasCustomSize) {
+          dropdown.style.height = `${self.dropdownSize.height}px`;
+        } else {
+          dropdown.style.height = 'auto';
+        }
+
+        const content = dropdown.querySelector('.ts-dropdown-content') as HTMLElement;
+        if (content) {
+          if (self.hasCustomSize) {
+            content.style.maxHeight = 'none';
+          } else {
+            content.style.maxHeight = '280px';
+          }
+        }
+      }
+    };
+
+    this.tomSelect.control_input.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key !== 'Backspace') {
+        return;
+      }
+
+      // Only when search box is empty
+      if (this.tomSelect.control_input.value.length > 0) {
+        return;
+      }
+
+      const values = this.tomSelect.items;
+      if (values.length > 0) {
+        e.preventDefault();
+        const lastValue = values[values.length - 1];
+        this.tomSelect.removeItem(lastValue);
+      }
+    });
+
+    // Apply readonly state
+    if (this.readonly) {
+      this.tomSelect.disable();
+    }
+
+    // Initialize with current data mode
+    if (this.dataManager) {
+      if (this.dataManager.type === "offline") {
+        this.refreshTomSelectOptions();
+      } else if (this.dataManager.type === "ondemand" && this.dataManager.onDemandFunction) {
+        this.setupOnDemandLoad();
+      }
+    }
+  }
+
+  // ── Data loading ────────────────────────────────────────────────────
+
+  private refreshTomSelectOptions(): void {
     if (!this.dataManager || this.dataManager.type !== "offline" || !this.tomSelect) return;
-    const options = this.dataManager.data.map((d: any) => ({
-      value: d[this.valueKey],
-      text: d[this.labelKey],
-    }));
+
+    const options = this.dataManager.data;
+
     this.tomSelect.clearOptions();
     this.tomSelect.addOptions(options);
 
+    // Restore current value if it exists
     const currentValue = this.tomSelect.getValue();
     if (this.value && (!currentValue || currentValue !== this.value)) {
-      this.tomSelect.setValue(this.value, false);
+      this.tomSelect.setValue(String(this.value), true);
     }
   }
 
-  private setupAjaxLoad(): void {
+  private setupOnDemandLoad(): void {
     if (!this.dataManager || !this.tomSelect) return;
+
     const self = this;
-    (this.tomSelect as any).settings.load = async function (query: string, callback: (options: { value: string; text: string }[]) => void) {
-      if (!query || query.length < 2) return callback([]);
-      const oldSearch = self.dataManager!.searchQuery;
-      self.dataManager!.searchQuery = query;
-      try {
-        const data = await self.dataManager!.getData({ startIndex: 0, rowsCount: 50 });
-        const options = data.map((d: any) => ({
-          value: d[self.valueKey],
-          text: d[self.labelKey],
-        }));
-        callback(options);
-      } catch (error) {
-        console.error("Error loading options:", error);
+
+    (this.tomSelect as any).settings.load = function (query: string, callback: (options: any[]) => void) {
+      if (!self.dataManager || !self.dataManager.onDemandFunction) {
         callback([]);
-      } finally {
-        self.dataManager!.searchQuery = oldSearch;
+        return;
       }
+
+      self._searchQuery = query;
+
+      const currentSeq = ++self.onDemandSequence;
+      self.dataManager.onDemandFunction({
+        searchQuery: query,
+        startIndex: 0,
+        rowsCount: 50,
+        successCallback: (response: IAcOnDemandResponseArgs) => {
+          if (currentSeq !== self.onDemandSequence) return;
+          if (response && response.data && response.data.length > 0) {
+            const options = response.data;
+            callback(options);
+          } else {
+            callback([]);
+          }
+        }
+      } as any);
     };
-    (this.tomSelect as any).settings.loadFilter = (query: string) => !!query;
-    (this.tomSelect as any).settings.loadThrottle = 300;
+
+    // Allow loading on every query
+    (this.tomSelect as any).settings.shouldLoad = (query: string) => true;
+    (this.tomSelect as any).settings.loadThrottle = 350;
+
+    // Trigger initial load on focus
+    (this.tomSelect as any).settings.preload = 'focus';
   }
 }
 
-acRegisterCustomElement({ tag: "ac-tomselect-input", type: AcTomSelectInput });
+acRegisterCustomElement({ tag: "ac-tom-select-input", type: AcTomSelectInputElement });

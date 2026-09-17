@@ -36,6 +36,16 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
     let projectRoot = '';
     let normalizedRoot = '';
     const compiledFiles = new Set<string>();
+    const normalizedWatchDirs = (runtimeConfig.watchDirectories || []).map(d => normalizePath(d));
+
+    /** Check if path is within project root, packages, or any configured watch directory. */
+    const isWatchedPath = (normalizedAbsPath: string): boolean => {
+        return (
+            normalizedAbsPath.startsWith(normalizedRoot) ||
+            normalizedAbsPath.includes('/packages/') ||
+            normalizedWatchDirs.some(dir => normalizedAbsPath === dir || normalizedAbsPath.startsWith(dir + '/'))
+        );
+    };
 
     // --- Path helpers ---
 
@@ -51,6 +61,16 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
         if (normalizedAbs.includes('/packages/')) {
             const parts = normalizePath(absolutePath).split('/packages/');
             return path.join(projectRoot, runtimeConfig.cacheDirectory, 'packages', parts[parts.length - 1]);
+        }
+
+        // Configured watch directories → cache/watched/<dirName>/...
+        for (let i = 0; i < runtimeConfig.watchDirectories.length; i++) {
+            const normDir = normalizedWatchDirs[i];
+            if (normalizedAbs === normDir || normalizedAbs.startsWith(normDir + '/')) {
+                const rel = path.relative(runtimeConfig.watchDirectories[i], absolutePath);
+                const dirName = path.basename(runtimeConfig.watchDirectories[i]);
+                return path.join(projectRoot, runtimeConfig.cacheDirectory, 'watched', dirName, rel);
+            }
         }
 
         // Anything else → cache/ext/...
@@ -107,10 +127,9 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
             const resolvedPath = resolveTypescriptFile(absolutePath);
             const normalizedResolved = normalizePath(resolvedPath);
 
-            const isInternal = normalizedResolved.startsWith(normalizedRoot);
-            const isPackage = normalizedResolved.includes('/packages/');
+            const isWatched = isWatchedPath(normalizedResolved);
 
-            if (normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
+            if (normalizedResolved.endsWith('.ts') && isWatched && fs.existsSync(resolvedPath)) {
                 if (writeToCache) {
                     const targetCachePath = getCachePath(resolvedPath);
                     const importerCachePath = getCachePath(importerPath);
@@ -129,7 +148,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
             }
 
             // Copy non-TS assets/files referenced by components to the cache directory so they can be resolved
-            if (!normalizedResolved.endsWith('.ts') && (isInternal || isPackage) && fs.existsSync(resolvedPath)) {
+            if (!normalizedResolved.endsWith('.ts') && isWatched && fs.existsSync(resolvedPath)) {
                 if (writeToCache) {
                     const targetCachePath = getCachePath(resolvedPath);
                     fs.mkdirSync(path.dirname(targetCachePath), { recursive: true });
@@ -239,9 +258,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
             if (absolutePath) {
                 absolutePath = resolveTypescriptFile(absolutePath);
                 const normalizedAbs = normalizePath(absolutePath);
-                const isInternal = normalizedAbs.startsWith(normalizedRoot);
-                const isPackage = normalizedAbs.includes('/packages/');
-                if (fs.existsSync(absolutePath) && normalizedAbs.endsWith('.ts') && (isInternal || isPackage)) {
+                if (fs.existsSync(absolutePath) && normalizedAbs.endsWith('.ts') && isWatchedPath(normalizedAbs)) {
                     await compileRecursive(absolutePath);
                 }
             }
@@ -276,9 +293,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
                     await walkGlob(baseDir, fullPath, regex);
                 } else if (regex.test(relPath)) {
                     const normalizedFull = normalizePath(fullPath);
-                    const isInternal = normalizedFull.startsWith(normalizedRoot);
-                    const isPackage = normalizedFull.includes('/packages/');
-                    if (normalizedFull.endsWith('.ts') && (isInternal || isPackage)) {
+                    if (normalizedFull.endsWith('.ts') && isWatchedPath(normalizedFull)) {
                         await compileRecursive(fullPath);
                     }
                 }
@@ -408,9 +423,20 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
         },
 
         configureServer(server) {
-            // Watch workspace packages for cross-package changes
+            // Ensure project root is watched
+            server.watcher.add(projectRoot);
+
+            // Watch configured directories from ac-runtime.json
+            for (const dir of runtimeConfig.watchDirectories) {
+                if (fs.existsSync(dir)) {
+                    server.watcher.add(dir);
+                    console.log(`[acr] Watching directory: ${dir}`);
+                }
+            }
+
+            // Watch workspace packages for cross-package changes (if not already included)
             const packagesDir = path.resolve(projectRoot, '../../packages');
-            if (fs.existsSync(packagesDir)) {
+            if (fs.existsSync(packagesDir) && !runtimeConfig.watchDirectories.includes(packagesDir)) {
                 server.watcher.add(packagesDir);
             }
         },

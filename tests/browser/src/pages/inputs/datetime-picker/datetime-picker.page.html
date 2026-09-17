@@ -1,23 +1,207 @@
 <div class="app-page">
-  <app-header [title]="'Datetime Picker Page'"></app-header>
+  <app-header [title]="'Enterprise DateTime Picker Showcase'"></app-header>
   <div class="container py-4 flex-fill overflow-auto">
-    <div class="row">
-      <div class="col-3">
-        <div class="form-group">
-          <label>Date Range Picker</label>
-          <ac-datetime-picker mode="daterange"></ac-datetime-picker>
+    <div class="mb-4">
+      <h3 class="fw-bold mb-1">Zero-Dependency Custom Calendar & DateTime Picker</h3>
+      <p class="text-muted">
+        Completely custom, zero-dependency calendar engine supporting touch/mouse, mobile bottom-sheet,
+        multi-format freeform parsing, synchronized dual-calendar range preview, and strict ISO 8601 output.
+      </p>
+    </div>
+
+    <!-- Row 1: Date Range & Single Date -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-primary">1. Date Range Picker (Dual Calendars & Presets)</h5>
+            <small class="text-muted">Live cross-month hover range preview, auto-inverted flip prevention, sidebar presets</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Date Range</label>
+              <ac-datetime-picker
+                id="dtp-range"
+                mode="daterange"
+                show-sidebar="true"
+                show-footer="true"
+                placeholder="Select date range..."
+              ></ac-datetime-picker>
+            </div>
+            <div class="alert alert-light border small text-muted mb-0">
+              <strong>Features:</strong> Synchronized dual calendars, no month-jumping, auto-inverts when earlier date is clicked 2nd.
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-3">
-        <div class="form-group">
-          <label>Date Picker</label>
-          <ac-datetime-picker mode="date"></ac-datetime-picker>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-primary">2. Single Date Picker</h5>
+            <small class="text-muted">Single-click selection with month/year jumpers and min/max constraints</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Single Date</label>
+              <ac-datetime-picker
+                id="dtp-single"
+                mode="date"
+                show-footer="true"
+                placeholder="Pick a single date..."
+              ></ac-datetime-picker>
+            </div>
+            <div class="alert alert-light border small text-muted mb-0">
+              <strong>Features:</strong> Direct selection, fast month/year title jumpers, clean clear/today footer buttons.
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-3">
-        <div class="form-group">
-          <label>Date Time Picker</label>
-          <ac-datetime-picker mode="datetime" show-time="true"></ac-datetime-picker>
+    </div>
+
+    <!-- Row 2: DateTime & DateTime Range -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-success">3. DateTime Picker (Custom Inline Time Controls)</h5>
+            <small class="text-muted">Direct numeric typing, chevron steppers, mouse wheel, 12h/24h AM/PM</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Date & Time</label>
+              <ac-datetime-picker
+                id="dtp-datetime"
+                mode="datetime"
+                show-time="true"
+                show-footer="true"
+                time-format="12"
+                placeholder="Choose date and time..."
+              ></ac-datetime-picker>
+            </div>
+            <div class="alert alert-light border small text-muted mb-0">
+              <strong>Features:</strong> Native zero-dependency time selector with step increments, bounds clamping, and keyboard support.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-success">4. DateTime Range Picker (Dual Time Controls)</h5>
+            <small class="text-muted">Simultaneous Start & End timepickers with ISO timestamp output</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Start & End DateTime</label>
+              <ac-datetime-picker
+                id="dtp-datetimerange"
+                mode="datetimerange"
+                show-time="true"
+                show-sidebar="true"
+                show-footer="true"
+                placeholder="Start date time - End date time..."
+              ></ac-datetime-picker>
+            </div>
+            <div class="alert alert-light border small text-muted mb-0">
+              <strong>Features:</strong> Dual Start/End timepickers, range highlights across months, formatted ISO output.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Month & Year Pickers -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-info">5. Month Picker</h5>
+            <small class="text-muted">Direct month and year selection grid</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Month</label>
+              <ac-datetime-picker
+                id="dtp-month"
+                mode="month"
+                placeholder="Select month..."
+              ></ac-datetime-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-info">6. Year Picker</h5>
+            <small class="text-muted">12-year decade jump matrix</small>
+          </div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label class="form-label fw-semibold">Select Year</label>
+              <ac-datetime-picker
+                id="dtp-year"
+                mode="year"
+                placeholder="Select year..."
+              ></ac-datetime-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Manual Multi-Format Entry & Form Integration -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-bold text-dark">7. Manual Universal Multi-Format Date Entry</h5>
+            <small class="text-muted">Type any standard or localized format into the inputs above or test below</small>
+          </div>
+          <div class="card-body">
+            <p class="mb-2">The flexible parser automatically recognizes:</p>
+            <div class="table-responsive mb-3">
+              <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Input Typed by User</th>
+                    <th>Interpretation</th>
+                    <th>Resulting ISO Output</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>today</code> / <code>yesterday</code> / <code>tomorrow</code></td>
+                    <td>Relative natural language keyword</td>
+                    <td><code>YYYY-MM-DD</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>15 Jan 2026</code> / <code>January 15, 2026</code></td>
+                    <td>Textual month name (case-insensitive)</td>
+                    <td><code>2026-01-15</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>25/12/2025</code> / <code>12-25-2025</code></td>
+                    <td>Auto-disambiguating numeric date (DMY / MDY)</td>
+                    <td><code>2025-12-25</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>01-05-2026 to 15-05-2026</code></td>
+                    <td>Range separated by <code>to</code>, <code>-</code>, or <code>–</code></td>
+                    <td><code>&#123; "start": "2026-05-01", "end": "2026-05-15" &#125;</code></td>
+                  </tr>
+                  <tr>
+                    <td><code>2026-06-01 09:30 AM</code></td>
+                    <td>Date with 12-hour AM/PM time</td>
+                    <td><code>2026-06-01T09:30:00...</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

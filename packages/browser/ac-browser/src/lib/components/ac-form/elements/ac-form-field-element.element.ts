@@ -24,7 +24,7 @@ export class AcFormField extends AcElementBase {
 
   private bindInput() {
     let foundInput:boolean = false;
-    const input = this.querySelector(`[name]`);
+    const input = this.querySelector(`[name], input, select, textarea, ac-input, ac-text-input, ac-select-input, ac-textarea-input, ac-number-input, ac-datetime-picker, ac-dd-input-field`);
     if(input){
       if (input == this.inputElement) return;
     }
@@ -62,26 +62,42 @@ export class AcFormField extends AcElementBase {
     this.inputListener = null;
   }
 
+  private isFormSubmitted(): boolean {
+    const acForm = this.closest('ac-form') as any;
+    if (acForm && acForm.submitted !== undefined) {
+      return !!acForm.submitted;
+    }
+    const form = (this.inputElement as any)?.form || acForm?.form || this.closest('form');
+    if (form && (form as any).submitted !== undefined) {
+      return !!(form as any).submitted;
+    }
+    return false;
+  }
+
   updateState() {
     if (!this.inputElement) return;
-    if ((this.inputElement as any).form && this.inputElement.form.submitted) {
+    if (this.isFormSubmitted()) {
       const validity = (this.inputElement as any).validity;
-      const isValid = validity.valid;
+      const isValid = validity ? validity.valid : (typeof this.inputElement.checkValidity === 'function' ? this.inputElement.checkValidity() : true);
       const hasError = !isValid;
-      const name = this.inputElement.getAttribute('name');
       this.setAttribute('is-valid', `${isValid}`);
       const errorMessages: AcFormFieldErrorMessage[] = Array.from(this.querySelectorAll('ac-form-field-error-message'));
       for (const msg of errorMessages) {
         if (hasError) {
-          const error: string = this.inputElement.validationMessage;
+          const error: string = this.inputElement.validationMessage || 'This field is invalid';
           msg.setError({message:error});
         }
         else {
           msg.setError({show:false});
         }
       }
+    } else {
+      this.removeAttribute('is-valid');
+      const errorMessages: AcFormFieldErrorMessage[] = Array.from(this.querySelectorAll('ac-form-field-error-message'));
+      for (const msg of errorMessages) {
+        msg.setError({show:false});
+      }
     }
-
   }
 }
 

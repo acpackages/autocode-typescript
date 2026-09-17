@@ -1,0 +1,141 @@
+ac-button {
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+ac-button button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+ac-button button:disabled,
+ac-button[disabled] button {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+/* Sizes */
+ac-button[size="sm"] button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+}
+
+ac-button[size="lg"] button {
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  border-radius: 0.5rem;
+}
+
+/* Solid Variants */
+ac-button[variant="primary"] button { color: #fff; background-color: #0d6efd; border-color: #0d6efd; }
+ac-button[variant="primary"] button:hover { background-color: #0b5ed7; border-color: #0a58ca; }
+
+ac-button[variant="secondary"] button { color: #fff; background-color: #6c757d; border-color: #6c757d; }
+ac-button[variant="secondary"] button:hover { background-color: #5c636a; border-color: #565e64; }
+
+ac-button[variant="success"] button { color: #fff; background-color: #198754; border-color: #198754; }
+ac-button[variant="success"] button:hover { background-color: #157347; border-color: #146c43; }
+
+ac-button[variant="danger"] button { color: #fff; background-color: #dc3545; border-color: #dc3545; }
+ac-button[variant="danger"] button:hover { background-color: #bb2d3b; border-color: #b02a37; }
+
+ac-button[variant="warning"] button { color: #000; background-color: #ffc107; border-color: #ffc107; }
+ac-button[variant="warning"] button:hover { background-color: #ffca2c; border-color: #ffc720; }
+
+ac-button[variant="info"] button { color: #000; background-color: #0dcaf0; border-color: #0dcaf0; }
+ac-button[variant="info"] button:hover { background-color: #31d2f2; border-color: #25cff2; }
+
+ac-button[variant="light"] button { color: #000; background-color: #f8f9fa; border-color: #f8f9fa; }
+ac-button[variant="light"] button:hover { background-color: #d3d4d5; border-color: #c6c7c8; }
+
+ac-button[variant="dark"] button { color: #fff; background-color: #212529; border-color: #212529; }
+ac-button[variant="dark"] button:hover { background-color: #424649; border-color: #373b3e; }
+
+ac-button[variant="link"] button { color: #0d6efd; background-color: transparent; border-color: transparent; text-decoration: underline; }
+ac-button[variant="link"] button:hover { color: #0a58ca; }
+
+/* Outline Variants */
+ac-button[outline][variant="primary"] button { color: #0d6efd; border-color: #0d6efd; background-color: transparent; }
+ac-button[outline][variant="primary"] button:hover { color: #fff; background-color: #0d6efd; }
+
+ac-button[outline][variant="secondary"] button { color: #6c757d; border-color: #6c757d; background-color: transparent; }
+ac-button[outline][variant="secondary"] button:hover { color: #fff; background-color: #6c757d; }
+
+ac-button[outline][variant="success"] button { color: #198754; border-color: #198754; background-color: transparent; }
+ac-button[outline][variant="success"] button:hover { color: #fff; background-color: #198754; }
+
+ac-button[outline][variant="danger"] button { color: #dc3545; border-color: #dc3545; background-color: transparent; }
+ac-button[outline][variant="danger"] button:hover { color: #fff; background-color: #dc3545; }
+
+ac-button[outline][variant="warning"] button { color: #ffc107; border-color: #ffc107; background-color: transparent; }
+ac-button[outline][variant="warning"] button:hover { color: #000; background-color: #ffc107; }
+
+ac-button[outline][variant="info"] button { color: #0dcaf0; border-color: #0dcaf0; background-color: transparent; }
+ac-button[outline][variant="info"] button:hover { color: #000; background-color: #0dcaf0; }
+
+ac-button[outline][variant="light"] button { color: #f8f9fa; border-color: #f8f9fa; background-color: transparent; }
+ac-button[outline][variant="light"] button:hover { color: #000; background-color: #f8f9fa; }
+
+ac-button[outline][variant="dark"] button { color: #212529; border-color: #212529; background-color: transparent; }
+ac-button[outline][variant="dark"] button:hover { color: #fff; background-color: #212529; }
+
+/* Button Group */
+ac-button-group {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+ac-button-group > ac-button {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+ac-button-group:not([vertical]) > ac-button:not(:first-child) button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+ac-button-group:not([vertical]) > ac-button:not(:last-child) button {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+ac-button-group[vertical] {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+ac-button-group[vertical] > ac-button:not(:first-child) button {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: -1px;
+}
+
+ac-button-group[vertical] > ac-button:not(:last-child) button {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}

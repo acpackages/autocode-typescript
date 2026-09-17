@@ -9,3 +9,4 @@ export * from './ac-select-input-element.element';
 export * from './ac-tags-input-element.element';
 export * from './ac-textarea-input-element.element';
 export * from './ac-text-input-element.element';
+export * from './ac-range-input-element.element';

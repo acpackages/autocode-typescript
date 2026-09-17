@@ -172,32 +172,15 @@ export class AcArrayValuesInputElement extends AcInputBase {
     }
   }
 
-  override setValue(value: any): void {
-    if (value != this._value) {
-      super.setValue(value);
-      this._value = value;
-    }
-    this.refreshItems();
-  }
-
-  override setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this._value;
-      },
-
-      set(value) {
-        if (value == undefined || value == null) {
+  override setValue({ value, emitEvent = false }:{ value: any, emitEvent?: boolean }): void {
+    if (value == undefined || value == null) {
       value = [];
     }
     if (value != this._value) {
-      this.setValue(value);
+      super.setValue({value,emitEvent});
+      this._value = value;
     }
-      },
-
-      enumerable: true,
-      configurable: true
-    });
+    this.refreshItems();
   }
 
 }

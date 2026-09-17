@@ -22,24 +22,40 @@ export class AcForm extends AcElementBase {
     this.syncInputsWithContext();
   }
 
+  submitted: boolean = false;
   isWrapped: boolean = false;
   formAddedManually: boolean = false;
   form!: HTMLFormElement | any;
-  autoDestroyOnDisconnect: boolean = false;
+  override autoDestroyOnDisconnect: boolean = false;
   private inputContextListeners: Map<HTMLElement, any> = new Map();
 
   invalidCallback: Function = () => {
-    this.form.submitted = true;
+    // No-op: do not set submitted to true on invalid event
   };
   resetCallback: Function = (event: any) => {
+    this.submitted = false;
+    if (this.form) {
+      this.form.submitted = false;
+    }
+    const fields = this.querySelectorAll('ac-form-field');
+    for (const field of Array.from(fields)) {
+      if (typeof (field as any).updateState === 'function') {
+        (field as any).updateState();
+      }
+    }
     this.dispatchEvent(new Event('reset'));
   };
 
   submitCallback: Function = (event: Event) => {
     event.preventDefault();
-    this.form.submitted = true;
+    this.submitted = true;
+    if (this.form) {
+      this.form.submitted = true;
+    }
     if (this.validateAll()) {
       this.dispatchEvent(new Event('submit'));
+    } else {
+      event.stopImmediatePropagation?.();
     }
   };
 
@@ -59,9 +75,9 @@ export class AcForm extends AcElementBase {
     if (!this.isWrapped) {
       this.isWrapped = true;
       if (this.isConnected && this.parentNode) {
-        const parent: HTMLElement = this.parentElement!;
-        if (parent.tagName.toLowerCase() === 'form') {
-          this.form = parent;
+        const enclosingForm = this.closest('form');
+        if (enclosingForm) {
+          this.form = enclosingForm;
         }
       }
       if (this.form == undefined || this.form == null) {
@@ -69,6 +85,7 @@ export class AcForm extends AcElementBase {
         this.formAddedManually = true;
       }
       this.form.style.display = 'contents';
+      this.submitted = false;
       this.form.submitted = false;
       this.form.noValidate = true;
       this.form.addEventListener('submit', this.submitCallback);
@@ -90,24 +107,27 @@ export class AcForm extends AcElementBase {
   }
 
   private getInputElements(): any[] {
-    return Array.from(this.querySelectorAll(`[name]`)).filter((el) => {
-      const style = window.getComputedStyle(el);
+    const selector = 'input, select, textarea, [name], ac-input, ac-text-input, ac-select-input, ac-textarea-input, ac-number-input, ac-datetime-picker, ac-dd-input-field';
+    const all = Array.from(this.querySelectorAll<HTMLElement>(selector));
+    return all.filter((el) => {
+      const tagName = el.tagName.toLowerCase();
+      if (tagName === 'button') return false;
+      if (tagName === 'input') {
+        const type = (el as HTMLInputElement).type?.toLowerCase();
+        if (type === 'submit' || type === 'reset' || type === 'button' || type === 'image') return false;
+      }
+      // If el is an internal element of a custom input element that manages its own validity, skip it
+      if (el.parentElement) {
+        const parentCustomInput = el.parentElement.closest('ac-input, ac-text-input, ac-select-input, ac-textarea-input, ac-number-input, ac-datetime-picker, ac-dd-input-field');
+        if (parentCustomInput && parentCustomInput !== el) {
+          return false;
+        }
+      }
       if ((el as HTMLInputElement).disabled) return false;
+      const style = window.getComputedStyle(el);
       if (style.display === 'none' || style.visibility === 'hidden') return false;
       return true;
     });
-  }
-
-  private handleSubmit(event: Event) {
-    event.preventDefault();
-    this.form.submitted = true;
-    this.form.noValidate = true;
-    this.form.removeEventListener('submit', this.handleSubmit);
-    this.form.submit();
-    this.dispatchEvent(new Event('submit', {
-      bubbles: true,
-      composed: true,
-    }));
   }
 
   reset(): void {
@@ -133,23 +153,39 @@ export class AcForm extends AcElementBase {
   }
 
   submit(): void {
-    this.form.requestSubmit();
+    if (this.form && typeof this.form.requestSubmit === 'function') {
+      this.form.requestSubmit();
+    } else if (this.form) {
+      const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+      this.form.dispatchEvent(submitEvent);
+    }
   }
 
-  validateAll() {
+  validateAll(): boolean {
     const inputs = this.getInputElements();
     let isValid = true;
+    let firstInvalid: HTMLElement | null = null;
     for (const el of inputs) {
       if (typeof el.checkValidity === 'function') {
-        if (!el.checkValidity()) {
-          if (isValid) {
-            el.focus();
-          }
-          if (typeof el.reportValidity === 'function') {
-            el.reportValidity();
+        const isElValid = el.checkValidity();
+        if (!isElValid) {
+          if (!firstInvalid) {
+            firstInvalid = el;
           }
           isValid = false;
         }
+      }
+    }
+    if (firstInvalid) {
+      firstInvalid.focus();
+      if (typeof (firstInvalid as any).reportValidity === 'function') {
+        (firstInvalid as any).reportValidity();
+      }
+    }
+    const fields = this.querySelectorAll('ac-form-field');
+    for (const field of Array.from(fields)) {
+      if (typeof (field as any).updateState === 'function') {
+        (field as any).updateState();
       }
     }
     return isValid;

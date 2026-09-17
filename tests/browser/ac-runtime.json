@@ -5,6 +5,10 @@
   "entryFile": "src/main.ts",
   "buildDirectory": "dist/app",
   "cacheDirectory": ".ac-runtime-cache",
+  "watchDirectories": [
+    "../../packages/browser/ac-browser/src",
+    "../../packages/browser/ac-datetime-picker/src"
+  ],
   "assets": [
     {
       "directory": "public/assets",

@@ -44,23 +44,62 @@ export function acAnimateElement(
 }
 
 export function acCloneEvent(oldEvent: Event|any): Event|any {
-  const newEvent = new (oldEvent.constructor as any)(oldEvent.type, {
-    bubbles: oldEvent.bubbles,
-    cancelable: oldEvent.cancelable,
-    composed: oldEvent.composed,
-    detail:oldEvent.detail
-  });
+  if (!oldEvent) return oldEvent;
+  try {
+    const eventInit: any = {
+      bubbles: oldEvent.bubbles,
+      cancelable: oldEvent.cancelable,
+      composed: oldEvent.composed,
+    };
+    if ('detail' in oldEvent) eventInit.detail = oldEvent.detail;
+    if ('view' in oldEvent) eventInit.view = oldEvent.view;
+    if ('clientX' in oldEvent) eventInit.clientX = oldEvent.clientX;
+    if ('clientY' in oldEvent) eventInit.clientY = oldEvent.clientY;
+    if ('screenX' in oldEvent) eventInit.screenX = oldEvent.screenX;
+    if ('screenY' in oldEvent) eventInit.screenY = oldEvent.screenY;
+    if ('button' in oldEvent) eventInit.button = oldEvent.button;
+    if ('buttons' in oldEvent) eventInit.buttons = oldEvent.buttons;
+    if ('ctrlKey' in oldEvent) eventInit.ctrlKey = oldEvent.ctrlKey;
+    if ('shiftKey' in oldEvent) eventInit.shiftKey = oldEvent.shiftKey;
+    if ('altKey' in oldEvent) eventInit.altKey = oldEvent.altKey;
+    if ('metaKey' in oldEvent) eventInit.metaKey = oldEvent.metaKey;
+    if ('key' in oldEvent) eventInit.key = oldEvent.key;
+    if ('code' in oldEvent) eventInit.code = oldEvent.code;
+    if ('data' in oldEvent) eventInit.data = oldEvent.data;
+    if ('inputType' in oldEvent) eventInit.inputType = oldEvent.inputType;
+    if ('pointerId' in oldEvent) eventInit.pointerId = oldEvent.pointerId;
+    if ('pointerType' in oldEvent) eventInit.pointerType = oldEvent.pointerType;
 
-  // Copy standard properties
-  for (const key of Object.keys(oldEvent)) {
+    const ctor = typeof oldEvent.constructor === 'function' ? oldEvent.constructor : CustomEvent;
+    let newEvent: any;
     try {
-      (newEvent as any)[key] = (oldEvent as any)[key];
+      newEvent = new ctor(oldEvent.type, eventInit);
     } catch {
-      //
+      try {
+        newEvent = new CustomEvent(oldEvent.type, {
+          bubbles: oldEvent.bubbles,
+          cancelable: oldEvent.cancelable,
+          composed: oldEvent.composed,
+          detail: oldEvent.detail || oldEvent
+        });
+      } catch {
+        newEvent = new Event(oldEvent.type, { bubbles: oldEvent.bubbles, cancelable: oldEvent.cancelable });
+      }
     }
-  }
 
-  return newEvent;
+    // Copy standard properties
+    for (const key of Object.keys(oldEvent)) {
+      try {
+        (newEvent as any)[key] = (oldEvent as any)[key];
+      } catch {
+        // Ignore read-only or non-configurable properties
+      }
+    }
+
+    return newEvent;
+  } catch {
+    return new Event(oldEvent?.type || 'unknown');
+  }
 }
 
 export function acCopyElementStyles({ fromElement, toElement }: { fromElement: HTMLElement, toElement: HTMLElement }) {

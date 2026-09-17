@@ -148,6 +148,71 @@ export default defineConfig(({ command }) => {
           input: 'src/lib/components/ac-virtual-scrolling/css',
           glob: '*.css',
           output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-alert/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-badge/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-breadcrumb/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-button/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-card/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-close-button/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-floating-label/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-input-group/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-list-group/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-navbar/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-progress/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-skeleton/css',
+          glob: '*.css',
+          output: 'css',
+        },
+        {
+          input: 'src/lib/components/ac-spinner/css',
+          glob: '*.css',
+          output: 'css',
         }
       ]),
       dts({

@@ -171,17 +171,20 @@ export class AcDDInputFieldElement extends AcInputBase {
 
   constructor() {
     super();
-    this.inputElement = this.ddInput;
     this.ddInputField = new AcDDInputManager.inputFieldElementClass();
     this.ddInputField.ddInputFieldElement = this;
     this.ddInput.on({
       event: 'change', callback: () => {
-        this.value = this.ddInput.value;
+        if (this._value !== this.ddInput.value) {
+          this.setValue({ value: this.ddInput.value, emitEvent: true });
+        }
       }
     });
     this.ddInput.on({
       event: 'input', callback: () => {
-        this.value = this.ddInput.value;
+        if (this._value !== this.ddInput.value) {
+          this.setValue({ value: this.ddInput.value, emitEvent: false });
+        }
       }
     });
     this.ddInput.on({
@@ -190,6 +193,10 @@ export class AcDDInputFieldElement extends AcInputBase {
         this.dispatchEvent(event);
       }
     });
+  }
+
+  override focus(options?: FocusOptions): void {
+    this.ddInput?.focus(options);
   }
 
   override connectedCallback(): void {
@@ -248,6 +255,9 @@ export class AcDDInputFieldElement extends AcInputBase {
       this.ddInput.tableName = this.tableName;
       this.ddInput.columnName = this.columnName;
       this.ddInput.inputName = this.inputName;
+      if (this.value !== undefined) {
+        this.ddInput.setValue({ value: this.value, emitEvent: false });
+      }
 
       if (this.ddInput && this.ddInput.ddTableColumn) {
         this.ddTableColumn = this.ddInput.ddTableColumn!;
@@ -311,21 +321,11 @@ export class AcDDInputFieldElement extends AcInputBase {
     }
   }
 
-  override setValueListener() {
-    Object.defineProperty(this, 'value', {
-      get() {
-        return this.ddInput.value;
-      },
-
-      set(value) {
-        this.ddInput.value = value;
-        this.inputElement.value = value;
-        this.setValue(value);
-      },
-
-      enumerable: true,
-      configurable: true
-    });
+  override setValue({ value, emitEvent = true}:{ value:any, emitEvent?: boolean }): void {
+    if (this.ddInput && this.ddInput.value !== value) {
+      this.ddInput.setValue({ value: value, emitEvent: false });
+    }
+    super.setValue({ value: value, emitEvent });
   }
 }
 

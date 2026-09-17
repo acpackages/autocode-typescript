@@ -17,12 +17,12 @@ export class AcNumberInput extends AcInputElement {
   get min(): number {
     let result: number = 0;
     if (this.hasAttribute("min")) {
-      result = parseInt(this.getAttribute('min')!);
+      result = parseFloat(this.getAttribute('min')!);
     }
     return result;
   }
-  set min(value: number) {
-    if (value > 0) {
+  set min(value: number | string) {
+    if (value !== null && value !== undefined && value !== '' && !isNaN(Number(value))) {
       this.setAttribute('min', `${value}`);
       this.inputElement.setAttribute('min', `${value}`);
     }
@@ -32,16 +32,15 @@ export class AcNumberInput extends AcInputElement {
     }
   }
 
-
   get max(): number {
     let result: number = 0;
     if (this.hasAttribute("max")) {
-      result = parseInt(this.getAttribute('max')!);
+      result = parseFloat(this.getAttribute('max')!);
     }
     return result;
   }
-  set max(value: number) {
-    if (value > 0) {
+  set max(value: number | string) {
+    if (value !== null && value !== undefined && value !== '' && !isNaN(Number(value))) {
       this.setAttribute('max', `${value}`);
       this.inputElement.setAttribute('max', `${value}`);
     }
@@ -51,23 +50,35 @@ export class AcNumberInput extends AcInputElement {
     }
   }
 
-  get step(): number {
-    let result: number = 0;
+  get step(): number | string {
+    let result: number | string = 'any';
     if (this.hasAttribute("step")) {
-      result = parseInt(this.getAttribute('step')!);
+      const s = this.getAttribute('step')!;
+      if (s === 'any') {
+        result = 'any';
+      } else {
+        const parsed = parseFloat(s);
+        result = isNaN(parsed) ? 'any' : parsed;
+      }
     }
     return result;
   }
 
-  set step(value: number) {
-    if (value > 0) {
+  set step(value: number | string) {
+    if (value === 'any' || (value !== null && value !== undefined && value !== '' && !isNaN(Number(value)) && Number(value) > 0)) {
       this.setAttribute('step', `${value}`);
       this.inputElement.setAttribute('step', `${value}`);
     }
     else {
       this.removeAttribute('step');
-      this.inputElement.removeAttribute('step');
+      this.inputElement.setAttribute('step', 'any');
     }
+  }
+
+  constructor() {
+    super();
+    this.inputElement.type = 'number';
+    this.inputElement.setAttribute('step', 'any');
   }
 
   override init() {
@@ -75,6 +86,18 @@ export class AcNumberInput extends AcInputElement {
       this.type = 'number';
     }
     super.init();
+    if (!this.hasAttribute('step')) {
+      this.inputElement.setAttribute('step', 'any');
+    }
+  }
+
+  override refreshReflectedAttributes({ attribute }: { attribute?: string } = {}) {
+    super.refreshReflectedAttributes({ attribute });
+    if (!attribute || attribute === 'step') {
+      if (!this.hasAttribute('step')) {
+        this.inputElement.setAttribute('step', 'any');
+      }
+    }
   }
 
   override attributeChangedCallback(name: string, oldValue: any, newValue: any) {

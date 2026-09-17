@@ -13,10 +13,17 @@ export default defineConfig(({ command }) => {
       '../../../node_modules/.vite/packages/browser/ac-data-dictionary-components',
     plugins: [
       nxViteTsPaths(),
-      nxCopyAssetsPlugin(['*.md']),
+      nxCopyAssetsPlugin([
+        '*.md',
+        {
+          input: 'src/lib/css',
+          glob: '*.css',
+          output: 'css',
+        },
+      ]),
       dts({
         entryRoot: 'src',
-        tsconfigPath: path.join(__dirname, tsconfig),
+        tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
       }),
     ],
     // Uncomment this if you are using workers.

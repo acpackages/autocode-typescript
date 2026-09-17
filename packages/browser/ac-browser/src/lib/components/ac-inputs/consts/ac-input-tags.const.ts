@@ -9,5 +9,6 @@ export const AC_INPUT_TAG = {
   selectInput:'ac-select-input',
   tagsInput:'ac-tags-input',
   textInput:'ac-text-input',
-  textareaInput:'ac-textarea-input'
+  textareaInput:'ac-textarea-input',
+  rangeInput:'ac-range-input'
 }

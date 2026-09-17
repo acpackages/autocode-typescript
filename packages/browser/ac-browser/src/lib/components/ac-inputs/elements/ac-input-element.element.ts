@@ -6,7 +6,11 @@ import { AcInputBase } from "../core/ac-input-base";
 
 export class AcInputElement extends AcInputBase {
   static override get observedAttributes() {
-    return [... super.observedAttributes, 'type'];
+    return [... super.observedAttributes, 'type', 'minlength', 'maxlength', 'pattern', 'min', 'max', 'step'];
+  }
+
+  override get inputReflectedAttributes() {
+    return [... super.inputReflectedAttributes, 'minlength', 'maxlength', 'pattern', 'min', 'max', 'step'];
   }
 
   get type(): string {
