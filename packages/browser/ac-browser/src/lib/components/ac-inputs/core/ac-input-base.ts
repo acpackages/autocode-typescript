@@ -428,7 +428,6 @@ export class AcInputBase extends AcElementBase {
   }
 
   setValue({value,emitEvent = true}:{value: any, emitEvent?: boolean}): void {
-
     if (!this.isDestroyed) {
       const oldValue: any = this._value;
       if (oldValue != value) {

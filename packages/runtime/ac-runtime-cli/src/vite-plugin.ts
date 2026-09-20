@@ -36,6 +36,8 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
     let projectRoot = '';
     let normalizedRoot = '';
     const compiledFiles = new Set<string>();
+    /** Files the plugin itself just wrote — used to distinguish plugin writes from manual edits. */
+    const pluginWrittenFiles = new Set<string>();
     const normalizedWatchDirs = (runtimeConfig.watchDirectories || []).map(d => normalizePath(d));
 
     /** Check if path is within project root, packages, or any configured watch directory. */
@@ -153,6 +155,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
                     const targetCachePath = getCachePath(resolvedPath);
                     fs.mkdirSync(path.dirname(targetCachePath), { recursive: true });
                     fs.copyFileSync(resolvedPath, targetCachePath);
+                    pluginWrittenFiles.add(normalizePath(targetCachePath));
                     
                     const importerCachePath = getCachePath(importerPath);
                     let relativePath = path.relative(path.dirname(importerCachePath), targetCachePath).replace(/\\/g, '/');
@@ -188,6 +191,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
                         });
                     fs.mkdirSync(path.dirname(cachePath), { recursive: true });
                     fs.writeFileSync(cachePath, rewritten);
+                    pluginWrittenFiles.add(normalizePath(cachePath));
                 }
                 return null;
             }
@@ -212,6 +216,7 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
             if (writeToCache) {
                 fs.mkdirSync(path.dirname(cachePath), { recursive: true });
                 fs.writeFileSync(cachePath, compiledCode);
+                pluginWrittenFiles.add(normalizePath(cachePath));
             }
 
             // Return compiled code only for component files (has selector)
@@ -382,7 +387,21 @@ export function acRuntimePlugin(runtimeConfig: AcRuntimeConfig): Plugin {
 
         async handleHotUpdate({ file, server, read }) {
             const normalizedFile = normalizePath(file);
-            if (normalizedFile.includes(runtimeConfig.cacheDirectory) || normalizedFile.includes('node_modules')) {
+
+            // Cache directory changes: skip plugin-initiated writes, reload on manual edits
+            if (normalizedFile.includes(runtimeConfig.cacheDirectory)) {
+                if (pluginWrittenFiles.has(normalizedFile)) {
+                    pluginWrittenFiles.delete(normalizedFile); // consume the flag, avoid loop
+                    return;
+                }
+                // Manual edit to cache file → invalidate module graph and reload
+                console.log(`[acr] Cache file manually edited: ${path.basename(file)}`);
+                invalidateCacheModules(server);
+                server.ws.send({ type: 'full-reload' });
+                return [];
+            }
+
+            if (normalizedFile.includes('node_modules')) {
                 return;
             }
 

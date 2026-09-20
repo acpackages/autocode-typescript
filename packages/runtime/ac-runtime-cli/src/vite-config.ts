@@ -159,7 +159,6 @@ export function createViteConfig(
                 usePolling: true,
                 interval: 100,
                 ignored: [
-                    `**/${config.cacheDirectory}/**`,
                     '**/node_modules/**',
                     `**/${config.buildDirectory}/**`,
                 ],

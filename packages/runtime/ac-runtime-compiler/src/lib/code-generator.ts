@@ -219,6 +219,8 @@ function generateBlockRenderers(
   let eventRegistrationCode = '';
   let updaterMethods = '';
   let subscriptionCode = '';
+  // Model assignement code will be executed first to set default value of the input;
+  let modelCode = '';
   for (const binding of bindings) {
     const hasPipe = binding.expression.replaceAll('||', '').includes('|');
     let expression = binding.expression;
@@ -421,6 +423,13 @@ function generateBlockRenderers(
   }
       `;
 
+      if(binding.type == 'model'){
+        modelCode += `this.${updaterName}(true);\n `;
+      }
+      else{
+        subscriptionCode += `this.${updaterName}(true);\n `;
+      }
+
       subscriptionCode += `this.${updaterName}(true);\n `;
       // initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
       for (const property of binding.properties || []) {
@@ -431,7 +440,6 @@ function generateBlockRenderers(
       }
     }
   }
-
 
   const suffix = type === 'root' ? 'Root' : `${type}$${blockId}`;
   const classNameSub = getRendererClassName({ className, suffix });
@@ -475,6 +483,7 @@ class ${classNameSub} extends AcElementRenderer {
   if (subscriptionCode != '') {
     classCode += `
     override setInitialState(){
+      ${modelCode}
       ${subscriptionCode}
     }`;
   }
