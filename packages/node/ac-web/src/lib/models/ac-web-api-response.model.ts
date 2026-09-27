@@ -38,11 +38,13 @@ export class AcWebApiResponse extends AcResult {
 
   override toJson(): Record<string, any> {
     const result = AcJsonUtils.getJsonDataFromInstance({ instance: this });
-    if (result[AcResult.KeyLog] && Array.isArray(result[AcResult.KeyLog]) && result[AcResult.KeyLog].length === 0) {
-      delete result[AcResult.KeyLog];
+    const logKey = (AcResult as any).KEY_LOG || (AcResult as any).KeyLog || 'log';
+    const otherDetailsKey = (AcResult as any).KEY_OTHER_DETAILS || (AcResult as any).KeyOtherDetails || 'otherDetails';
+    if (result[logKey] && Array.isArray(result[logKey]) && result[logKey].length === 0) {
+      delete result[logKey];
     }
-    if (result[AcResult.KeyOtherDetails] && typeof result[AcResult.KeyOtherDetails] === 'object' && Object.keys(result[AcResult.KeyOtherDetails]).length === 0) {
-      delete result[AcResult.KeyOtherDetails];
+    if (result[otherDetailsKey] && typeof result[otherDetailsKey] === 'object' && Object.keys(result[otherDetailsKey]).length === 0) {
+      delete result[otherDetailsKey];
     }
     return result;
   }

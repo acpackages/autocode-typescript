@@ -81,18 +81,25 @@ export class AcDataDictionaryAutoSelectDistinct {
   getHandler(): (args: IAcWebRequestHandlerArgs) => Promise<AcWebResponse> {
     return async (args: IAcWebRequestHandlerArgs) => {
       const acWebRequest = args.request;
-      const response = new AcWebApiResponse();
+      let response = new AcWebApiResponse();
       try {
         const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
         if (sqlDbTableResult.isSuccess()) {
           const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
-          const getResponse = await acSqlDbTable.getDistinctColumnValues({
+          const autoApiResult = await AcWebDataDictionaryUtils.handleAutoSelectDistinctWebRequest({
+            logger: args.logger,
+            request: acWebRequest,
+            dao: acSqlDbTable.dao!,
+            tableName: this.acDDTable.tableName,
             columnName: this.acDDTableColumn.columnName,
           });
-          response.setFromSqlDaoResult({ result: getResponse });
+          if (autoApiResult.webApiResponse) {
+            response = autoApiResult.webApiResponse;
+          }
         } else {
           response.setFromResult({ result: sqlDbTableResult });
         }
+        return response.toWebResponse();
       } catch (ex: any) {
         response.setException({ exception: ex });
       }

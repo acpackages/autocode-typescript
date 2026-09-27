@@ -135,13 +135,13 @@ export class AcDataDictionaryAutoApi {
           continueOperation = true;
           this.logger.log(`Include tables list contains table ${acDDTable.tableName}`);
           const options = this.includeTables[tableName];
-          generateDelete = options.delete;
-          generateInsert = options.insert;
-          generateSave = options.save;
-          generateSelect = options.select;
-          generateSelectDistinct = options.selectDistinct;
-          generateSelectRow = options.selectRow;
-          generateUpdate = options.update;
+          generateDelete = options['delete'];
+          generateInsert = options['insert'];
+          generateSave = options['save'];
+          generateSelect = options['select'];
+          generateSelectDistinct = options['selectDistinct'];
+          generateSelectRow = options['selectRow'];
+          generateUpdate = options['update'];
         } else {
           this.logger.log(`Include tables list does not contains table ${acDDTable.tableName}`);
         }
@@ -151,13 +151,13 @@ export class AcDataDictionaryAutoApi {
       } else if (this.excludeTables[tableName]) {
         continueOperation = true;
         const options = this.excludeTables[tableName];
-        generateDelete = !options.delete;
-        generateInsert = !options.insert;
-        generateSave = !options.save;
-        generateSelect = !options.select;
-        generateSelectDistinct = !options.selectDistinct;
-        generateSelectRow = !options.selectRow;
-        generateUpdate = !options.update;
+        generateDelete = !options['delete'];
+        generateInsert = !options['insert'];
+        generateSave = !options['save'];
+        generateSelect = !options['select'];
+        generateSelectDistinct = !options['selectDistinct'];
+        generateSelectRow = !options['selectRow'];
+        generateUpdate = !options['update'];
       }
 
       if (continueOperation) {

@@ -77,7 +77,7 @@ export class AcDataDictionaryAutoDelete {
       const response = new AcWebApiResponse();
       const key = this.acDDTable.getPrimaryKeyColumnName();
       try {
-        if (acWebRequest.post && acWebRequest.post[key] != undefined) {
+        if (acWebRequest.pathParameters && acWebRequest.pathParameters[key] != undefined) {
           const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
           if (sqlDbTableResult.isSuccess()) {
             const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
@@ -88,6 +88,7 @@ export class AcDataDictionaryAutoDelete {
           } else {
             response.setFromResult({ result: sqlDbTableResult });
           }
+          return response.toWebResponse();
         } else {
           response.message = 'parameters missing';
           return AcWebResponse.json({ data: response });
@@ -136,23 +137,29 @@ export class AcDataDictionaryAutoDelete {
     return async (args: IAcWebRequestHandlerArgs) => {
       const logger: AcLogger = args.logger;
       const acWebRequest = args.request;
-      const response = new AcWebApiResponse();
+      let response = new AcWebApiResponse();
       try {
         logger.log(`Deleting row from table ${this.acDDTable.tableName}`);
         const key = this.acDDTable.getPrimaryKeyColumnName();
         logger.log(`Deleting for primary key field ${key}`);
-        if (acWebRequest.post && acWebRequest.post[key] != undefined) {
+        if (acWebRequest.post && acWebRequest.post[key] !== undefined) {
           logger.log(`Found primary key field ${key}`);
           const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
           if (sqlDbTableResult.isSuccess()) {
             const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
-            const result = await acSqlDbTable.deleteRows({
-              primaryKeyValue: acWebRequest.post[key],
+            const autoApiResult = await AcWebDataDictionaryUtils.handleAutoDeleteWebRequest({
+              logger,
+              request: acWebRequest,
+              dao: acSqlDbTable.dao!,
+              tableName: this.acDDTable.tableName,
             });
-            response.setFromSqlDaoResult({ result });
+            if (autoApiResult.webApiResponse) {
+              response = autoApiResult.webApiResponse;
+            }
           } else {
             response.setFromResult({ result: sqlDbTableResult });
           }
+          return response.toWebResponse();
         } else {
           logger.log(['Primary key field is missing in post', acWebRequest.post]);
           response.message = 'parameters missing';
@@ -160,7 +167,7 @@ export class AcDataDictionaryAutoDelete {
       } catch (ex: any) {
         response.setException({ exception: ex });
       }
-      return response.toWebResponse();
+      return AcWebResponse.json({ data: response });
     };
   }
 }

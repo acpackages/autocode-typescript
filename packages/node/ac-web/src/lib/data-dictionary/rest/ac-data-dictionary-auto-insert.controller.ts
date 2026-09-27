@@ -77,23 +77,24 @@ export class AcDataDictionaryAutoInsert {
   getHandler(): (args: IAcWebRequestHandlerArgs) => Promise<AcWebResponse> {
     return async (args: IAcWebRequestHandlerArgs) => {
       const acWebRequest = args.request;
-      const response = new AcWebApiResponse();
+      let response = new AcWebApiResponse();
       try {
         const sqlDbTableResult = await this.acDataDictionaryAutoApi.getAcSqlDbTable({ request: acWebRequest, acDDTable: this.acDDTable });
         if (sqlDbTableResult.isSuccess()) {
           const acSqlDbTable: AcSqlDbTable = sqlDbTableResult.value;
-          if (acWebRequest.post && acWebRequest.post['row'] != undefined) {
-            const result = await acSqlDbTable.insertRow({ row: acWebRequest.post['row'] });
-            response.setFromSqlDaoResult({ result });
-          } else if (acWebRequest.post && acWebRequest.post['rows'] != undefined) {
-            const result = await acSqlDbTable.insertRows({ rows: acWebRequest.post['rows'] });
-            response.setFromSqlDaoResult({ result });
-          } else {
-            response.message = 'parameters missing';
+          const autoApiResult = await AcWebDataDictionaryUtils.handleAutoInsertWebRequest({
+            logger: args.logger,
+            request: acWebRequest,
+            dao: acSqlDbTable.dao!,
+            tableName: this.acDDTable.tableName,
+          });
+          if (autoApiResult.webApiResponse) {
+            response = autoApiResult.webApiResponse;
           }
         } else {
           response.setFromResult({ result: sqlDbTableResult });
         }
+        return response.toWebResponse();
       } catch (ex: any) {
         response.setException({ exception: ex });
       }

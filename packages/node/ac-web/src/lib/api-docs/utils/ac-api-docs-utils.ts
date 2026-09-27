@@ -118,24 +118,24 @@ export class AcApiDocUtils {
 
       switch (typeName) {
         case 'number':
-          propSchema.type = Number.isInteger(value) ? 'integer' : 'number';
+          propSchema['type'] = Number.isInteger(value) ? 'integer' : 'number';
           break;
         case 'boolean':
-          propSchema.type = 'boolean';
+          propSchema['type'] = 'boolean';
           break;
         case 'string':
-          propSchema.type = 'string';
+          propSchema['type'] = 'string';
           break;
         case 'object':
           if (Array.isArray(value)) {
-            propSchema.type = 'array';
-            propSchema.items = { type: 'object' }; // Default
+            propSchema['type'] = 'array';
+            propSchema['items'] = { type: 'object' }; // Default
           } else {
             propSchema['$ref'] = `#/components/schemas/${value?.constructor?.name || 'object'}`;
           }
           break;
         default:
-          propSchema.type = 'string';
+          propSchema['type'] = 'string';
           break;
       }
 

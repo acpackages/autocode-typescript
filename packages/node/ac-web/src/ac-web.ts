@@ -20,6 +20,10 @@ export * from './lib/annotations/ac-web-view.annotation';
 
 export * from './lib/api-docs/enums/ac-enum-api-data-format.enum';
 export * from './lib/api-docs/enums/ac-enum-api-data-type.enum';
+export * from './lib/api-docs/enums/ac-enum-api-doc-renderer.enum';
+export * from './lib/api-docs/enums/ac-enum-api-doc-asset-source.enum';
+export * from './lib/api-docs/models/ac-api-doc-ui-options.model';
+export * from './lib/api-docs/utils/ac-api-doc-ui-handler.utility';
 
 export * from './lib/api-docs/models/ac-api-doc-components.model';
 export * from './lib/api-docs/models/ac-api-doc-contact.model';

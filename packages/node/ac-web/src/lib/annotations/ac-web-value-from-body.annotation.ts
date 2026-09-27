@@ -4,7 +4,7 @@ export function AcWebValueFromBody(key?: string) {
     const metadataKey = 'ac:web:value-from-body';
 
     // Get existing metadata or initialize
-    const existingParams: Record<number, string> =
+    const existingParams: Record<number, string | undefined> =
       Reflect.getOwnMetadata(metadataKey, target, propertyKey) || {};
 
     // Assign the key to the parameter index

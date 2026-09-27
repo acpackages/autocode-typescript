@@ -40,6 +40,15 @@ export class AcWebResponse {
     return response;
   }
 
+  static html(params: { html: string; responseCode?: number }): AcWebResponse {
+    const response = new AcWebResponse();
+    response.responseCode = params.responseCode ?? AcEnumHttpResponseCode.Ok;
+    response.responseType = AcEnumWebResponseType.Html;
+    response.content = params.html;
+    response.headers['Content-Type'] = 'text/html; charset=utf-8';
+    return response;
+  }
+
   static notFound(): AcWebResponse {
     const response = new AcWebResponse();
     response.responseCode = AcEnumHttpResponseCode.NotFound;

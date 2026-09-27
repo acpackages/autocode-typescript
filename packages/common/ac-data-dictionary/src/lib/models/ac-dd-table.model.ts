@@ -153,6 +153,15 @@ export class AcDDTable {
     return '';
   }
 
+  getOrderByValue(): string {
+    for (const property of this.tableProperties) {
+      if (property.propertyName === AcEnumDDTableProperty.OrderBy) {
+        return property.propertyValue;
+      }
+    }
+    return '';
+  }
+
   fromJson({ jsonData }: { jsonData: any }): this {
     const json = { ...jsonData };
 

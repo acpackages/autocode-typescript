@@ -11,7 +11,7 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
 
   static readonly claimsKey = 'jwt_payload';
 
-  readonly name = 'AcWebJwtInterceptor';
+  override readonly name = 'AcWebJwtInterceptor';
 
   constructor({
     secretKey,
@@ -35,7 +35,7 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
     this.secretKey = secret;
   }
 
-  async onRequest({ request }: { request: AcWebRequest }): Promise<AcWebResponse | null> {
+  override async onRequest({ request }: { request: AcWebRequest }): Promise<AcWebResponse | null> {
     try {
       // Skip excluded paths
       const path = `/${(request.url || '').split('?')[0]}`.replace(/\/\//g, '/');
@@ -61,7 +61,7 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
       if (this.verifyToken) {
         claims = await this.verifyToken(token);
       } else if (this.secretKey) {
-        claims = AcEncryption.verifyToken({ token, secret: this.secretKey });
+        claims = (AcEncryption as any).verifyToken?.({ token, secret: this.secretKey }) ?? null;
       }
 
       if (!claims) {
@@ -100,7 +100,7 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
     secret: string;
     expiresInSeconds?: number;
   }): string {
-    return AcEncryption.generateToken({ data: payload, secret, expiresInSeconds });
+    return (AcEncryption as any).generateToken?.({ data: payload, secret, expiresInSeconds }) ?? '';
   }
 
   generateToken({
@@ -114,12 +114,6 @@ export class AcWebJwtInterceptor extends AcWebInterceptor {
   }): string {
     return AcWebJwtInterceptor.generateToken({ payload, secret, expiresInSeconds });
   }
-
-
-
-
-
-
 
   private _unauthorized(message: string): AcWebResponse {
     return AcWebResponse.json({
