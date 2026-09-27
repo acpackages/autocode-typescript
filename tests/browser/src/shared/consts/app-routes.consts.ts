@@ -24,9 +24,25 @@ export const APP_ROUTES = {
     editor:'/editor',
   },
   datagrid: {
-    local:'/datagrid/local',
-    onDemand:'/datagrid/on-demand',
-    tree:'/datagrid/tree'
+    local: '/datagrid/local',
+    onDemand: '/datagrid/on-demand',
+    tree: '/datagrid/tree',
+    columnResizing: '/datagrid/column-resizing',
+    columnDragging: '/datagrid/column-dragging',
+    rowDragging: '/datagrid/row-dragging',
+    nestedTreeRows: '/datagrid/nested-tree-rows',
+    rowGrouping: '/datagrid/row-grouping',
+    aggregates: '/datagrid/aggregates',
+    cellEditing: '/datagrid/cell-editing',
+    rowEditing: '/datagrid/row-editing',
+    rowPinning: '/datagrid/row-pinning',
+    columnPinning: '/datagrid/column-pinning',
+    masterDetail: '/datagrid/master-detail',
+    keyboardNavigation: '/datagrid/keyboard-navigation',
+    rowSelection: '/datagrid/row-selection',
+    statePersistence: '/datagrid/state-persistence',
+    sidePanel: '/datagrid/side-panel',
+    kitchenSink: '/datagrid/kitchen-sink'
   },
   draggable:{
     advanced: '/draggable/advanced',

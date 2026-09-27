@@ -6,4 +6,5 @@ export * from './enums/_enums.export';
 export * from './extensions/_extensions.export';
 export * from './interfaces/_interfaces.export';
 export * from './models/_models.export';
+export * from './helpers/_helpers.export';
 

@@ -34,5 +34,22 @@ export const AC_DATAGRID_CLASS_NAME = {
   acDatagridRowEven: 'ac-datagrid-row-even',
   acDatagridRowOdd: 'ac-datagrid-row-odd',
   acDatagridRowsContainer: 'ac-datagrid-rows-container',
-  acDatagridRowWrapper: 'ac-datagrid-row-wrapper'
+  acDatagridRowWrapper: 'ac-datagrid-row-wrapper',
+  acDatagridSelectAllCheckbox: 'ac-datagrid-select-all-checkbox',
+  acDatagridRowCheckbox: 'ac-datagrid-row-checkbox',
+  acDatagridRowDragHandle: 'ac-datagrid-row-drag-handle',
+  acDatagridRowExpandIcon: 'ac-datagrid-row-expand-icon',
+  acDatagridDetailExpandIcon: 'ac-datagrid-detail-expand-icon',
+  acDatagridRowNumber: 'ac-datagrid-row-number',
+  acDatagridRowNumberHeader: 'ac-datagrid-row-number-header',
+  acDatagridRowPinned: 'ac-datagrid-row-pinned',
+  acDatagridRowPinnedTop: 'ac-datagrid-row-pinned-top',
+  acDatagridRowPinnedBottom: 'ac-datagrid-row-pinned-bottom',
+  acDatagridGroupHeaderRow: 'ac-datagrid-group-header-row',
+  acDatagridDetailRow: 'ac-datagrid-detail-row',
+  acDatagridSidePanel: 'ac-datagrid-side-panel',
+  acDatagridDropIndicator: 'ac-datagrid-drop-indicator',
+  acDatagridRowDropIndicator: 'ac-datagrid-row-drop-indicator',
+  acDatagridSidePanelDropIndicator: 'ac-datagrid-side-panel-drop-indicator'
 }
+

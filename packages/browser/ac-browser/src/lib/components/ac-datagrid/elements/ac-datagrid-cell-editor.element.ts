@@ -21,10 +21,10 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   }
 
   destroy(): void {
-    acClearElement({element:this.element});
+    acClearElement({ element: this.element });
     this.element.remove();
     Object.freeze(this);
-    acNullifyInstanceProperties({instance:this});
+    acNullifyInstanceProperties({ instance: this });
   }
 
   focus() {
@@ -48,45 +48,60 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
     this.datagridColumn = this.datagridCell.datagridColumn;
     this.datagridRow = this.datagridCell.datagridRow;
     this.columnDefinition = this.datagridColumn.columnDefinition;
-    if (this.columnDefinition.cellInputElement) {
-      this.element = this.datagridCell.element!.ownerDocument.createElement(this.columnDefinition.cellInputElement);
-    }
-    else {
-      if (this.datagridColumn.columnDefinition.dataType == 'BOOLEAN') {
-        this.element = this.datagridCell.element!.ownerDocument.createElement('select');
-        this.element.append('<option value="true">true</option>');
-        this.element.append('<option value="false">false</option>')
+
+    // Use rawValue from args (honours valueGetter) then fall back to row data
+    const initialValue = args.rawValue !== undefined
+      ? args.rawValue
+      : this.datagridRow.data[this.datagridColumn.columnKey];
+
+    const ownerDoc = this.datagridCell.element?.ownerDocument ?? document;
+
+    if (this.columnDefinition.dataType == 'BOOLEAN') {
+      this.element = ownerDoc.createElement('select');
+      const optTrue = ownerDoc.createElement('option');
+      optTrue.value = 'true';
+      optTrue.text = 'true';
+      const optFalse = ownerDoc.createElement('option');
+      optFalse.value = 'false';
+      optFalse.text = 'false';
+      this.element.append(optTrue, optFalse);
+    } else {
+      this.element = ownerDoc.createElement('input');
+      if (this.columnDefinition.dataType == 'NUMBER') {
+        this.element.setAttribute('type', 'number');
+      } else if (this.columnDefinition.dataType == 'DATE') {
+        this.element.setAttribute('type', 'date');
+      } else if (this.columnDefinition.dataType == 'DATETIME') {
+        this.element.setAttribute('type', 'datetime-local');
       }
-      else {
-        this.element = this.datagridCell.element!.ownerDocument.createElement('input');
-        if (this.datagridColumn.columnDefinition.dataType == 'NUMBER') {
-          this.element.setAttribute('type', 'number');
-        }
-        else if (this.datagridColumn.columnDefinition.dataType == 'DATE') {
-          this.element.setAttribute('type', 'date');
-          this.element.type = 'date';
-        }
-        else if (this.datagridColumn.columnDefinition.dataType == 'DATETIME') {
-          this.element.setAttribute('type', 'datetime-local');
-        }
+    }
+
+    // Apply cellEditorElementAttrs (setAttribute style) and cellInputElementAttrs (property style)
+    if (this.columnDefinition.cellEditorElementAttrs) {
+      for (const key of Object.keys(this.columnDefinition.cellEditorElementAttrs)) {
+        this.element.setAttribute(key, String(this.columnDefinition.cellEditorElementAttrs[key]));
       }
     }
     if (this.columnDefinition.cellInputElementAttrs) {
-      for(const key of Object.keys(this.columnDefinition.cellInputElementAttrs)){
+      for (const key of Object.keys(this.columnDefinition.cellInputElementAttrs)) {
         this.element[key] = this.columnDefinition.cellInputElementAttrs[key];
       }
     }
-    this.initElement();
+
+    this.initElement(initialValue);
   }
 
   refresh(args: IAcDatagridCellElementArgs): void {
-    this.element.value = args.datagridCell.datagridRow.data[args.datagridCell.datagridColumn.columnKey];
-    if(this.datagridApi){
-      this.datagridApi.hooks.execute({hook:AC_DATAGRID_HOOK.CellEditorRefresh,args:this});
+    const value = args.rawValue !== undefined
+      ? args.rawValue
+      : args.datagridCell.datagridRow.data[args.datagridCell.datagridColumn.columnKey];
+    this.element.value = value ?? '';
+    if (this.datagridApi) {
+      this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.CellEditorRefresh, args: this });
     }
   }
 
-  initElement() {
+  initElement(initialValue?: any) {
     this.element.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId, this.datagridCell.cellId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridCell.datagridColumn.columnId);
@@ -94,7 +109,7 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput, element: this.element });
     this.element.style.height = "100%";
     this.element.style.width = "100%";
-    this.element.value = this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey];
+    this.element.value = initialValue ?? this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey] ?? '';
   }
 
 }

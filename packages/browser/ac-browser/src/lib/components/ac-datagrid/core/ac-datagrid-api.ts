@@ -150,6 +150,9 @@ export class AcDatagridApi {
   set data(value: any[]) {
     this.dataManager.data = value;
     this.dataManager.processRows();
+    if (this.treeConfig) {
+      this.initTreeRows();
+    }
     this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
     // this.events.execute({ event: AC_DATAGRID_EVENT.DataChange });
   }
@@ -166,10 +169,42 @@ export class AcDatagridApi {
     if (width < 30) width = 30;
     const oldWidth = datagridColumn.width;
     datagridColumn.width = width;
+
+    // 1. Update header cell DOM
+    const headerCell = this.datagrid?.datagridHeader?.datagridHeaderCells.find(
+      c => c.datagridColumn?.columnId === datagridColumn.columnId
+    );
+    headerCell?.setCellWidth();
+
+    // 2. Update all corresponding cells in the body DOM
+    if (this.datagrid?.datagridBody?.currentRows) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        const cellEl = rowEl.datagridCells.find(
+          c => c.datagridCell?.datagridColumn?.columnId === datagridColumn.columnId
+        );
+        cellEl?.setCellWidth();
+      }
+    }
+
+    // 3. Update pinned column offsets if pinned
+    if (this.datagridColumns.some(c => !!c.pinnedOn)) {
+      this.updatePinnedOffsets();
+      this.datagrid?.datagridHeader?.refresh();
+      if (this.datagrid?.datagridBody?.currentRows) {
+        for (const rowEl of this.datagrid.datagridBody.currentRows) {
+          rowEl.refresh();
+        }
+      }
+    }
+
+    this.datagrid?.datagridHeader?.syncScrollbarSpacer?.();
     this.hooks.execute({ hook: AC_DATAGRID_HOOK.ColumnWidthChange, args: { datagridColumn, width, oldWidth, datagridApi: this } });
   }
 
   get displayedDatagridRows(): IAcDatagridRow[] {
+    if (this.hasTreeOrGroup && this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
+      return (this.dataManager.allRows as IAcDatagridRow[]).filter(r => r && r.index !== -1);
+    }
     if (this.dataManager) {
       return this.dataManager.displayedRows as any[];
     }
@@ -188,15 +223,24 @@ export class AcDatagridApi {
     }
   }
 
-  private _rowHeight: number = 40;
+  private _rowHeight: number = 36;
   get rowHeight(): number {
     return this._rowHeight;
   }
   set rowHeight(value: number) {
     if (value != this._rowHeight) {
       this._rowHeight = value;
+      this.updateRowHeightDOM();
       this.hooks.execute({ hook: AC_DATAGRID_HOOK.RowHeightChange, args: { rowHeight: this.rowHeight } });
       this.events.execute({ event: AC_DATAGRID_HOOK.RowHeightChange, args: { rowHeight: this.rowHeight } });
+    }
+  }
+
+  updateRowHeightDOM() {
+    if (this.datagrid?.datagridBody?.currentRows) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        (rowEl as any).applyRowHeight?.();
+      }
     }
   }
 
@@ -310,6 +354,41 @@ export class AcDatagridApi {
   logger: AcLogger = new AcLogger({ logMessages: false });
   pagination: AcPaginationElement = new AcPaginationElement();
   rowValueChangeTimeoutDuration = 250;
+
+  // === New Capabilities State ===
+  selectionMode: 'none' | 'single' | 'multiple' = 'multiple';
+  allowSelection: boolean = false;
+  allowMultipleSelection: boolean = true;
+  selectOnRowClick: boolean = false;
+  selectedRowIds: Set<string> = new Set<string>();
+  lastSelectedRowIndex: number = -1;
+  allowRowDragging: boolean = false;
+  allowColumnResizing: boolean = true;
+  allowColumnDragging: boolean = true;
+  editMode: 'cell' | 'row' | 'none' = 'cell';
+  activeEditRowId: string | null = null;
+  groupBy: string[] = [];
+  expandedRowIds: Set<string> = new Set<string>();
+  expandedDetailRowIds: Set<string> = new Set<string>();
+  loadingRowIds: Set<string> = new Set<string>();
+  private _treeConfig?: { idKey: string; parentIdKey: string; childrenKey?: string };
+  get treeConfig(): { idKey: string; parentIdKey: string; childrenKey?: string } | undefined {
+    return this._treeConfig;
+  }
+  set treeConfig(value: { idKey: string; parentIdKey: string; childrenKey?: string } | undefined) {
+    this._treeConfig = value;
+    if (this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
+      this.initTreeRows();
+      this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    }
+  }
+  masterDetailConfig?: { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string };
+  onDemandTreeFunction?: (args: { parentRow: IAcDatagridRow, successCallback: (children: any[]) => void, errorCallback: (err: any) => void }) => void;
+  onDemandGroupFunction?: (args: { groupBy: string[], successCallback: (groups: any[]) => void, errorCallback: (err: any) => void }) => void;
+  pinnedTopRowIds: string[] = [];
+  pinnedBottomRowIds: string[] = [];
+  sidePanelOpen: boolean = false;
+  private _stateChangeTimer: any;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {
     this.datagrid = datagrid;
@@ -446,27 +525,35 @@ export class AcDatagridApi {
   }
 
   autoResizeColumn({ datagridColumn }: { datagridColumn: IAcDatagridColumn }) {
+    if (!datagridColumn) return;
     this.logger.log('Auto-resizing column', { field: datagridColumn.columnDefinition.field });
-    // let maxWidth: number = 0;
-    // for (const datagridRow of this.datagridRows) {
-    //   if (datagridRow.element) {
-    //     // for (const datagridCell of datagridRow.element.datagridCells) {
-    //     //   if (datagridCell.datagridColumn.columnId == datagridColumn.columnId) {
-    //     //     const cellWidth = datagridCell.containerWidth;
-    //     //     if (cellWidth > maxWidth) {
-    //     //       maxWidth = cellWidth;
-    //     //       this.logger.log('Updated maxWidth for cell', { rowId: datagridRow.rowId, width: maxWidth });
-    //     //     }
-    //     //   }
-    //     // }
-    //   }
-    // }
-    // if (maxWidth > 0) {
-    //   datagridColumn.width = maxWidth + 10;
-    //   this.logger.log('Set column width', { field: datagridColumn.columnDefinition.field, width: datagridColumn.width });
-    // } else {
-    //   this.logger.log('No valid width found, skipping resize');
-    // }
+    const minWidth = datagridColumn.columnDefinition.minWidth ?? 60;
+    const maxWidth = datagridColumn.columnDefinition.maxWidth ?? 800;
+    const title = datagridColumn.title || datagridColumn.columnKey || '';
+
+    let maxChars = title.length + 4;
+    const field = datagridColumn.columnDefinition.field || datagridColumn.columnKey;
+    const rows = this.displayedDatagridRows || [];
+    for (let i = 0; i < Math.min(rows.length, 100); i++) {
+      const val = rows[i]?.data?.[field];
+      if (val != null) {
+        const len = String(val).length;
+        if (len > maxChars) {
+          maxChars = len;
+        }
+      }
+    }
+    const calculatedWidth = Math.max(minWidth, Math.min(maxWidth, Math.round(maxChars * 9) + 40));
+    this.setColumnWidth({ datagridColumn, width: calculatedWidth });
+    this.events.execute({
+      event: AC_DATAGRID_EVENT.ColumnResize,
+      args: {
+        column: datagridColumn,
+        width: calculatedWidth,
+        datagridApi: this
+      }
+    });
+    this.notifyStateChange({ source: 'columnResize' });
   }
 
   deleteRow({ data, rowId, key, value, highlightCells = false }: { data?: any, rowId?: string, key?: string, value?: any, highlightCells?: boolean }) {
@@ -631,7 +718,11 @@ export class AcDatagridApi {
 
   getRow({ rowId, index, key, value }: { rowId?: string, index?: number, key?: string, value?: any }): IAcDatagridRow | undefined {
     let result: IAcDatagridRow | undefined;
-    for (const row of this.datagridRows) {
+    const sourceRows = (this.dataManager?.allRows && this.dataManager.allRows.length > 0)
+      ? (this.dataManager.allRows as IAcDatagridRow[])
+      : this.datagridRows;
+    for (const row of sourceRows) {
+      if (!row) continue;
       if (rowId != undefined && row.rowId == rowId) {
         result = row;
         break;
@@ -844,6 +935,8 @@ export class AcDatagridApi {
           }
           this.logger.log('Refreshed cell', { cellId: cell.cellId });
         }
+        // Flash the entire updated row
+        this.flashCells({ rowIds: [datagridRow.rowId], color: 'green' });
       }
       this.logger.log('Row update complete');
     } else {
@@ -852,8 +945,52 @@ export class AcDatagridApi {
     return datagridRow;
   }
 
+  /**
+   * Visually flash one or more cells with a colour-pulse animation.
+   * @param rowIds - optional list of rowIds to restrict flashing; if omitted, flashes all rows
+   * @param columnKeys - optional list of column keys to restrict flashing; if omitted, flashes all columns
+   * @param color - 'green' (default), 'red', or 'blue'
+   * @param duration - animation duration in milliseconds (default 800)
+   */
+  flashCells({
+    rowIds,
+    columnKeys,
+    color = 'green',
+    duration = 800
+  }: {
+    rowIds?: string[];
+    columnKeys?: string[];
+    color?: 'green' | 'red' | 'blue';
+    duration?: number;
+  } = {}) {
+    const flashClass = `ac-cell-flash-${color}`;
+    const rows = this.datagrid?.datagridBody?.currentRows ?? [];
+    for (const rowEl of rows) {
+      const rowRow = (rowEl as any).datagridRow;
+      if (rowIds && rowIds.length > 0 && rowRow && !rowIds.includes(rowRow.rowId)) {
+        continue;
+      }
+      const cells = (rowEl as any).datagridCells ?? [];
+      for (const cellEl of cells) {
+        const cellColKey = cellEl?.datagridCell?.datagridColumn?.columnKey;
+        if (columnKeys && columnKeys.length > 0 && cellColKey && !columnKeys.includes(cellColKey)) {
+          continue;
+        }
+        const el: HTMLElement | undefined = cellEl?.element ?? cellEl;
+        if (!el || typeof el.classList === 'undefined') continue;
+        el.classList.remove(flashClass);
+        // Force reflow to restart animation if already running
+        void (el as HTMLElement).offsetWidth;
+        el.classList.add(flashClass);
+        setTimeout(() => {
+          el.classList.remove(flashClass);
+        }, duration);
+      }
+    }
+  }
+
   getPinnedLeftOffset(datagridColumn: IAcDatagridColumn): number {
-    let offset = 0;
+    let offset = this.getInternalColumnWidth();
     const columns = this.datagridColumns
       .filter(c => c.visible && c.pinnedOn === 'LEFT')
       .sort((a, b) => a.index - b.index);
@@ -879,16 +1016,768 @@ export class AcDatagridApi {
   }
 
   openColumnCustomizer() {
-    let customizer = this.datagrid.querySelector('ac-datagrid-column-customizer') as any;
-    if (customizer) {
-      customizer.style.display = customizer.style.display === 'none' ? 'flex' : 'none';
-      if (customizer.style.display !== 'none') {
-        customizer.render();
+    this.toggleSidePanel(true);
+  }
+
+  private _customInternalColumnWidth?: number;
+
+  get internalColumnWidth(): number {
+    return this.getInternalColumnWidth();
+  }
+  set internalColumnWidth(value: number) {
+    this.setInternalColumnWidth(value);
+  }
+
+  setInternalColumnWidth(width: number) {
+    this._customInternalColumnWidth = Math.max(30, width);
+    this.updateInternalColumnDOM();
+    this.notifyStateChange({ source: 'internalColumnResize', payload: { width: this._customInternalColumnWidth } });
+  }
+
+  resetInternalColumnWidth() {
+    this._customInternalColumnWidth = undefined;
+    this.updateInternalColumnDOM();
+    this.notifyStateChange({ source: 'internalColumnReset' });
+  }
+
+  updateInternalColumnDOM() {
+    this.datagrid?.datagridHeader?.internalHeaderCell?.applyStyles();
+    if (this.datagrid?.datagridBody?.currentRows) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        (rowEl as any).internalCell?.applyStyles();
       }
+    }
+    this.updatePinnedOffsets();
+    this.datagrid?.datagridHeader?.syncScrollbarSpacer?.();
+  }
+
+  getInternalColumnWidth(): number {
+    let width = 0;
+    if (this.allowRowDragging) width += 22;
+    if (this.allowSelection) width += 24;
+    if (this.showRowNumbers) width += 34;
+    if (this.hasTreeOrGroup) width += 22;
+    if (this.hasMasterDetail) width += 22;
+    if (width <= 0) return 0;
+    if (this._customInternalColumnWidth !== undefined) {
+      return this._customInternalColumnWidth;
+    }
+    return Math.max(width + 8, 36);
+  }
+
+  get hasTreeOrGroup(): boolean {
+    return (this.groupBy && this.groupBy.length > 0) || !!this.treeConfig || this.datagridRows.some((r: any) => r.hasChildren || r.isGroupHeader);
+  }
+
+  get hasMasterDetail(): boolean {
+    return !!this.masterDetailConfig || this.datagridRows.some((r: any) => r.isMasterDetail);
+  }
+
+  notifyStateChange(info?: { source?: string, payload?: any }) {
+    if (this._stateChangeTimer) {
+      clearTimeout(this._stateChangeTimer);
+    }
+    this._stateChangeTimer = setTimeout(() => {
+      if (this.datagridState) {
+        this.datagridState.refresh();
+      }
+    }, 150);
+  }
+
+  isRowSelected(rowId: string): boolean {
+    return this.selectedRowIds.has(rowId);
+  }
+
+  getActiveCellCoordinate(): { rowIndex: number, columnIndex: number } {
+    const visibleCols = this.datagridColumns.filter(c => c.visible);
+    if (!this.activeDatagridCell) {
+      return { rowIndex: 0, columnIndex: 0 };
+    }
+    const rowIdx = this.displayedDatagridRows.findIndex(r => r.rowId === this.activeDatagridCell?.datagridRow.rowId);
+    const colIdx = visibleCols.findIndex(c => c.columnId === this.activeDatagridCell?.datagridColumn.columnId);
+    return {
+      rowIndex: rowIdx >= 0 ? rowIdx : 0,
+      columnIndex: colIdx >= 0 ? colIdx : 0
+    };
+  }
+
+  focusCell({ rowId, columnId }: { rowId: string, columnId: string }) {
+    const row = this.getRow({ rowId });
+    const col = this.getColumn({ columnId });
+    if (!row || !col) return;
+
+    if (this.datagrid?.datagridBody) {
+      const rowEl = (this.datagrid.datagridBody as any).currentRows?.find((r: any) => r.datagridRow?.rowId === rowId);
+      if (rowEl) {
+        const cellEl = rowEl.datagridCells?.find((c: any) => c.datagridCell?.datagridColumn?.columnId === columnId);
+        if (cellEl) {
+          this.setActiveCell({ datagridCell: cellEl.datagridCell });
+          cellEl.focus();
+          cellEl.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+          return;
+        }
+      }
+    }
+    this.setActiveCell({ rowIndex: row.index, columnIndex: col.index });
+  }
+
+  navigateCell({ rowDelta, colDelta }: { rowDelta: number, colDelta: number }) {
+    const visibleCols = this.datagridColumns.filter(c => c.visible);
+    if (visibleCols.length === 0 || this.displayedDatagridRows.length === 0) return;
+
+    const currentCoord = this.getActiveCellCoordinate();
+    let nextRowIdx = currentCoord.rowIndex + rowDelta;
+    let nextColIdx = currentCoord.columnIndex + colDelta;
+
+    if (nextColIdx >= visibleCols.length) {
+      if (nextRowIdx < this.displayedDatagridRows.length - 1) {
+        nextColIdx = 0;
+        nextRowIdx++;
+      } else {
+        nextColIdx = visibleCols.length - 1;
+      }
+    } else if (nextColIdx < 0) {
+      if (nextRowIdx > 0) {
+        nextColIdx = visibleCols.length - 1;
+        nextRowIdx--;
+      } else {
+        nextColIdx = 0;
+      }
+    }
+
+    nextRowIdx = Math.max(0, Math.min(this.displayedDatagridRows.length - 1, nextRowIdx));
+
+    const targetRow = this.displayedDatagridRows[nextRowIdx];
+    const targetCol = visibleCols[nextColIdx];
+    if (targetRow && targetCol) {
+      this.focusCell({ rowId: targetRow.rowId, columnId: targetCol.columnId });
+    }
+  }
+
+  selectRow({ rowId, isSelected, event }: { rowId: string, isSelected?: boolean, event?: MouseEvent }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+
+    if (this.selectionMode === 'single' || !this.allowMultipleSelection) {
+      this.selectedRowIds.clear();
+      this.selectedRowIds.add(rowId);
+      this.lastSelectedRowIndex = row.index;
     } else {
-      customizer = document.createElement('ac-datagrid-column-customizer') as any;
-      customizer.bindDatagridApi({ datagridApi: this });
-      this.datagrid.append(customizer);
+      if (event && event.shiftKey && this.lastSelectedRowIndex >= 0) {
+        const start = Math.min(this.lastSelectedRowIndex, row.index);
+        const end = Math.max(this.lastSelectedRowIndex, row.index);
+        for (let i = start; i <= end; i++) {
+          const r = this.displayedDatagridRows[i];
+          if (r) {
+            this.selectedRowIds.add(r.rowId);
+          }
+        }
+      } else {
+        const shouldSelect = isSelected !== undefined ? isSelected : !this.selectedRowIds.has(rowId);
+        if (shouldSelect) {
+          this.selectedRowIds.add(rowId);
+        } else {
+          this.selectedRowIds.delete(rowId);
+        }
+        this.lastSelectedRowIndex = row.index;
+      }
+    }
+
+    this.events.execute({
+      event: AC_DATAGRID_EVENT.RowSelectionChange,
+      args: {
+        selectedRowIds: Array.from(this.selectedRowIds),
+        selectedRows: this.getSelectedRows(),
+        selectedData: this.getSelectedData(),
+        datagridApi: this
+      }
+    });
+
+    this.refreshInternalCells();
+    this.notifyStateChange({ source: 'selection' });
+  }
+
+  selectAll() {
+    for (const row of this.displayedDatagridRows) {
+      this.selectedRowIds.add(row.rowId);
+    }
+    this.events.execute({
+      event: AC_DATAGRID_EVENT.RowSelectionChange,
+      args: {
+        selectedRowIds: Array.from(this.selectedRowIds),
+        selectedRows: this.getSelectedRows(),
+        selectedData: this.getSelectedData(),
+        datagridApi: this
+      }
+    });
+    this.refreshInternalCells();
+    this.notifyStateChange({ source: 'selection' });
+  }
+
+  clearSelection() {
+    this.selectedRowIds.clear();
+    this.lastSelectedRowIndex = -1;
+    this.events.execute({
+      event: AC_DATAGRID_EVENT.RowSelectionChange,
+      args: {
+        selectedRowIds: [],
+        selectedRows: [],
+        selectedData: [],
+        datagridApi: this
+      }
+    });
+    this.refreshInternalCells();
+    this.notifyStateChange({ source: 'selection' });
+  }
+
+  toggleSelectAll() {
+    if (this.selectedRowIds.size === this.displayedDatagridRows.length && this.displayedDatagridRows.length > 0) {
+      this.clearSelection();
+    } else {
+      this.selectAll();
+    }
+  }
+
+  getSelectedRows(): IAcDatagridRow[] {
+    return this.datagridRows.filter(r => this.selectedRowIds.has(r.rowId));
+  }
+
+  getSelectedData(): any[] {
+    return this.getSelectedRows().map(r => r.data);
+  }
+
+  refreshInternalCells() {
+    if (this.datagrid?.datagridHeader?.['internalHeaderCell']) {
+      this.datagrid.datagridHeader['internalHeaderCell'].refresh();
+    }
+    if (this.datagrid?.datagridBody) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        rowEl.refresh();
+      }
+    }
+  }
+
+  toggleRow({ rowId }: { rowId: string }) {
+    if (this.expandedRowIds.has(rowId)) {
+      this.collapseRow({ rowId });
+    } else {
+      this.expandRow({ rowId });
+    }
+  }
+
+  expandRow({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+
+    if (this.onDemandTreeFunction && row.hasChildren && !this.hasChildrenLoaded(row)) {
+      this.loadingRowIds.add(rowId);
+      this.refreshInternalCells();
+      this.onDemandTreeFunction({
+        parentRow: row,
+        successCallback: (children: any[]) => {
+          this.loadingRowIds.delete(rowId);
+          this.insertChildrenRows(row, children);
+          this.expandedRowIds.add(rowId);
+          row.isExpanded = true;
+          this.processTreeVisibility();
+          this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          this.refreshInternalCells();
+          this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
+          this.notifyStateChange({ source: 'tree' });
+        },
+        errorCallback: (err: any) => {
+          this.loadingRowIds.delete(rowId);
+          this.refreshInternalCells();
+          console.error('Failed to load tree child rows', err);
+        }
+      });
+      return;
+    }
+
+    this.expandedRowIds.add(rowId);
+    row.isExpanded = true;
+    this.processTreeVisibility();
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    this.refreshInternalCells();
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
+    this.notifyStateChange({ source: 'tree' });
+  }
+
+  collapseRow({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    this.expandedRowIds.delete(rowId);
+    row.isExpanded = false;
+    this.processTreeVisibility();
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    this.refreshInternalCells();
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowCollapse, args: { row, datagridApi: this } });
+    this.notifyStateChange({ source: 'tree' });
+  }
+
+  expandAllRows() {
+    const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || this.datagridRows;
+    for (const row of allRows) {
+      if (row.hasChildren || row.isGroupHeader) {
+        this.expandedRowIds.add(row.rowId);
+        row.isExpanded = true;
+      }
+    }
+    this.processTreeVisibility();
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    this.refreshInternalCells();
+    this.notifyStateChange({ source: 'tree' });
+  }
+
+  collapseAllRows() {
+    this.expandedRowIds.clear();
+    const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || this.datagridRows;
+    for (const row of allRows) {
+      row.isExpanded = false;
+    }
+    this.processTreeVisibility();
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    this.refreshInternalCells();
+    this.notifyStateChange({ source: 'tree' });
+  }
+
+  hasChildrenLoaded(row: IAcDatagridRow): boolean {
+    return (this.dataManager.allRows as IAcDatagridRow[]).some((r: any) => r && r.parentId === row.rowId);
+  }
+
+  insertChildrenRows(parentRow: IAcDatagridRow, children: any[]) {
+    if (!children || children.length === 0) return;
+    const allRows = this.dataManager.allRows as IAcDatagridRow[];
+    const parentIdx = allRows.findIndex((r: any) => r && r.rowId === parentRow.rowId);
+    if (parentIdx === -1) return;
+
+    const idKey = this.treeConfig?.idKey || 'id';
+    const childRows: IAcDatagridRow[] = children.map((c, i) => {
+      const rowId = String(c[idKey] ?? c[this.dataManager.uniqueIdKey] ?? Autocode.uuid());
+      return {
+        rowId,
+        data: c,
+        index: parentRow.index + 1 + i,
+        originalIndex: parentIdx + 1 + i,
+        extensionData: {},
+        parentId: parentRow.rowId,
+        level: (parentRow.level || 0) + 1,
+        hasChildren: !!(c.children && c.children.length > 0) || !!c.hasChildren
+      };
+    });
+
+    allRows.splice(parentIdx + 1, 0, ...childRows);
+    parentRow.hasChildren = true;
+  }
+
+  initTreeRows() {
+    if (!this.treeConfig) return;
+    const idKey = this.treeConfig.idKey || 'id';
+    const parentIdKey = this.treeConfig.parentIdKey || 'parentId';
+    const childrenKey = this.treeConfig.childrenKey || 'children';
+
+    const allRows = this.dataManager.allRows as IAcDatagridRow[];
+    if (!allRows || allRows.length === 0) return;
+
+    const rowMap = new Map<string, IAcDatagridRow>();
+    for (const r of allRows) {
+      if (!r || !r.data) continue;
+      const rowId = String(r.data[idKey] ?? r.rowId);
+      r.rowId = rowId;
+      const pId = r.data[parentIdKey];
+      r.parentId = pId != null ? String(pId) : undefined;
+      rowMap.set(rowId, r);
+    }
+
+    for (const r of allRows) {
+      if (!r || !r.data) continue;
+      const hasDirectChildren = allRows.some(child => child && child.parentId === r.rowId);
+      const hasChildrenProp = !!r.data.hasChildren || !!(r.data[childrenKey] && r.data[childrenKey].length > 0);
+      r.hasChildren = hasDirectChildren || hasChildrenProp;
+
+      let level = 0;
+      let currParentId = r.parentId;
+      const visited = new Set<string>();
+      while (currParentId && !visited.has(currParentId)) {
+        visited.add(currParentId);
+        level++;
+        const parent = rowMap.get(currParentId);
+        currParentId = parent ? parent.parentId : undefined;
+      }
+      r.level = level;
+    }
+
+    this.processTreeVisibility();
+  }
+
+  processTreeVisibility() {
+    if (!this.hasTreeOrGroup) {
+      return;
+    }
+    const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || [];
+    const rowMap = new Map<string, IAcDatagridRow>();
+    for (const r of allRows) {
+      if (r) rowMap.set(r.rowId, r);
+    }
+
+    let visibleIndex = 0;
+    for (const r of allRows) {
+      if (!r) continue;
+      let isVisible = true;
+      let currParentId = r.parentId;
+      const visited = new Set<string>();
+      while (currParentId && !visited.has(currParentId)) {
+        visited.add(currParentId);
+        if (!this.expandedRowIds.has(currParentId)) {
+          isVisible = false;
+          break;
+        }
+        const parent = rowMap.get(currParentId);
+        currParentId = parent ? parent.parentId : undefined;
+      }
+
+      if (isVisible) {
+        r.index = visibleIndex++;
+      } else {
+        r.index = -1;
+      }
+    }
+    this.dataManager.totalRows = visibleIndex;
+  }
+
+  toggleDetailRow({ rowId }: { rowId: string }) {
+    if (this.expandedDetailRowIds.has(rowId)) {
+      this.collapseDetailRow({ rowId });
+    } else {
+      this.expandDetailRow({ rowId });
+    }
+  }
+
+  expandDetailRow({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    this.expandedDetailRowIds.add(rowId);
+    row.isDetailExpanded = true;
+    if (row.element) {
+      (row.element as any).renderDetail?.();
+    }
+    this.refreshInternalCells();
+    this.events.execute({ event: AC_DATAGRID_EVENT.DetailRowExpand, args: { row, datagridApi: this } });
+    this.notifyStateChange({ source: 'masterDetail' });
+  }
+
+  collapseDetailRow({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    this.expandedDetailRowIds.delete(rowId);
+    row.isDetailExpanded = false;
+    if (row.element) {
+      (row.element as any).removeDetail?.();
+    }
+    this.refreshInternalCells();
+    this.events.execute({ event: AC_DATAGRID_EVENT.DetailRowCollapse, args: { row, datagridApi: this } });
+    this.notifyStateChange({ source: 'masterDetail' });
+  }
+
+  startRowEdit({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    this.activeEditRowId = rowId;
+    row.isRowEditing = true;
+    row.originalDataBackup = { ...row.data };
+    row.isDirty = false;
+    if (row.element) {
+      (row.element as any).enterRowEditMode?.();
+    }
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowEditingStart, args: { row, datagridApi: this } });
+  }
+
+  async saveRowEdit({ rowId }: { rowId: string }): Promise<boolean> {
+    const row = this.getRow({ rowId });
+    if (!row) return false;
+    if (row.element) {
+      const valid = (row.element as any).commitRowEdit?.();
+      if (valid === false) return false;
+    }
+    row.isRowEditing = false;
+    this.activeEditRowId = null;
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowEditSave, args: { row, data: row.data, datagridApi: this } });
+    this.notifyStateChange({ source: 'rowEdit' });
+    return true;
+  }
+
+  cancelRowEdit({ rowId }: { rowId: string }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    if (row.originalDataBackup) {
+      row.data = { ...row.originalDataBackup };
+    }
+    row.isRowEditing = false;
+    row.isDirty = false;
+    this.activeEditRowId = null;
+    if (row.element) {
+      (row.element as any).cancelRowEdit?.();
+    }
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowEditCancel, args: { row, datagridApi: this } });
+  }
+
+  pinRow({ rowId, position }: { rowId: string, position: 'top' | 'bottom' | null }) {
+    const row = this.getRow({ rowId });
+    if (!row) return;
+    this.pinnedTopRowIds = this.pinnedTopRowIds.filter(id => id !== rowId);
+    this.pinnedBottomRowIds = this.pinnedBottomRowIds.filter(id => id !== rowId);
+    if (position === 'top') {
+      this.pinnedTopRowIds.push(rowId);
+      row.pinned = 'top';
+    } else if (position === 'bottom') {
+      this.pinnedBottomRowIds.push(rowId);
+      row.pinned = 'bottom';
+    } else {
+      row.pinned = undefined;
+    }
+    if (this.datagrid?.datagridBody) {
+      (this.datagrid.datagridBody as any).renderPinnedRows?.();
+    }
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowPinChange, args: { row, position, datagridApi: this } });
+    this.notifyStateChange({ source: 'rowPin' });
+  }
+
+  getPinnedRows(): { top: IAcDatagridRow[], bottom: IAcDatagridRow[] } {
+    return {
+      top: this.pinnedTopRowIds.map(id => this.getRow({ rowId: id })).filter(Boolean) as IAcDatagridRow[],
+      bottom: this.pinnedBottomRowIds.map(id => this.getRow({ rowId: id })).filter(Boolean) as IAcDatagridRow[]
+    };
+  }
+
+  pinColumn({ columnId, pinnedOn }: { columnId: string, pinnedOn: 'LEFT' | 'RIGHT' | null }) {
+    const col = this.getColumn({ columnId });
+    if (!col) return;
+    col.pinnedOn = pinnedOn || undefined;
+    col.columnDefinition.pinnedOn = pinnedOn || undefined;
+    this.updatePinnedOffsets();
+    this.events.execute({ event: AC_DATAGRID_EVENT.ColumnPinChange, args: { column: col, pinnedOn, datagridApi: this } });
+    this.notifyStateChange({ source: 'columnPin' });
+  }
+
+  updatePinnedOffsets() {
+    if (this.datagrid?.datagridHeader) {
+      this.datagrid.datagridHeader.internalHeaderCell?.applyStyles();
+      for (const hCell of this.datagrid.datagridHeader.datagridHeaderCells) {
+        hCell.applyPinning();
+      }
+    }
+    if (this.datagrid?.datagridBody) {
+      for (const rEl of this.datagrid.datagridBody.currentRows) {
+        (rEl as any).internalCell?.applyStyles();
+        for (const cEl of (rEl as any).datagridCells || []) {
+          cEl.applyPinning();
+        }
+      }
+    }
+  }
+
+  moveColumn({ fromIndex, toIndex }: { fromIndex: number, toIndex: number }) {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= this.datagridColumns.length || toIndex >= this.datagridColumns.length) return;
+    const [moved] = this.datagridColumns.splice(fromIndex, 1);
+    this.datagridColumns.splice(toIndex, 0, moved);
+    this.datagridColumns.forEach((c, idx) => {
+      c.index = idx;
+      c.columnDefinition.index = idx;
+    });
+    this.updatePinnedOffsets();
+    if (this.datagrid?.datagridHeader) {
+      this.datagrid.datagridHeader.render();
+    }
+    if (this.datagrid?.datagridBody) {
+      this.datagrid.datagridBody.setDisplayedRows();
+    }
+    this.events.execute({ event: AC_DATAGRID_EVENT.ColumnPositionChange, args: { oldIndex: fromIndex, newIndex: toIndex, column: moved, datagridApi: this } });
+    this.notifyStateChange({ source: 'columnReorder' });
+  }
+
+  moveRow({ fromIndex, toIndex }: { fromIndex: number, toIndex: number }) {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+    const rows = this.dataManager.allRows;
+    if (fromIndex >= rows.length || toIndex >= rows.length) return;
+    const [moved] = rows.splice(fromIndex, 1);
+    rows.splice(toIndex, 0, moved);
+    rows.forEach((r, idx) => {
+      if (r) {
+        r.originalIndex = idx;
+        r.index = idx;
+      }
+    });
+    this.dataManager.processRows();
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowPositionChange, args: { oldIndex: fromIndex, newIndex: toIndex, row: moved, datagridApi: this } });
+    this.notifyStateChange({ source: 'rowReorder' });
+  }
+
+  calculateAggregates(rows: IAcDatagridRow[]): Record<string, any> {
+    const result: Record<string, any> = {};
+    for (const col of this.datagridColumns) {
+      const aggFn = col.columnDefinition.aggregate || col.columnDefinition.groupAggregateFunction;
+      if (!aggFn) continue;
+
+      const field = col.columnDefinition.field;
+      const values = rows.map(r => r.data ? r.data[field] : undefined).filter(v => v !== undefined && v !== null);
+      if (typeof aggFn === 'function') {
+        result[field] = aggFn(values);
+      } else {
+        const fnName = String(aggFn).toUpperCase();
+        const numValues = values.map(Number).filter(v => !isNaN(v));
+        if (fnName === 'COUNT') {
+          result[field] = values.length;
+        } else if (fnName === 'SUM') {
+          result[field] = numValues.reduce((a, b) => a + b, 0);
+        } else if (fnName === 'AVG' || fnName === 'AVERAGE') {
+          result[field] = numValues.length > 0 ? numValues.reduce((a, b) => a + b, 0) / numValues.length : 0;
+        } else if (fnName === 'MIN') {
+          result[field] = numValues.length > 0 ? Math.min(...numValues) : 0;
+        } else if (fnName === 'MAX') {
+          result[field] = numValues.length > 0 ? Math.max(...numValues) : 0;
+        }
+      }
+    }
+    return result;
+  }
+
+  getAggregates({ groupKey }: { groupKey?: string } = {}): Record<string, any> {
+    if (groupKey) {
+      const groupRow = this.getRow({ rowId: groupKey });
+      return groupRow?.groupAggregates || {};
+    }
+    return this.calculateAggregates(this.datagridRows);
+  }
+
+  setGroupBy({ fields }: { fields: string[] }) {
+    this.groupBy = fields || [];
+    if (this.groupBy.length === 0) {
+      this.dataManager.processRows();
+      return;
+    }
+
+    if (this.onDemandGroupFunction) {
+      this.onDemandGroupFunction({
+        groupBy: this.groupBy,
+        successCallback: (groups: any[]) => {
+          this.buildClientGroupRows();
+          this.processTreeVisibility();
+          this.notifyStateChange({ source: 'group' });
+        },
+        errorCallback: (err: any) => {
+          console.error('Failed on demand group fetch', err);
+        }
+      });
+    } else {
+      this.buildClientGroupRows();
+      this.processTreeVisibility();
+      this.notifyStateChange({ source: 'group' });
+    }
+  }
+
+  private buildClientGroupRows() {
+    const rawData = this.data;
+    if (!rawData || rawData.length === 0) return;
+
+    const groupField = this.groupBy[0];
+    const groupsMap = new Map<any, any[]>();
+    for (const item of rawData) {
+      const key = item[groupField] ?? '(Empty)';
+      if (!groupsMap.has(key)) {
+        groupsMap.set(key, []);
+      }
+      groupsMap.get(key)!.push(item);
+    }
+
+    const newAllRows: IAcDatagridRow[] = [];
+    let rowIndex = 0;
+    for (const [groupVal, items] of groupsMap) {
+      const groupRowId = `group_${groupField}_${String(groupVal)}`;
+      const childRows: IAcDatagridRow[] = items.map(d => ({
+        rowId: d[this.dataManager.uniqueIdKey] || Autocode.uuid(),
+        data: d,
+        index: rowIndex++,
+        originalIndex: rowIndex,
+        extensionData: {},
+        parentId: groupRowId,
+        level: 1
+      }));
+
+      const groupAggregates = this.calculateAggregates(childRows);
+      const groupHeaderRow: IAcDatagridRow = {
+        rowId: groupRowId,
+        data: { [groupField]: groupVal },
+        index: rowIndex++,
+        originalIndex: rowIndex,
+        extensionData: {},
+        isGroupHeader: true,
+        groupField,
+        groupValue: groupVal,
+        groupCount: items.length,
+        groupAggregates,
+        hasChildren: true,
+        isExpanded: this.expandedRowIds.has(groupRowId),
+        level: 0
+      };
+
+      newAllRows.push(groupHeaderRow);
+      newAllRows.push(...childRows);
+    }
+
+    this.dataManager.allRows = newAllRows as any;
+  }
+
+  toggleSidePanel(open?: boolean) {
+    this.sidePanelOpen = open !== undefined ? open : !this.sidePanelOpen;
+    const sidePanel = this.datagrid?.querySelector('ac-datagrid-side-panel') as any;
+    if (sidePanel) {
+      if (this.sidePanelOpen) {
+        sidePanel.open();
+      } else {
+        sidePanel.close();
+      }
+    }
+    this.notifyStateChange({ source: 'sidePanel' });
+  }
+
+  applyState(state: IAcDatagridState) {
+    if (!state) return;
+    if (state.columns && state.columns.length > 0) {
+      const colMap = new Map<string, any>();
+      for (const c of state.columns) {
+        if (c.field) colMap.set(c.field, c);
+      }
+      for (const col of this.datagridColumns) {
+        const saved = colMap.get(col.columnDefinition.field);
+        if (saved) {
+          if (saved.width !== undefined) col.width = saved.width;
+          if (saved.isVisible !== undefined) col.visible = saved.isVisible;
+          if (saved.pinnedOn !== undefined) col.pinnedOn = saved.pinnedOn;
+          if (saved.index !== undefined) col.index = saved.index;
+        }
+      }
+      this.datagridColumns.sort((a, b) => a.index - b.index);
+    }
+
+    if (state.groupBy) {
+      this.setGroupBy({ fields: state.groupBy });
+    }
+
+    if (state.expandedRowIds) {
+      this.expandedRowIds = new Set(state.expandedRowIds);
+      this.processTreeVisibility();
+    }
+
+    if (state.sidePanelOpen !== undefined) {
+      this.toggleSidePanel(state.sidePanelOpen);
+    }
+
+    this.updatePinnedOffsets();
+    if (this.datagrid?.datagridHeader) {
+      this.datagrid.datagridHeader.render();
+    }
+    if (this.datagrid?.datagridBody) {
+      this.datagrid.datagridBody.setDisplayedRows();
     }
   }
 }

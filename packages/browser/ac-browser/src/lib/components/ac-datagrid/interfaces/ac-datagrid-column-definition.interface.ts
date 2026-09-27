@@ -97,9 +97,12 @@ export interface IAcDatagridColumnDefinition {
   }) */
   tooltipField?: string;
 
-  useCellEditorForRenderer?:boolean;
-  isGroup?:boolean;
-  groupAggregateFunction?:AcEnumDatagridColumnAggregateFunction;
+  useCellEditorForRenderer?: boolean;
+  isGroup?: boolean;
+  groupAggregateFunction?: AcEnumDatagridColumnAggregateFunction;
+  aggregate?: AcEnumDatagridColumnAggregateFunction | 'sum' | 'avg' | 'min' | 'max' | 'count' | ((values: any[]) => any);
+  validator?: (value: any, row?: any, column?: any) => boolean | string;
+  allowReorder?: boolean;
 
   /* AcDoc({
     "description": A function or expression to format a value, should return a string."

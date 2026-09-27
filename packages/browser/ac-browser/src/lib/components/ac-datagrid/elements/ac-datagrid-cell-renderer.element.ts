@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { dateFormat, parseDateTimeString } from "@autocode-ts/ac-extensions";
 import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
-import { IAcDatagridCellRenderer, IAcDatagridCellElementArgs, IAcDatagridColumn, AC_DATAGRID_HOOK, IAcDatagridCell, AcEnumDatagridColumnDataType } from "../_ac-datagrid.export";
+import { IAcDatagridCellRenderer, IAcDatagridCellElementArgs, IAcDatagridColumn, AC_DATAGRID_HOOK, IAcDatagridCell } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
+import { acResolveCellValue } from "../helpers/ac-datagrid-value-helper";
 
-export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
+export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer {
   private datagridApi!: AcDatagridApi;
-  private datagridCell!:IAcDatagridCell;
-  private datagridColumn!:IAcDatagridColumn;
+  private datagridCell!: IAcDatagridCell;
+  private datagridColumn!: IAcDatagridColumn;
   public element: HTMLElement = document.createElement('div');
 
   destroy?(): void {
-    acClearElement({element:this.element});
+    acClearElement({ element: this.element });
     this.element.remove();
     Object.freeze(this);
   }
@@ -29,10 +29,10 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
     this.initElement();
   }
 
-  initElement(){
-    this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId,this.datagridCell.cellId);
-    this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId,this.datagridCell.datagridColumn.columnId);
-    this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId,this.datagridCell.datagridRow.rowId);
+  initElement() {
+    this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId, this.datagridCell.cellId);
+    this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridCell.datagridColumn.columnId);
+    this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId, this.datagridCell.datagridRow.rowId);
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellRenderer, element: this.element });
     this.element.style.height = "100%";
     this.element.style.width = "max-content";
@@ -41,31 +41,20 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer{
 
   refresh(args: IAcDatagridCellElementArgs): void {
     this.render();
-    if(this.datagridApi){
-      this.datagridApi.hooks.execute({hook:AC_DATAGRID_HOOK.CellRendererRefresh,args:this});
+    if (this.datagridApi) {
+      this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.CellRendererRefresh, args: this });
     }
   }
 
   render() {
-    const value = this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey];
-    acClearElement({element:this.element});
-    if (value !== undefined && value !== null) {
-      if (this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Date) {
-        const parseValue = parseDateTimeString(value);
-        if (parseValue) {
-          this.element.innerHTML = dateFormat(parseValue, 'dd-MM-yyyy');
-        }
-      }
-      else if (this.datagridColumn && this.datagridColumn.columnDefinition.dataType == AcEnumDatagridColumnDataType.Datetime) {
-        const parseValue = parseDateTimeString(value);
-        if (parseValue) {
-          this.element.innerHTML = dateFormat(parseValue, 'dd-MM-yyyy HH:mm a');
-        }
-      }
-      else {
-        this.element.innerHTML = value;
-      }
+    const { formattedValue } = acResolveCellValue({
+      row: this.datagridCell.datagridRow,
+      column: this.datagridColumn,
+      datagridApi: this.datagridApi
+    });
+    acClearElement({ element: this.element });
+    if (formattedValue !== '') {
+      this.element.innerHTML = formattedValue;
     }
   }
-
 }

@@ -10,3 +10,6 @@ export * from './ac-datagrid-internal-header-cell.element';
 export * from './ac-datagrid-row.element';
 export * from './ac-datagrid.element';
 export * from "./ac-datagrid-column-customizer.element";
+export * from "./ac-datagrid-side-panel.element";
+export * from "./ac-datagrid-functional-cell-renderer";
+export * from "./ac-datagrid-functional-cell-editor";

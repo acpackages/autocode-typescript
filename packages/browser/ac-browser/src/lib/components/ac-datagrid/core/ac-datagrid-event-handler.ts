@@ -585,4 +585,118 @@ export class AcDatagridEventHandler {
       this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.StateChange, args: eventArgs });
     }
   }
+
+  handleKeyDown(event: KeyboardEvent) {
+    if (!this.datagridApi) return;
+
+    const key = event.key;
+    const isEditing = (this.datagridApi.activeDatagridCell?.element as any)?.isEditing || !!this.datagridApi.activeEditRowId;
+
+    if (isEditing) {
+      if (key === 'Enter') {
+        event.preventDefault();
+        if (this.datagridApi.activeEditRowId) {
+          this.datagridApi.saveRowEdit({ rowId: this.datagridApi.activeEditRowId });
+        } else if ((this.datagridApi.activeDatagridCell?.element as any)?.isEditing) {
+          (this.datagridApi.activeDatagridCell!.element as any).commitEdit();
+          this.datagridApi.navigateCell({ rowDelta: 1, colDelta: 0 });
+        }
+        return;
+      } else if (key === 'Escape') {
+        event.preventDefault();
+        if (this.datagridApi.activeEditRowId) {
+          this.datagridApi.cancelRowEdit({ rowId: this.datagridApi.activeEditRowId });
+        } else if ((this.datagridApi.activeDatagridCell?.element as any)?.isEditing) {
+          (this.datagridApi.activeDatagridCell!.element as any).cancelEdit();
+        }
+        return;
+      } else if (key === 'Tab') {
+        event.preventDefault();
+        if ((this.datagridApi.activeDatagridCell?.element as any)?.isEditing) {
+          (this.datagridApi.activeDatagridCell!.element as any).commitEdit();
+        }
+        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: event.shiftKey ? -1 : 1 });
+        return;
+      }
+      return;
+    }
+
+    switch (key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: -1, colDelta: 0 });
+        break;
+
+      case 'ArrowDown':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: 1, colDelta: 0 });
+        break;
+
+      case 'ArrowLeft':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: -1 });
+        break;
+
+      case 'ArrowRight':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: 1 });
+        break;
+
+      case 'Tab':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: event.shiftKey ? -1 : 1 });
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (this.datagridApi.editMode === 'row') {
+          if (this.datagridApi.activeDatagridCell) {
+            this.datagridApi.startRowEdit({ rowId: this.datagridApi.activeDatagridCell.datagridRow.rowId });
+          }
+        } else {
+          (this.datagridApi.activeDatagridCell?.element as any)?.startEdit();
+        }
+        break;
+
+      case 'Home':
+        event.preventDefault();
+        {
+          const coord = this.datagridApi.getActiveCellCoordinate();
+          this.datagridApi.navigateCell({
+            rowDelta: event.ctrlKey ? -coord.rowIndex : 0,
+            colDelta: -coord.columnIndex
+          });
+        }
+        break;
+
+      case 'End':
+        event.preventDefault();
+        {
+          const coord = this.datagridApi.getActiveCellCoordinate();
+          const visCols = this.datagridApi.datagridColumns.filter(c => c.visible);
+          this.datagridApi.navigateCell({
+            rowDelta: event.ctrlKey ? (this.datagridApi.displayedDatagridRows.length - 1 - coord.rowIndex) : 0,
+            colDelta: visCols.length - 1 - coord.columnIndex
+          });
+        }
+        break;
+
+      case 'PageUp':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: -10, colDelta: 0 });
+        break;
+
+      case 'PageDown':
+        event.preventDefault();
+        this.datagridApi.navigateCell({ rowDelta: 10, colDelta: 0 });
+        break;
+
+      case ' ':
+        if (this.datagridApi.allowSelection && this.datagridApi.activeDatagridCell) {
+          event.preventDefault();
+          this.datagridApi.selectRow({ rowId: this.datagridApi.activeDatagridCell.datagridRow.rowId });
+        }
+        break;
+    }
+  }
 }

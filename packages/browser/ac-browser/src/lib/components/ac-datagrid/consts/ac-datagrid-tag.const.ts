@@ -7,5 +7,7 @@ export const AC_DATAGRID_TAG = {
   datagridInternalHeaderCell:'ac-datagrid-internal-header-cell',
   datagridInternalCell:'ac-datagrid-internal-cell',
   datagridRow:'ac-datagrid-row',
-  datagridBody:'ac-datagrid-body'
+  datagridBody:'ac-datagrid-body',
+  datagridSidePanel:'ac-datagrid-side-panel',
+  datagridColumnCustomizer:'ac-datagrid-column-customizer'
 }

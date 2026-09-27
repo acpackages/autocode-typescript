@@ -50,9 +50,23 @@ export const SIDEBAR_NAV: IAppNavItem[] = [
   {
     label: 'Datagrid',
     children: [
+      { label: 'Kitchen Sink', route: APP_ROUTES.datagrid.kitchenSink },
       { label: 'Local Data', route: APP_ROUTES.datagrid.local },
-      { label: 'On-Demand Data', route: APP_ROUTES.datagrid.onDemand },
-      { label: 'Tree Data', route: APP_ROUTES.datagrid.tree }
+      { label: 'Column Resizing', route: APP_ROUTES.datagrid.columnResizing },
+      { label: 'Column Dragging', route: APP_ROUTES.datagrid.columnDragging },
+      { label: 'Row Dragging', route: APP_ROUTES.datagrid.rowDragging },
+      { label: 'Nested / Tree Rows', route: APP_ROUTES.datagrid.nestedTreeRows },
+      { label: 'Row Grouping', route: APP_ROUTES.datagrid.rowGrouping },
+      { label: 'Aggregates', route: APP_ROUTES.datagrid.aggregates },
+      { label: 'Cell Editing', route: APP_ROUTES.datagrid.cellEditing },
+      { label: 'Row Editing', route: APP_ROUTES.datagrid.rowEditing },
+      { label: 'Row Pinning', route: APP_ROUTES.datagrid.rowPinning },
+      { label: 'Column Pinning', route: APP_ROUTES.datagrid.columnPinning },
+      { label: 'Master / Detail', route: APP_ROUTES.datagrid.masterDetail },
+      { label: 'Keyboard Navigation', route: APP_ROUTES.datagrid.keyboardNavigation },
+      { label: 'Row Selection', route: APP_ROUTES.datagrid.rowSelection },
+      { label: 'State Persistence', route: APP_ROUTES.datagrid.statePersistence },
+      { label: 'Side Panel', route: APP_ROUTES.datagrid.sidePanel }
     ],
   },
   {
