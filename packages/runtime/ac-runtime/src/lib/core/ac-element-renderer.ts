@@ -81,17 +81,51 @@ export class AcElementRenderer {
     return Array.from(template.content.childNodes);
   }
 
-  destroy(): void {
-    if (this.startComment && this.endComment && this.parentRenderer) {
-      this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
-    } else {
-      this.removeNodesBetweenComments({ startComment: this.rendererStartCommentText, endComment: this.rendererEndCommentText });
+  protected destroyNestedElements(node: Node): void {
+    if (node && node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as Element;
+      if (typeof (el as any).destroy === 'function') {
+        (el as any).destroy();
+      } else {
+        const nested = el.querySelectorAll?.('[ac-runtime-element]');
+        if (nested) {
+          nested.forEach((child: any) => {
+            if (typeof child.destroy === 'function') {
+              child.destroy();
+            }
+          });
+        }
+      }
     }
+  }
+
+  updateContext(contextUpdates: any): void {
+    this.context = { ...this.context, ...contextUpdates };
+    for (const key of Object.keys(this.childRenderers)) {
+      this.childRenderers[key].updateContext(contextUpdates);
+    }
+  }
+
+  destroy(): void {
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
     }
-    this.nodes = [];
     this.childRenderers = {};
+
+    if (this.startComment && this.endComment && this.parentRenderer) {
+      this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
+    } else if (this.rendererStartCommentText && this.rendererEndCommentText) {
+      this.removeNodesBetweenComments({ startComment: this.rendererStartCommentText, endComment: this.rendererEndCommentText });
+    }
+
+    for (const node of this.nodes) {
+      this.destroyNestedElements(node);
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    }
+    this.nodes = [];
+
     this.commentCache.clear();
     for (const unsub of this.subscriptions) {
       unsub();
@@ -105,20 +139,30 @@ export class AcElementRenderer {
   }
 
   protected subscribeArrayItem(path: string, callback: () => void): void {
-    if(this.parentRenderer && this.parentRenderer instanceof AcElementArrayRenderer){
-      const arrayRenderer:AcElementArrayRenderer = this.parentRenderer as AcElementArrayRenderer;
-      if(arrayRenderer.indexVar && arrayRenderer.itemVar && arrayRenderer.expression){
-        const key = path.replaceAll(`${arrayRenderer.itemVar}.`,`${arrayRenderer.expression}.${this.context[arrayRenderer.indexVar]}.`);
-        this.subscribe(key,callback);
+    let resolvedKey = path;
+    let currentRenderer: AcElementRenderer | undefined = this;
+    while (currentRenderer) {
+      if (currentRenderer.parentRenderer && currentRenderer.parentRenderer instanceof AcElementArrayRenderer) {
+        const arrayRenderer = currentRenderer.parentRenderer as AcElementArrayRenderer;
+        if (arrayRenderer.indexVar && arrayRenderer.itemVar && arrayRenderer.expression) {
+          const idx = currentRenderer.context ? currentRenderer.context[arrayRenderer.indexVar] : undefined;
+          if (idx !== undefined) {
+            resolvedKey = resolvedKey.replaceAll(`${arrayRenderer.itemVar}.`, `${arrayRenderer.expression}.${idx}.`);
+          }
+        }
       }
+      currentRenderer = currentRenderer.parentRenderer;
+    }
+    if (resolvedKey) {
+      this.subscribe(resolvedKey, callback);
     }
   }
 
   destroyChildRenderer(targetId: string): void {
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
-      childRenderer.destroy();
       delete this.childRenderers[targetId];
+      childRenderer.destroy();
     }
   }
 
@@ -178,7 +222,18 @@ export class AcElementRenderer {
       return cached;
     }
 
-    // 1. If this renderer has its own nodes, search within this.nodes first (prevents cross-contamination across loop items)
+    // 1. If searching for this renderer's own boundary comments (startComment or endComment),
+    // and this renderer has a parentRenderer, delegate to parentRenderer because boundary
+    // comments were defined in parentRenderer's scope.
+    if ((commentText === this.startComment || commentText === this.endComment) && this.parentRenderer) {
+      const comment = this.parentRenderer.findComment(commentText);
+      if (comment) {
+        this.commentCache.set(commentText, comment);
+        return comment;
+      }
+    }
+
+    // 2. If this renderer has its own nodes, search within this.nodes first (prevents cross-contamination across loop items)
     if (this.nodes && this.nodes.length > 0) {
       for (let i = 0; i < this.nodes.length; i++) {
         const rootNode = this.nodes[i];
@@ -205,39 +260,72 @@ export class AcElementRenderer {
       }
     }
 
-    // 2. Otherwise search within rootElement, scoped strictly between this.startComment and this.endComment
-    const walker = document.createTreeWalker(
-      this.rootElement,
-      NodeFilter.SHOW_COMMENT
-    );
-
-    let current = walker.nextNode();
-    let childFound: boolean = this.startComment == undefined || this.isRoot == true;
-    let targetResult: Comment | null = null;
-
-    while (current) {
-      if (current.nodeType === Node.COMMENT_NODE) {
-        const val = (current as Comment).nodeValue?.trim();
-        if (val) {
-          if (!childFound && val === this.startComment) {
-            childFound = true;
+    // 3. If this renderer is delimited by startComment and endComment, search strictly between them
+    if (this.startComment && this.endComment) {
+      const startEl = this.findComment(this.startComment);
+      const endEl = this.findComment(this.endComment);
+      if (startEl && endEl && startEl.parentNode) {
+        let current: Node | null = startEl.nextSibling;
+        while (current && current !== endEl) {
+          if (current.nodeType === Node.COMMENT_NODE) {
+            const val = (current as Comment).nodeValue?.trim();
+            if (val) {
+              this.commentCache.set(val, current as Comment);
+              if (val === commentText) {
+                return current as Comment;
+              }
+            }
           }
-          if (childFound) {
+          if (current.nodeType === Node.ELEMENT_NODE) {
+            const walker = document.createTreeWalker(current, NodeFilter.SHOW_COMMENT);
+            let child = walker.nextNode();
+            while (child) {
+              const val = (child as Comment).nodeValue?.trim();
+              if (val) {
+                this.commentCache.set(val, child as Comment);
+                if (val === commentText) {
+                  return child as Comment;
+                }
+              }
+              child = walker.nextNode();
+            }
+          }
+          current = current.nextSibling;
+        }
+      }
+    }
+
+    // 4. If not found and parentRenderer exists, delegate to parentRenderer
+    if (this.parentRenderer) {
+      const comment = this.parentRenderer.findComment(commentText);
+      if (comment) {
+        this.commentCache.set(commentText, comment);
+        return comment;
+      }
+    }
+
+    // 5. Fallback: search within rootElement if isRoot or no parentRenderer
+    if (this.isRoot || !this.parentRenderer) {
+      const walker = document.createTreeWalker(
+        this.rootElement,
+        NodeFilter.SHOW_COMMENT
+      );
+      let current = walker.nextNode();
+      while (current) {
+        if (current.nodeType === Node.COMMENT_NODE) {
+          const val = (current as Comment).nodeValue?.trim();
+          if (val) {
             this.commentCache.set(val, current as Comment);
             if (val === commentText) {
-              targetResult = current as Comment;
-              break;
-            }
-            if (val === this.endComment) {
-              break;
+              return current as Comment;
             }
           }
         }
+        current = walker.nextNode();
       }
-      current = walker.nextNode();
     }
 
-    return targetResult;
+    return null;
   }
 
   getChildRenderer(targetId: string): AcElementRenderer | undefined {
@@ -399,11 +487,10 @@ export class AcElementRenderer {
         const commentText = (current as Comment).data.trim();
         if (commentText.includes('-start')) {
           const identifier = commentText.replace('-start', '');
-          if (this.childRenderers[identifier] != undefined) {
-            delete this.childRenderers[identifier];
-          }
+          this.destroyChildRenderer(identifier);
         }
       }
+      this.destroyNestedElements(current);
       current.remove();
       current = null;
       current = next;
@@ -609,8 +696,30 @@ export class AcElementArrayRenderer extends AcElementRenderer {
     });
   }
 
-  refreshLoop({ items }: { items: any[] }) {
-    for(const key of Object.keys(this.childRenderers)){
+  override destroy(): void {
+    if (this.expression && this.bindingId && this.rootElement) {
+      this.rootElement.unsubscribeArrayPropertyChangeListeners({
+        property: this.expression,
+        bindingId: this.bindingId
+      });
+    }
+    super.destroy();
+    this.loopItemRendererMap = {};
+    this.loopItemOrder = [];
+  }
+
+  override updateContext(contextUpdates: any): void {
+    this.context = { ...this.context, ...contextUpdates };
+    for (const key of Object.keys(this.childRenderers)) {
+      this.childRenderers[key].updateContext(contextUpdates);
+    }
+  }
+
+  refreshLoop({ items, context }: { items: any[]; context?: any }) {
+    if (context) {
+      this.context = { ...this.context, ...context };
+    }
+    for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
     }
     this.parentRenderer?.removeNodesBetweenComments({ startComment: `${this.targetId}-start`, endComment: `${this.targetId}-end` });
@@ -666,7 +775,7 @@ export class AcElementArrayRenderer extends AcElementRenderer {
   updateChildRendererContext(targetId: string, contextUpdates: any): void {
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
-      childRenderer.context = { ...childRenderer.context, ...contextUpdates };
+      childRenderer.updateContext(contextUpdates);
     }
   }
 }

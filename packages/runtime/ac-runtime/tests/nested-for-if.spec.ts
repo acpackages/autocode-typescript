@@ -305,4 +305,494 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
     expect(rowItems[0].querySelector('.badge')?.textContent).toBe('T1');
     expect(rowItems[1].querySelector('.badge')).toBeNull();
   });
+
+  it('renders nested ac:for loops into their respective parent loop items without leaking into item 0', () => {
+    const groupsStart = document.createComment('for-groups-start');
+    const groupsEnd = document.createComment('for-groups-end');
+    host.appendChild(groupsStart);
+    host.appendChild(groupsEnd);
+
+    class ProductItemRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml(
+          `<span class="prod">${this.context.group.name}: ${this.context.prod}</span>`
+        );
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+      override render() {
+        this.createRendererNodes();
+      }
+    }
+
+    class GroupItemRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml(`
+          <div class="group-box">
+            <h4 class="group-title">${this.context.group.name}</h4>
+            <!--prod-for-start--><!--prod-for-end-->
+          </div>
+        `);
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+
+      override render() {
+        this.createRendererNodes();
+        this.updateProdLoop();
+      }
+
+      updateProdLoop() {
+        if (!this.childRenderers['prod-for']) {
+          const innerArray = new AcElementArrayRenderer({
+            targetId: 'prod-for',
+            startComment: 'prod-for-start',
+            endComment: 'prod-for-end',
+            parentRenderer: this,
+            context: { ...this.context },
+            rootElement: this.rootElement,
+            childRendererClass: ProductItemRenderer,
+          });
+          this.childRenderers['prod-for'] = innerArray;
+          innerArray.initLoop({
+            itemVar: 'prod',
+            indexVar: 'j',
+            expression: 'group.products',
+            bindingId: 'b_prod',
+            items: this.context.group.products,
+          });
+        } else {
+          const innerArray = this.childRenderers['prod-for'] as AcElementArrayRenderer;
+          innerArray.context = { ...this.context };
+          innerArray.refreshLoop({
+            items: this.context.group.products,
+            context: { ...this.context },
+          });
+        }
+      }
+    }
+
+    const rootRenderer = new AcElementRenderer({
+      targetId: 'root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+    rootRenderer.nodes = [host];
+
+    const outerArray = new AcElementArrayRenderer({
+      targetId: 'for-groups',
+      startComment: 'for-groups-start',
+      endComment: 'for-groups-end',
+      parentRenderer: rootRenderer,
+      context: {},
+      rootElement,
+      childRendererClass: GroupItemRenderer,
+    });
+
+    outerArray.initLoop({
+      itemVar: 'group',
+      indexVar: 'i',
+      expression: 'groups',
+      bindingId: 'b_groups',
+      items: [
+        { name: 'Group A', products: ['A1', 'A2'] },
+        { name: 'Group B', products: ['B1', 'B2', 'B3'] },
+        { name: 'Group C', products: ['C1'] },
+      ],
+    });
+
+    const groupBoxes = host.querySelectorAll('.group-box');
+    expect(groupBoxes.length).toBe(3);
+
+    // Group A (Item 0)
+    const prodsA = groupBoxes[0].querySelectorAll('.prod');
+    expect(prodsA.length).toBe(2);
+    expect(prodsA[0].textContent).toBe('Group A: A1');
+    expect(prodsA[1].textContent).toBe('Group A: A2');
+
+    // Group B (Item 1) - Crucial: Must render inside Group B, NOT inside Group A!
+    const prodsB = groupBoxes[1].querySelectorAll('.prod');
+    expect(prodsB.length).toBe(3);
+    expect(prodsB[0].textContent).toBe('Group B: B1');
+    expect(prodsB[1].textContent).toBe('Group B: B2');
+    expect(prodsB[2].textContent).toBe('Group B: B3');
+
+    // Group C (Item 2)
+    const prodsC = groupBoxes[2].querySelectorAll('.prod');
+    expect(prodsC.length).toBe(1);
+    expect(prodsC[0].textContent).toBe('Group C: C1');
+
+    // Verify Group A did NOT receive Group B or Group C's elements
+    expect(groupBoxes[0].querySelectorAll('.prod').length).toBe(2);
+
+    // Refresh the inner loop of Group B
+    const groupBRenderer = (outerArray as any).childRenderers[(outerArray as any).loopItemOrder[1]];
+    expect(groupBRenderer).toBeDefined();
+    groupBRenderer.context.group.products = ['B_Updated_1'];
+    groupBRenderer.updateProdLoop();
+
+    const prodsBUpdated = groupBoxes[1].querySelectorAll('.prod');
+    expect(prodsBUpdated.length).toBe(1);
+    expect(prodsBUpdated[0].textContent).toBe('Group B: B_Updated_1');
+    // Group A still intact
+    expect(groupBoxes[0].querySelectorAll('.prod').length).toBe(2);
+  });
+
+  it('removes and destroys element, renderer, child renderers and nested custom elements on destroy', () => {
+    let childDestroyed = false;
+
+    class MockChildElement extends AcRuntimeElement {
+      override connectedCallback() {}
+    }
+    if (!customElements.get('mock-child-el')) {
+      customElements.define('mock-child-el', MockChildElement);
+    }
+
+    const childEl = document.createElement('mock-child-el') as any;
+    childEl.acRuntimeInstance = {
+      acOnDestroy: () => {
+        childDestroyed = true;
+      },
+    };
+
+    class ItemWithChildRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml('<div class="item-card"><span>Card</span></div>');
+        this.nodes[0].appendChild(childEl);
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+      override render() {
+        this.createRendererNodes();
+      }
+    }
+
+    const startComment = document.createComment('item-start');
+    const endComment = document.createComment('item-end');
+    host.appendChild(startComment);
+    host.appendChild(endComment);
+
+    const rootRenderer = new AcElementRenderer({
+      targetId: 'root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+    rootRenderer.nodes = [host];
+
+    const itemRenderer = new ItemWithChildRenderer({
+      targetId: 'item',
+      startComment: 'item-start',
+      endComment: 'item-end',
+      parentRenderer: rootRenderer,
+      context: {},
+      rootElement,
+    });
+    rootRenderer.childRenderers['item'] = itemRenderer;
+    itemRenderer.render();
+
+    expect(host.querySelector('.item-card')).not.toBeNull();
+    expect(host.querySelector('mock-child-el')).not.toBeNull();
+
+    // Destroy item renderer
+    itemRenderer.destroy();
+
+    // Nodes between comments should be removed from DOM
+    expect(host.querySelector('.item-card')).toBeNull();
+    expect(host.querySelector('mock-child-el')).toBeNull();
+    // Nested custom element's acOnDestroy should have been invoked
+    expect(childDestroyed).toBe(true);
+
+    // Destroy root element
+    let rootDestroyed = false;
+    rootElement.acRuntimeInstance.acOnDestroy = () => {
+      rootDestroyed = true;
+    };
+    rootElement.elementRenderer = rootRenderer;
+    rootElement.destroy();
+
+    expect(rootDestroyed).toBe(true);
+    expect(rootElement.parentNode).toBeNull();
+  });
+
+  it('renders nested previewRows (tbody > tr > td) and columnMappingRows (select > option) with complete isolation and correct context', () => {
+    // ─── Part 1: previewRows table test ───
+    const tableHost = document.createElement('div');
+    host.appendChild(tableHost);
+    tableHost.innerHTML = `
+      <table>
+        <!--preview-for-start--><!--preview-for-end-->
+      </table>
+    `;
+
+    // Cell renderer for "cell of row"
+    class CellRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml(`<td class="cell">${this.context.cell}</td>`);
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+      override render() {
+        this.createRendererNodes();
+      }
+    }
+
+    // Row renderer for "row of previewRows"
+    class PreviewRowRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml(`
+          <tbody>
+            <tr>
+              <!--cell-for-start--><!--cell-for-end-->
+            </tr>
+          </tbody>
+        `);
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+
+      override render() {
+        this.createRendererNodes();
+        const innerArray = new AcElementArrayRenderer({
+          targetId: 'cell-for',
+          startComment: 'cell-for-start',
+          endComment: 'cell-for-end',
+          parentRenderer: this,
+          context: { ...this.context },
+          rootElement: this.rootElement,
+          childRendererClass: CellRenderer,
+        });
+        this.childRenderers['cell-for'] = innerArray;
+        innerArray.initLoop({
+          itemVar: 'cell',
+          indexVar: '__index',
+          expression: 'row',
+          bindingId: 'b_cell',
+          items: this.context.row,
+        });
+      }
+    }
+
+    const rootRenderer = new AcElementRenderer({
+      targetId: 'root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+    rootRenderer.nodes = [tableHost];
+
+    const previewArrayRenderer = new AcElementArrayRenderer({
+      targetId: 'preview-for',
+      startComment: 'preview-for-start',
+      endComment: 'preview-for-end',
+      parentRenderer: rootRenderer,
+      context: {},
+      rootElement,
+      childRendererClass: PreviewRowRenderer,
+    });
+
+    const previewData = [
+      ['R0-C0', 'R0-C1', 'R0-C2'],
+      ['R1-C0', 'R1-C1', 'R1-C2'],
+      ['R2-C0', 'R2-C1', 'R2-C2'],
+    ];
+
+    previewArrayRenderer.initLoop({
+      itemVar: 'row',
+      indexVar: '__index',
+      expression: 'previewRows',
+      bindingId: 'b_preview',
+      items: previewData,
+    });
+
+    const tbodies = tableHost.querySelectorAll('tbody');
+    expect(tbodies.length).toBe(3);
+
+    for (let r = 0; r < 3; r++) {
+      const cells = tbodies[r].querySelectorAll('td.cell');
+      expect(cells.length).toBe(3);
+      expect(cells[0].textContent).toBe(`R${r}-C0`);
+      expect(cells[1].textContent).toBe(`R${r}-C1`);
+      expect(cells[2].textContent).toBe(`R${r}-C2`);
+    }
+
+    // ─── Part 2: columnMappingRows with select and option test ───
+    const mappingHost = document.createElement('div');
+    host.appendChild(mappingHost);
+    mappingHost.innerHTML = `
+      <div class="mapping-container">
+        <!--mapping-for-start--><!--mapping-for-end-->
+      </div>
+    `;
+
+    // Option renderer for "field of row.availableFields"
+    class OptionRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        const selected = this.context.row.selectedField === this.context.field.key;
+        this.nodes = this.createNodesFromHtml(
+          `<option value="${this.context.field.key}" ${selected ? 'selected' : ''}>${this.context.field.label}</option>`
+        );
+        if (selected) {
+          (this.nodes.find(n => n.nodeName === 'OPTION') as HTMLOptionElement).selected = true;
+        }
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+      override render() {
+        this.createRendererNodes();
+      }
+    }
+
+    // Mapping row renderer for "row of columnMappingRows"
+    class MappingRowRenderer extends AcElementRenderer {
+      override createRendererNodes() {
+        this.nodes = this.createNodesFromHtml(`
+          <div class="mtl-mapping-row">
+            <span class="col-name">${this.context.row.column}</span>
+            <select class="form-select">
+              <!--opt-for-start--><!--opt-for-end-->
+            </select>
+          </div>
+        `);
+        if (this.parentRenderer && this.startComment && this.endComment) {
+          this.parentRenderer.appendNodesBetweenComments({
+            startComment: this.startComment,
+            endComment: this.endComment,
+            nodes: this.nodes,
+          });
+        }
+      }
+
+      override render() {
+        this.createRendererNodes();
+        const innerArray = new AcElementArrayRenderer({
+          targetId: 'opt-for',
+          startComment: 'opt-for-start',
+          endComment: 'opt-for-end',
+          parentRenderer: this,
+          context: { ...this.context },
+          rootElement: this.rootElement,
+          childRendererClass: OptionRenderer,
+        });
+        this.childRenderers['opt-for'] = innerArray;
+        innerArray.initLoop({
+          itemVar: 'field',
+          indexVar: '__index',
+          expression: 'row.availableFields',
+          bindingId: 'b_opts',
+          items: this.context.row.availableFields,
+        });
+      }
+    }
+
+    const mappingRootRenderer = new AcElementRenderer({
+      targetId: 'mapping-root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+    mappingRootRenderer.nodes = [mappingHost];
+
+    const mappingArrayRenderer = new AcElementArrayRenderer({
+      targetId: 'mapping-for',
+      startComment: 'mapping-for-start',
+      endComment: 'mapping-for-end',
+      parentRenderer: mappingRootRenderer,
+      context: {},
+      rootElement,
+      childRendererClass: MappingRowRenderer,
+    });
+
+    const mappingData = [
+      {
+        column: 'Date',
+        selectedField: 'entry_time',
+        availableFields: [
+          { key: '__skip__', label: 'Skip' },
+          { key: 'entry_time', label: 'Transaction Date' },
+          { key: 'amount', label: 'Amount' },
+        ],
+      },
+      {
+        column: 'Description',
+        selectedField: 'desc',
+        availableFields: [
+          { key: '__skip__', label: 'Skip' },
+          { key: 'desc', label: 'Description' },
+          { key: 'amount', label: 'Amount' },
+        ],
+      },
+      {
+        column: 'Amount',
+        selectedField: 'amount',
+        availableFields: [
+          { key: '__skip__', label: 'Skip' },
+          { key: 'amount', label: 'Amount' },
+        ],
+      },
+    ];
+
+    mappingArrayRenderer.initLoop({
+      itemVar: 'row',
+      indexVar: '__index',
+      expression: 'columnMappingRows',
+      bindingId: 'b_map',
+      items: mappingData,
+    });
+
+    const mappingRows = mappingHost.querySelectorAll('.mtl-mapping-row');
+    expect(mappingRows.length).toBe(3);
+
+    // Row 0: Date
+    expect(mappingRows[0].querySelector('.col-name')?.textContent).toBe('Date');
+    const opts0 = mappingRows[0].querySelectorAll('select option');
+    expect(opts0.length).toBe(3);
+    expect((mappingRows[0].querySelector('select') as HTMLSelectElement).value).toBe('entry_time');
+
+    // Row 1: Description
+    expect(mappingRows[1].querySelector('.col-name')?.textContent).toBe('Description');
+    const opts1 = mappingRows[1].querySelectorAll('select option');
+    expect(opts1.length).toBe(3);
+    expect((mappingRows[1].querySelector('select') as HTMLSelectElement).value).toBe('desc');
+
+    // Row 2: Amount
+    expect(mappingRows[2].querySelector('.col-name')?.textContent).toBe('Amount');
+    const opts2 = mappingRows[2].querySelectorAll('select option');
+    expect(opts2.length).toBe(2);
+    expect((mappingRows[2].querySelector('select') as HTMLSelectElement).value).toBe('amount');
+
+    // Crucial: opts0 should NOT have options from Row 1 or Row 2
+    expect(opts0.length).toBe(3);
+  });
 });

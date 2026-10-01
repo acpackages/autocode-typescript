@@ -279,10 +279,16 @@ function generateBlockRenderers(
         else {
           updateStatement += `
             if(newValue === null || newValue === undefined || (newValue as any) === false){\n
-              this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}')\n;
+              this.${getElementPropertyName({ targetId })}.removeAttribute('${binding.target}');\n
+              if ('${binding.target}' in this.${getElementPropertyName({ targetId })}) {\n
+                try { (this.${getElementPropertyName({ targetId })} as any)['${binding.target}'] = typeof (this.${getElementPropertyName({ targetId })} as any)['${binding.target}'] === 'boolean' ? false : ''; } catch(e) {}\n
+              }\n
             }\n
             else{\n
               this.${getElementPropertyName({ targetId })}.setAttribute('${binding.target}', String(newValue));\n
+              if ('${binding.target}' in this.${getElementPropertyName({ targetId })}) {\n
+                try { (this.${getElementPropertyName({ targetId })} as any)['${binding.target}'] = typeof (this.${getElementPropertyName({ targetId })} as any)['${binding.target}'] === 'boolean' ? true : newValue; } catch(e) {}\n
+              }\n
             }\n`;
         }
         updateStatement += `}\n`;
@@ -309,8 +315,8 @@ function generateBlockRenderers(
         break;
       case 'for':
         updateStatement = `
-        if(this.childRenderers['${binding.bindingId}'] == undefined){
-          this.childRenderers['${binding.bindingId}'] = new AcElementArrayRenderer({
+        if(this.childRenderers['${binding.bindingId}'] == undefined && this.childRenderers['${binding.targetId}'] == undefined){
+          const arrayRenderer = new AcElementArrayRenderer({
             targetId: '${binding.targetId}',
             startComment: '${binding.targetId}-start',
             endComment: '${binding.targetId}-end',
@@ -319,10 +325,14 @@ function generateBlockRenderers(
             rootElement: this.rootElement,
             childRendererClass: ${getRendererClassName({ className, suffix: `ForItem$${binding.bindingId}` })}
           });
-          (this.childRenderers['${binding.bindingId}'] as any).ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
-          (this.childRenderers['${binding.bindingId}'] as any).initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:${JSON.stringify(binding.expression)},bindingId:'${binding.bindingId}',items:newValue});
+          (arrayRenderer as any).ownedTargetIds = ${JSON.stringify(binding.ownedElementIds || [])};
+          this.childRenderers['${binding.bindingId}'] = arrayRenderer;
+          this.childRenderers['${binding.targetId}'] = arrayRenderer;
+          (arrayRenderer as any).initLoop({itemVar:'${binding.itemVar}',indexVar:'${binding.indexVar || '__index'}',expression:${JSON.stringify(binding.expression)},bindingId:'${binding.bindingId}',items:newValue});
         } else {
-          (this.childRenderers['${binding.bindingId}'] as any).refreshLoop({items:newValue});
+          const arrayRenderer = (this.childRenderers['${binding.targetId}'] || this.childRenderers['${binding.bindingId}']) as any;
+          arrayRenderer.context = { ...this.context };
+          arrayRenderer.refreshLoop({items:newValue, context: { ...this.context }});
         }\n
         `;
         break;
@@ -430,7 +440,6 @@ function generateBlockRenderers(
         subscriptionCode += `this.${updaterName}(true);\n `;
       }
 
-      subscriptionCode += `this.${updaterName}(true);\n `;
       // initialStateCode += `this.executeChangeListener({targetId:'${tid}',force:true,isFirst:true});\n`;
       for (const property of binding.properties || []) {
         subscriptionCode += ` this.subscribe('${property}', () => this.${updaterName}());\n`;

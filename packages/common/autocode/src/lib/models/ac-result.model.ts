@@ -97,7 +97,7 @@ export class AcResult {
     value?: any;
     message?: string;
     logger?: AcLogger;
-  }= {}): AcResult {
+  } = {}): AcResult {
     this.status = 'success';
     this.code = AcResult.CodeSuccess;
 
@@ -121,7 +121,7 @@ export class AcResult {
     value?: any;
     message?: string;
     logger?: AcLogger;
-  }): AcResult {
+  } = {}): AcResult {
     this.status = 'failure';
     this.code = AcResult.CodeFailure;
 

@@ -45,13 +45,29 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   disconnectedCallback(): void {
-    if ((this.acRuntimeInstance as any).acOnDestroy) {
+    if (this.acRuntimeInstance && (this.acRuntimeInstance as any).acOnDestroy) {
       (this.acRuntimeInstance as any).acOnDestroy();
+      (this.acRuntimeInstance as any).acOnDestroy = undefined;
+    }
+    const nestedElements = this.querySelectorAll?.('[ac-runtime-element]');
+    if (nestedElements) {
+      nestedElements.forEach((el: any) => {
+        if (el !== this && typeof el.destroy === 'function') {
+          el.destroy();
+        }
+      });
     }
     if (this.elementRenderer) {
       this.elementRenderer.destroy();
     }
     (this.elementRenderer as any) = null;
+  }
+
+  destroy(): void {
+    this.disconnectedCallback();
+    if (this.parentNode) {
+      this.remove();
+    }
   }
 
   private static hexIdCounter = 0;
