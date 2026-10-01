@@ -623,7 +623,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
 
   if (stylesScript != '') {
     code += `\nconst __styles = \`${selector} {\n ${stylesScript} \n}\`;
-  let __styleRefCount = 0;`;
+  let __stylesInjected = false;`;
   }
 
   code += `
@@ -661,7 +661,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
   if (stylesScript != '') {
     code += `override connectedCallback() {
       super.connectedCallback();
-      if (__styles) {
+      if (__styles && !__stylesInjected) {
         let styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"], style[data-ac-style="${selector}"]\`);
         if (!styleEl) {
           styleEl = document.createElement('style');
@@ -670,23 +670,7 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
           styleEl.innerHTML = __styles;
           document.head.appendChild(styleEl);
         }
-        __styleRefCount++;
-      }
-    }
-
-    override disconnectedCallback() {
-      super.disconnectedCallback();
-      if (__styles) {
-        __styleRefCount = Math.max(0, __styleRefCount - 1);
-        let hasOtherInstances = false;
-        try {
-          hasOtherInstances = Array.from(document.querySelectorAll('${selector}')).some(el => el !== this);
-        } catch (e) {}
-        if (!hasOtherInstances) {
-          __styleRefCount = 0;
-          const styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"], style[data-ac-style="${selector}"]\`);
-          styleEl?.remove();
-        }
+        __stylesInjected = true;
       }
     }
 

@@ -796,10 +796,10 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
     expect(opts0.length).toBe(3);
   });
 
-  it('does not remove style element when another element with the same tag is still in DOM', () => {
+  it('retains style element permanently in head across element lifecycles (Method 5)', () => {
     const selector = 'test-multi-style-el';
     const styles = `${selector} { color: blue; }`;
-    let styleRefCount = 0;
+    let stylesInjected = false;
 
     class TestStyledElement extends AcRuntimeElement {
       constructor() {
@@ -808,27 +808,15 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
       }
       override connectedCallback() {
         super.connectedCallback();
-        let styleEl = document.head.querySelector(`style[data-ac-style="${selector}"]`);
-        if (!styleEl) {
-          styleEl = document.createElement('style');
-          styleEl.setAttribute('data-ac-style', selector);
-          styleEl.innerHTML = styles;
-          document.head.appendChild(styleEl);
-        }
-        styleRefCount++;
-      }
-
-      override disconnectedCallback() {
-        super.disconnectedCallback();
-        styleRefCount = Math.max(0, styleRefCount - 1);
-        let hasOtherInstances = false;
-        try {
-          hasOtherInstances = Array.from(document.querySelectorAll(selector)).some(el => el !== this);
-        } catch (e) {}
-        if (!hasOtherInstances) {
-          styleRefCount = 0;
-          const styleEl = document.head.querySelector(`style[data-ac-style="${selector}"]`);
-          styleEl?.remove();
+        if (!stylesInjected) {
+          let styleEl = document.head.querySelector(`style[data-ac-style="${selector}"]`);
+          if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.setAttribute('data-ac-style', selector);
+            styleEl.innerHTML = styles;
+            document.head.appendChild(styleEl);
+          }
+          stylesInjected = true;
         }
       }
     }
@@ -844,21 +832,29 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
     document.body.appendChild(el2);
 
     // Style element should exist in head
-    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).not.toBeNull();
+    const styleElsBefore = document.head.querySelectorAll(`style[data-ac-style="${selector}"]`);
+    expect(styleElsBefore.length).toBe(1);
 
     // Destroy first element (el2 is still in DOM)
     el1.destroy();
     expect(document.body.contains(el1)).toBe(false);
     expect(document.body.contains(el2)).toBe(true);
 
-    // Style element MUST STILL BE IN HEAD because el2 is still in DOM!
+    // Style element MUST STILL BE IN HEAD
     expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).not.toBeNull();
 
     // Destroy second element
     el2.destroy();
     expect(document.body.contains(el2)).toBe(false);
 
-    // Now that NO elements with this tag exist in DOM, style should be removed
-    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).toBeNull();
+    // In Method 5, style element remains in head permanently (no layout thrashing, no premature removal)
+    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).not.toBeNull();
+
+    // Reconnecting a new element uses the existing style without adding duplicate tags
+    const el3 = document.createElement(selector) as TestStyledElement;
+    document.body.appendChild(el3);
+    const styleElsAfter = document.head.querySelectorAll(`style[data-ac-style="${selector}"]`);
+    expect(styleElsAfter.length).toBe(1);
+    el3.destroy();
   });
 });

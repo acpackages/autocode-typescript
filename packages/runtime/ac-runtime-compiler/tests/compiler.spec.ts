@@ -384,7 +384,7 @@ describe('ComponentCompiler', () => {
     // Should replace :host with tag selector and wrap
     expect(results[0].code).toContain('test-styles');
     expect(results[0].code).toContain('__styles');
-    expect(results[0].code).toContain('__styleRefCount');
+    expect(results[0].code).toContain('__stylesInjected');
     expect(results[0].code).toContain("data-ac-style");
   });
 
