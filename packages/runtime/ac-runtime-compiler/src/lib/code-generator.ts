@@ -662,8 +662,9 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     code += `override connectedCallback() {
       super.connectedCallback();
       if (__styles) {
-        if (__styleRefCount === 0) {
-          const styleEl = document.createElement('style');
+        let styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"], style[data-ac-style="${selector}"]\`);
+        if (!styleEl) {
+          styleEl = document.createElement('style');
           styleEl.setAttribute('ac-element-style', '${selector}');
           styleEl.setAttribute('data-ac-style', '${selector}');
           styleEl.innerHTML = __styles;
@@ -676,8 +677,13 @@ export function acGenerateCustomElement(options: AcGenerateCustomElementOptions)
     override disconnectedCallback() {
       super.disconnectedCallback();
       if (__styles) {
-        __styleRefCount--;
-        if (__styleRefCount === 0) {
+        __styleRefCount = Math.max(0, __styleRefCount - 1);
+        let hasOtherInstances = false;
+        try {
+          hasOtherInstances = Array.from(document.querySelectorAll('${selector}')).some(el => el !== this);
+        } catch (e) {}
+        if (!hasOtherInstances) {
+          __styleRefCount = 0;
           const styleEl = document.head.querySelector(\`style[ac-element-style="${selector}"], style[data-ac-style="${selector}"]\`);
           styleEl?.remove();
         }

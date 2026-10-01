@@ -63,10 +63,15 @@ export class AcRuntimeElement extends HTMLElement {
     (this.elementRenderer as any) = null;
   }
 
+  private isDestroyed = false;
+
   destroy(): void {
-    this.disconnectedCallback();
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
     if (this.parentNode) {
       this.remove();
+    } else {
+      this.disconnectedCallback();
     }
   }
 
@@ -92,14 +97,16 @@ export class AcRuntimeElement extends HTMLElement {
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
-      if ((this.acRuntimeInstance as any).acOnInit) {
+      if (this.acRuntimeInstance && (this.acRuntimeInstance as any).acOnInit) {
         (this.acRuntimeInstance as any).acOnInit();
       }
     });
   }
 
   protected async render(): Promise<void> {
-    await this.elementRenderer.render();
+    if (this.elementRenderer) {
+      await this.elementRenderer.render();
+    }
   }
 
   protected async handleArrayPropertyChange({

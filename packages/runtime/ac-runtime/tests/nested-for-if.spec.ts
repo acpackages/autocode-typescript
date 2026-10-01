@@ -795,4 +795,70 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
     // Crucial: opts0 should NOT have options from Row 1 or Row 2
     expect(opts0.length).toBe(3);
   });
+
+  it('does not remove style element when another element with the same tag is still in DOM', () => {
+    const selector = 'test-multi-style-el';
+    const styles = `${selector} { color: blue; }`;
+    let styleRefCount = 0;
+
+    class TestStyledElement extends AcRuntimeElement {
+      constructor() {
+        super();
+        this.acRuntimeInstance = {};
+      }
+      override connectedCallback() {
+        super.connectedCallback();
+        let styleEl = document.head.querySelector(`style[data-ac-style="${selector}"]`);
+        if (!styleEl) {
+          styleEl = document.createElement('style');
+          styleEl.setAttribute('data-ac-style', selector);
+          styleEl.innerHTML = styles;
+          document.head.appendChild(styleEl);
+        }
+        styleRefCount++;
+      }
+
+      override disconnectedCallback() {
+        super.disconnectedCallback();
+        styleRefCount = Math.max(0, styleRefCount - 1);
+        let hasOtherInstances = false;
+        try {
+          hasOtherInstances = Array.from(document.querySelectorAll(selector)).some(el => el !== this);
+        } catch (e) {}
+        if (!hasOtherInstances) {
+          styleRefCount = 0;
+          const styleEl = document.head.querySelector(`style[data-ac-style="${selector}"]`);
+          styleEl?.remove();
+        }
+      }
+    }
+
+    if (!customElements.get(selector)) {
+      customElements.define(selector, TestStyledElement);
+    }
+
+    // Create 2 instances
+    const el1 = document.createElement(selector) as TestStyledElement;
+    const el2 = document.createElement(selector) as TestStyledElement;
+    document.body.appendChild(el1);
+    document.body.appendChild(el2);
+
+    // Style element should exist in head
+    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).not.toBeNull();
+
+    // Destroy first element (el2 is still in DOM)
+    el1.destroy();
+    expect(document.body.contains(el1)).toBe(false);
+    expect(document.body.contains(el2)).toBe(true);
+
+    // Style element MUST STILL BE IN HEAD because el2 is still in DOM!
+    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).not.toBeNull();
+
+    // Destroy second element
+    el2.destroy();
+    expect(document.body.contains(el2)).toBe(false);
+
+    // Now that NO elements with this tag exist in DOM, style should be removed
+    expect(document.head.querySelector(`style[data-ac-style="${selector}"]`)).toBeNull();
+  });
 });
