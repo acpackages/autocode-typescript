@@ -65,16 +65,15 @@ export class AcDataSortPopup {
         <span>${title}</span>
         <button class="ac-data-sort-popup-close" type="button">&times;</button>
       </div>
-      <div class="ac-data-sort-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
+      <div class="ac-data-sort-rows-container"></div>
       <div class="ac-data-sort-actions">
         ${this.isSingleFieldMode ? '' : '<button class="ac-data-sort-btn ac-data-sort-add-btn" type="button">Add</button>'}
         <button class="ac-data-sort-btn ac-data-sort-clear-btn" type="button">Clear</button>
-        <button class="ac-data-sort-btn ac-data-sort-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
+        <button class="ac-data-sort-btn ac-data-sort-apply-btn" type="button">Apply</button>
       </div>
     `;
 
     document.body.appendChild(this.popupElement);
-    this.popupElement.style.display = 'flex';
 
     const anchor = anchorElement ?? this.options.anchorElement ?? this.sortElement?.buttonElement ?? this.sortElement;
     if (anchor) {

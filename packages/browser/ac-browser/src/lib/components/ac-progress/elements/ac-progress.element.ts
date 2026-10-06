@@ -105,7 +105,7 @@ export class AcProgressBarElement extends AcElementBase {
     const val = this.value;
     const range = max - min;
     const percentage = range > 0 ? Math.min(100, Math.max(0, ((val - min) / range) * 100)) : 0;
-    this.style.width = `${percentage}%`;
+    this.style.setProperty('--ac-progress-width', `${percentage}%`);
     this.setAttribute('aria-valuenow', val.toString());
     this.setAttribute('aria-valuemin', min.toString());
     this.setAttribute('aria-valuemax', max.toString());

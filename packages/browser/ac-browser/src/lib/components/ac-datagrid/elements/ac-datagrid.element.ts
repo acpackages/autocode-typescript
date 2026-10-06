@@ -20,17 +20,44 @@ export class AcDatagridElement extends AcElementBase {
   datagridHeader?: AcDatagridHeaderElement;
   sidePanel?: AcDatagridSidePanelElement;
 
+  private resizeObserver?: ResizeObserver;
+  private lastContainerWidth: number = 0;
+  private resizeRafId: number | null = null;
+
+  get fillAvailableWidth(): boolean {
+    return this.datagridApi.fillAvailableWidth;
+  }
+  set fillAvailableWidth(value: boolean) {
+    this.datagridApi.fillAvailableWidth = value;
+  }
+
   connectedCallback(): void {
     super.connectedCallback();
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementConnected });
   }
 
   override destroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = undefined;
+    }
+    if (this.resizeRafId !== null) {
+      cancelAnimationFrame(this.resizeRafId);
+      this.resizeRafId = null;
+    }
     this.datagridApi.destroy();
     super.destroy();
   }
 
   disconnectedCallback(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = undefined;
+    }
+    if (this.resizeRafId !== null) {
+      cancelAnimationFrame(this.resizeRafId);
+      this.resizeRafId = null;
+    }
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementDisconnected });
     super.disconnectedCallback();
   }
@@ -44,6 +71,7 @@ export class AcDatagridElement extends AcElementBase {
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagrid, element: this });
 
     this.mainRowElement = this.ownerDocument.createElement('div');
+    this.mainRowElement.className = 'ac-datagrid-main-row';
     this.mainRowElement.style.display = 'flex';
     this.mainRowElement.style.flexDirection = 'row';
     this.mainRowElement.style.flex = '1';
@@ -52,6 +80,11 @@ export class AcDatagridElement extends AcElementBase {
 
     this.containerElement = this.ownerDocument.createElement('div');
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridContainer, element: this.containerElement });
+    this.containerElement.style.display = 'flex';
+    this.containerElement.style.flexDirection = 'column';
+    this.containerElement.style.flex = '1';
+    this.containerElement.style.overflow = 'hidden';
+    this.containerElement.style.position = 'relative';
 
     this.datagridHeader = this.ownerDocument.createElement('ac-datagrid-header') as AcDatagridHeaderElement;
     this.datagridHeader.datagridApi = this.datagridApi;
@@ -83,9 +116,35 @@ export class AcDatagridElement extends AcElementBase {
 
     this.append(this.mainRowElement);
     this.append(this.datagridFooter);
+    if (this.hasAttribute('fill-available-width')) {
+      this.datagridApi.fillAvailableWidth = this.getAttribute('fill-available-width') !== 'false';
+    }
+
+    this.setupResizeObserver();
 
     // Fire init hook
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.DatagridInit });
+  }
+
+  private setupResizeObserver() {
+    if (typeof ResizeObserver === 'undefined') return;
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const currentWidth = Math.round(entry.contentRect.width);
+      if (Math.abs(currentWidth - this.lastContainerWidth) < 2) return;
+      this.lastContainerWidth = currentWidth;
+      this.datagridApi.bodyWidth = currentWidth;
+
+      if (this.resizeRafId !== null) {
+        cancelAnimationFrame(this.resizeRafId);
+      }
+      this.resizeRafId = requestAnimationFrame(() => {
+        this.datagridApi.recomputeColumnLayout();
+        this.resizeRafId = null;
+      });
+    });
+    this.resizeObserver.observe(this.containerElement);
   }
 }
 

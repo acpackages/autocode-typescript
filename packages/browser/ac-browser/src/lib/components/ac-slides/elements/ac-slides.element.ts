@@ -21,28 +21,12 @@ export class AcSlides {
     this.interval = options.interval ?? 3000;
     this.loop = options.loop ?? true;
 
-    this.setupStyles();
     this.showSlide(this.currentIndex);
-  }
-
-  private setupStyles() {
-    this.container.style.position = 'relative';
-    this.container.style.overflow = 'hidden';
-
-    this.slides.forEach(slide => {
-      slide.style.position = 'absolute';
-      slide.style.top = '0';
-      slide.style.left = '0';
-      slide.style.width = '100%';
-      slide.style.height = '100%';
-      slide.style.opacity = '0';
-      slide.style.transition = 'opacity 0.5s ease';
-    });
   }
 
   private showSlide(index: number) {
     this.slides.forEach((slide, i) => {
-      slide.style.opacity = i === index ? '1' : '0';
+      slide.classList.toggle('active', i === index);
     });
     this.currentIndex = index;
   }

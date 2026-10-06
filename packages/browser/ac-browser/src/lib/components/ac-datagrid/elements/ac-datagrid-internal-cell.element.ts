@@ -33,18 +33,10 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       this.style.maxWidth = '0px';
       return;
     }
-    this.style.display = 'inline-flex';
-    this.style.alignItems = 'center';
-    this.style.justifyContent = 'flex-start';
+    this.style.display = '';
     this.style.width = `${width}px`;
     this.style.minWidth = `${width}px`;
     this.style.maxWidth = `${width}px`;
-    this.style.boxSizing = 'border-box';
-    this.style.flexShrink = '0';
-    this.style.position = 'sticky';
-    this.style.left = '0px';
-    this.style.zIndex = '3';
-    this.style.borderRight = '1px solid var(--ac-datagrid-border-color, #e0e0e0)';
   }
 
   refresh() {
@@ -79,7 +71,7 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       return;
     }
 
-    this.innerHTML = `<div class="${AC_DATAGRID_CLASS_NAME.acDatagridInternalCellContainer}" style="display: inline-flex; align-items: center; justify-content: flex-start; gap: 4px; width: 100%; height: 100%; padding: 0 4px; box-sizing: border-box;"></div>`;
+    this.innerHTML = `<div class="${AC_DATAGRID_CLASS_NAME.acDatagridInternalCellContainer}"></div>`;
     const container = this.querySelector(`.${AC_DATAGRID_CLASS_NAME.acDatagridInternalCellContainer}`) as HTMLElement;
     if (!container) return;
 
@@ -89,14 +81,6 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       handle.className = AC_DATAGRID_CLASS_NAME.acDatagridRowDragHandle;
       handle.setAttribute('data-row-id', this.datagridRow.rowId);
       handle.title = 'Drag to reorder';
-      handle.style.cursor = 'grab';
-      handle.style.touchAction = 'none';
-      handle.style.userSelect = 'none';
-      handle.style.display = 'inline-flex';
-      handle.style.alignItems = 'center';
-      handle.style.justifyContent = 'center';
-      handle.style.width = '14px';
-      handle.style.color = '#999';
       handle.textContent = '⋮⋮';
 
       handle.addEventListener('pointerdown', (e: PointerEvent) => {
@@ -181,8 +165,6 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       }
       chk.className = AC_DATAGRID_CLASS_NAME.acDatagridRowCheckbox;
       chk.checked = this.datagridApi.isRowSelected(this.datagridRow.rowId);
-      chk.style.cursor = 'pointer';
-      chk.style.margin = '0 2px';
 
       chk.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -201,21 +183,31 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       this.checkboxElement = undefined;
     }
 
-    // 3. Tree / Group chevron
+    // 3. Tree / Group chevron — skip if a body column is designated as the parent/tree column
     const isGroup = this.datagridRow.isGroupHeader;
     const hasChildren = this.datagridRow.hasChildren || isGroup;
-    if (this.datagridApi.hasTreeOrGroup) {
+    const treeHandledByColumn = this.datagridApi.hasTreeOrGroup && (() => {
+      const treeConfig = (this.datagridApi as any).treeConfig;
+      const treeExt = (this.datagridApi as any).treeTableExtension;
+      const cols = this.datagridApi.datagridColumns.filter(c => c.visible);
+      if (!cols.length) return false;
+      // Check if any visible column declares itself as the tree column
+      const explicitTreeCol = cols.find(c =>
+        (c.columnDefinition as any).isTreeColumn === true ||
+        (c.columnDefinition as any).showTreeToggle === true
+      );
+      if (explicitTreeCol) return true;
+      if (treeConfig?.treeColumn) return true;
+      if (treeExt?.treeDataDisplayKey) return true;
+      // If no explicit designation, tree is handled by first visible column (the default fallback)
+      // in that case, keep chevron here only when there is NO visible column (shouldn't happen)
+      return cols.length > 0;
+    })();
+
+    if (this.datagridApi.hasTreeOrGroup && !treeHandledByColumn) {
       if (hasChildren) {
         const chevron = document.createElement('span');
         chevron.className = AC_DATAGRID_CLASS_NAME.acDatagridRowExpandIcon;
-        chevron.style.cursor = 'pointer';
-        chevron.style.userSelect = 'none';
-        chevron.style.display = 'inline-flex';
-        chevron.style.alignItems = 'center';
-        chevron.style.justifyContent = 'center';
-        chevron.style.width = '16px';
-        chevron.style.fontSize = '10px';
-        chevron.style.color = '#555';
 
         if (this.datagridApi.loadingRowIds.has(this.datagridRow.rowId)) {
           chevron.textContent = '⏳';
@@ -232,8 +224,7 @@ export class AcDatagridInternalCellElement extends AcElementBase {
         container.appendChild(chevron);
       } else {
         const spacer = document.createElement('span');
-        spacer.style.display = 'inline-block';
-        spacer.style.width = '16px';
+        spacer.className = 'ac-datagrid-internal-spacer';
         container.appendChild(spacer);
       }
     }
@@ -243,15 +234,6 @@ export class AcDatagridInternalCellElement extends AcElementBase {
       if (this.datagridRow.isMasterDetail || this.datagridApi.masterDetailConfig) {
         const detailIcon = document.createElement('span');
         detailIcon.className = AC_DATAGRID_CLASS_NAME.acDatagridDetailExpandIcon;
-        detailIcon.style.cursor = 'pointer';
-        detailIcon.style.userSelect = 'none';
-        detailIcon.style.display = 'inline-flex';
-        detailIcon.style.alignItems = 'center';
-        detailIcon.style.justifyContent = 'center';
-        detailIcon.style.width = '16px';
-        detailIcon.style.fontSize = '12px';
-        detailIcon.style.fontWeight = 'bold';
-        detailIcon.style.color = '#333';
         detailIcon.textContent = this.datagridRow.isDetailExpanded ? '−' : '+';
 
         detailIcon.addEventListener('click', (e) => {
@@ -263,8 +245,7 @@ export class AcDatagridInternalCellElement extends AcElementBase {
         container.appendChild(detailIcon);
       } else {
         const spacer = document.createElement('span');
-        spacer.style.display = 'inline-block';
-        spacer.style.width = '16px';
+        spacer.className = 'ac-datagrid-internal-spacer';
         container.appendChild(spacer);
       }
     }
@@ -273,9 +254,6 @@ export class AcDatagridInternalCellElement extends AcElementBase {
     if (this.datagridApi.showRowNumbers) {
       const numSpan = document.createElement('span');
       numSpan.className = AC_DATAGRID_CLASS_NAME.acDatagridRowNumber;
-      numSpan.style.fontSize = '11px';
-      numSpan.style.color = '#777';
-      numSpan.style.userSelect = 'none';
       numSpan.textContent = `${this.datagridRow.index + 1}`;
       container.appendChild(numSpan);
     }

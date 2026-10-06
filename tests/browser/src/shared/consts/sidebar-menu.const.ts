@@ -48,6 +48,18 @@ export const SIDEBAR_NAV: IAppNavItem[] = [
     ],
   },
   {
+    label: 'Nodeflow Designer',
+    children: [
+      { label: 'Visual Graph Designer', route: APP_ROUTES.nodeflow.designer }
+    ],
+  },
+  {
+    label: 'Database Designer',
+    children: [
+      { label: 'ERD Designer', route: APP_ROUTES.databaseDesigner }
+    ],
+  },
+  {
     label: 'Datagrid',
     children: [
       { label: 'Kitchen Sink', route: APP_ROUTES.datagrid.kitchenSink },

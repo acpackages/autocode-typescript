@@ -12,9 +12,6 @@ export class AcRepeaterElement extends AcElementBase{
 
   override init(){
     super.init();
-    this.style.display = 'flex';
-    this.style.flexDirection = 'column';
-    this.style.overflow = 'hidden';
     this.innerHTML = `
       <${AC_REPEATER_TAG.repeaterHeader}></${AC_REPEATER_TAG.repeaterHeader}>
       <${AC_REPEATER_TAG.repeaterBody}></${AC_REPEATER_TAG.repeaterBody}>

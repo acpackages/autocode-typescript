@@ -120,6 +120,49 @@
   flex-grow: 1;
 }
 
+.ac-data-filter-badge.d-none {
+  display: none !important;
+}
+
+.ac-data-filter-apply-btn {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.ac-data-filter-apply-btn:hover {
+  background: #0069d9;
+  border-color: #0062cc;
+}
+
+.ac-data-filter-value {
+  flex: 1.5;
+}
+
+.ac-data-filter-value-between {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1.5;
+}
+
+.ac-data-filter-value-between input {
+  flex: 1;
+  min-width: 0;
+  max-width: 100px;
+  padding: 4px;
+}
+
+.ac-data-filter-value-between span {
+  font-size: 11px;
+  color: #888;
+}
+
+.ac-data-filter-value.d-none,
+.ac-data-filter-value-between.d-none {
+  display: none !important;
+}
+
 .ac-data-filter-row-remove {
   color: red;
   border: none;

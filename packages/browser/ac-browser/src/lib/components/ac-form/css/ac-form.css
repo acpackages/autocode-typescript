@@ -1,9 +1,12 @@
-ac-form {
-  display: block;
+ac-form,
+.ac-form,
+ac-form > form {
+  display: contents;
 }
 
-ac-form-field {
-  display: block;
+ac-form-field,
+.ac-form-field {
+  display: contents;
 }
 
 ac-form-field-error-message {

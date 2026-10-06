@@ -39,7 +39,6 @@ export class AcTabs extends AcElementBase{
 
   override init() {
     super.init();
-    this.style.display = "contents";
     if (!this.hasAttribute('role')) this.setAttribute('role', 'tablist');
     const tabs = Array.from(this.querySelectorAll(`.${AcTabsCssClassName.acTab}, [${AcTabsAttributeName.acTab}]`));
     for (const el of tabs) {

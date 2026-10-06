@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.base.build.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/out-tsc",
+    "declaration": true,
+    "declarationDir": "dist",
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+    "preserveSymlinks": true,
+    "composite": false,
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts","dist"]
+}

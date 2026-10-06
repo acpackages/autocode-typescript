@@ -32,9 +32,6 @@ export class AcPopover {
 
     this.popoverEl = document.createElement('div');
     this.popoverEl.className = `ac-popover ${this.options.className || ''}`;
-    this.popoverEl.style.position = 'absolute';
-    this.popoverEl.style.zIndex = '9999';
-    this.popoverEl.style.display = 'none';
 
     if (this.options.trigger === 'click') {
       this.anchor.addEventListener('click', () => this.toggle());
@@ -110,13 +107,13 @@ export class AcPopover {
     }
 
     this.anchor.ownerDocument.body.appendChild(this.popoverEl);
-    this.popoverEl.style.display = 'block';
+    this.popoverEl.classList.add('show');
     this.positionPopover();
     this.isVisible = true;
   }
 
   public hide() {
-    this.popoverEl.style.display = 'none';
+    this.popoverEl.classList.remove('show');
     this.popoverEl.remove();
     this.isVisible = false;
   }

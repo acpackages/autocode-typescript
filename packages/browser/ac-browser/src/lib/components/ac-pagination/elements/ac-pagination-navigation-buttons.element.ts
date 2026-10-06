@@ -34,10 +34,10 @@ export class AcPaginationNavigationButtonsElement extends AcElementBase{
     this.innerHTML = `
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton} ac-res-none ac-res-xs-block" ac-pagination-first-button>${acPaginationElementHtml.first}</button>
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-previous-button>${acPaginationElementHtml.previous}</button>
-      <div ac-pagination-rows-label style="margin: 0 5px; font-size: 14px;"></div>
+      <div ac-pagination-rows-label></div>
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton}" ac-pagination-next-button>${acPaginationElementHtml.next}</button>
       <button type="button" class="${AcPaginationCssClassName.acPaginationPageButton} ac-res-none ac-res-xs-block" ac-pagination-last-button>${acPaginationElementHtml.last}</button>
-      <div class="ac-res-none ac-res-sm-block" ac-pagination-page-label style="margin: 0 10px; font-size: 14px;"></div>
+      <div class="ac-res-none ac-res-sm-block" ac-pagination-page-label></div>
     `;
     this.firstButton = this.querySelector('[ac-pagination-first-button]') as HTMLButtonElement;
     this.previousButton = this.querySelector('[ac-pagination-previous-button]') as HTMLButtonElement;

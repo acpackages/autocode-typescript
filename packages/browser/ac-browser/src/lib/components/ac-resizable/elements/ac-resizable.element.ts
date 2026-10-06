@@ -8,9 +8,6 @@ export class AcResizable extends AcElementBase{
 
   constructor() {
     super();
-    this.style.position = 'relative';
-    this.style.overflow = 'hidden';
-
     this.createHandles();
   }
 
@@ -20,93 +17,10 @@ export class AcResizable extends AcElementBase{
     directions.forEach((dir) => {
       const handle = this.ownerDocument.createElement('div');
       handle.classList.add('ac-resize-handle', `ac-resize-${dir}`);
-      this.styleHandle(handle, dir);
       handle.addEventListener('mousedown', (e) => this.startResize(e, dir));
       this.appendChild(handle);
       this.handles[dir] = handle;
     });
-  }
-
-  private styleHandle(handle: HTMLDivElement, dir: AcEnumResizeDirection) {
-    const size = '8px';
-    handle.style.position = 'absolute';
-    handle.style.background = 'transparent'; // change for visibility
-    handle.style.zIndex = '10';
-
-    switch (dir) {
-      case AcEnumResizeDirection.Top:
-        Object.assign(handle.style, {
-          top: '0',
-          left: '0',
-          right: '0',
-          height: size,
-          cursor: 'ns-resize'
-        });
-        break;
-      case AcEnumResizeDirection.Bottom:
-        Object.assign(handle.style, {
-          bottom: '0',
-          left: '0',
-          right: '0',
-          height: size,
-          cursor: 'ns-resize'
-        });
-        break;
-      case AcEnumResizeDirection.Left:
-        Object.assign(handle.style, {
-          top: '0',
-          bottom: '0',
-          left: '0',
-          width: size,
-          cursor: 'ew-resize'
-        });
-        break;
-      case AcEnumResizeDirection.Right:
-        Object.assign(handle.style, {
-          top: '0',
-          bottom: '0',
-          right: '0',
-          width: size,
-          cursor: 'ew-resize'
-        });
-        break;
-      case AcEnumResizeDirection.TopLeft:
-        Object.assign(handle.style, {
-          top: '0',
-          left: '0',
-          width: size,
-          height: size,
-          cursor: 'nwse-resize'
-        });
-        break;
-      case AcEnumResizeDirection.TopRight:
-        Object.assign(handle.style, {
-          top: '0',
-          right: '0',
-          width: size,
-          height: size,
-          cursor: 'nesw-resize'
-        });
-        break;
-      case AcEnumResizeDirection.BottomLeft:
-        Object.assign(handle.style, {
-          bottom: '0',
-          left: '0',
-          width: size,
-          height: size,
-          cursor: 'nesw-resize'
-        });
-        break;
-      case AcEnumResizeDirection.BottomRight:
-        Object.assign(handle.style, {
-          bottom: '0',
-          right: '0',
-          width: size,
-          height: size,
-          cursor: 'nwse-resize'
-        });
-        break;
-    }
   }
 
   private startResize(event: MouseEvent, dir: AcEnumResizeDirection) {

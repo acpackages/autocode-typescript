@@ -84,7 +84,6 @@ export class AcForm extends AcElementBase {
         this.form = acWrapElementWithTag({ element: this, wrapperTag: 'form' }) as HTMLFormElement;
         this.formAddedManually = true;
       }
-      this.form.style.display = 'contents';
       this.submitted = false;
       this.form.submitted = false;
       this.form.noValidate = true;

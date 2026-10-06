@@ -647,12 +647,16 @@ export class AcDataManager {
         totalCount = this.totalRows;
       }
       startIndex = startIndex ?? 0;
+      if(startIndex < 0){
+        startIndex = 0;
+      }
       const endIndex = startIndex + (data.length) - 1;
       if (this.allRows.length < totalCount) {
         this.allRows = new Array(totalCount).fill(undefined);
       }
       for (let index = startIndex; index <= endIndex; index++) {
         const dataIndex = index - startIndex;
+        console.log(`dataIndex : ${dataIndex},index : ${index}, startIndex : ${startIndex}`);
         if (this.allRows[index] == undefined) {
           this.allRows[index] = {
             rowId: Autocode.uuid(),

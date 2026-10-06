@@ -139,12 +139,7 @@ export class AcPaginationElement extends AcElementBase {
 
   private setAddButtonDisplay() {
     if (this.addButton) {
-      if (this.showAddButton) {
-        this.addButton.style.display = "";
-      }
-      else {
-        this.addButton.style.display = "none";
-      }
+      this.addButton.classList.toggle('d-none', !this.showAddButton);
     }
   }
 

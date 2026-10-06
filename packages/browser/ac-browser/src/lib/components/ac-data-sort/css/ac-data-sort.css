@@ -126,6 +126,21 @@
   flex-grow: 1;
 }
 
+.ac-data-sort-badge.d-none {
+  display: none !important;
+}
+
+.ac-data-sort-apply-btn {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.ac-data-sort-apply-btn:hover {
+  background: #0069d9;
+  border-color: #0062cc;
+}
+
 .ac-data-sort-row-remove {
   color: red;
   border: none;

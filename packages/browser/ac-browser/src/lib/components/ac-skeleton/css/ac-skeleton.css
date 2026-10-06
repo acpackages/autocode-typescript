@@ -3,6 +3,8 @@ ac-skeleton {
   background-color: rgba(0, 0, 0, 0.11);
   border-radius: 0.25rem;
   box-sizing: border-box;
+  width: var(--ac-skeleton-width, auto);
+  height: var(--ac-skeleton-height, auto);
 }
 
 ac-skeleton[type="text"] {

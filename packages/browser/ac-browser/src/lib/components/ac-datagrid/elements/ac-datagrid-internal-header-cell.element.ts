@@ -31,19 +31,10 @@ export class AcDatagridInternalHeaderCellElement extends AcElementBase {
       this.style.maxWidth = '0px';
       return;
     }
-    this.style.display = 'inline-flex';
-    this.style.alignItems = 'center';
-    this.style.justifyContent = 'center';
+    this.style.display = '';
     this.style.width = `${width}px`;
     this.style.minWidth = `${width}px`;
     this.style.maxWidth = `${width}px`;
-    this.style.boxSizing = 'border-box';
-    this.style.flexShrink = '0';
-    this.style.position = 'sticky';
-    this.style.left = '0px';
-    this.style.zIndex = '15';
-    this.style.backgroundColor = 'var(--ac-datagrid-header-bg, #f4f5f7)';
-    this.style.borderRight = '1px solid var(--ac-datagrid-border-color, #e0e0e0)';
   }
 
   refresh() {
@@ -75,7 +66,7 @@ export class AcDatagridInternalHeaderCellElement extends AcElementBase {
   }
 
   render() {
-    this.innerHTML = `<div class="${AC_DATAGRID_CLASS_NAME.acDatagridInternalHeaderCellContainer}" style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 100%;"></div>`;
+    this.innerHTML = `<div class="${AC_DATAGRID_CLASS_NAME.acDatagridInternalHeaderCellContainer}"></div>`;
     const container = this.querySelector(`.${AC_DATAGRID_CLASS_NAME.acDatagridInternalHeaderCellContainer}`) as HTMLElement;
     if (!container || !this.datagridApi) return;
 
@@ -83,8 +74,6 @@ export class AcDatagridInternalHeaderCellElement extends AcElementBase {
       const chk = document.createElement('input');
       chk.type = 'checkbox';
       chk.className = AC_DATAGRID_CLASS_NAME.acDatagridSelectAllCheckbox;
-      chk.style.cursor = 'pointer';
-      chk.style.margin = '0 2px';
       chk.addEventListener('change', (e) => {
         e.stopPropagation();
         this.datagridApi?.toggleSelectAll();
@@ -99,9 +88,6 @@ export class AcDatagridInternalHeaderCellElement extends AcElementBase {
       const numHeader = document.createElement('span');
       numHeader.className = AC_DATAGRID_CLASS_NAME.acDatagridRowNumberHeader;
       numHeader.textContent = '#';
-      numHeader.style.fontSize = '11px';
-      numHeader.style.fontWeight = 'bold';
-      numHeader.style.color = '#888';
       container.appendChild(numHeader);
     }
 

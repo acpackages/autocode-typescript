@@ -15,17 +15,6 @@ export class AcDatagridSidePanelElement extends AcElementBase {
   override init() {
     super.init();
     this.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridSidePanel);
-    this.style.display = 'none';
-    this.style.flexDirection = 'column';
-    this.style.width = '300px';
-    this.style.minWidth = '300px';
-    this.style.maxWidth = '300px';
-    this.style.height = '100%';
-    this.style.backgroundColor = '#ffffff';
-    this.style.borderLeft = '1px solid #e2e8f0';
-    this.style.boxSizing = 'border-box';
-    this.style.overflow = 'hidden';
-    this.style.zIndex = '20';
   }
 
   bindDatagridApi({ datagridApi }: { datagridApi: AcDatagridApi }) {
@@ -36,7 +25,7 @@ export class AcDatagridSidePanelElement extends AcElementBase {
   }
 
   open() {
-    this.style.display = 'flex';
+    this.classList.add('open');
     if (this.datagridApi) {
       this.datagridApi.sidePanelOpen = true;
     }
@@ -44,7 +33,7 @@ export class AcDatagridSidePanelElement extends AcElementBase {
   }
 
   close() {
-    this.style.display = 'none';
+    this.classList.remove('open');
     if (this.datagridApi) {
       this.datagridApi.sidePanelOpen = false;
       this.datagridApi.notifyStateChange({ source: 'sidePanel' });
@@ -61,27 +50,15 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 
     // Header
     const header = document.createElement('div');
-    header.style.display = 'flex';
-    header.style.alignItems = 'center';
-    header.style.justifyContent = 'space-between';
-    header.style.padding = '12px 16px';
-    header.style.borderBottom = '1px solid #e2e8f0';
-    header.style.backgroundColor = '#f8fafc';
+    header.className = 'ac-datagrid-side-panel-header';
 
     const title = document.createElement('span');
+    title.className = 'ac-datagrid-side-panel-title';
     title.textContent = 'Columns & Sorting';
-    title.style.fontWeight = '600';
-    title.style.fontSize = '14px';
-    title.style.color = '#1e293b';
 
     const closeBtn = document.createElement('button');
+    closeBtn.className = 'ac-datagrid-side-panel-close';
     closeBtn.innerHTML = '&times;';
-    closeBtn.style.background = 'none';
-    closeBtn.style.border = 'none';
-    closeBtn.style.fontSize = '20px';
-    closeBtn.style.cursor = 'pointer';
-    closeBtn.style.color = '#64748b';
-    closeBtn.style.lineHeight = '1';
     closeBtn.addEventListener('click', () => this.close());
 
     header.appendChild(title);
@@ -90,22 +67,13 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 
     // Search bar & actions
     const toolbar = document.createElement('div');
-    toolbar.style.padding = '10px 16px';
-    toolbar.style.borderBottom = '1px solid #f1f5f9';
-    toolbar.style.display = 'flex';
-    toolbar.style.flexDirection = 'column';
-    toolbar.style.gap = '8px';
+    toolbar.className = 'ac-datagrid-side-panel-toolbar';
 
     this.filterInput = document.createElement('input');
     this.filterInput.type = 'text';
+    this.filterInput.className = 'ac-datagrid-side-panel-filter-input';
     this.filterInput.placeholder = 'Search columns...';
     this.filterInput.value = this.searchQuery;
-    this.filterInput.style.padding = '6px 10px';
-    this.filterInput.style.borderRadius = '4px';
-    this.filterInput.style.border = '1px solid #cbd5e1';
-    this.filterInput.style.fontSize = '12px';
-    this.filterInput.style.width = '100%';
-    this.filterInput.style.boxSizing = 'border-box';
     this.filterInput.addEventListener('input', (e) => {
       this.searchQuery = (e.target as HTMLInputElement).value.toLowerCase();
       this.renderColumnList();
@@ -113,17 +81,11 @@ export class AcDatagridSidePanelElement extends AcElementBase {
     toolbar.appendChild(this.filterInput);
 
     const btnRow = document.createElement('div');
-    btnRow.style.display = 'flex';
-    btnRow.style.gap = '8px';
+    btnRow.className = 'ac-datagrid-side-panel-btn-row';
 
     const showAllBtn = document.createElement('button');
+    showAllBtn.className = 'ac-datagrid-side-panel-action-btn';
     showAllBtn.textContent = 'Show All';
-    showAllBtn.style.padding = '4px 8px';
-    showAllBtn.style.fontSize = '11px';
-    showAllBtn.style.cursor = 'pointer';
-    showAllBtn.style.borderRadius = '3px';
-    showAllBtn.style.border = '1px solid #cbd5e1';
-    showAllBtn.style.backgroundColor = '#ffffff';
     showAllBtn.addEventListener('click', () => {
       for (const c of this.datagridApi.datagridColumns) {
         c.visible = true;
@@ -134,13 +96,8 @@ export class AcDatagridSidePanelElement extends AcElementBase {
     });
 
     const hideAllBtn = document.createElement('button');
+    hideAllBtn.className = 'ac-datagrid-side-panel-action-btn';
     hideAllBtn.textContent = 'Hide All';
-    hideAllBtn.style.padding = '4px 8px';
-    hideAllBtn.style.fontSize = '11px';
-    hideAllBtn.style.cursor = 'pointer';
-    hideAllBtn.style.borderRadius = '3px';
-    hideAllBtn.style.border = '1px solid #cbd5e1';
-    hideAllBtn.style.backgroundColor = '#ffffff';
     hideAllBtn.addEventListener('click', () => {
       for (const c of this.datagridApi.datagridColumns) {
         c.visible = false;
@@ -159,10 +116,7 @@ export class AcDatagridSidePanelElement extends AcElementBase {
     // List container
     const listContainer = document.createElement('div');
     listContainer.id = 'ac-side-panel-col-list';
-    listContainer.style.flex = '1';
-    listContainer.style.overflowY = 'auto';
-    listContainer.style.padding = '6px 0';
-    listContainer.style.position = 'relative';
+    listContainer.className = 'ac-datagrid-side-panel-list';
     this.appendChild(listContainer);
 
     this.renderColumnList();
@@ -181,20 +135,12 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 
     filtered.forEach((col, idx) => {
       const item = document.createElement('div');
-      item.style.display = 'flex';
-      item.style.alignItems = 'center';
-      item.style.padding = '6px 16px';
-      item.style.gap = '8px';
-      item.style.borderBottom = '1px solid #f8fafc';
-      item.style.fontSize = '13px';
+      item.className = 'ac-datagrid-side-panel-item';
 
       // Drag handle
       const dragHandle = document.createElement('span');
+      dragHandle.className = 'ac-datagrid-side-panel-drag-handle';
       dragHandle.innerHTML = '⋮⋮';
-      dragHandle.style.cursor = 'grab';
-      dragHandle.style.color = '#94a3b8';
-      dragHandle.style.touchAction = 'none';
-      dragHandle.style.userSelect = 'none';
 
       // Pointer drag reorder
       dragHandle.addEventListener('pointerdown', (e: PointerEvent) => {
@@ -268,8 +214,8 @@ export class AcDatagridSidePanelElement extends AcElementBase {
       // Visibility Checkbox
       const chk = document.createElement('input');
       chk.type = 'checkbox';
+      chk.className = 'ac-datagrid-side-panel-checkbox';
       chk.checked = col.visible;
-      chk.style.cursor = 'pointer';
       chk.addEventListener('change', () => {
         col.visible = chk.checked;
         col.columnDefinition.visible = chk.checked;
@@ -279,23 +225,15 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 
       // Label
       const label = document.createElement('span');
+      label.className = 'ac-datagrid-side-panel-label';
       label.textContent = col.title || col.columnKey;
-      label.style.flex = '1';
-      label.style.overflow = 'hidden';
-      label.style.textOverflow = 'ellipsis';
-      label.style.whiteSpace = 'nowrap';
       label.title = col.title || col.columnKey;
       item.appendChild(label);
 
       // Pinning buttons
       const pinBtn = document.createElement('button');
+      pinBtn.className = `ac-datagrid-side-panel-pin-btn ${col.pinnedOn ? 'pinned' : ''}`;
       pinBtn.title = col.pinnedOn ? `Pinned ${col.pinnedOn} (Click to cycle)` : 'Pin column';
-      pinBtn.style.background = col.pinnedOn ? '#e0f2fe' : 'none';
-      pinBtn.style.border = '1px solid #cbd5e1';
-      pinBtn.style.borderRadius = '3px';
-      pinBtn.style.fontSize = '10px';
-      pinBtn.style.padding = '2px 4px';
-      pinBtn.style.cursor = 'pointer';
       pinBtn.textContent = col.pinnedOn === 'LEFT' ? '📌L' : (col.pinnedOn === 'RIGHT' ? '📌R' : '📌-');
       pinBtn.addEventListener('click', () => {
         const nextPin = col.pinnedOn === 'LEFT' ? 'RIGHT' : (col.pinnedOn === 'RIGHT' ? null : 'LEFT');
@@ -306,13 +244,9 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 
       // Sort button
       const sortBtn = document.createElement('button');
+      const isSorted = col.sortOrder && col.sortOrder !== AcEnumSortOrder.None;
+      sortBtn.className = `ac-datagrid-side-panel-sort-btn ${isSorted ? 'sorted' : ''}`;
       sortBtn.title = 'Cycle Sort (Asc / Desc / None)';
-      sortBtn.style.background = col.sortOrder && col.sortOrder !== AcEnumSortOrder.None ? '#fef3c7' : 'none';
-      sortBtn.style.border = '1px solid #cbd5e1';
-      sortBtn.style.borderRadius = '3px';
-      sortBtn.style.fontSize = '10px';
-      sortBtn.style.padding = '2px 5px';
-      sortBtn.style.cursor = 'pointer';
       sortBtn.textContent = col.sortOrder === AcEnumSortOrder.Ascending ? '↑' : (col.sortOrder === AcEnumSortOrder.Descending ? '↓' : '↕');
       sortBtn.addEventListener('click', () => {
         const nextSort = col.sortOrder === AcEnumSortOrder.Ascending ? AcEnumSortOrder.Descending

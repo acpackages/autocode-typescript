@@ -34,8 +34,9 @@ export class AcDatagridCellRendererElement implements IAcDatagridCellRenderer {
     this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridCell.datagridColumn.columnId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId, this.datagridCell.datagridRow.rowId);
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellRenderer, element: this.element });
-    this.element.style.height = "100%";
-    this.element.style.width = "max-content";
+    this.element.style.width = "100%";
+    this.element.style.minWidth = "0";
+    this.element.style.textAlign = "inherit";
     this.render();
   }
 

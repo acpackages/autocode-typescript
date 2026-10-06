@@ -191,29 +191,11 @@ export class AcDatagridHeaderElement extends AcElementBase {
     this.syncScrollbarSpacer();
     this.scrollLeft = prevScrollLeft;
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.HeaderColumnCellsCreate, args: hookArgs });
+    this.datagridApi.recomputeColumnLayout();
   }
 
   setFlexColumnWidth() {
-    if (!this.datagridApi) return;
-    const flexColumns: IAcDatagridColumn[] = [];
-    let currentTotalWidth: number = 0;
-    for (const column of this.datagridApi.datagridColumns) {
-      if (column.visible) {
-        if (column.columnDefinition.flexSize != undefined) {
-          flexColumns.push(column);
-        } else {
-          currentTotalWidth += column.width;
-        }
-      }
-    }
-    const bodyWidth = this.datagridApi.bodyWidth || this.getBoundingClientRect().width || 1000;
-    const internalColWidth = this.datagridApi.getInternalColumnWidth();
-    const fillWidth = bodyWidth - currentTotalWidth - internalColWidth - 20;
-    if (fillWidth > 0) {
-      for (const column of flexColumns) {
-        column.width = fillWidth * column.columnDefinition.flexSize!;
-      }
-    }
+    this.datagridApi?.recomputeColumnLayout();
   }
 }
 

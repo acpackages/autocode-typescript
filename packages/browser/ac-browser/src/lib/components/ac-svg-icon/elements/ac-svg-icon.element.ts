@@ -100,13 +100,13 @@ export class AcSvgIcon extends AcElementBase {
   }
 
   private applyColor(color: string | null): void {
-    if (!color) this.style.removeProperty('color');
-    else this.style.setProperty('color', color);
+    if (!color) this.style.removeProperty('--ac-icon-color');
+    else this.style.setProperty('--ac-icon-color', color);
   }
 
   private applySize(size: string | null): void {
-    if (!size) this.style.removeProperty('font-size');
-    else this.style.setProperty('font-size', size);
+    if (!size) this.style.removeProperty('--ac-icon-size');
+    else this.style.setProperty('--ac-icon-size', size);
   }
 
   private ensureSlotSvgStyle(): void {
@@ -120,9 +120,6 @@ export class AcSvgIcon extends AcElementBase {
     svg.setAttribute('width', '100%');
     svg.setAttribute('height', '100%');
     if (!svg.hasAttribute('fill')) svg.setAttribute('fill', 'currentColor');
-    svg.style.width = '100%';
-    svg.style.height = '100%';
-    svg.style.display = 'block';
   }
 
   private async loadFromSrc(url: string): Promise<void> {

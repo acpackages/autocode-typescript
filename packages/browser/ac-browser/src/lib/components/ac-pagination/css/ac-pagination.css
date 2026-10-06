@@ -68,3 +68,17 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+[ac-pagination-rows-label] {
+  margin: 0 5px;
+  font-size: 14px;
+}
+
+[ac-pagination-page-label] {
+  margin: 0 10px;
+  font-size: 14px;
+}
+
+.ac-pagination-add-btn.d-none {
+  display: none !important;
+}

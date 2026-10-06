@@ -1,9 +1,15 @@
+ac-dropdown {
+  display: contents;
+}
+
 .ac-dropdown {
   position: relative;
 }
 
+[ac-dropdown-target],
 .ac-dropdown-menu {
   position: fixed;
+  display: none;
   z-index: 9999;
   background: #fff;
   border: 1px solid var(--ac-border-color, #ccc);
@@ -11,6 +17,11 @@
   border-radius: 4px;
   padding: 4px 0;
   min-width: 150px;
+}
+
+[ac-dropdown-target].fade-in,
+.ac-dropdown-menu.fade-in {
+  display: block;
 }
 
 .ac-dropdown-item {

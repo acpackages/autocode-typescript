@@ -66,31 +66,21 @@ export class AcPopoutTextareaInputElement extends AcInputBase {
   private applyBaseStyles() {
     if (!this.textarea) return;
     const ta = this.textarea;
+    ta.classList.add("ac-popout-textarea");
     const cs = getComputedStyle(this.inputElement);
     const inputRect = this.inputElement.getBoundingClientRect();
     const minWidth = this.opts.minWidthPx || inputRect.width;
     const minHeight = this.opts.minHeightPx || inputRect.height;
-    ta.style.position = "fixed";
-    ta.style.zIndex = "9999";
-    ta.style.boxSizing = "border-box";
-    ta.style.resize = "none";
-    ta.style.overflow = "hidden";
     ta.style.padding = `${this.opts.paddingPx}px`;
     ta.style.border = `1px solid ${cs.borderColor || "#ccc"}`;
     ta.style.borderRadius = `${this.opts.borderRadiusPx}px`;
-    ta.style.background = "#fff";
     ta.style.color = cs.color || "#000";
     ta.style.font = cs.font || "inherit";
     ta.style.lineHeight = cs.lineHeight || "1.4";
     ta.style.letterSpacing = cs.letterSpacing || "normal";
-    ta.style.whiteSpace = "pre-wrap";
     ta.style.minWidth = `${minWidth}px`;
     ta.style.minHeight = `${minHeight}px`;
     ta.style.maxHeight = `${this.opts.maxHeightPx}px`;
-    ta.style.opacity = "0";
-    ta.style.transform = "scale(0.98)";
-    ta.style.pointerEvents = "none";
-    ta.style.transition = `transform ${this.opts.animationDurationMs}ms ${this.opts.animationEasing}, opacity ${this.opts.animationDurationMs}ms ${this.opts.animationEasing}`;
     if (this.opts.copyInputPlaceholder) ta.placeholder = this.inputElement.placeholder || "";
     if (this.opts.respectMaxLength && this.inputElement.maxLength > 0) {
       ta.maxLength = this.inputElement.maxLength;
@@ -172,8 +162,7 @@ export class AcPopoutTextareaInputElement extends AcInputBase {
     this.textarea.style.height = rect.height + "px";
     this.textarea.style.left = rect.left + "px";
     this.textarea.style.top = rect.top + "px";
-    this.textarea.style.opacity = "0";
-    this.textarea.style.pointerEvents = "none";
+    this.textarea.classList.remove("open");
     const duration = this.opts.animationDurationMs;
     this.delayedCallback.add({callback:() => {
       this.teardownTextarea();
@@ -282,10 +271,7 @@ export class AcPopoutTextareaInputElement extends AcInputBase {
       this.textarea.style.top = rect.top + "px";
       this.textarea.style.resize = 'auto';
       this.textarea.getBoundingClientRect();
-      this.textarea.style.transition = "all 0.25s ease";
-      this.textarea.style.opacity = "1";
-      this.textarea.style.transform = "scale(1)";
-      this.textarea.style.pointerEvents = "auto";
+      this.textarea.classList.add("open");
       this.autoGrow();
       this.textarea.focus();
     });

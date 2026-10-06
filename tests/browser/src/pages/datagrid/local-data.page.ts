@@ -50,14 +50,14 @@ export class DatagridLocalPage {
     });
 
     api.columnDefinitions = [
-      { field: 'index', title: "SrNo.", width: 80 },
+      { field: 'index', title: "SrNo.", width: 80,cellClass:'text-center',headerCellClass:'text-center' },
       { field: 'first_name', title: "First Name", allowEdit: true },
       { field: 'last_name', title: "Last Name", allowEdit: true },
       { field: 'company', title: "Company" },
       { field: 'city', title: "City" },
       { field: 'country', title: "Country" },
       { field: 'email', title: "Email" },
-      { field: 'website', title: "Website", visible: false }
+      { field: 'website', title: "Website", visible: false,flex:1 }
     ];
 
     this.loadData();

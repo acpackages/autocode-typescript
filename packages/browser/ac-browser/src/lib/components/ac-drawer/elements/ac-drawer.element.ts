@@ -44,52 +44,11 @@ export class AcDrawer extends AcElementBase{
         this.close();
       })
     }
-    this.style.position = 'fixed';
-    this.style.zIndex = '1050';
-    this.style.transition = `transform ${this.animationDuration}ms ease`;
-    this.style.willChange = 'transform';
-
-    // Placement styles
-    const placements: Record<string, () => void> = {
-      left: () => {
-        this.style.top = '0';
-        this.style.left = '0';
-        this.style.height = '100%';
-        this.style.transform = 'translateX(-100%)';
-      },
-      right: () => {
-        this.style.top = '0';
-        this.style.right = '0';
-        this.style.height = '100%';
-        this.style.transform = 'translateX(100%)';
-      },
-      top: () => {
-        this.style.top = '0';
-        this.style.left = '0';
-        this.style.width = '100%';
-        this.style.transform = 'translateY(-100%)';
-      },
-      bottom: () => {
-        this.style.bottom = '0';
-        this.style.left = '0';
-        this.style.width = '100%';
-        this.style.transform = 'translateY(100%)';
-      }
-    };
-
-    placements[this.placement]();
+    this.style.setProperty('--ac-drawer-duration', `${this.animationDuration}ms`);
 
     if (this.showBackdrop) {
       this.backdropEl = this.ownerDocument.createElement('div');
-      this.backdropEl.style.position = 'fixed';
-      this.backdropEl.style.top = '0';
-      this.backdropEl.style.left = '0';
-      this.backdropEl.style.width = '100%';
-      this.backdropEl.style.height = '100%';
-      this.backdropEl.style.backgroundColor = 'rgba(0,0,0,0.5)';
-      this.backdropEl.style.opacity = '0';
-      this.backdropEl.style.transition = `opacity ${this.animationDuration}ms ease`;
-      this.backdropEl.style.zIndex = '1040';
+      this.backdropEl.classList.add('ac-drawer-backdrop');
 
       if (!this.suppressBackdropClose) {
         this.backdropEl.addEventListener('click', () => this.close());
@@ -103,13 +62,13 @@ export class AcDrawer extends AcElementBase{
 
     if (this.showBackdrop && this.backdropEl) {
       this.ownerDocument.body.appendChild(this.backdropEl);
-      this.delayedCallback.add({callback:() => {
-        this.backdropEl!.style.opacity = '1';
-      }, duration:10});
+      requestAnimationFrame(() => {
+        this.backdropEl?.classList.add('show');
+      });
     }
 
     requestAnimationFrame(() => {
-      this.style.transform = 'translate(0,0)';
+      this.classList.add('open');
     });
     this.events.execute({event:AcEnumDrawerEvent.Open});
     this.events.execute({event:AcEnumDrawerEvent.Toggle});
@@ -119,17 +78,10 @@ export class AcDrawer extends AcElementBase{
     if (!this.isOpen) return;
     this.isOpen = false;
 
-    const placementsReset: Record<string, string> = {
-      left: 'translateX(-100%)',
-      right: 'translateX(100%)',
-      top: 'translateY(-100%)',
-      bottom: 'translateY(100%)'
-    };
-
-    this.style.transform = placementsReset[this.placement];
+    this.classList.remove('open');
 
     if (this.showBackdrop && this.backdropEl) {
-      this.backdropEl.style.opacity = '0';
+      this.backdropEl.classList.remove('show');
       this.delayedCallback.add({callback:() => {
         if (this.backdropEl && this.backdropEl.parentElement) {
           this.backdropEl.parentElement.removeChild(this.backdropEl);

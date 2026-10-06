@@ -28,12 +28,12 @@ export class AcDatagridBody extends AcElementBase {
       this.appendChild(this.rowDropIndicator);
     }
     this.rowDropIndicator.style.top = `${topPx}px`;
-    this.rowDropIndicator.style.display = 'block';
+    this.rowDropIndicator.classList.add('show');
   }
 
   hideRowDropIndicator() {
     if (this.rowDropIndicator) {
-      this.rowDropIndicator.style.display = 'none';
+      this.rowDropIndicator.classList.remove('show');
     }
   }
 
@@ -199,6 +199,7 @@ export class AcDatagridBody extends AcElementBase {
 
     // Top
     acClearElement({ element: this.pinnedTopContainer });
+    this.pinnedTopContainer.classList.toggle('show', top.length > 0);
     if (top.length > 0) {
       this.pinnedTopContainer.style.display = 'flex';
       for (const row of top) {
@@ -213,6 +214,7 @@ export class AcDatagridBody extends AcElementBase {
 
     // Bottom
     acClearElement({ element: this.pinnedBottomContainer });
+    this.pinnedBottomContainer.classList.toggle('show', bottom.length > 0);
     if (bottom.length > 0) {
       this.pinnedBottomContainer.style.display = 'flex';
       for (const row of bottom) {
@@ -255,6 +257,7 @@ export class AcDatagridBody extends AcElementBase {
       }
     }
     this.datagridApi?.datagrid?.datagridHeader?.syncScrollbarSpacer();
+    this.datagridApi?.handleAutoWidthColumns();
   }
 }
 

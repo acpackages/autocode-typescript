@@ -1,3 +1,86 @@
-.ac-resize-handle{
-
+ac-resizable,
+.ac-resizable {
+  position: relative;
+  overflow: hidden;
+  display: block;
 }
+
+.ac-resize-handle {
+  position: absolute;
+  background: transparent;
+  z-index: 10;
+  --ac-resize-handle-size: 8px;
+}
+
+.ac-resize-handle.ac-resize-TOP,
+.ac-resize-handle.ac-resize-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--ac-resize-handle-size);
+  cursor: ns-resize;
+}
+
+.ac-resize-handle.ac-resize-BOTTOM,
+.ac-resize-handle.ac-resize-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--ac-resize-handle-size);
+  cursor: ns-resize;
+}
+
+.ac-resize-handle.ac-resize-LEFT,
+.ac-resize-handle.ac-resize-left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--ac-resize-handle-size);
+  cursor: ew-resize;
+}
+
+.ac-resize-handle.ac-resize-RIGHT,
+.ac-resize-handle.ac-resize-right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--ac-resize-handle-size);
+  cursor: ew-resize;
+}
+
+.ac-resize-handle.ac-resize-TOP_LEFT,
+.ac-resize-handle.ac-resize-top-left {
+  top: 0;
+  left: 0;
+  width: var(--ac-resize-handle-size);
+  height: var(--ac-resize-handle-size);
+  cursor: nwse-resize;
+}
+
+.ac-resize-handle.ac-resize-TOP_RIGHT,
+.ac-resize-handle.ac-resize-top-right {
+  top: 0;
+  right: 0;
+  width: var(--ac-resize-handle-size);
+  height: var(--ac-resize-handle-size);
+  cursor: nesw-resize;
+}
+
+.ac-resize-handle.ac-resize-BOTTOM_LEFT,
+.ac-resize-handle.ac-resize-bottom-left {
+  bottom: 0;
+  left: 0;
+  width: var(--ac-resize-handle-size);
+  height: var(--ac-resize-handle-size);
+  cursor: nesw-resize;
+}
+
+.ac-resize-handle.ac-resize-BOTTOM_RIGHT,
+.ac-resize-handle.ac-resize-bottom-right {
+  bottom: 0;
+  right: 0;
+  width: var(--ac-resize-handle-size);
+  height: var(--ac-resize-handle-size);
+  cursor: nwse-resize;
+}
+

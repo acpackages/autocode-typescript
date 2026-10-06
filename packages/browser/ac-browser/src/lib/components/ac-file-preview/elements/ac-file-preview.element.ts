@@ -36,10 +36,6 @@ export class AcFilePreview extends AcElementBase {
 
   override init(): void {
     super.init();
-    this.style.display = "flex";
-    this.style.flexDirection = "column";
-    this.style.height = "100%";
-    this.style.width = "100%";
     this.setPreview();
   }
 
@@ -58,7 +54,7 @@ export class AcFilePreview extends AcElementBase {
         const fileDetails: { name: string, type: string } | undefined = AcFileUtils.detailsFromExtension({ extension: extension });
         if (fileDetails) {
           if (fileDetails.type == "image") {
-            this.innerHTML = `<img src="${this.filePath}" style="height:100%;width:100%;object-fit:contain;"/>`
+            this.innerHTML = `<img src="${this.filePath}" class="ac-file-preview-image"/>`
           }
           else {
             this.setExtensionPreview(extension);
@@ -119,9 +115,9 @@ export class AcFilePreview extends AcElementBase {
         svgName = fileDetails.svg;
       }
     }
-    this.innerHTML = `<ac-svg-icon style="margin:auto;height:50%;width:50%">${svgObject[svgName]}</ac-svg-icon>`;
+    this.innerHTML = `<ac-svg-icon class="ac-file-preview-icon">${svgObject[svgName]}</ac-svg-icon>`;
     if (extension != "") {
-      this.innerHTML += `<ac-file-preview-extension style="text-align:center;height:30%;font-weight:bold;font-size:20px;text-transform:uppercase;">${extension}</ac-file-preview-extension>`;
+      this.innerHTML += `<ac-file-preview-extension>${extension}</ac-file-preview-extension>`;
     }
   }
 

@@ -97,6 +97,9 @@
       "@autocode-ts/ac-nodeflow-designer": [
         "packages/browser/ac-nodeflow-designer/src/index.ts"
       ],
+      "@autocode-ts/ac-database-designer": [
+        "packages/browser/ac-database-designer/src/index.ts"
+      ],
       "@autocode-ts/ac-number-to-words-pipe": [
         "packages/browser/extensions/report-engine/ac-number-to-words-pipe/src/ac-number-to-words-pipe.ts"
       ],

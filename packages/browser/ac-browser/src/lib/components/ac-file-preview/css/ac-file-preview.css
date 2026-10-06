@@ -1,13 +1,35 @@
-ac-file-preview {
+ac-file-preview,
+.ac-file-preview {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 }
 
-ac-file-preview img {
+ac-file-preview img,
+.ac-file-preview img,
+.ac-file-preview-image {
+  height: 100%;
+  width: 100%;
   margin: auto;
   object-fit: contain;
+}
+
+ac-file-preview ac-svg-icon,
+.ac-file-preview-icon {
+  margin: auto;
+  height: 50%;
+  width: 50%;
+}
+
+ac-file-preview ac-file-preview-extension,
+ac-file-preview-extension {
+  display: block;
+  text-align: center;
+  height: 30%;
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: uppercase;
 }
 
 .ac-upload-file-preview {

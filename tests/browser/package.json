@@ -18,6 +18,8 @@
     "@autocode-ts/ac-dde-code-generator": "workspace:*",
     "@autocode-ts/ac-dde-browser-storage": "workspace:*",
     "@autocode-ts/ac-sqlite-dao-browser": "workspace:*",
+    "@autocode-ts/ac-data-dictionary-editor": "workspace:*",
+    "@autocode-ts/ac-nodeflow-designer": "workspace:*",
     "@coreui/coreui": "^5.0.0",
     "bootstrap": "^5.3.3"
   },

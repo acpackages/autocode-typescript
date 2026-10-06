@@ -1,10 +1,25 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-export class AcConnection{
+import { ClassicPreset } from 'rete';
+import { AcNode } from './ac-node.model';
+
+export class AcConnection extends ClassicPreset.Connection<AcNode, AcNode> {
   static readonly KeyConnectionId = 'connectionId';
   static readonly KeyDestinationNodeId = 'destinationNodeId';
-  static readonly KeySourceNodeId = 'connectionId';
+  static readonly KeySourceNodeId = 'sourceNodeId';
 
-  connectionId:string = '';
-  destinationNodeId:string = '';
-  sourceNodeId:string = '';
+  data?: any;
+
+  constructor(
+    source: AcNode,
+    sourceOutput: string,
+    target: AcNode,
+    targetInput: string,
+    data?: any
+  ) {
+    super(source, sourceOutput, target, targetInput);
+    this.data = data;
+  }
+
+  get isLoop(): boolean {
+    return this.source === this.target;
+  }
 }

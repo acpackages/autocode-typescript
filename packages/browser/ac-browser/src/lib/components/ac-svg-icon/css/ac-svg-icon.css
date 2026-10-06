@@ -1,4 +1,12 @@
 ac-svg-icon {
   display: inline-block;
   vertical-align: middle;
+  color: var(--ac-icon-color, inherit);
+  font-size: var(--ac-icon-size, inherit);
+}
+
+ac-svg-icon > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }

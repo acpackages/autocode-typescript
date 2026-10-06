@@ -4,4 +4,60 @@ ac-drawer,
   z-index: 1050;
   background: #fff;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  transition: transform var(--ac-drawer-duration, 200ms) ease;
+  will-change: transform;
+}
+
+ac-drawer[placement="left"],
+.ac-drawer[placement="left"],
+ac-drawer:not([placement]),
+.ac-drawer:not([placement]) {
+  top: 0;
+  left: 0;
+  height: 100%;
+  transform: translateX(-100%);
+}
+
+ac-drawer[placement="right"],
+.ac-drawer[placement="right"] {
+  top: 0;
+  right: 0;
+  height: 100%;
+  transform: translateX(100%);
+}
+
+ac-drawer[placement="top"],
+.ac-drawer[placement="top"] {
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: translateY(-100%);
+}
+
+ac-drawer[placement="bottom"],
+.ac-drawer[placement="bottom"] {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transform: translateY(100%);
+}
+
+ac-drawer.open,
+.ac-drawer.open {
+  transform: translate(0, 0) !important;
+}
+
+.ac-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity var(--ac-drawer-duration, 200ms) ease;
+  z-index: 1040;
+}
+
+.ac-drawer-backdrop.show {
+  opacity: 1;
 }

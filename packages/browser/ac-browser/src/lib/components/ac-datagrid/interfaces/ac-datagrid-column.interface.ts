@@ -15,6 +15,10 @@ export interface IAcDatagridColumn {
   index: number;
   sortOrder?: AcEnumSortOrder;
   allowEdit:boolean;
+  editable?: boolean | ((params: any) => boolean);
+  isTreeColumn?: boolean;
+  cellClass?: any;
+  headerCellClass?: any;
   allowFilter:boolean;
   allowFocus:boolean;
   allowResize:boolean;
@@ -26,5 +30,8 @@ export interface IAcDatagridColumn {
   title:string;
   visible:boolean;
   width:number;
+  flexSize?: number;
+  autoWidth?: boolean;
+  suppressSizeToFit?: boolean;
   pinnedOn?:'LEFT'|'RIGHT';
 }

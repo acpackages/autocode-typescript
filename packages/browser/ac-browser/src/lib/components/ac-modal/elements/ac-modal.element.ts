@@ -31,7 +31,6 @@ export class AcModal extends AcElementBase {
 
   override init() {
     super.init();
-    Object.assign(this.style, AC_MODAL_CONFIG.closeStyle);
   }
 
   close() {
@@ -48,28 +47,23 @@ export class AcModal extends AcElementBase {
 
     if (this.backdrop) {
       this.backdrop.remove();
+      this.backdrop = null;
     }
 
-    this.style.display = "none";
+    this.classList.remove('open');
     this.events.execute({ event: AcEnumModalEvent.Close });
-
   }
 
   private fadeOutModal() {
-    this.style.transition = `opacity ${this.animationDuration}ms ease`;
-    this.style.opacity = "0";
-    if (this.backdrop) this.backdrop.style.opacity = "0";
+    this.classList.remove('open');
 
     this.delayedCallback.add({callback:() => {
-      this.style.display = "none";
       if (this.backdrop && this.backdrop.parentElement) {
         this.backdrop.parentElement.removeChild(this.backdrop);
         this.backdrop = null;
       }
       this.ownerDocument.body.style.overflow = this.originalBodyStyleOverflow;
       this.ownerDocument.removeEventListener("keydown", this.handleEscape);
-      this.style.transition = "";
-      this.style.opacity = "";
     }, duration:this.animationDuration});
   }
 
@@ -84,52 +78,33 @@ export class AcModal extends AcElementBase {
     this.isOpen = true;
     this.lastTrigger = triggerElement;
 
+    this.style.setProperty('--ac-modal-duration', `${this.animationDuration}ms`);
+
     // Create backdrop
     this.backdrop = this.ownerDocument.createElement("div");
     this.backdrop.classList.add('ac-modal-backdrop');
-    const backdropStyle = { ...AC_MODAL_CONFIG.backdropStyle, "transition": `opacity ${this.animationDuration}ms ease` };
-    Object.assign(this.backdrop.style, backdropStyle);
     this.appendChild(this.backdrop);
     this.originalBodyStyleOverflow = this.ownerDocument.body.style.overflow;
     this.ownerDocument.body.style.overflow = "hidden";
 
-    this.style.display = "block";
-    const rect = this.getBoundingClientRect();
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const finalWidth = Math.min(rect.width, vw * 0.9);
-    const finalHeight = Math.min(rect.height, vh * 0.9);
-    const finalLeft = Math.round((vw - finalWidth) / 2);
-    const finalTop = Math.round((vh - finalHeight) / 2);
-    Object.assign(this.style, AC_MODAL_CONFIG.openStyle);
-
     if (!triggerElement) {
-      this.style.transition = `opacity ${this.animationDuration}ms ease`;
       requestAnimationFrame(() => {
-        this.style.opacity = "1";
-        if (this.backdrop) this.backdrop.style.opacity = "1";
-        this.style.pointerEvents = "";
+        this.classList.add('open');
       });
       this.backdrop.addEventListener("click", () => {
-      if (this.closeOnOutsideClick) {
-        this.close();
-      }
-    }, { once: true });
+        if (this.closeOnOutsideClick) {
+          this.close();
+        }
+      }, { once: true });
       this.ownerDocument.addEventListener("keydown", this.handleEscape);
       this.events.execute({ event: AcEnumModalEvent.Open });
       return;
     }
 
-
     acMorphElement({ source: triggerElement, destination: this, duration: this.animationDuration, sourceColor: morphTriggerColor, destinationColor: morphModalColor });
 
     this.delayedCallback.add({callback:() => {
-      this.style.visibility = "visible";
-      this.style.opacity = "1";
-      this.style.pointerEvents = "";
-      if (this.backdrop) this.backdrop.style.opacity = "1";
+      this.classList.add('open');
       this.events.execute({ event: AcEnumModalEvent.Open });
     }, duration:this.animationDuration});
 

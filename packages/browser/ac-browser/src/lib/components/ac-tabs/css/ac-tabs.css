@@ -1,4 +1,10 @@
+ac-tabs,
+.ac-tabs {
+  display: contents;
+}
+
 @import "./ac-vscode-window-tabs.css";
 @import "./ac-chrome-window-tabs.css";
 @import "./ac-horizontal-tabs.css";
 @import "./ac-vertical-tabs.css";
+

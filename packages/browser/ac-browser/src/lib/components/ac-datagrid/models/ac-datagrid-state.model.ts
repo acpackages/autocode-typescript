@@ -124,6 +124,7 @@ export class AcDatagridState {
       const columnState: IAcDatagridColumnState = {
         field: datagridColumn.columnDefinition.field,
         width: datagridColumn.width,
+        flexSize: datagridColumn.flexSize ?? datagridColumn.columnDefinition.flexSize,
         index: datagridColumn.index,
         isVisible:datagridColumn.visible
       };

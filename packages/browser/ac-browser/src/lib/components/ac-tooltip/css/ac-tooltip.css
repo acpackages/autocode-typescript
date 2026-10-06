@@ -1,3 +1,4 @@
+ac-tooltip,
 .ac-tooltip {
   background: rgba(23, 23, 23, 1);
   color: #fff;
@@ -10,4 +11,10 @@
   pointer-events: none;
   position: fixed;
   z-index: 10000;
+  display: none;
+}
+
+ac-tooltip.show,
+.ac-tooltip.show {
+  display: block;
 }

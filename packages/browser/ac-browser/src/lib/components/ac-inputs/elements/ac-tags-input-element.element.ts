@@ -77,47 +77,17 @@ export class AcTagsInputElement extends AcInputBase {
   override isInputElementValidHtmlInput = false;
 
   private setupElements() {
-    Object.assign(this.inputElement.style, {
-      position: 'relative',
-      display: 'flex',
-      flexWrap: 'wrap',
-      padding: '4px',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-      background: '#fff',
-      boxSizing: 'border-box',
-    });
-
-    Object.assign(this.tagsContainer.style, {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '4px',
-    });
+    this.inputElement.className = 'ac-tags-input-container';
+    this.tagsContainer.className = 'ac-tags-container';
     this.inputElement.appendChild(this.tagsContainer);
 
     this.textInputElement.type = 'text';
     this.textInputElement.autocomplete = 'off';
-    Object.assign(this.textInputElement.style, {
-      border: 'none',
-      outline: 'none',
-      background: 'transparent',
-      flexGrow: '1',
-      minWidth: '100px',
-      padding: '4px',
-    });
+    this.textInputElement.className = 'ac-tags-input-field';
     this.inputElement.appendChild(this.textInputElement);
 
     this.dropdownContainer = this.ownerDocument.createElement('div');
-    Object.assign(this.dropdownContainer.style, {
-      position: 'fixed',
-      display: 'none',
-      zIndex: '9999',
-      minWidth: 'max-content',
-      maxHeight: `${this.maxDropdownHeight}px`,
-      border: '1px solid #ccc',
-      background: '#fff',
-      boxSizing: 'border-box',
-    });
+    this.dropdownContainer.className = 'ac-tags-dropdown';
 
     this.listEl = this.ownerDocument.createElement('div');
     this.dropdownContainer.appendChild(this.listEl);
@@ -232,20 +202,10 @@ export class AcTagsInputElement extends AcInputBase {
       tagEl.classList.add('ac-tag-value');
       const labelObj = this._tagOptions.find(opt => opt[this.valueKey] === value);
       tagEl.textContent = labelObj ? labelObj[this.labelKey] : value;
-      Object.assign(tagEl.style, {
-        background: '#007bff',
-        color: '#fff',
-        padding: '2px 8px',
-        borderRadius: '3px',
-        margin: '2px',
-        display: 'inline-flex',
-        alignItems: 'center',
-      });
 
       const removeBtn = this.ownerDocument.createElement('span');
+      removeBtn.classList.add('ac-tag-remove');
       removeBtn.textContent = '×';
-      removeBtn.style.cursor = 'pointer';
-      removeBtn.style.marginLeft = '8px';
       removeBtn.addEventListener('click', () => this.removeTag(value));
 
       tagEl.appendChild(removeBtn);
@@ -276,10 +236,8 @@ export class AcTagsInputElement extends AcInputBase {
 
   private buildOptionElement(option: any, index: number): HTMLElement {
     const el = this.ownerDocument.createElement('div');
+    el.className = 'ac-tag-option';
     el.dataset['optionIndex'] = String(index);
-    el.style.padding = '4px 8px';
-    el.style.cursor = 'pointer';
-    el.style.boxSizing = 'border-box';
     el.textContent = String(option[this.labelKey]);
     el.addEventListener('mousedown', e => { e.preventDefault(); this.addTag(option); });
     el.addEventListener('mouseenter', () => { this.highlightingIndex = index; this.applyHighlightStyles(); });
@@ -290,12 +248,13 @@ export class AcTagsInputElement extends AcInputBase {
     if (!this.isDropdownOpen) {
       this.ownerDocument.body.appendChild(this.dropdownContainer);
       this.isDropdownOpen = true;
-      this.dropdownContainer.style.display = 'block';
+      this.dropdownContainer.classList.add('show');
     }
     this.positionDropdown();
   }
 
   private closeDropdown() {
+    this.dropdownContainer.classList.remove('show');
     this.dropdownContainer.remove();
     this.isDropdownOpen = false;
     this.highlightingIndex = -1;
@@ -312,7 +271,6 @@ export class AcTagsInputElement extends AcInputBase {
         this.dropdownContainer.style.width = rect.width + 'px';
         this.dropdownContainer.style.left = rect.left + 'px';
         this.dropdownContainer.style.top = showAbove ? `${rect.top - dropdownHeight}px` : `${rect.bottom}px`;
-        this.dropdownContainer.style.overflowY = 'auto';
       }, duration: 10
     });
   }
@@ -322,7 +280,7 @@ export class AcTagsInputElement extends AcInputBase {
     if (this._filteredOptions.length) {
       this._filteredOptions.forEach((opt, i) => this.listEl.appendChild(this.buildOptionElement(opt, i)));
     } else {
-      this.listEl.innerHTML = `<div style="text-align:center;padding:4px;">No matching options!</div>`;
+      this.listEl.innerHTML = `<div class="ac-tag-no-options">No matching options!</div>`;
     }
     this.scrollable.registerExistingElements();
     this.delayedCallback.add({ callback: () => this.applyHighlightStyles() });
@@ -331,10 +289,10 @@ export class AcTagsInputElement extends AcInputBase {
 
   private applyHighlightStyles() {
     const all = this.dropdownContainer.querySelectorAll<HTMLElement>('[data-option-index]');
-    all.forEach(n => (n.style.background = ''));
+    all.forEach(n => n.classList.remove('highlighted'));
     if (this.highlightingIndex >= 0) {
       const el = this.dropdownContainer.querySelector<HTMLElement>(`[data-option-index="${this.highlightingIndex}"]`);
-      if (el) el.style.background = '#ddd';
+      if (el) el.classList.add('highlighted');
     }
   }
 

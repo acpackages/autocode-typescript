@@ -35,6 +35,10 @@ ac-repeater-footer,
   flex-direction: column;
 }
 
+ac-repeater-row {
+  display: block;
+}
+
 .ac-repeater-row {
   display: flex;
   align-items: center;

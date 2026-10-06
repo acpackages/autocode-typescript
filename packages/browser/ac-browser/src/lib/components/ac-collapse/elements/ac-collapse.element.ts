@@ -65,7 +65,6 @@ export class AcCollapse extends AcElementBase{
 
   override connectedCallback() {
     super.connectedCallback();
-    this.style.display = 'contents';
     const directionAttr = this.getAttribute(AcCollapseAttributeName.acCollapseDirection);
     if (directionAttr && Object.values(AcEnumCollapseDirection).includes(directionAttr as AcEnumCollapseDirection)) {
       this.direction = directionAttr as AcEnumCollapseDirection;
@@ -197,7 +196,6 @@ export class AcCollapse extends AcElementBase{
       class_: AcCollapseCssClassName.acCollapseContent,
       element,
     });
-    this.contentElement.style.overflow = "hidden";
     this.contentElement.style.opacity = "0";
 
     this.delayedCallback.add({callback:() => {

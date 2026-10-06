@@ -33,7 +33,6 @@ export class AcAccordion extends AcElementBase {
 
   override init(){
     super.init();
-    this.style.display = 'contents';
   }
 }
 

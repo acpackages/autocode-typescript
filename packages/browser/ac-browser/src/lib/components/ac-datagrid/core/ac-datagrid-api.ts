@@ -30,6 +30,9 @@ import { IAcDatagridColumnDefinitionsSetEvent } from "../interfaces/event-args/a
 import { AC_DATAGRID_DEFAULT_COLUMN_DEFINITION, AcEnumDatagridColumnDataType, IAcDatagridActiveRowChangeEvent, IAcDatagridCell, IAcDatagridColumn } from "../_ac-datagrid.export";
 import { isValidDateString, isValidDateTimeString } from "@autocode-ts/ac-extensions";
 import { IAcDatagridRow } from "../interfaces/ac-datagrid-row.interface";
+import { AcDatagridColumnSizeHelper } from "../helpers/ac-datagrid-column-size-helper";
+import { IAcDatagridSizeColumnsToFitOptions } from "../interfaces/options/ac-datagrid-size-columns-to-fit-options.interface";
+import { IAcDatagridAutoSizeColumnsOptions } from "../interfaces/options/ac-datagrid-auto-size-columns-options.interface";
 
 export class AcDatagridApi {
   private _bodyWidth: number = 0;
@@ -38,6 +41,17 @@ export class AcDatagridApi {
   }
   set bodyWidth(value: number) {
     this._bodyWidth = value;
+  }
+
+  private _fillAvailableWidth: boolean = false;
+  get fillAvailableWidth(): boolean {
+    return this._fillAvailableWidth;
+  }
+  set fillAvailableWidth(value: boolean) {
+    if (this._fillAvailableWidth !== value) {
+      this._fillAvailableWidth = value;
+      this.recomputeColumnLayout();
+    }
   }
 
   private _columnDefinitions: IAcDatagridColumnDefinition[] = [];
@@ -104,7 +118,11 @@ export class AcDatagridApi {
         dataType: AcEnumDatagridColumnDataType.Unknown,
         columnId: Autocode.uuid(),
         extensionData: {},
-        allowEdit: column.allowEdit,
+        allowEdit: column.editable !== undefined ? (typeof column.editable === 'function' ? true : !!column.editable) : (column.allowEdit ?? false),
+        editable: column.editable !== undefined ? column.editable : (column.allowEdit ?? false),
+        isTreeColumn: column.isTreeColumn,
+        cellClass: column.cellClass,
+        headerCellClass: column.headerCellClass,
         allowFilter: column.allowFilter,
         allowFocus: column.allowFocus,
         allowResize: column.allowResize,
@@ -116,6 +134,9 @@ export class AcDatagridApi {
         visible: column.visible,
         index: column.visible ? displayIndex : -1,
         width: column.width ?? this.defaultColumnDefiniation.width,
+        flexSize: column.flex ?? column.flexSize,
+        autoWidth: column.autoWidth,
+        suppressSizeToFit: column.suppressSizeToFit,
         pinnedOn: column.pinnedOn
       };
       this.datagridColumns.push(datagridColumn);
@@ -141,6 +162,7 @@ export class AcDatagridApi {
     };
     this.events.execute({ event: AC_DATAGRID_EVENT.ColumnDefinitionsSet, args: event });
     this.logger.log('Executed ColumnDefinitionsSet event');
+    this.recomputeColumnLayout();
   }
 
   get data(): any[] {
@@ -201,6 +223,89 @@ export class AcDatagridApi {
     this.hooks.execute({ hook: AC_DATAGRID_HOOK.ColumnWidthChange, args: { datagridColumn, width, oldWidth, datagridApi: this } });
   }
 
+  setColumnWidths(updates: { datagridColumn: IAcDatagridColumn; width: number }[]) {
+    if (!updates || updates.length === 0) return;
+
+    const validUpdates: { datagridColumn: IAcDatagridColumn; width: number; oldWidth: number }[] = [];
+    const widthMap = new Map<string, number>();
+
+    for (const u of updates) {
+      if (!u.datagridColumn) continue;
+      const w = Math.max(30, u.width);
+      const oldWidth = u.datagridColumn.width;
+      u.datagridColumn.width = w;
+      validUpdates.push({ datagridColumn: u.datagridColumn, width: w, oldWidth });
+      widthMap.set(u.datagridColumn.columnId, w);
+    }
+
+    if (validUpdates.length === 0) return;
+
+    // 1. Update header cell DOM
+    if (this.datagrid?.datagridHeader?.datagridHeaderCells) {
+      for (const hCell of this.datagrid.datagridHeader.datagridHeaderCells) {
+        if (hCell.datagridColumn && widthMap.has(hCell.datagridColumn.columnId)) {
+          hCell.setCellWidth();
+        }
+      }
+    }
+
+    // 2. Update body cells DOM via direct cell iteration
+    if (this.datagrid?.datagridBody?.currentRows) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        for (const cellEl of rowEl.datagridCells) {
+          const colId = cellEl.datagridCell?.datagridColumn?.columnId;
+          if (colId && widthMap.has(colId)) {
+            cellEl.setCellWidth();
+          }
+        }
+      }
+    }
+
+    // 3. Update pinned column offsets once
+    if (this.datagridColumns.some(c => !!c.pinnedOn)) {
+      this.updatePinnedOffsets();
+      this.datagrid?.datagridHeader?.refresh();
+      if (this.datagrid?.datagridBody?.currentRows) {
+        for (const rowEl of this.datagrid.datagridBody.currentRows) {
+          rowEl.refresh();
+        }
+      }
+    }
+
+    this.datagrid?.datagridHeader?.syncScrollbarSpacer?.();
+
+    for (const u of validUpdates) {
+      this.hooks.execute({
+        hook: AC_DATAGRID_HOOK.ColumnWidthChange,
+        args: { datagridColumn: u.datagridColumn, width: u.width, oldWidth: u.oldWidth, datagridApi: this }
+      });
+    }
+    this.notifyStateChange({ source: 'columnResize' });
+  }
+
+  recomputeColumnLayout() {
+    if (!this.datagridColumns || this.datagridColumns.length === 0) return;
+    const updates = AcDatagridColumnSizeHelper.calculateFlexAndFillWidths({
+      datagridApi: this,
+      fillAvailableWidth: this._fillAvailableWidth
+    });
+    if (updates.length > 0) {
+      this.setColumnWidths(updates);
+    }
+  }
+
+  sizeColumnsToFit(options?: IAcDatagridSizeColumnsToFitOptions) {
+    if (!this.datagridColumns || this.datagridColumns.length === 0) return;
+    const updates = AcDatagridColumnSizeHelper.calculateFlexAndFillWidths({
+      datagridApi: this,
+      fillAvailableWidth: true,
+      options
+    });
+    if (updates.length > 0) {
+      this.setColumnWidths(updates);
+    }
+  }
+
   get displayedDatagridRows(): IAcDatagridRow[] {
     if (this.hasTreeOrGroup && this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
       return (this.dataManager.allRows as IAcDatagridRow[]).filter(r => r && r.index !== -1);
@@ -223,7 +328,7 @@ export class AcDatagridApi {
     }
   }
 
-  private _rowHeight: number = 36;
+  private _rowHeight: number = 30;
   get rowHeight(): number {
     return this._rowHeight;
   }
@@ -524,37 +629,92 @@ export class AcDatagridApi {
     this.logger.log('Executed ApplyFilter hook');
   }
 
-  autoResizeColumn({ datagridColumn }: { datagridColumn: IAcDatagridColumn }) {
-    if (!datagridColumn) return;
-    this.logger.log('Auto-resizing column', { field: datagridColumn.columnDefinition.field });
-    const minWidth = datagridColumn.columnDefinition.minWidth ?? 60;
-    const maxWidth = datagridColumn.columnDefinition.maxWidth ?? 800;
-    const title = datagridColumn.title || datagridColumn.columnKey || '';
+  autoResizeColumn({
+    datagridColumn,
+    skipHeader,
+    additionalPadding
+  }: {
+    datagridColumn: IAcDatagridColumn | string;
+    skipHeader?: boolean;
+    additionalPadding?: number;
+  }) {
+    const col: IAcDatagridColumn | undefined = typeof datagridColumn === 'string'
+      ? this.datagridColumns.find(c => c.columnKey === datagridColumn || c.columnId === datagridColumn || c.columnDefinition.field === datagridColumn)
+      : datagridColumn;
+    if (!col) return;
 
-    let maxChars = title.length + 4;
-    const field = datagridColumn.columnDefinition.field || datagridColumn.columnKey;
-    const rows = this.displayedDatagridRows || [];
-    for (let i = 0; i < Math.min(rows.length, 100); i++) {
-      const val = rows[i]?.data?.[field];
-      if (val != null) {
-        const len = String(val).length;
-        if (len > maxChars) {
-          maxChars = len;
-        }
-      }
-    }
-    const calculatedWidth = Math.max(minWidth, Math.min(maxWidth, Math.round(maxChars * 9) + 40));
-    this.setColumnWidth({ datagridColumn, width: calculatedWidth });
+    this.logger.log('Auto-resizing column', { field: col.columnDefinition.field });
+    const calculatedWidth = AcDatagridColumnSizeHelper.calculateColumnAutoWidth({
+      datagridColumn: col,
+      datagridApi: this,
+      skipHeader,
+      additionalPadding
+    });
+
+    this.setColumnWidth({ datagridColumn: col, width: calculatedWidth });
     this.events.execute({
       event: AC_DATAGRID_EVENT.ColumnResize,
       args: {
-        column: datagridColumn,
+        column: col,
         width: calculatedWidth,
         datagridApi: this
       }
     });
     this.notifyStateChange({ source: 'columnResize' });
+    this.recomputeColumnLayout();
   }
+
+  autoSizeColumns(options?: IAcDatagridAutoSizeColumnsOptions | string[]) {
+    const opts: IAcDatagridAutoSizeColumnsOptions = Array.isArray(options) ? { columnKeys: options } : (options || {});
+    const keys = opts.columnKeys;
+    const targets = keys && keys.length > 0
+      ? this.datagridColumns.filter(c => keys.includes(c.columnKey) || keys.includes(c.columnDefinition.field) || keys.includes(c.columnId))
+      : this.datagridColumns.filter(c => c.visible);
+
+    const updates: { datagridColumn: IAcDatagridColumn; width: number }[] = [];
+    for (const col of targets) {
+      const width = AcDatagridColumnSizeHelper.calculateColumnAutoWidth({
+        datagridColumn: col,
+        datagridApi: this,
+        skipHeader: opts.skipHeader,
+        additionalPadding: opts.additionalPadding,
+        maxSampleRows: opts.maxSampleRows
+      });
+      if (Math.abs(width - col.width) >= 1) {
+        updates.push({ datagridColumn: col, width });
+      }
+    }
+
+    if (updates.length > 0) {
+      this.setColumnWidths(updates);
+      for (const u of updates) {
+        this.events.execute({
+          event: AC_DATAGRID_EVENT.ColumnResize,
+          args: {
+            column: u.datagridColumn,
+            width: u.width,
+            datagridApi: this
+          }
+        });
+      }
+      this.recomputeColumnLayout();
+    }
+  }
+
+  autoSizeAllColumns(options?: { skipHeader?: boolean; additionalPadding?: number; maxSampleRows?: number }) {
+    this.autoSizeColumns({
+      skipHeader: options?.skipHeader,
+      additionalPadding: options?.additionalPadding,
+      maxSampleRows: options?.maxSampleRows
+    });
+  }
+
+  handleAutoWidthColumns() {
+    const autoCols = this.datagridColumns.filter(c => c.visible && (c.autoWidth || c.columnDefinition.autoWidth));
+    if (autoCols.length === 0) return;
+    this.autoSizeColumns({ columnKeys: autoCols.map(c => c.columnKey) });
+  }
+
 
   deleteRow({ data, rowId, key, value, highlightCells = false }: { data?: any, rowId?: string, key?: string, value?: any, highlightCells?: boolean }) {
     this.logger.log('Deleting row', { rowId, key, value: value ? '[provided]' : 'undefined', highlightCells });

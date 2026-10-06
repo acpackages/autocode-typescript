@@ -62,7 +62,6 @@ export class AcDropdown extends AcElementBase {
 
   override init() {
     super.init();
-    this.style.display = "contents";
     this.setAttribute(AcDropdownAttributeName.acDropdownId, this.id);
     this.setAttribute(AcDropdownAttributeName.acDropdown, "");
 
@@ -88,7 +87,6 @@ export class AcDropdown extends AcElementBase {
   open(): void {
     if (this.isOpen) return;
     this.isOpen = true;
-    this.targetElement.style.display = "block";
     this.targetElement.classList.add("fade-in");
 
     this.chosenPosition = this.position === "auto" ? this.getBestPosition() : this.position;
@@ -113,7 +111,6 @@ export class AcDropdown extends AcElementBase {
     if (!this.isOpen) return;
     this.isOpen = false;
     this.targetElement.classList.remove("fade-in");
-    this.targetElement.style.display = "none";
 
     document.removeEventListener("click", this.outsideClickHandler);
     this.triggerElement.setAttribute("aria-expanded", "false");
@@ -159,9 +156,6 @@ export class AcDropdown extends AcElementBase {
     }
     element.setAttribute(AcDropdownAttributeName.acDropdownTarget, "");
     element.setAttribute("role", "menu");
-    element.style.position = "fixed";
-    element.style.display = "none";
-    element.style.zIndex = "9999";
     element.addEventListener("keydown", this.keydownHandler);
 
     if (this.trigger === "hover") {

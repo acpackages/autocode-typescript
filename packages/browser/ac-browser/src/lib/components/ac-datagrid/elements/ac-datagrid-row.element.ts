@@ -149,25 +149,13 @@ export class AcDatagridRowElement extends AcElementBase {
     // 2. Group Header or Normal Cells
     if (this.datagridRow.isGroupHeader) {
       const groupBanner = document.createElement('div');
-      groupBanner.className = AC_DATAGRID_CLASS_NAME.acDatagridGroupHeaderRow;
-      groupBanner.style.display = 'flex';
-      groupBanner.style.alignItems = 'center';
-      groupBanner.style.flex = '1';
-      groupBanner.style.padding = '0 12px';
-      groupBanner.style.backgroundColor = '#f1f5f9';
-      groupBanner.style.fontWeight = '600';
-      groupBanner.style.fontSize = '13px';
-      groupBanner.style.gap = '8px';
+      groupBanner.className = `${AC_DATAGRID_CLASS_NAME.acDatagridGroupHeaderRow} ac-datagrid-group-banner`;
       groupBanner.innerHTML = `<span>${this.datagridRow.groupField}: <strong>${this.datagridRow.groupValue}</strong></span>
-        <span style="font-weight: normal; color: #64748b; font-size: 12px;">(${this.datagridRow.groupCount} items)</span>`;
+        <span class="ac-datagrid-group-count">(${this.datagridRow.groupCount} items)</span>`;
 
       if (this.datagridRow.groupAggregates && Object.keys(this.datagridRow.groupAggregates).length > 0) {
         const aggSpan = document.createElement('span');
-        aggSpan.style.marginLeft = 'auto';
-        aggSpan.style.display = 'flex';
-        aggSpan.style.gap = '12px';
-        aggSpan.style.fontSize = '12px';
-        aggSpan.style.color = '#334155';
+        aggSpan.className = 'ac-datagrid-group-aggregates';
         for (const [fld, val] of Object.entries(this.datagridRow.groupAggregates)) {
           aggSpan.innerHTML += `<span><em>${fld}</em>: <strong>${typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(2)) : val}</strong></span>`;
         }
@@ -206,12 +194,6 @@ export class AcDatagridRowElement extends AcElementBase {
 
     this.detailContainer = document.createElement('div');
     this.detailContainer.className = AC_DATAGRID_CLASS_NAME.acDatagridDetailRow;
-    this.detailContainer.style.width = '100%';
-    this.detailContainer.style.boxSizing = 'border-box';
-    this.detailContainer.style.backgroundColor = '#f8fafc';
-    this.detailContainer.style.borderTop = '1px solid #e2e8f0';
-    this.detailContainer.style.borderBottom = '1px solid #cbd5e1';
-    this.detailContainer.style.padding = '12px 24px';
 
     const content = this.datagridApi.masterDetailConfig.detailTemplate(this.datagridRow);
     if (typeof content === 'string') {
@@ -231,7 +213,7 @@ export class AcDatagridRowElement extends AcElementBase {
 
   enterRowEditMode() {
     for (const cell of this.datagridCells) {
-      if (cell.datagridCell?.datagridColumn.columnDefinition.allowEdit !== false) {
+      if (cell.isEditable()) {
         cell.startEdit();
       }
     }

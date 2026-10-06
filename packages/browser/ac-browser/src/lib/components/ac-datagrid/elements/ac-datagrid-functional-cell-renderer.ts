@@ -27,7 +27,9 @@ export class AcDatagridFunctionalCellRenderer implements IAcDatagridCellRenderer
       }
     }
     this.element.style.height = "100%";
-    this.element.style.width = "max-content";
+    this.element.style.width = "100%";
+    this.element.style.minWidth = "0";
+    this.element.style.textAlign = "inherit";
 
     // Apply attributes if specified
     const attrs = args.column?.columnDefinition.cellRendererElementAttrs;

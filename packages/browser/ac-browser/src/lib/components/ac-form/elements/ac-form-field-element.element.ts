@@ -10,7 +10,6 @@ export class AcFormField extends AcElementBase {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.style.display = 'contents';
     this.mutationObserver = new MutationObserver(() => this.bindInput());
     this.bindInput();
     this.mutationObserver.observe(this, { childList: true, subtree: true });

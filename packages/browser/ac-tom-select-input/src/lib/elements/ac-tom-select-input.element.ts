@@ -8,6 +8,8 @@ import { stringIsJson } from "@autocode-ts/ac-extensions";
 import { AcFilterGroup, AcEnumConditionOperator, IAcOnDemandRequestArgs, IAcOnDemandResponseArgs } from "@autocode-ts/autocode";
 
 export class AcTomSelectInputElement extends AcInputBase {
+  override isInputElementValidHtmlInput = false;
+
   static override get observedAttributes() {
     return [...super.observedAttributes, "placeholder", "readonly", "label-key", "value-key", "select-options", "add-row"];
   }
@@ -177,39 +179,23 @@ export class AcTomSelectInputElement extends AcInputBase {
   private tomSelect!: TomSelect;
   private subscriptionId?: string;
   private isDropdownOpen: boolean = false;
-
   // ── Value management ────────────────────────────────────────────────
 
-  override get value(): any {
-    return this._value;
-  }
+//   override setValueListener() {
+//     Object.defineProperty(this, 'value', {
+//       get() {
+//         return this._value;
+//       },
 
-  override set value(val: any) {
-    this.setValue({ value: val });
-    this.setSelectedRowsFromValue();
-  }
+//       set(value) {
+//         this.setValue(value);
+//         this.setSelectedRowsFromValue();
+//       },
 
-  setValue({ value, emitEvent = true}:{ value:any, emitEvent?: boolean }): void {
-    console.log("[AcTomSelectInputElement] Setting value",value);
-    console.trace();
-    super.setValue({ value: value, emitEvent });
-
-    if (this.tomSelect) {
-      if (value === null || value === undefined || value === '') {
-        if (this.tomSelect.getValue() !== '') {
-          this.tomSelect.clear(true);
-        }
-      } else {
-        const optKey = String(value);
-        if (this.tomSelect.getValue() !== optKey) {
-          if (!this.tomSelect.options[optKey] && this.selectedRows.length > 0) {
-            this.tomSelect.addOption(this.selectedRows[0]);
-          }
-          this.tomSelect.setValue(optKey, true);
-        }
-      }
-    }
-  }
+//       enumerable: true,
+//       configurable: true
+//     });
+//   }
 
   private setSelectedRows({ rows }: { rows: any[] }) {
     this.selectedRows = rows;
@@ -393,7 +379,7 @@ export class AcTomSelectInputElement extends AcInputBase {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.innerHTML = `<select class="ac-tomselect"></select>`;
+    this.innerHTML = `<select class="ac-tomselect" style="display:none;"></select>`;
     this.selectEl = this.querySelector(".ac-tomselect")!;
 
     this.initTomSelect();
@@ -416,27 +402,7 @@ export class AcTomSelectInputElement extends AcInputBase {
     }
   }
 
-  private resizerCleanups: Array<() => void> = [];
-  private onDemandSequence: number = 0;
-
-  private onWindowScrollOrResize = () => {
-    if (this.isDropdownOpen && this.tomSelect) {
-      this.tomSelect.position();
-    }
-  };
-
-  private cleanupResizer(): void {
-    for (const cleanup of this.resizerCleanups) {
-      cleanup();
-    }
-    this.resizerCleanups = [];
-  }
-
   override disconnectedCallback() {
-    window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
-    window.removeEventListener('resize', this.onWindowScrollOrResize);
-    this.cleanupResizer();
-
     if (this.subscriptionId && this.dataManager) {
       this.dataManager.hooks.unsubscribe({ subscriptionId: this.subscriptionId });
     }
@@ -447,17 +413,13 @@ export class AcTomSelectInputElement extends AcInputBase {
   }
 
   override destroy(): void {
-    window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
-    window.removeEventListener('resize', this.onWindowScrollOrResize);
-    this.cleanupResizer();
-
     if (this.tomSelect) {
       this.tomSelect.destroy();
     }
     super.destroy();
   }
 
-  private setupCustomResizer({ resizer, dropdown }: { resizer: HTMLElement; dropdown: HTMLElement }): void {
+  private setupCustomResizer(resizer: HTMLElement, dropdown: HTMLElement) {
     const handleDrag = (startX: number, startY: number, startWidth: number, startHeight: number, clientX: number, clientY: number) => {
       const newWidth = Math.max(150, startWidth + (clientX - startX));
       const newHeight = Math.max(100, startHeight + (clientY - startY));
@@ -470,7 +432,7 @@ export class AcTomSelectInputElement extends AcInputBase {
       this.notifyState();
     };
 
-    const onMouseDown = (e: MouseEvent) => {
+    resizer.addEventListener('mousedown', (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -490,13 +452,9 @@ export class AcTomSelectInputElement extends AcInputBase {
 
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
-      this.resizerCleanups.push(() => {
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-      });
-    };
+    });
 
-    const onTouchStart = (e: TouchEvent) => {
+    resizer.addEventListener('touchstart', (e: TouchEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -518,18 +476,6 @@ export class AcTomSelectInputElement extends AcInputBase {
 
       document.addEventListener('touchmove', onTouchMove, { passive: false });
       document.addEventListener('touchend', onTouchEnd);
-      this.resizerCleanups.push(() => {
-        document.removeEventListener('touchmove', onTouchMove);
-        document.removeEventListener('touchend', onTouchEnd);
-      });
-    };
-
-    resizer.addEventListener('mousedown', onMouseDown);
-    resizer.addEventListener('touchstart', onTouchStart);
-
-    this.resizerCleanups.push(() => {
-      resizer.removeEventListener('mousedown', onMouseDown);
-      resizer.removeEventListener('touchstart', onTouchStart);
     });
   }
 
@@ -585,6 +531,8 @@ export class AcTomSelectInputElement extends AcInputBase {
         this.addRowCallback({
           query: input,
           callback: (newOption: any) => {
+            console.log(newOption);
+            this.tomSelect.addOptions([newOption],true);
             const valueOptions = [...this._options, newOption];
             this._options = valueOptions;
             this.dataManager.data = valueOptions;
@@ -592,6 +540,7 @@ export class AcTomSelectInputElement extends AcInputBase {
               [self.valueKey]: newOption[self.valueKey],
               [self.labelKey]: newOption[self.labelKey]
             });
+            this.tomSelect.setValue(newOption[self.valueKey]);
           }
         });
       } : false,
@@ -623,7 +572,7 @@ export class AcTomSelectInputElement extends AcInputBase {
         // this.wrapper.classList.add('my-tom-select');
         const inputClass:string|null = self.getAttribute('class');
         if(inputClass){
-          for(const _class of Array.from(self.classList)){
+          for(const _class of self.classList){
             this.control.classList.add(_class);
           }
         }
@@ -688,12 +637,9 @@ export class AcTomSelectInputElement extends AcInputBase {
               background: linear-gradient(135deg, transparent 5px, #bbb 5px, #bbb 6px, transparent 6px, transparent 8px, #bbb 8px, #bbb 9px, transparent 9px, transparent 11px, #bbb 11px, #bbb 12px, transparent 12px);
             `;
             dropdown.appendChild(resizer);
-            this.setupCustomResizer({ resizer, dropdown });
+            this.setupCustomResizer(resizer, dropdown);
           }
         }
-
-        window.addEventListener('scroll', this.onWindowScrollOrResize, true);
-        window.addEventListener('resize', this.onWindowScrollOrResize);
 
         const event: CustomEvent = new CustomEvent('dropdownOpen', {});
         this.dispatchEvent(event);
@@ -701,8 +647,6 @@ export class AcTomSelectInputElement extends AcInputBase {
 
       onDropdownClose: () => {
         this.isDropdownOpen = false;
-        window.removeEventListener('scroll', this.onWindowScrollOrResize, true);
-        window.removeEventListener('resize', this.onWindowScrollOrResize);
         const event: CustomEvent = new CustomEvent('dropdownClose', {});
         this.dispatchEvent(event);
         this.notifyState();
@@ -818,6 +762,11 @@ export class AcTomSelectInputElement extends AcInputBase {
     }
   }
 
+  setValue({value,emitEvent = true}:{value: any, emitEvent?: boolean}): void {
+    super.setValue({value,emitEvent});
+    this.setSelectedRowsFromValue();
+  }
+
   private setupOnDemandLoad(): void {
     if (!this.dataManager || !this.tomSelect) return;
 
@@ -831,13 +780,11 @@ export class AcTomSelectInputElement extends AcInputBase {
 
       self._searchQuery = query;
 
-      const currentSeq = ++self.onDemandSequence;
       self.dataManager.onDemandFunction({
         searchQuery: query,
         startIndex: 0,
         rowsCount: 50,
         successCallback: (response: IAcOnDemandResponseArgs) => {
-          if (currentSeq !== self.onDemandSequence) return;
           if (response && response.data && response.data.length > 0) {
             const options = response.data;
             callback(options);

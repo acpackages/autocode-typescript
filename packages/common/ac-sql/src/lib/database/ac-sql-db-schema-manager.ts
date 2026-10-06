@@ -637,6 +637,10 @@ export class AcSqlDbSchemaManager extends AcSqlDbBase {
         });
       }
 
+      if(this.databaseType == AcEnumSqlDatabaseType.MySql){
+        this.createDatabaseRelationships();
+      }
+
       result.setSuccess({ message: 'Schema created successfully', logger: this.logger });
     } catch (ex) {
       // in JS/TS, no built-in stack argument in catch, but ex.stack exists on Error

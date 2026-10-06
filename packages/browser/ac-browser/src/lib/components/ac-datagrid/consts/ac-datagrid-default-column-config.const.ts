@@ -2,6 +2,7 @@ import { IAcDatagridColumnDefinition } from "../interfaces/ac-datagrid-column-de
 
 export const AC_DATAGRID_DEFAULT_COLUMN_DEFINITION:Partial<IAcDatagridColumnDefinition> = {
   allowEdit:false,
+  editable:false,
   allowFilter:true,
   allowResize:true,
   allowSort:true,

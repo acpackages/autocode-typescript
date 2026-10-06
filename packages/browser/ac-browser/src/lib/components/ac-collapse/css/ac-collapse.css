@@ -1,3 +1,8 @@
+ac-collapse,
+.ac-collapse {
+  display: contents;
+}
+
 .ac-collapse-header {
   background: #f5f5f5;
   padding: 10px;
@@ -8,6 +13,7 @@
 }
 
 .ac-collapse-content {
+  overflow: hidden;
   background: #fff;
   padding: 10px;
   border-top: none;

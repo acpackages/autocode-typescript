@@ -32,19 +32,6 @@ export class AcTooltip {
     };
     this.tooltipEl = this.anchor.ownerDocument.createElement('div');
     this.tooltipEl.className = `ac-tooltip ${this.options.className || ''}`;
-    this.tooltipEl.setAttribute('style', `background: rgba(23, 23, 23, 1);
-          color: #fff;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 13px;
-          line-height: 1.4;
-          max-width: 200px;
-          text-align: center;
-          pointer-events: none;
-          position:fixed;
-          z-index:10000;
-          display:none;
-          `);
 
     // Hover behavior
     this.anchor.addEventListener('mouseenter', () => this.scheduleShow());
@@ -89,7 +76,7 @@ export class AcTooltip {
       return;
     }
 
-    this.tooltipEl.style.display = "block"; // ensure visible for measurement
+    this.tooltipEl.classList.add("show"); // ensure visible for measurement
     const tooltipRect = this.tooltipEl.getBoundingClientRect();
 
     const spaceTop = rect.top;
@@ -164,8 +151,8 @@ export class AcTooltip {
   }
 
   public hide() {
+    this.tooltipEl.classList.remove('show');
     this.tooltipEl.remove();
-    this.tooltipEl.style.display = 'none';
     this.isVisible = false;
   }
 

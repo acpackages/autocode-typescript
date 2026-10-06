@@ -77,16 +77,15 @@ export class AcDataFilterPopup {
         <span>${title}</span>
         <button class="ac-data-filter-popup-close" type="button">&times;</button>
       </div>
-      <div class="ac-data-filter-rows-container" style="max-height: 300px; overflow-y: auto;"></div>
+      <div class="ac-data-filter-rows-container"></div>
       <div class="ac-data-filter-actions">
         ${this.isSingleFieldMode ? '' : '<button class="ac-data-filter-btn ac-data-filter-add-btn" type="button">Add</button>'}
         <button class="ac-data-filter-btn ac-data-filter-clear-btn" type="button">Clear</button>
-        <button class="ac-data-filter-btn ac-data-filter-apply-btn" type="button" style="background:#007bff; color:#fff; border-color:#007bff;">Apply</button>
+        <button class="ac-data-filter-btn ac-data-filter-apply-btn" type="button">Apply</button>
       </div>
     `;
 
     document.body.appendChild(this.popupElement);
-    this.popupElement.style.display = 'flex';
 
     const anchor = anchorElement ?? this.options.anchorElement ?? this.filterElement?.buttonElement ?? this.filterElement;
     if (anchor) {
@@ -247,14 +246,14 @@ export class AcDataFilterPopup {
     if (isSingle) {
       row.innerHTML = `
         <div class="ac-data-filter-flex">
-          <select class="ac-data-filter-operator ac-data-filter-select ac-data-filter-flex-fill" style="flex:1"></select>
+          <select class="ac-data-filter-operator ac-data-filter-select ac-data-filter-flex-fill"></select>
           <button class="ac-data-filter-row-remove">${acDataFilterElementHtml.delete}</button>
         </div>
-        <input type="${inputType}" class="ac-data-filter-value" style="flex:1.5; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
-        <div class="ac-data-filter-value-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1.5;">
-          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${fromVal}">
-          <span style="font-size: 11px; color: #888;">to</span>
-          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${toVal}">
+        <input type="${inputType}" class="ac-data-filter-value ${!isNoValue && !isBetween ? '' : 'd-none'}" value="${singleVal}">
+        <div class="ac-data-filter-value-between ${isBetween ? '' : 'd-none'}">
+          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" value="${fromVal}">
+          <span>to</span>
+          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" value="${toVal}">
         </div>
       `;
     } else {
@@ -267,11 +266,11 @@ export class AcDataFilterPopup {
         <button class="ac-data-filter-row-remove">${acDataFilterElementHtml.delete}</button>
         </div>
         <select class="ac-data-filter-operator ac-data-filter-select"></select>
-        <input type="${inputType}" class="ac-data-filter-value" style="flex:1; display: ${!isNoValue && !isBetween ? 'block' : 'none'}" value="${singleVal}">
-        <div class="ac-data-filter-value-between" style="display: ${isBetween ? 'flex' : 'none'}; gap: 4px; align-items: center; flex: 1;">
-          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${fromVal}">
-          <span style="font-size: 11px; color: #888;">to</span>
-          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" style="flex: 1; min-width: 0;max-width:100px; padding: 4px;" value="${toVal}">
+        <input type="${inputType}" class="ac-data-filter-value ${!isNoValue && !isBetween ? '' : 'd-none'}" value="${singleVal}">
+        <div class="ac-data-filter-value-between ${isBetween ? '' : 'd-none'}">
+          <input type="${inputType}" class="ac-data-filter-value-from" placeholder="From" value="${fromVal}">
+          <span>to</span>
+          <input type="${inputType}" class="ac-data-filter-value-to" placeholder="To" value="${toVal}">
         </div>
       `;
     }
@@ -300,16 +299,10 @@ export class AcDataFilterPopup {
 
     const updateInputVisibility = () => {
       const selectedOp = opSelect.value as AcEnumConditionOperator;
-      if (NO_VALUE_OPS.includes(selectedOp)) {
-        valInput.style.display = 'none';
-        betweenContainer.style.display = 'none';
-      } else if (selectedOp === AcEnumConditionOperator.Between) {
-        valInput.style.display = 'none';
-        betweenContainer.style.display = 'flex';
-      } else {
-        valInput.style.display = 'block';
-        betweenContainer.style.display = 'none';
-      }
+      const isBetweenOp = selectedOp === AcEnumConditionOperator.Between;
+      const isNoValueOp = NO_VALUE_OPS.includes(selectedOp);
+      valInput.classList.toggle('d-none', isNoValueOp || isBetweenOp);
+      betweenContainer.classList.toggle('d-none', !isBetweenOp);
     };
 
     populateOperators(initialOp);

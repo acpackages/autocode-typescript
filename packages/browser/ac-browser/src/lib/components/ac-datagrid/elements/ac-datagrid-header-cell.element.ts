@@ -58,14 +58,65 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     this.registerListeners();
   }
 
+  private _reflectedHeaderClasses: Set<string> = new Set();
+
+  applyReflectedHeaderClasses() {
+    if (!this.datagridColumn) return;
+    const colDef = this.datagridColumn.columnDefinition;
+    const headerCellClass = colDef.headerCellClass;
+    if (!headerCellClass) {
+      for (const cls of this._reflectedHeaderClasses) {
+        this.classList.remove(cls);
+      }
+      this._reflectedHeaderClasses.clear();
+      return;
+    }
+
+    let newClasses: string[] = [];
+    if (typeof headerCellClass === 'string') {
+      newClasses = headerCellClass.split(/\s+/).filter(Boolean);
+    } else if (Array.isArray(headerCellClass)) {
+      newClasses = (headerCellClass as string[]).filter(Boolean);
+    } else if (typeof headerCellClass === 'object') {
+      newClasses = Object.entries(headerCellClass as Record<string, boolean>)
+        .filter(([, v]) => v)
+        .map(([k]) => k);
+    } else if (typeof headerCellClass === 'function') {
+      const result = (headerCellClass as Function)({
+        column: this.datagridColumn,
+        datagridApi: this.datagridApi
+      });
+      if (typeof result === 'string') {
+        newClasses = result.split(/\s+/).filter(Boolean);
+      } else if (Array.isArray(result)) {
+        newClasses = result.filter(Boolean);
+      } else if (result && typeof result === 'object') {
+        newClasses = Object.entries(result as Record<string, boolean>)
+          .filter(([, v]) => v)
+          .map(([k]) => k);
+      }
+    }
+
+    const newSet = new Set(newClasses);
+    for (const cls of this._reflectedHeaderClasses) {
+      if (!newSet.has(cls)) this.classList.remove(cls);
+    }
+    for (const cls of newSet) {
+      if (!this._reflectedHeaderClasses.has(cls)) this.classList.add(cls);
+    }
+    this._reflectedHeaderClasses = newSet;
+  }
+
   initHeaderCell() {
     this.render();
     this.setCellWidth();
     this.applyPinning();
+    this.applyReflectedHeaderClasses();
   }
 
   refresh() {
     this.applyPinning();
+    this.applyReflectedHeaderClasses();
   }
 
   registerListeners() {
@@ -137,9 +188,10 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
   render() {
     if (!this.datagridColumn) return;
 
+    const titleText = this.datagridColumn.title ?? this.datagridColumn.columnKey ?? '';
     this.innerHTML = `<div class="${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellContainer}">
       <div class="${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellLeftContainer}">
-        <div class="${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellTitle}">${this.datagridColumn.title ?? this.datagridColumn.columnKey}</div>
+        <div class="${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellTitle}" title="${titleText}">${titleText}</div>
       </div>
       <div class="${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellRightContainer}"></div>
     </div>`;

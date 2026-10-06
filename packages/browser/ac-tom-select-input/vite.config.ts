@@ -5,7 +5,9 @@ import * as path from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 
-export default defineConfig(() => ({
+export default defineConfig(({ command }) => {
+  const tsconfig = command === 'build' ? 'tsconfig.lib.build.json' : 'tsconfig.lib.json';
+  return {
   root: __dirname,
   cacheDir: '../../../node_modules/.vite/packages/browser/ac-tom-select-input',
   plugins: [
@@ -20,7 +22,7 @@ export default defineConfig(() => ({
     ]),
     dts({
       entryRoot: 'src',
-      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      tsconfigPath: path.join(__dirname, tsconfig),
     }),
   ],
   // Uncomment this if you are using workers.
@@ -55,4 +57,4 @@ export default defineConfig(() => ({
       ],
     },
   },
-}));
+};});

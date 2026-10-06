@@ -39,7 +39,6 @@ export class AcRepeaterHeaderElement extends AcElementBase {
 
   override init(): void {
     super.init();
-    this.style.position = 'relative';
     this.autoBindRepeater();
   }
 
@@ -68,7 +67,7 @@ export class AcRepeaterHeaderElement extends AcElementBase {
         <div class="ac-repeater-search-container">
           ${acRepeaterElementHtml.searchIcon}
           <input type="text" class="ac-repeater-search-input" placeholder="Search...">
-          <button class="ac-repeater-clear-search-btn" type="button" style="display:none">&times;</button>
+          <button class="ac-repeater-clear-search-btn d-none" type="button">&times;</button>
         </div>
         <${AC_DATA_FILTER_TAG.dataFilter}></${AC_DATA_FILTER_TAG.dataFilter}>
         <${AC_DATA_SORT_TAG.dataSort}></${AC_DATA_SORT_TAG.dataSort}>
@@ -106,14 +105,14 @@ export class AcRepeaterHeaderElement extends AcElementBase {
         duration: 300,
         key: 'queryRepeaterRows',
       });
-      clearSearchBtn.style.display = searchInput.value ? 'block' : 'none';
+      clearSearchBtn.classList.toggle('d-none', !searchInput.value);
     });
 
     clearSearchBtn?.addEventListener('click', () => {
       searchInput.value = '';
       this.repeaterApi.dataManager.searchQuery = '';
       this.repeaterApi.dataManager.refreshRows();
-      clearSearchBtn.style.display = 'none';
+      clearSearchBtn.classList.add('d-none');
       searchInput.focus();
     });
   }

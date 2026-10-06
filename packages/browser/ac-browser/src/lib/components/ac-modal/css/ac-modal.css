@@ -1,17 +1,38 @@
 ac-modal {
+  display: none;
   position: fixed;
   inset: 0;
-  z-index: 1100;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(4px);
-  display: flex;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1050;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  opacity: 0;
+  transition: opacity var(--ac-modal-duration, 200ms) ease;
+  will-change: transform, opacity;
+  box-sizing: border-box;
+}
+
+ac-modal.open {
+  display: flex;
+  opacity: 1;
 }
 
 .ac-modal-backdrop {
-  background: transparent !important;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--ac-modal-duration, 200ms) ease;
+}
+
+ac-modal.open .ac-modal-backdrop {
+  opacity: 1;
 }
 
 .ac-modal-body {

@@ -76,7 +76,7 @@ export class AcDataFilterElement extends AcElementBase {
     this.innerHTML = `
       <button class="ac-data-filter-btn ac-data-filter-toggle-btn" type="button">
         ${acDataFilterElementHtml.filter}
-        <span class="ac-data-filter-badge" style="display:none">0</span>
+        <span class="ac-data-filter-badge d-none">0</span>
       </button>
     `;
 
@@ -154,7 +154,7 @@ export class AcDataFilterElement extends AcElementBase {
       : allFilters.length;
 
     this.badgeElement.innerText = count.toString();
-    this.badgeElement.style.display = count > 0 ? 'flex' : 'none';
+    this.badgeElement.classList.toggle('d-none', count === 0);
   }
 
   override destroy(): void {

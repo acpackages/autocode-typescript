@@ -29,7 +29,6 @@ export class AcDatagridFooterElement extends AcElementBase {
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooter, element: this });
     this.style.display = 'flex';
     this.style.alignItems = 'center';
-    this.style.padding = '6px 12px';
     this.style.gap = '12px';
     this.style.borderTop = '1px solid #e2e8f0';
     this.style.backgroundColor = '#f8fafc';

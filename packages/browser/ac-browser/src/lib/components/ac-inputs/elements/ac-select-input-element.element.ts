@@ -129,10 +129,10 @@ export class AcSelectInputElement extends AcInputBase {
 
   private applyHighlightStyles() {
     const all = this.dropdownContainer.querySelectorAll<HTMLElement>('[data-option-index]');
-    all.forEach(n => n.style.background = "");
+    all.forEach(n => n.classList.remove('highlighted'));
     if (this.highlightingIndex >= 0) {
       const el = this.dropdownContainer.querySelector<HTMLElement>(`[data-option-index="${this.highlightingIndex}"]`);
-      if (el) el.style.background = "#ddd";
+      if (el) el.classList.add('highlighted');
     }
   }
 
@@ -229,10 +229,8 @@ export class AcSelectInputElement extends AcInputBase {
 
   private buildOptionElement(row: IAcDataRow): HTMLElement {
     const el = this.ownerDocument.createElement("div");
+    el.className = "ac-select-option";
     el.dataset["optionIndex"] = String(row.index);
-    el.style.padding = "4px 8px";
-    el.style.cursor = "pointer";
-    el.style.boxSizing = "border-box";
     const option = row.data;
     const label = typeof option === "object" ? option[this.labelKey] : option;
     el.textContent = String(label);
@@ -249,11 +247,8 @@ export class AcSelectInputElement extends AcInputBase {
 
   private buildAddOptionElement(label: string): HTMLElement {
     const el = this.ownerDocument.createElement("div");
+    el.className = "ac-select-option ac-select-option-add";
     el.dataset["optionIndex"] = String(this.loadedCount);
-    el.style.padding = "4px 8px";
-    el.style.cursor = "pointer";
-    el.style.color = "#0078d7";
-    el.style.fontStyle = "italic";
     el.textContent = `Add "${label}"`;
     el.addEventListener("mousedown", (e) => {
       e.preventDefault();
@@ -271,7 +266,7 @@ export class AcSelectInputElement extends AcInputBase {
       this.popper.destroy();
       this.popper = undefined;
     }
-    this.dropdownContainer.style.display = "none";
+    this.dropdownContainer.classList.remove("show");
     this.dropdownContainer.remove();
     this.isDropdownOpen = false;
   }
@@ -286,26 +281,13 @@ export class AcSelectInputElement extends AcInputBase {
     if (!this.hasAttribute('label-key')) this.labelKey = 'label';
     if (!this.hasAttribute('value-key')) this.valueKey = 'value';
 
-    this.selectContainer.style.display = "flex";
-    this.selectContainer.style.height = "-webkit-fill-available";
-    this.selectContainer.style.width = "-webkit-fill-available";
+    this.selectContainer.className = "ac-select-container";
     this.textInputElement.type = "text";
     this.textInputElement.autocomplete = "off";
     this.selectContainer.appendChild(this.textInputElement);
 
     this.dropdownContainer = this.ownerDocument.createElement("div");
-    Object.assign(this.dropdownContainer.style, {
-      position: "fixed",
-      display: "none",
-      zIndex: "9999",
-      minWidth: "max-content",
-      maxHeight: `${this.maxDropdownHeight}px`,
-      border: "1px solid #ccc",
-      borderRadius: '5px',
-      background: "#fff",
-      boxSizing: "border-box",
-      overflow: 'auto'
-    });
+    this.dropdownContainer.className = "ac-select-dropdown";
 
     this.listEl = this.ownerDocument.createElement("div");
     this.dropdownContainer.appendChild(this.listEl);
@@ -390,7 +372,7 @@ export class AcSelectInputElement extends AcInputBase {
         ],
       });
 
-      this.dropdownContainer.style.display = "block";
+      this.dropdownContainer.classList.add("show");
       this.delayedCallback.add({
         callback: () => {
           this.renderVirtualList();

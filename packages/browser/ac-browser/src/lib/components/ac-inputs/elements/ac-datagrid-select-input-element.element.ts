@@ -19,11 +19,8 @@ export class AcDatagridSelectInputElement extends AcInputBase {
   }
   set addRow(value: boolean) {
     this.setAttribute('add-row', `${value}`);
-    if (value) {
-      this.addNewButton.style.display = '';
-    }
-    else {
-      this.addNewButton.style.display = 'none';
+    if (this.addNewButton) {
+      this.addNewButton.classList.toggle('d-none', !value);
     }
   }
 
@@ -264,12 +261,8 @@ export class AcDatagridSelectInputElement extends AcInputBase {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.addNewContainer.innerHTML = `<div><button type="button">Add New Row</button></div>`;
+    this.addNewContainer.innerHTML = `<div><button type="button" class="ac-datagrid-select-add-btn">Add New Row</button></div>`;
     this.addNewButton = this.addNewContainer.querySelector('button');
-    this.addNewButton.style.padding = "4px 8px";
-    this.addNewButton.style.cursor = "pointer";
-    this.addNewButton.style.color = "#0078d7";
-    this.addNewButton.style.fontStyle = "italic";
     this.addNewButton.textContent = `Add "${this.searchQuery}"`;
     this.datagrid.datagridApi.dataManager.refreshRowsTimeoutDuration = 300;
     this.datagrid.afterRowsContainer.append(this.addNewContainer);
@@ -361,26 +354,16 @@ export class AcDatagridSelectInputElement extends AcInputBase {
     this.dropdownContainer = this.ownerDocument.createElement("div");
     this.dropdownContainer.classList.add('ac-datagrid-select-dropdown');
     this.dropdownContainer.innerHTML = `
-      <div class="dropdown-header" style=""></div>
-      <div class="dropdown-body" style="flex-grow:1;overflow:auto"></div>
-      <div class="dropdown-footer" style=""></div>
+      <div class="dropdown-header"></div>
+      <div class="dropdown-body"></div>
+      <div class="dropdown-footer"></div>
     `;
     const createEvent: CustomEvent = new CustomEvent('dropdownCreate', { detail: { dropdownContainer: this.dropdownContainer } });
     this.dispatchEvent(createEvent);
     (this.dropdownContainer.querySelector('.dropdown-body') as HTMLElement).append(this.datagrid);
     this.ownerDocument.body.append(this.dropdownContainer);
-    Object.assign(this.dropdownContainer.style, {
-      height: `${this.dropdownSize.height}px`,
-      width: `${this.dropdownSize.width}px`,
-      border: "1px solid #ccc",
-      background: "#fff",
-      boxSizing: "border-box",
-      resize: 'both',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      zIndex: 9999999999
-    });
+    this.dropdownContainer.style.height = `${this.dropdownSize.height}px`;
+    this.dropdownContainer.style.width = `${this.dropdownSize.width}px`;
     this.popper = createPopper(this.textInputElement, this.dropdownContainer, {
       placement: 'bottom-start' as Placement,
       strategy: 'fixed',

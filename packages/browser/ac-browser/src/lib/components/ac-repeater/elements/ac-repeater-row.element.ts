@@ -29,7 +29,6 @@ export class AcRepeaterRowElement extends AcElementBase {
   }
 
   initElement() {
-    this.style.display = "block";
     this.setAttribute(AcRepeaterAttributeName.IAcRepeaterRowId, this.repeaterRow.rowId);
     acAddClassToElement({ class_: AcRepeaterCssClassName.IAcRepeaterRow, element: this });
     if (this.repeaterRow.index == 0 || this.repeaterRow.index % 2 == 0) {

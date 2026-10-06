@@ -76,7 +76,7 @@ export class AcDataSortElement extends AcElementBase {
     this.innerHTML = `
       <button class="ac-data-sort-btn ac-data-sort-toggle-btn" type="button">
         ${acDataSortElementHtml.sort}
-        <span class="ac-data-sort-badge" style="display:none">0</span>
+        <span class="ac-data-sort-badge d-none">0</span>
       </button>
     `;
 
@@ -154,7 +154,7 @@ export class AcDataSortElement extends AcElementBase {
       : allSorts.length;
 
     this.badgeElement.innerText = count.toString();
-    this.badgeElement.style.display = count > 0 ? 'flex' : 'none';
+    this.badgeElement.classList.toggle('d-none', count === 0);
   }
 
   override destroy(): void {

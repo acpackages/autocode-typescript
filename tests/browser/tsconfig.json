@@ -30,7 +30,8 @@
       "@autocode-ts/ac-runtime-router": ["../../packages/runtime/ac-runtime-router/src/ac-runtime-router.ts"],
       "@autocode-ts/autocode": ["../../packages/common/autocode/src/autocode.ts"],
       "@autocode-ts/ac-data-dictionary-editor": ["../../packages/browser/ac-data-dictionary-editor/src/index.ts"],
-      "@autocode-ts/ac-data-dictionary-components": ["../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts"]
+      "@autocode-ts/ac-data-dictionary-components": ["../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts"],
+      "@autocode-ts/ac-nodeflow-designer": ["../../packages/browser/ac-nodeflow-designer/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts"]

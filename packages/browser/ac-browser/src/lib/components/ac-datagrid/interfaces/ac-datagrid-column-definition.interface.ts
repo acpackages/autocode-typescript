@@ -1,5 +1,37 @@
 import { AcEnumDatagridColumnAggregateFunction } from "../enums/ac-enum-datagrid-column-aggregate-function.enum";
 
+export interface IAcDatagridCellClassParams {
+  row: any;
+  column: any;
+  value: any;
+  rawValue: any;
+  datagridApi?: any;
+  datagridCell?: any;
+}
+
+export interface IAcDatagridHeaderCellClassParams {
+  column: any;
+  datagridApi?: any;
+}
+
+export interface IAcDatagridCellEditParams {
+  row: any;
+  column: any;
+  datagridApi?: any;
+}
+
+export type AcDatagridCellClassType =
+  | string
+  | string[]
+  | Record<string, boolean>
+  | ((params: IAcDatagridCellClassParams) => string | string[] | Record<string, boolean> | undefined);
+
+export type AcDatagridHeaderCellClassType =
+  | string
+  | string[]
+  | Record<string, boolean>
+  | ((params: IAcDatagridHeaderCellClassParams) => string | string[] | Record<string, boolean> | undefined);
+
 export interface IAcDatagridColumnDefinition {
   /* AcDoc({
     "description": "Set to `true` to have the grid allow sorting on this column."
@@ -26,7 +58,7 @@ export interface IAcDatagridColumnDefinition {
     "default_value": false
   }) */
   autoWidth?: boolean;
-  cellClass?:string;
+  cellClass?: AcDatagridCellClassType;
 
   cellEditorElement?:any;
   cellEditorElementAttrs?:any;
@@ -55,6 +87,10 @@ export interface IAcDatagridColumnDefinition {
     "default_value": false
   }) */
   allowEdit?: boolean;
+  editable?: boolean | ((params: IAcDatagridCellEditParams) => boolean);
+  isTreeColumn?: boolean;
+  showTreeToggle?: boolean;
+  isParentColumn?: boolean;
 
   extensionData?:Record<string,any>;
 
@@ -64,14 +100,15 @@ export interface IAcDatagridColumnDefinition {
     "description": "The field of the row object to get the cell's data from."
   }) */
   field: string,
-  flexSize?:number;
+  flex?: number;
+  flexSize?: number;
 
   floatingFilterInput?:any;
   floatingFilterInputAttrs?:any;
   floatingFilterInputFunction?:any;
   floatingFilterInputParams?:any;
 
-  headerCellClass?:string;
+  headerCellClass?: AcDatagridHeaderCellClassType;
   index?:number;
 
   /* AcDoc({
@@ -86,6 +123,7 @@ export interface IAcDatagridColumnDefinition {
 
   pinnedOn?:'LEFT'|'RIGHT';
   suppressFocus?:boolean;
+  suppressSizeToFit?: boolean;
 
   /* AcDoc({
     "description": "The title of the column. If not provided, field value will be used"

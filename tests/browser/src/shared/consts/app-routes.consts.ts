@@ -19,6 +19,7 @@ export const APP_ROUTES = {
   },
   dashboard: '/dashboard',
   dataBridge: '/data-bridge',
+  databaseDesigner: '/database-designer',
   dataDictionary:{
     components:'/components',
     editor:'/editor',
@@ -67,6 +68,9 @@ export const APP_ROUTES = {
   modal:{
     animated:'/modal/animated',
     simple:'/modal',
+  },
+  nodeflow: {
+    designer: '/nodeflow/designer'
   },
   popover:{
     popover:'/popover',

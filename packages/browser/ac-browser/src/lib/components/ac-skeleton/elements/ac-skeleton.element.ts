@@ -31,10 +31,10 @@ export class AcSkeletonElement extends AcElementBase {
   set width(val: string | null) {
     if (val) {
       this.setAttribute('width', val);
-      this.style.width = val;
+      this.style.setProperty('--ac-skeleton-width', val);
     } else {
       this.removeAttribute('width');
-      this.style.width = '';
+      this.style.removeProperty('--ac-skeleton-width');
     }
   }
 
@@ -44,18 +44,18 @@ export class AcSkeletonElement extends AcElementBase {
   set height(val: string | null) {
     if (val) {
       this.setAttribute('height', val);
-      this.style.height = val;
+      this.style.setProperty('--ac-skeleton-height', val);
     } else {
       this.removeAttribute('height');
-      this.style.height = '';
+      this.style.removeProperty('--ac-skeleton-height');
     }
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
     this.setAttribute('aria-hidden', 'true');
-    if (this.width) this.style.width = this.width;
-    if (this.height) this.style.height = this.height;
+    if (this.width) this.style.setProperty('--ac-skeleton-width', this.width);
+    if (this.height) this.style.setProperty('--ac-skeleton-height', this.height);
     if (!this.hasAttribute('type')) this.type = 'text';
     if (!this.hasAttribute('animation')) this.animation = 'pulse';
   }
@@ -63,9 +63,11 @@ export class AcSkeletonElement extends AcElementBase {
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue === newValue) return;
     if (name === 'width') {
-      this.style.width = newValue ?? '';
+      if (newValue) this.style.setProperty('--ac-skeleton-width', newValue);
+      else this.style.removeProperty('--ac-skeleton-width');
     } else if (name === 'height') {
-      this.style.height = newValue ?? '';
+      if (newValue) this.style.setProperty('--ac-skeleton-height', newValue);
+      else this.style.removeProperty('--ac-skeleton-height');
     }
   }
 }
