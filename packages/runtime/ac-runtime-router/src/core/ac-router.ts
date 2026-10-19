@@ -67,7 +67,7 @@ export class AcRouter {
         hash += "?" + queryString;
       }
       window.history.replaceState({}, '', `${this.basePath}/#`);
-      console.log(hash);
+      // console.log(hash);
       this.navigateTo({ path: hash });
     });
   }
@@ -164,7 +164,7 @@ export class AcRouter {
   private handleHashChange(): void {
 
     const path = this.getCurrentPath();
-    console.log("Route Changed", path, this.isPaused);
+    // console.log("Route Changed", path, this.isPaused);
     if (this.isPaused) return;
     this.matchRoute(path);
   }

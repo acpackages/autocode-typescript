@@ -85,6 +85,9 @@ export class AcDataManager {
   }
 
   get displayedRows(): IAcDataRow[] {
+    if (this.displayCount <= 0 || (this.displayStartIndex === -1 && this.displayEndIndex === -1)) {
+      return this.rows;
+    }
     return this.rows.filter((row) => {
       return row && row.index >= this.displayStartIndex && row.index <= this.displayEndIndex;
     });
@@ -421,7 +424,21 @@ export class AcDataManager {
     if (dataRow) {
       const row = { ...dataRow };
       arrayRemoveByKey(this.allRows, 'rowId', dataRow.rowId);
-      this.totalRows--;
+      let visibleIdx = 0;
+      for (let i = 0; i < this.allRows.length; i++) {
+        const r = this.allRows[i];
+        if (r) {
+          r.originalIndex = i;
+          if (r.index !== -1) {
+            r.index = visibleIdx++;
+          }
+        }
+      }
+      this._totalRows = this.allRows.length;
+      if (this.displayCount > 0) {
+        this.displayCount = Math.min(this.displayCount, this.allRows.length);
+        this.displayEndIndex = this.displayStartIndex + this.displayCount - 1;
+      }
       this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.RowDelete, args: { dataRow: dataRow } });
       this.events.execute({ event: AC_DATA_MANAGER_EVENT.RowDelete, args: { dataRow: dataRow } });
     }

@@ -86,11 +86,30 @@ export class AcDatagridRowElement extends AcElementBase {
     }
   }
 
+  updateIndex(newIndex: number) {
+    if (!this.datagridRow) return;
+    this.datagridRow.index = newIndex;
+    this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowEven, newIndex % 2 === 0);
+    this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowOdd, newIndex % 2 !== 0);
+    if (this.internalCell) {
+      this.internalCell.refresh();
+    }
+    const rowNumCell = this.querySelector(`.${AC_DATAGRID_CLASS_NAME.acDatagridRowNumber}`) || this.querySelector('.ac-datagrid-row-number-cell');
+    if (rowNumCell) {
+      rowNumCell.textContent = `${newIndex + 1}`;
+    }
+    const rh = this.datagridApi?.rowHeight || 36;
+    if (this.datagridApi?.useVirtualScrolling) {
+      this.style.transform = `translateY(${newIndex * rh}px)`;
+    }
+  }
+
   refresh() {
     if (!this.datagridRow || !this.datagridApi) return;
     this.classList.toggle('ac-datagrid-row-selected', this.datagridApi.isRowSelected(this.datagridRow.rowId));
     this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowEven, this.datagridRow.index % 2 === 0);
     this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowOdd, this.datagridRow.index % 2 !== 0);
+    this.classList.toggle('ac-datagrid-row-expanded', !!this.datagridRow.isExpanded);
     this.applyRowHeight();
     if (this.internalCell) {
       this.internalCell.refresh();
@@ -141,6 +160,7 @@ export class AcDatagridRowElement extends AcElementBase {
     }
 
     this.classList.toggle('ac-datagrid-row-selected', this.datagridApi.isRowSelected(this.datagridRow.rowId));
+    this.classList.toggle('ac-datagrid-row-expanded', !!this.datagridRow.isExpanded);
 
     // Cells container
     const rowContainer = document.createElement('div');

@@ -278,6 +278,57 @@
   max-height: none !important;
 }
 
+/* === AG Grid Parity Virtual Scrolling & Animated Rows === */
+.ac-datagrid-virtual-scroll .ac-datagrid-rows-container {
+  position: relative !important;
+  display: block !important;
+}
+
+.ac-datagrid-virtual-scroll .ac-datagrid-row {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.ac-datagrid.ac-datagrid-animate-rows .ac-datagrid-row {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-out;
+  will-change: transform, opacity;
+}
+
+.ac-datagrid-row.ac-datagrid-row-removing {
+  opacity: 0 !important;
+  transform: translateY(var(--row-top, 0px)) scaleY(0.7) !important;
+  pointer-events: none !important;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-out !important;
+}
+
+.ac-datagrid-row.ac-datagrid-row-entering {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+.ac-datagrid.ac-datagrid-no-transition .ac-datagrid-row {
+  transition: none !important;
+}
+
+.ac-datagrid-row-expand-icon,
+.ac-datagrid-group-toggle,
+.ac-datagrid-cell-tree-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-row-expand-icon,
+.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-group-toggle,
+.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-cell-tree-toggle {
+  transform: rotate(90deg);
+}
+
 .ac-datagrid-row-container {
   display: flex;
   flex-direction: row;

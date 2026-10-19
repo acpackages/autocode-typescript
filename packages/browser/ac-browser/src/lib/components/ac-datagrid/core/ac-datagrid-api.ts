@@ -338,6 +338,9 @@ export class AcDatagridApi {
         .filter(r => r && r.index !== -1)
         .sort((a, b) => a.index - b.index);
     }
+    if (this.useVirtualScrolling && this.dataManager) {
+      return this.dataManager.rows as any[];
+    }
     if (this.dataManager) {
       return this.dataManager.displayedRows as any[];
     }
@@ -399,12 +402,29 @@ export class AcDatagridApi {
     }
   }
 
+  private _animateRows: boolean = true;
+  get animateRows(): boolean {
+    return this._animateRows;
+  }
+  set animateRows(value: boolean) {
+    if (this._animateRows !== value) {
+      this._animateRows = value;
+      this.datagrid?.classList.toggle('ac-datagrid-animate-rows', value);
+    }
+  }
+
   private _useVirtualScrolling: boolean = false;
   get useVirtualScrolling(): boolean {
     return this._useVirtualScrolling;
   }
   set useVirtualScrolling(value: boolean) {
-    this._useVirtualScrolling = value;
+    if (this._useVirtualScrolling !== value) {
+      this._useVirtualScrolling = value;
+      this.datagrid?.classList.toggle('ac-datagrid-virtual-scroll', value);
+      if (this.datagrid?.datagridBody) {
+        this.datagrid.datagridBody.setDisplayedRows();
+      }
+    }
   }
 
   private _showAddButton: boolean = false;
@@ -779,12 +799,42 @@ export class AcDatagridApi {
 
   deleteRow({ data, rowId, key, value, highlightCells = false }: { data?: any, rowId?: string, key?: string, value?: any, highlightCells?: boolean }) {
     this.logger.log('Deleting row', { rowId, key, value: value ? '[provided]' : 'undefined', highlightCells });
-    const datagridRow: IAcDatagridRow | undefined = this.dataManager.deleteRow({ data, rowId, key, value }) as IAcDatagridRow;
-    if (datagridRow) {
-      this.logger.log('Row deleted from dataManager', { rowId: datagridRow.rowId });
-      if (datagridRow.element) {
-        datagridRow.element.remove();
-        this.logger.log('Removed row element from DOM');
+    const targetRow = this.getRow({ data, rowId, key, value });
+    const body = this.datagrid?.datagridBody as any;
+    const resolvedRowId = rowId || targetRow?.rowId;
+    const rowEl = targetRow?.element ||
+      (resolvedRowId ? body?.renderedRowsMap?.get(resolvedRowId) : undefined) ||
+      (resolvedRowId ? body?.currentRows?.find((r: any) => r.datagridRow?.rowId === resolvedRowId) : undefined);
+
+    if (rowEl && this.animateRows) {
+      rowEl.classList.add('ac-datagrid-row-removing');
+    }
+
+    const datagridRow: IAcDatagridRow | undefined = this.dataManager.deleteRow({ data, rowId: resolvedRowId, key, value }) as IAcDatagridRow;
+    const rowToDelete = targetRow || datagridRow;
+
+    if (rowToDelete) {
+      this.logger.log('Row deleted from dataManager', { rowId: rowToDelete.rowId });
+      if (this.hasTreeOrGroup) {
+        this.processTreeVisibility();
+      }
+      if (this.animateRows && body?.deleteRowAnimated) {
+        body.deleteRowAnimated({ datagridRow: rowToDelete, rowElement: rowEl });
+      } else {
+        if (body) {
+          if (rowEl) {
+            rowEl.remove();
+            rowEl.destroy?.();
+            this.logger.log('Removed row element from DOM');
+          }
+          if (rowToDelete.rowId) {
+            body.renderedRowsMap?.delete(rowToDelete.rowId);
+          }
+          body.currentRows = body.currentRows.filter(
+            (r: any) => r !== rowEl && (!rowToDelete.rowId || r.datagridRow?.rowId !== rowToDelete.rowId)
+          );
+          body.resequenceRows?.();
+        }
       }
     } else {
       this.logger.log('No row found to delete');
@@ -941,14 +991,18 @@ export class AcDatagridApi {
     return result;
   }
 
-  getRow({ rowId, index, key, value }: { rowId?: string, index?: number, key?: string, value?: any }): IAcDatagridRow | undefined {
+  getRow({ data, rowId, index, key, value }: { data?: any, rowId?: string, index?: number, key?: string, value?: any }): IAcDatagridRow | undefined {
     let result: IAcDatagridRow | undefined;
     const sourceRows = (this.dataManager?.allRows && this.dataManager.allRows.length > 0)
       ? (this.dataManager.allRows as IAcDatagridRow[])
       : this.datagridRows;
     for (const row of sourceRows) {
       if (!row) continue;
-      if (rowId != undefined && row.rowId == rowId) {
+      if (data != undefined && row.data === data) {
+        result = row;
+        break;
+      }
+      else if (rowId != undefined && row.rowId == rowId) {
         result = row;
         break;
       }
@@ -1644,6 +1698,31 @@ export class AcDatagridApi {
     }
   }
 
+  getDescendantRowIds(parentId: string): Set<string> {
+    const descendants = new Set<string>();
+    const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || [];
+    const queue = [parentId];
+    while (queue.length > 0) {
+      const curr = queue.shift()!;
+      for (const r of allRows) {
+        if (r && r.parentId === curr) {
+          descendants.add(r.rowId);
+          queue.push(r.rowId);
+        }
+      }
+    }
+    return descendants;
+  }
+
+  getVisibleChildRows(parentRow: IAcDatagridRow): IAcDatagridRow[] {
+    const descendants = this.getDescendantRowIds(parentRow.rowId);
+    return this.displayedDatagridRows.filter(r => descendants.has(r.rowId));
+  }
+
+  ensureIndexVisible(index: number) {
+    (this.datagrid?.datagridBody as any)?.ensureIndexVisible?.(index);
+  }
+
   expandRow({ rowId }: { rowId: string }) {
     const row = this.getRow({ rowId });
     if (!row) return;
@@ -1667,7 +1746,12 @@ export class AcDatagridApi {
           this.expandedRowIds.add(rowId);
           row.isExpanded = true;
           this.processTreeVisibility();
-          this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          const visibleChildren = this.getVisibleChildRows(row);
+          if (this.animateRows && (this.datagrid?.datagridBody as any)?.animateRowExpansion && visibleChildren.length > 0) {
+            (this.datagrid!.datagridBody as any).animateRowExpansion({ parentRow: row, childRows: visibleChildren });
+          } else {
+            this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          }
           this.refreshInternalCells();
           this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
           this.notifyStateChange({ source: 'group' });
@@ -1698,7 +1782,12 @@ export class AcDatagridApi {
           this.expandedRowIds.add(rowId);
           row.isExpanded = true;
           this.processTreeVisibility();
-          this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          const visibleChildren = this.getVisibleChildRows(row);
+          if (this.animateRows && (this.datagrid?.datagridBody as any)?.animateRowExpansion && visibleChildren.length > 0) {
+            (this.datagrid!.datagridBody as any).animateRowExpansion({ parentRow: row, childRows: visibleChildren });
+          } else {
+            this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          }
           this.refreshInternalCells();
           this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
           this.notifyStateChange({ source: 'tree' });
@@ -1715,7 +1804,12 @@ export class AcDatagridApi {
     this.expandedRowIds.add(rowId);
     row.isExpanded = true;
     this.processTreeVisibility();
-    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    const visibleChildren = this.getVisibleChildRows(row);
+    if (this.animateRows && (this.datagrid?.datagridBody as any)?.animateRowExpansion && visibleChildren.length > 0) {
+      (this.datagrid!.datagridBody as any).animateRowExpansion({ parentRow: row, childRows: visibleChildren });
+    } else {
+      this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    }
     this.refreshInternalCells();
     this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
     this.notifyStateChange({ source: 'tree' });
@@ -1724,10 +1818,15 @@ export class AcDatagridApi {
   collapseRow({ rowId }: { rowId: string }) {
     const row = this.getRow({ rowId });
     if (!row) return;
+    const descendantIds = this.getDescendantRowIds(rowId);
     this.expandedRowIds.delete(rowId);
     row.isExpanded = false;
     this.processTreeVisibility();
-    this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    if (this.animateRows && (this.datagrid?.datagridBody as any)?.animateRowCollapse && descendantIds.size > 0) {
+      (this.datagrid!.datagridBody as any).animateRowCollapse({ parentRow: row, childRowIds: descendantIds });
+    } else {
+      this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+    }
     this.refreshInternalCells();
     this.events.execute({ event: AC_DATAGRID_EVENT.RowCollapse, args: { row, datagridApi: this } });
     this.notifyStateChange({ source: 'tree' });
@@ -1919,7 +2018,7 @@ export class AcDatagridApi {
         r.index = -1;
       }
     }
-    this.dataManager.totalRows = visibleIndex;
+    (this.dataManager as any)._totalRows = visibleIndex;
   }
 
   toggleDetailRow({ rowId }: { rowId: string }) {

@@ -111,8 +111,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   isColumnsCustomizerOpen: boolean = false;
   isFirstDataRendered: boolean = false;
   paginationContainer?: HTMLElement;
-  leftFooterContainer?: HTMLElement;
-  rightFooterContainer?: HTMLElement;
+  // leftFooterContainer?: HTMLElement;
+  // rightFooterContainer?: HTMLElement;
   delayedCallback: AcDelayedCallback = new AcDelayedCallback();
 
   private agGridEventHandler = new AcDatagridOnAgGridEventHandler();
@@ -1109,23 +1109,23 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
   }
 
   setDataExportButton() {
-    if (!this.downloadButtonContainer) {
-      this.downloadButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
-    }
-    acClearElement({ element: this.downloadButtonContainer });
-    this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn ac-datagrid-download-btn"><i class="fa fa-download"></i></button>`;
-    (this.downloadButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
-      this.handleDataExportXlsx();
-    });
-    const pagination = this.datagridApi.pagination;
-    if (pagination) {
-      const rightContainer = pagination.rightContainer;
-      if (rightContainer) {
-        if (!rightContainer.contains(this.downloadButtonContainer)) {
-          rightContainer.append(this.downloadButtonContainer!);
-        }
-      }
-    }
+    // if (!this.downloadButtonContainer) {
+    //   this.downloadButtonContainer = this.datagridApi.datagrid.ownerDocument.createElement('div');
+    // }
+    // acClearElement({ element: this.downloadButtonContainer });
+    // this.downloadButtonContainer.innerHTML = `<button type="button" class="ac-datagrid-footer-btn ac-datagrid-download-btn"><i class="fa fa-download"></i></button>`;
+    // (this.downloadButtonContainer.querySelector('button') as HTMLElement).addEventListener('click', (event: any) => {
+    //   this.handleDataExportXlsx();
+    // });
+    // const pagination = this.datagridApi.pagination;
+    // if (pagination) {
+    //   const rightContainer = pagination.rightContainer;
+    //   if (rightContainer) {
+    //     if (!rightContainer.contains(this.downloadButtonContainer)) {
+    //       rightContainer.append(this.downloadButtonContainer!);
+    //     }
+    //   }
+    // }
 
   }
 
