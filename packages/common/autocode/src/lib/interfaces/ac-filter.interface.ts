@@ -3,5 +3,5 @@ import { AcEnumConditionOperator } from "../enums/ac-enum-condition-operator.enu
 export interface IAcFilter {
   key: string;
   operator: AcEnumConditionOperator;
-  value:any;
+  value?:any;
 }

@@ -3,6 +3,8 @@ import { AC_DATAGRID_EVENT } from "./ac-datagrid-event.const";
 export const AC_DATAGRID_HOOK = {
   ...AC_DATAGRID_EVENT,
   ApplyFilter: 'applyFilter',
+  BeforeExport: 'beforeExport',
+  AfterExport: 'afterExport',
   BeforeColumnDefinitionsChange: 'beforeColumnDefinitionsChange',
   BeforeDataChange: 'beforeDataChange',
   BeforeDatagridRowCreate: 'beforeDatagridRowCreate',

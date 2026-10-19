@@ -35,3 +35,4 @@ export * from './ac-navbar/_ac-navbar.export';
 export * from './ac-progress/_ac-progress.export';
 export * from './ac-skeleton/_ac-skeleton.export';
 export * from './ac-spinner/_ac-spinner.export';
+export * from './ac-overlay-scrollbar/_ac-overlay-scrollbar.export';

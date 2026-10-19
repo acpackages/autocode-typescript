@@ -20,9 +20,11 @@ export function acGetAgDataTypeFromAcDataType(dataType: any) {
 }
 
 export function acGetColDefFromAcDataGridColumn({ datagridColDef }: { datagridColDef: IAcDatagridColumnDefinition }): ColDef {
-  let editable: boolean = datagridColDef.allowEdit;
-  if (datagridColDef.allowEdit != undefined) {
+  let editable: any = false;
+  if (datagridColDef.allowEdit !== undefined) {
     editable = datagridColDef.allowEdit;
+  } else if (datagridColDef.editable !== undefined) {
+    editable = datagridColDef.editable;
   }
   const colDef: ColDef | any = {
     field: datagridColDef.field,

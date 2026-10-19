@@ -75,16 +75,34 @@ export class AcDatagridFunctionalCellEditor implements IAcDatagridCellEditor {
       (this.element as any).value = args.value ?? '';
     }
 
-    this.element.addEventListener('input', (e: Event) => {
+    const handleInput = (e: Event) => {
       this.currentValue = (e.target as any)?.value;
-    });
+      if (this.args?.datagridCell) {
+        const colKey = this.args.datagridCell.datagridColumn.columnKey;
+        this.args.datagridCell.datagridRow.data[colKey] = this.currentValue;
+        this.args.datagridApi?.eventHandler?.handleCellValueChange({ datagridCell: this.args.datagridCell, event: e });
+      }
+    };
+    this.element.addEventListener('input', handleInput);
+    this.element.addEventListener('change', handleInput);
   }
 
   refresh(args: IAcDatagridCellElementArgs): void {
     this.args = args;
-    this.currentValue = args.value;
-    if ('value' in (this.element as any) && args.value !== undefined) {
-      (this.element as any).value = args.value ?? '';
+    const resolvedValue = args.rawValue !== undefined ? args.rawValue : args.value;
+    this.currentValue = resolvedValue;
+    if (this.element) {
+      if (typeof (this.element as any).refresh === 'function') {
+        (this.element as any).refresh(args);
+      } else if ('value' in (this.element as any)) {
+        (this.element as any).value = resolvedValue ?? '';
+      } else if (typeof (this.element as any).setValue === 'function') {
+        try {
+          (this.element as any).setValue({ value: resolvedValue, emitEvent: false });
+        } catch {
+          (this.element as any).setValue(resolvedValue);
+        }
+      }
     }
   }
 

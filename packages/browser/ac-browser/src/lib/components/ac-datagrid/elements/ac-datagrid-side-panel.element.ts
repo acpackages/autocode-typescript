@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
-import { IAcDatagridColumn } from "../interfaces/ac-datagrid-column.interface";
 import { acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_DATAGRID_TAG } from "../consts/ac-datagrid-tag.const";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
@@ -240,7 +239,7 @@ export class AcDatagridSidePanelElement extends AcElementBase {
         this.datagridApi.pinColumn({ columnId: col.columnId, pinnedOn: nextPin });
         this.renderColumnList();
       });
-      item.appendChild(pinBtn);
+      // item.appendChild(pinBtn);
 
       // Sort button
       const sortBtn = document.createElement('button');
@@ -254,7 +253,7 @@ export class AcDatagridSidePanelElement extends AcElementBase {
         this.datagridApi.setColumnSortOrder({ datagridColumn: col, sortOrder: nextSort });
         this.renderColumnList();
       });
-      item.appendChild(sortBtn);
+      // item.appendChild(sortBtn);
 
       item.dataset['colIndex'] = col.index.toString();
       list.appendChild(item);

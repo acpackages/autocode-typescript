@@ -4,6 +4,8 @@ export const AC_DATAGRID_EXTENSION_NAME = {
   AutoSaveRow: 'AUTO_SAVE_ROW',
   ColumnDragging : 'COLUMN_DRAGGING',
   ColumnsCustomizer : 'COLUMNS_CUSTOMIZER',
+  DataExport : 'DATA_EXPORT',
+  DataExportCsv : 'DATA_EXPORT_CSV',
   DataExportXlsx : 'DATA_EXPORT_XLSX',
   FixedEditor : 'FIXED_EDITOR',
   KeyboardActions : 'KEYBOARD_ACTIONS',

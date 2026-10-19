@@ -99,16 +99,23 @@ export class AcDataManager {
       this._filterGroup = value;
       value.on({
         event: 'change', callback: () => {
-          //
+          if (this.type === 'ondemand') {
+            this.refreshRows();
+          }
         }
       });
+      if (this.type === 'ondemand') {
+        this.refreshRows();
+      }
     }
   }
 
   get rows(): IAcDataRow[] {
-    return this.allRows.filter((row) => {
-      return row && row.index >= 0;
-    });
+    return this.allRows
+      .filter((row) => {
+        return row && row.index >= 0;
+      })
+      .sort((a, b) => a.index - b.index);
   }
 
   private _onDemandFunction?: (args: IAcOnDemandRequestArgs) => void;
@@ -145,12 +152,17 @@ export class AcDataManager {
   }
   set sortOrder(value: AcSortOrder) {
     if (value != this._sortOrder) {
+      this._sortOrder = value;
       value.on({
         event: 'change', callback: () => {
-          // SortOrder change detected, triggering refreshRows (comment kept for context)
+          if (this.type === 'ondemand') {
+            this.refreshRows();
+          }
         }
       });
-      this._sortOrder = value;
+      if (this.type === 'ondemand') {
+        this.refreshRows();
+      }
     }
   }
 
@@ -221,6 +233,23 @@ export class AcDataManager {
   logger: AcLogger = new AcLogger({ logMessages: false });
   private refreshRowsTimeout: any;
   refreshRowsTimeoutDuration = 100;
+
+  constructor() {
+    this._sortOrder.on({
+      event: 'change', callback: () => {
+        if (this.type === 'ondemand') {
+          this.refreshRows();
+        }
+      }
+    });
+    this._filterGroup.on({
+      event: 'change', callback: () => {
+        if (this.type === 'ondemand') {
+          this.refreshRows();
+        }
+      }
+    });
+  }
 
   addRow({ data = {}, index }: { data?: any, index?: number } = {}): IAcDataRow {
     if (index === undefined || index < 0 || index > this.allRows.length) {
@@ -333,6 +362,8 @@ export class AcDataManager {
       rows[0].isFirst = true;
       rows[rows.length - 1].isLast = true;
     }
+    const filteredOutRows = this.allRows.filter((row) => !row || row.index < 0);
+    this.allRows = [...rows, ...filteredOutRows];
   }
 
   private checkOnDemandRowsAvailable({ startIndex = 0, rowsCount = -1 }: { startIndex?: number; rowsCount?: number; } = {}): boolean {
@@ -542,8 +573,10 @@ export class AcDataManager {
         this.applySort();
       }
       this.totalRows = this.rows.length;
+      this.setDisplayedRows({ startIndex: this.displayStartIndex, rowsCount: this.displayCount });
+    } else {
+      await this.refreshRows();
     }
-    this.setDisplayedRows({ startIndex: this.displayStartIndex, rowsCount: this.displayCount });
   }
 
   async refreshRows() {
@@ -554,9 +587,11 @@ export class AcDataManager {
         }
         else {
           this.isWorking = true;
+          const startIndex = this.displayStartIndex >= 0 ? this.displayStartIndex : 0;
+          const rowsCount = this.displayCount > 0 ? this.displayCount : (this.lastRowsCount > 0 ? this.lastRowsCount : 50);
           this.reset();
-          await this.getRows({ rowsCount: this.lastRowsCount });
-          this.setDisplayedRows({ startIndex: this.displayStartIndex, rowsCount: this.displayCount });
+          await this.getRows({ startIndex, rowsCount });
+          this.setDisplayedRows({ startIndex, rowsCount });
           this.isWorking = false;
         }
       }, duration: this.refreshRowsTimeoutDuration, key: 'refreshRows'
@@ -643,12 +678,12 @@ export class AcDataManager {
       this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.DataChange, args: hookArgs });
     }
     else if (this.type == 'ondemand') {
-      if (totalCount == undefined) {
-        totalCount = this.totalRows;
-      }
       startIndex = startIndex ?? 0;
-      if(startIndex < 0){
+      if (startIndex < 0) {
         startIndex = 0;
+      }
+      if (totalCount == undefined) {
+        totalCount = this.totalRows > 0 ? this.totalRows : (startIndex + data.length);
       }
       const endIndex = startIndex + (data.length) - 1;
       if (this.allRows.length < totalCount) {
@@ -656,39 +691,39 @@ export class AcDataManager {
       }
       for (let index = startIndex; index <= endIndex; index++) {
         const dataIndex = index - startIndex;
-        console.log(`dataIndex : ${dataIndex},index : ${index}, startIndex : ${startIndex}`);
-        if (this.allRows[index] == undefined) {
-          this.allRows[index] = {
-            rowId: Autocode.uuid(),
-            data: {},
-            isPlaceholder: false,
-            index: index,
-            originalIndex: index,
-            extensionData: {}
-          };
-          if (index == 0) {
-            this.allRows[index].isFirst = true;
-          }
-          if (index == totalCount - 1) {
-            this.allRows[index].isLast = true;
-          }
-        }
+        const rowId = Autocode.uuid();
         const rowData = data[dataIndex];
-        if (this.assignUniqueIdToData) {
-          rowData[this.uniqueIdKey] = this.allRows[index].rowId;
+        if (this.assignUniqueIdToData && rowData) {
+          rowData[this.uniqueIdKey] = rowId;
         }
-        this.allRows[index].data = rowData;
-        this.allRows[index].isPlaceholder = false;
+        const dataRow: IAcDataRow = {
+          rowId: rowId,
+          data: rowData,
+          isPlaceholder: false,
+          index: index,
+          originalIndex: index,
+          extensionData: {}
+        };
+        if (index == 0) {
+          dataRow.isFirst = true;
+        }
+        if (index == totalCount - 1) {
+          dataRow.isLast = true;
+        }
+        this.allRows[index] = dataRow;
         const hookArgs: IAcDataManagerRowHookArgs = {
           dataManager: this,
-          dataRow: this.allRows[index],
+          dataRow: dataRow,
         };
         this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.RowCreate, args: hookArgs });
         this.events.execute({ event: AC_DATA_MANAGER_EVENT.RowCreate, args: hookArgs });
       }
       this.allDataAvailable = this.allRows.filter((row) => { return row == undefined || row.isPlaceholder == false }).length == 0;
       this.totalRows = this.allRows.length;
-      this.processRows();
+      this.setDisplayedRows({
+        startIndex: this.displayStartIndex >= 0 ? this.displayStartIndex : startIndex,
+        rowsCount: this.displayCount > 0 ? this.displayCount : data.length
+      });
     }
     this.isFirstRowsSet = true;
   }

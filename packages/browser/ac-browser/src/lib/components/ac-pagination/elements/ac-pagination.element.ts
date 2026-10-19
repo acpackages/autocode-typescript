@@ -88,6 +88,7 @@ export class AcPaginationElement extends AcElementBase {
   totalPages: number = 1;
   leftContainer?: HTMLElement;
   rightContainer?: HTMLElement;
+  setDisplayedRows:boolean = true;
 
   bindDataManager({ dataManager }: { dataManager: AcDataManager }) {
     this.dataManager = dataManager;
@@ -98,32 +99,10 @@ export class AcPaginationElement extends AcElementBase {
     });
     dataManager.on({
       event: AC_DATA_MANAGER_EVENT.OnDemandFunctionSet, callback: () => {
-        this.dataManager.getRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
+        this.dataManager?.getRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
       }
     });
   }
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    if (!this.addButton) {
-      this.addButton = this.ownerDocument.createElement('button');
-      this.addButton.setAttribute('type', 'button');
-      this.addButton.setAttribute('class', 'ac-pagination-add-btn');
-      this.addButton.innerHTML = acPaginationElementHtml.add;
-      this.addButton.addEventListener('click', () => {
-        this.dispatchEvent(new CustomEvent('add'));
-      });
-    }
-    this.leftContainer.append(this.navigationButtons);
-    this.leftContainer.append(this.sizeDropdown);
-    this.leftContainer.append(this.addButton);
-    this.setAddButtonDisplay();
-  }
-
-  override destroy(): void {
-    super.destroy();
-  }
-
 
   override init() {
     super.init();
@@ -133,8 +112,21 @@ export class AcPaginationElement extends AcElementBase {
     acAddClassToElement({ class_: 'ac-res-container', element: this });
     acClearElement({ element: this });
     this.innerHTML = '<div class="ac-pagination-left-container"></div><div class="ac-pagination-right-container"></div>';
-    this.leftContainer = this.querySelector(".ac-pagination-left-container");
-    this.rightContainer = this.querySelector(".ac-pagination-right-container");
+    this.leftContainer = this.querySelector(".ac-pagination-left-container") ?? undefined;
+    this.rightContainer = this.querySelector(".ac-pagination-right-container") ?? undefined;
+    if (!this.addButton) {
+      this.addButton = this.ownerDocument.createElement('button');
+      this.addButton.setAttribute('type', 'button');
+      this.addButton.setAttribute('class', 'ac-pagination-add-btn');
+      this.addButton.innerHTML = acPaginationElementHtml.add;
+      this.addButton.addEventListener('click', () => {
+        this.dispatchEvent(new CustomEvent('add'));
+      });
+    }
+    this.leftContainer?.append(this.navigationButtons);
+    this.leftContainer?.append(this.sizeDropdown);
+    this.leftContainer?.append(this.addButton);
+    this.setAddButtonDisplay();
   }
 
   private setAddButtonDisplay() {
@@ -162,10 +154,10 @@ export class AcPaginationElement extends AcElementBase {
       this.startRow = this.endRow = this.totalPages = this._activePage = 0;
     }
     if (this.startRow != oldStart || this.endRow != oldEnd || this.totalPages != oldTotal) {
-      if (this.dataManager && !this.dataManager.isWorking) {
+      if (this.setDisplayedRows &&this.dataManager && !this.dataManager.isWorking) {
         if (this.dataManager.type == 'ondemand') {
           this.dataManager.getData({ startIndex: this.startRow - 1, rowsCount: this.activePageSize }).then((res: any) => {
-            this.dataManager.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
+            this.dataManager?.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
           });
         }
         else {

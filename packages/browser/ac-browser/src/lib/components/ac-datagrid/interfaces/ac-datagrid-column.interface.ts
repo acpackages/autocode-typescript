@@ -8,6 +8,7 @@ export interface IAcDatagridColumn {
   isActive:boolean;
   columnId: string;
   columnDefinition: IAcDatagridColumnDefinition;
+  rawColumnDefinition?: IAcDatagridColumnDefinition;
   dataType: AcEnumDatagridColumnDataType;
   extensionData: Record<string, any>;
   filterGroup?: IAcFilterGroup;

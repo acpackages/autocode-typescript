@@ -187,7 +187,8 @@ export class AggridOnDemandPage {
         totalCount,
         data
       };
-      console.log(response);
+      // console.trace();
+      // console.log(response);
       setTimeout(() => {
         args.successCallback(response);
       }, 40);

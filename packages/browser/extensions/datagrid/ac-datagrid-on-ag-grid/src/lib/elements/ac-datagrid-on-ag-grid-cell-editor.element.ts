@@ -292,6 +292,13 @@ export class AcDatagridOnAgGridCellEditor implements ICellEditorComp {
   }
 
   refresh(params: ICellEditorParams<any, any, any>): boolean {
+    if (!this.datagridRow || !this.agGridExtension) {
+      return false;
+    }
+    const newRowId = params.data?.[this.agGridExtension.rowKey];
+    if (newRowId !== this.datagridRow.rowId) {
+      return false;
+    }
     this.params = params;
     let value: any = params.value;
     if (value == '' || value == undefined) {

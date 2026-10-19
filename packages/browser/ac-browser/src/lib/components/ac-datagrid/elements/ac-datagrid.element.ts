@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcElementBase } from "../../../core/ac-element-base";
@@ -31,7 +32,21 @@ export class AcDatagridElement extends AcElementBase {
     this.datagridApi.fillAvailableWidth = value;
   }
 
-  connectedCallback(): void {
+  get enterNavigation(): boolean {
+    return this.datagridApi.enterNavigation;
+  }
+  set enterNavigation(value: boolean) {
+    this.datagridApi.enterNavigation = value;
+  }
+
+  get enterNavigatesVertically(): boolean {
+    return this.datagridApi.enterNavigatesVertically;
+  }
+  set enterNavigatesVertically(value: boolean) {
+    this.datagridApi.enterNavigatesVertically = value;
+  }
+
+  override connectedCallback(): void {
     super.connectedCallback();
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.ElementConnected });
   }
@@ -49,7 +64,7 @@ export class AcDatagridElement extends AcElementBase {
     super.destroy();
   }
 
-  disconnectedCallback(): void {
+  override disconnectedCallback(): void {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = undefined;

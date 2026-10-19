@@ -63,10 +63,10 @@ export class AcDatagridColumnSizeHelper {
 
     let extraWidth = 16; // base padding (8px left + 8px right) + resize handle buffer
 
-    if (datagridColumn.columnDefinition.allowSort !== false && datagridApi?.allowSorting !== false) {
+    if (datagridColumn.columnDefinition.allowSort !== false && (datagridApi as any)?.allowSorting !== false) {
       extraWidth += 20; // 16px sort icon + 4px gap
     }
-    if (datagridColumn.columnDefinition.allowFilter !== false && datagridApi?.allowFiltering !== false) {
+    if (datagridColumn.columnDefinition.allowFilter !== false && (datagridApi as any)?.allowFiltering !== false) {
       extraWidth += 20; // 16px filter icon + 4px gap
     }
 
@@ -195,7 +195,8 @@ export class AcDatagridColumnSizeHelper {
 
     const internalColWidth = datagridApi.getInternalColumnWidth();
     const bodyEl = datagridApi.datagrid?.datagridBody;
-    const scrollbarWidth = bodyEl ? Math.max(0, bodyEl.offsetWidth - bodyEl.clientWidth) : 0;
+    // const scrollbarWidth = bodyEl ? Math.max(0, bodyEl.offsetWidth - bodyEl.clientWidth) : 0;
+    const scrollbarWidth = 10;
     const availableWidth = Math.max(0, containerWidth - internalColWidth - scrollbarWidth);
 
     // 1. Check if any columns have explicit flexSize

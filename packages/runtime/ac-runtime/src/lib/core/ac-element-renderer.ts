@@ -20,6 +20,7 @@ export class AcElementRenderer {
   childRendererClass?: any;
   private subscriptions: (() => void)[] = [];
   commentCache: Map<string, Comment> = new Map();
+  private activeCommentSearches: Set<string> = new Set();
 
   constructor({ targetId, rootElement, context, parentRenderer, startComment, endComment, isRoot = false, childRendererClass }: { targetId?: string, rootElement: AcRuntimeElement, context: any, parentRenderer?: AcElementRenderer, startComment?: string; endComment?: string, isRoot?: boolean, childRendererClass?: any }) {
     this.rendererId = rootElement.generateHexId();
@@ -218,33 +219,69 @@ export class AcElementRenderer {
 
   protected findComment(commentText: string): Comment | null {
     const cached = this.commentCache.get(commentText);
-    if (cached && cached.isConnected) {
-      return cached;
+    if (cached) {
+      if (cached.isConnected) {
+        return cached;
+      }
+      this.commentCache.delete(commentText);
     }
 
-    // 1. If searching for this renderer's own boundary comments (startComment or endComment),
-    // and this renderer has a parentRenderer, delegate to parentRenderer because boundary
-    // comments were defined in parentRenderer's scope.
-    if ((commentText === this.startComment || commentText === this.endComment) && this.parentRenderer) {
-      const comment = this.parentRenderer.findComment(commentText);
-      if (comment) {
-        this.commentCache.set(commentText, comment);
+    if (this.activeCommentSearches.has(commentText)) {
+      return null;
+    }
+    this.activeCommentSearches.add(commentText);
+
+    try {
+      // 1. If searching for this renderer's own boundary comments (startComment or endComment),
+      // and this renderer has a parentRenderer, delegate to parentRenderer because boundary
+      // comments were defined in parentRenderer's scope.
+      if ((commentText === this.startComment || commentText === this.endComment) && this.parentRenderer) {
+        const comment = this.parentRenderer.findComment(commentText);
+        if (comment) {
+          this.commentCache.set(commentText, comment);
+        }
         return comment;
       }
-    }
 
-    // 2. If this renderer has its own nodes, search within this.nodes first (prevents cross-contamination across loop items)
-    if (this.nodes && this.nodes.length > 0) {
-      for (let i = 0; i < this.nodes.length; i++) {
-        const rootNode = this.nodes[i];
-        if (rootNode.nodeType === Node.COMMENT_NODE && (rootNode as Comment).nodeValue?.trim() === commentText) {
-          this.commentCache.set(commentText, rootNode as Comment);
-          return rootNode as Comment;
+      // 2. If this renderer has its own nodes, search within this.nodes first (prevents cross-contamination across loop items)
+      if (this.nodes && this.nodes.length > 0) {
+        for (let i = 0; i < this.nodes.length; i++) {
+          const rootNode = this.nodes[i];
+          if (rootNode.nodeType === Node.COMMENT_NODE && (rootNode as Comment).nodeValue?.trim() === commentText) {
+            this.commentCache.set(commentText, rootNode as Comment);
+            return rootNode as Comment;
+          }
+          if (rootNode.nodeType === Node.ELEMENT_NODE || rootNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_COMMENT);
+            let current = walker.nextNode();
+            while (current) {
+              if (current.nodeType === Node.COMMENT_NODE) {
+                const val = (current as Comment).nodeValue?.trim();
+                if (val) {
+                  this.commentCache.set(val, current as Comment);
+                  if (val === commentText) {
+                    return current as Comment;
+                  }
+                }
+              }
+              current = walker.nextNode();
+            }
+          }
         }
-        if (rootNode.nodeType === Node.ELEMENT_NODE || rootNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-          const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_COMMENT);
-          let current = walker.nextNode();
-          while (current) {
+      }
+
+      // 3. If this renderer is delimited by startComment and endComment, search strictly between them
+      if (
+        this.startComment &&
+        this.endComment &&
+        commentText !== this.startComment &&
+        commentText !== this.endComment
+      ) {
+        const startEl = this.findComment(this.startComment);
+        const endEl = this.findComment(this.endComment);
+        if (startEl && endEl && startEl.parentNode) {
+          let current: Node | null = startEl.nextSibling;
+          while (current && current !== endEl) {
             if (current.nodeType === Node.COMMENT_NODE) {
               const val = (current as Comment).nodeValue?.trim();
               if (val) {
@@ -254,19 +291,42 @@ export class AcElementRenderer {
                 }
               }
             }
-            current = walker.nextNode();
+            if (current.nodeType === Node.ELEMENT_NODE) {
+              const walker = document.createTreeWalker(current, NodeFilter.SHOW_COMMENT);
+              let child = walker.nextNode();
+              while (child) {
+                const val = (child as Comment).nodeValue?.trim();
+                if (val) {
+                  this.commentCache.set(val, child as Comment);
+                  if (val === commentText) {
+                    return child as Comment;
+                  }
+                }
+                child = walker.nextNode();
+              }
+            }
+            current = current.nextSibling;
           }
         }
       }
-    }
 
-    // 3. If this renderer is delimited by startComment and endComment, search strictly between them
-    if (this.startComment && this.endComment) {
-      const startEl = this.findComment(this.startComment);
-      const endEl = this.findComment(this.endComment);
-      if (startEl && endEl && startEl.parentNode) {
-        let current: Node | null = startEl.nextSibling;
-        while (current && current !== endEl) {
+      // 4. If not found and parentRenderer exists, delegate to parentRenderer
+      if (this.parentRenderer) {
+        const comment = this.parentRenderer.findComment(commentText);
+        if (comment) {
+          this.commentCache.set(commentText, comment);
+          return comment;
+        }
+      }
+
+      // 5. Fallback: search within rootElement if isRoot or no parentRenderer
+      if (this.isRoot || !this.parentRenderer) {
+        const walker = document.createTreeWalker(
+          this.rootElement,
+          NodeFilter.SHOW_COMMENT
+        );
+        let current = walker.nextNode();
+        while (current) {
           if (current.nodeType === Node.COMMENT_NODE) {
             const val = (current as Comment).nodeValue?.trim();
             if (val) {
@@ -276,56 +336,14 @@ export class AcElementRenderer {
               }
             }
           }
-          if (current.nodeType === Node.ELEMENT_NODE) {
-            const walker = document.createTreeWalker(current, NodeFilter.SHOW_COMMENT);
-            let child = walker.nextNode();
-            while (child) {
-              const val = (child as Comment).nodeValue?.trim();
-              if (val) {
-                this.commentCache.set(val, child as Comment);
-                if (val === commentText) {
-                  return child as Comment;
-                }
-              }
-              child = walker.nextNode();
-            }
-          }
-          current = current.nextSibling;
+          current = walker.nextNode();
         }
       }
-    }
 
-    // 4. If not found and parentRenderer exists, delegate to parentRenderer
-    if (this.parentRenderer) {
-      const comment = this.parentRenderer.findComment(commentText);
-      if (comment) {
-        this.commentCache.set(commentText, comment);
-        return comment;
-      }
+      return null;
+    } finally {
+      this.activeCommentSearches.delete(commentText);
     }
-
-    // 5. Fallback: search within rootElement if isRoot or no parentRenderer
-    if (this.isRoot || !this.parentRenderer) {
-      const walker = document.createTreeWalker(
-        this.rootElement,
-        NodeFilter.SHOW_COMMENT
-      );
-      let current = walker.nextNode();
-      while (current) {
-        if (current.nodeType === Node.COMMENT_NODE) {
-          const val = (current as Comment).nodeValue?.trim();
-          if (val) {
-            this.commentCache.set(val, current as Comment);
-            if (val === commentText) {
-              return current as Comment;
-            }
-          }
-        }
-        current = walker.nextNode();
-      }
-    }
-
-    return null;
   }
 
   getChildRenderer(targetId: string): AcElementRenderer | undefined {

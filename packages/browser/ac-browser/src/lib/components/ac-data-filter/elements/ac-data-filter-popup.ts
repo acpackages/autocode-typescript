@@ -183,17 +183,15 @@ export class AcDataFilterPopup {
     }
     if (['STRING', "TEXT"].includes(fieldType)) {
       result = [
-        ...result,
         { operator: AcEnumConditionOperator.Contains, label: "Contains" },
         { operator: AcEnumConditionOperator.NotContains, label: "Not Contains" },
         { operator: AcEnumConditionOperator.StartsWith, label: "Starts With" },
         { operator: AcEnumConditionOperator.EndsWith, label: "Ends With" },
         { operator: AcEnumConditionOperator.IsEmpty, label: "Is Empty" },
         { operator: AcEnumConditionOperator.IsNotEmpty, label: "Is Not Empty" },
+        ...result,
       ];
     }
-
-
     result.push({ operator: AcEnumConditionOperator.IsNull, label: "Is Null" });
     result.push({ operator: AcEnumConditionOperator.IsNotNull, label: "Is Not Null" });
     return result;

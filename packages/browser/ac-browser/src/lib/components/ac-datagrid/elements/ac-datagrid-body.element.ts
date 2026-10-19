@@ -11,6 +11,7 @@ import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.con
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_DATAGRID_TAG, AcDatagridElement } from "../../_components.export";
 import { AcDatagridCellElement } from "./ac-datagrid-cell.element";
+import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 
 export class AcDatagridBody extends AcElementBase {
   datagridApi?: AcDatagridApi;
@@ -202,12 +203,14 @@ export class AcDatagridBody extends AcElementBase {
     this.pinnedTopContainer.classList.toggle('show', top.length > 0);
     if (top.length > 0) {
       this.pinnedTopContainer.style.display = 'flex';
+      const topFragment = document.createDocumentFragment();
       for (const row of top) {
         const rowEl = new AcDatagridRowElement();
         rowEl.setRow({ datagridApi: this.datagridApi, datagridRow: row });
         this.currentRows.push(rowEl);
-        this.pinnedTopContainer.appendChild(rowEl);
+        topFragment.appendChild(rowEl);
       }
+      this.pinnedTopContainer.appendChild(topFragment);
     } else {
       this.pinnedTopContainer.style.display = 'none';
     }
@@ -217,12 +220,14 @@ export class AcDatagridBody extends AcElementBase {
     this.pinnedBottomContainer.classList.toggle('show', bottom.length > 0);
     if (bottom.length > 0) {
       this.pinnedBottomContainer.style.display = 'flex';
+      const bottomFragment = document.createDocumentFragment();
       for (const row of bottom) {
         const rowEl = new AcDatagridRowElement();
         rowEl.setRow({ datagridApi: this.datagridApi, datagridRow: row });
         this.currentRows.push(rowEl);
-        this.pinnedBottomContainer.appendChild(rowEl);
+        bottomFragment.appendChild(rowEl);
       }
+      this.pinnedBottomContainer.appendChild(bottomFragment);
     } else {
       this.pinnedBottomContainer.style.display = 'none';
     }
@@ -231,6 +236,37 @@ export class AcDatagridBody extends AcElementBase {
   setDisplayedRows() {
     const prevScrollLeft = this.scrollLeft;
     const prevScrollTop = this.scrollTop;
+
+    // Capture active cell state and focus before clearing DOM
+    const activeCell = this.datagridApi?.activeDatagridCell;
+    const activeRowId = activeCell?.datagridRow?.rowId ?? this.datagridApi?.activeEditRowId ?? this.datagridApi?.activeDatagridRow?.rowId;
+    const activeRowIndex = activeCell?.datagridRow?.index;
+    const activeColumnId = activeCell?.datagridColumn?.columnId;
+    const activeColumnKey = activeCell?.datagridColumn?.columnKey;
+
+    const activeElement = document.activeElement;
+    const cellEl = activeCell?.element;
+    const cellContainsFocus = cellEl ? (cellEl.contains(activeElement) || activeElement === cellEl) : false;
+    const rowContainsFocus = activeRowId ? !!this.querySelector(`[${AcDatagridAttributeName.acDatagridRowId}="${activeRowId}"]`)?.contains(activeElement) : false;
+    const bodyContainsFocus = this.contains(activeElement) || activeElement === this;
+    const hadFocus = cellContainsFocus || rowContainsFocus || bodyContainsFocus;
+
+    const wasEditing = !!(
+      (cellEl as any)?.isEditing ||
+      (activeRowId && this.datagridApi?.activeEditRowId === activeRowId)
+    );
+
+    let selectionStart: number | null = null;
+    let selectionEnd: number | null = null;
+    if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) {
+      try {
+        selectionStart = activeElement.selectionStart;
+        selectionEnd = activeElement.selectionEnd;
+      } catch (e) {
+        // Ignored for input types not supporting selection
+      }
+    }
+
     this.clearBody();
     if (!this.datagridApi || !this.rowsContainer) return;
 
@@ -238,6 +274,7 @@ export class AcDatagridBody extends AcElementBase {
 
     // Normal displayed rows (excluding pinned rows)
     const normalRows = this.datagridApi.displayedDatagridRows.filter(r => !r.pinned);
+    const fragment = document.createDocumentFragment();
     for (const row of normalRows) {
       const datagridRow = new AcDatagridRowElement();
       datagridRow.setRow({
@@ -245,7 +282,49 @@ export class AcDatagridBody extends AcElementBase {
         datagridRow: row
       });
       this.currentRows.push(datagridRow);
-      this.rowsContainer.appendChild(datagridRow);
+      fragment.appendChild(datagridRow);
+    }
+    this.rowsContainer.appendChild(fragment);
+
+    // Restore active cell, editing state, and focus on the counterpart row/cell
+    if (activeRowId || (activeRowIndex !== undefined && activeRowIndex >= 0)) {
+      const newRowEl = this.currentRows.find(r => r.datagridRow?.rowId === activeRowId)
+        || (activeRowIndex !== undefined && activeRowIndex >= 0 && activeRowIndex < this.currentRows.length ? this.currentRows[activeRowIndex] : undefined);
+
+      if (newRowEl) {
+        const newCellEl = newRowEl.datagridCells?.find(c =>
+          (activeColumnId && c.datagridCell?.datagridColumn?.columnId === activeColumnId) ||
+          (activeColumnKey && c.datagridCell?.datagridColumn?.columnKey === activeColumnKey)
+        );
+
+        if (newCellEl && newCellEl.datagridCell) {
+          this.datagridApi!.setActiveCell({ datagridCell: newCellEl.datagridCell });
+
+          if (wasEditing) {
+            newCellEl.enterEditMode();
+          }
+
+          if (hadFocus) {
+            newCellEl.focus();
+            if (selectionStart !== null && selectionEnd !== null) {
+              const inputEl = newCellEl.querySelector('input, textarea') as HTMLInputElement | HTMLTextAreaElement;
+              if (inputEl) {
+                try {
+                  inputEl.setSelectionRange(selectionStart, selectionEnd);
+                } catch (e) {
+                  // ignore
+                }
+              }
+            }
+          }
+        } else if (hadFocus && newRowEl.datagridRow) {
+          const firstFocusableCell = newRowEl.datagridCells?.find(c => c.isEditable?.() || c.datagridCell?.datagridColumn?.allowFocus);
+          if (firstFocusableCell?.datagridCell) {
+            this.datagridApi!.setActiveCell({ datagridCell: firstFocusableCell.datagridCell });
+            firstFocusableCell.focus();
+          }
+        }
+      }
     }
 
     if (prevScrollLeft > 0 || prevScrollTop > 0) {

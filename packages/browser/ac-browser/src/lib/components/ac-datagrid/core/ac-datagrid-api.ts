@@ -5,7 +5,7 @@
 import { AcPaginationElement } from "../../ac-pagination/elements/ac-pagination.element";
 import { AcDatagridElement } from "../elements/ac-datagrid.element";
 import { IAcDatagridColumnDefinition } from "../interfaces/ac-datagrid-column-definition.interface";
-import { AcDataManager, AC_DATA_MANAGER_EVENT, AcEnumLogicalOperator, AcEnumSortOrder, AcEvents, AcHooks, AcLogger, Autocode, IAcDataManagerDataEvent, IAcFilter, IAcFilterGroup, acNullifyInstanceProperties } from "@autocode-ts/autocode";
+import { AcDataManager, AC_DATA_MANAGER_EVENT, AC_DATA_MANAGER_HOOK, AcEnumLogicalOperator, AcEnumSortOrder, AcEvents, AcHooks, AcLogger, Autocode, IAcDataManagerDataEvent, IAcFilter, IAcFilterGroup, acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AC_DATAGRID_EVENT } from "../consts/ac-datagrid-event.const";
 import { IAcDatagridColumnDragPlaceholderCreatorArgs } from "../interfaces/callback-args/ac-datagrid-column-drag-placeholder-creator-args.interface";
 import { IAcDatagridRowDragPlaceholderCreatorArgs } from "../interfaces/callback-args/ac-datagrid-row-drag-placeholder-creator-args.interface";
@@ -33,6 +33,10 @@ import { IAcDatagridRow } from "../interfaces/ac-datagrid-row.interface";
 import { AcDatagridColumnSizeHelper } from "../helpers/ac-datagrid-column-size-helper";
 import { IAcDatagridSizeColumnsToFitOptions } from "../interfaces/options/ac-datagrid-size-columns-to-fit-options.interface";
 import { IAcDatagridAutoSizeColumnsOptions } from "../interfaces/options/ac-datagrid-auto-size-columns-options.interface";
+import { AcBrowser } from "../../../core/ac-browser";
+import { AcDatagridExportHelper } from "../helpers/ac-datagrid-export-helper";
+import { AcExcelExportService, IAcExcelSheetExportDef } from "@autocode-ts/ac-data-manager-export";
+import { IAcDatagridCsvExportParams, IAcDatagridExcelExportParams, IAcDatagridExcelExportMultipleSheetsParams } from "../interfaces/export/ac-datagrid-export-params.interface";
 
 export class AcDatagridApi {
   private _bodyWidth: number = 0;
@@ -111,20 +115,51 @@ export class AcDatagridApi {
       if (column.visible) {
         displayIndex++;
       }
+      let rawEditable: any;
+      if (colDef.allowEdit !== undefined) {
+        rawEditable = colDef.allowEdit;
+      } else if (colDef.editable !== undefined) {
+        rawEditable = colDef.editable;
+      } else if (this.defaultColumnDefiniation?.allowEdit !== undefined) {
+        rawEditable = this.defaultColumnDefiniation.allowEdit;
+      } else if (this.defaultColumnDefiniation?.editable !== undefined) {
+        rawEditable = this.defaultColumnDefiniation.editable;
+      } else {
+        rawEditable = false;
+      }
+      const allowEditBool = typeof rawEditable === 'function' ? true : !!rawEditable;
+      column.allowEdit = allowEditBool;
+      column.editable = rawEditable;
+
+      let rawFocusable: boolean;
+      if (colDef.allowFocus !== undefined) {
+        rawFocusable = !!colDef.allowFocus;
+      } else if ((colDef as any).suppressFocus !== undefined) {
+        rawFocusable = !(colDef as any).suppressFocus;
+      } else if (allowEditBool) {
+        rawFocusable = true;
+      } else if (this.defaultColumnDefiniation?.allowFocus !== undefined) {
+        rawFocusable = this.defaultColumnDefiniation.allowFocus;
+      } else {
+        rawFocusable = false;
+      }
+      column.allowFocus = rawFocusable;
+
       const datagridColumn: IAcDatagridColumn = {
         columnDefinition: column,
+        rawColumnDefinition: colDef,
         originalIndex: column.index!,
         isActive: false,
         dataType: AcEnumDatagridColumnDataType.Unknown,
         columnId: Autocode.uuid(),
         extensionData: {},
-        allowEdit: column.editable !== undefined ? (typeof column.editable === 'function' ? true : !!column.editable) : (column.allowEdit ?? false),
-        editable: column.editable !== undefined ? column.editable : (column.allowEdit ?? false),
+        allowEdit: allowEditBool,
+        editable: rawEditable,
         isTreeColumn: column.isTreeColumn,
         cellClass: column.cellClass,
         headerCellClass: column.headerCellClass,
         allowFilter: column.allowFilter,
-        allowFocus: column.allowFocus,
+        allowFocus: rawFocusable,
         allowResize: column.allowResize,
         allowSort: column.allowSort,
         columnKey: column.field,
@@ -172,6 +207,7 @@ export class AcDatagridApi {
   set data(value: any[]) {
     this.dataManager.data = value;
     this.dataManager.processRows();
+    this.syncRowProperties();
     if (this.treeConfig) {
       this.initTreeRows();
     }
@@ -212,11 +248,6 @@ export class AcDatagridApi {
     if (this.datagridColumns.some(c => !!c.pinnedOn)) {
       this.updatePinnedOffsets();
       this.datagrid?.datagridHeader?.refresh();
-      if (this.datagrid?.datagridBody?.currentRows) {
-        for (const rowEl of this.datagrid.datagridBody.currentRows) {
-          rowEl.refresh();
-        }
-      }
     }
 
     this.datagrid?.datagridHeader?.syncScrollbarSpacer?.();
@@ -265,11 +296,6 @@ export class AcDatagridApi {
     if (this.datagridColumns.some(c => !!c.pinnedOn)) {
       this.updatePinnedOffsets();
       this.datagrid?.datagridHeader?.refresh();
-      if (this.datagrid?.datagridBody?.currentRows) {
-        for (const rowEl of this.datagrid.datagridBody.currentRows) {
-          rowEl.refresh();
-        }
-      }
     }
 
     this.datagrid?.datagridHeader?.syncScrollbarSpacer?.();
@@ -308,7 +334,9 @@ export class AcDatagridApi {
 
   get displayedDatagridRows(): IAcDatagridRow[] {
     if (this.hasTreeOrGroup && this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
-      return (this.dataManager.allRows as IAcDatagridRow[]).filter(r => r && r.index !== -1);
+      return (this.dataManager.allRows as IAcDatagridRow[])
+        .filter(r => r && r.index !== -1)
+        .sort((a, b) => a.index - b.index);
     }
     if (this.dataManager) {
       return this.dataManager.displayedRows as any[];
@@ -447,7 +475,7 @@ export class AcDatagridApi {
   datagridColumns: IAcDatagridColumn[] = [];
   datagridState: AcDatagridState;
   dataManager: AcDataManager = new AcDataManager();
-  defaultColumnDefiniation: Partial<IAcDatagridColumnDefinition> = AC_DATAGRID_DEFAULT_COLUMN_DEFINITION;
+  defaultColumnDefiniation: Partial<IAcDatagridColumnDefinition> = { ...AC_DATAGRID_DEFAULT_COLUMN_DEFINITION };
   eventHandler!: AcDatagridEventHandler;
   events: AcEvents;
   extensions: Record<string, AcDatagridExtension> = {};
@@ -470,17 +498,34 @@ export class AcDatagridApi {
   allowRowDragging: boolean = false;
   allowColumnResizing: boolean = true;
   allowColumnDragging: boolean = true;
+  private _enterNavigatesVertically: boolean = false;
+  get enterNavigatesVertically(): boolean {
+    return this._enterNavigatesVertically;
+  }
+  set enterNavigatesVertically(value: boolean) {
+    this._enterNavigatesVertically = value;
+    this._enterNavigation = value;
+  }
+
+  private _enterNavigation: boolean = false;
+  get enterNavigation(): boolean {
+    return this._enterNavigation;
+  }
+  set enterNavigation(value: boolean) {
+    this._enterNavigation = value;
+    this._enterNavigatesVertically = value;
+  }
   editMode: 'cell' | 'row' | 'none' = 'cell';
   activeEditRowId: string | null = null;
   groupBy: string[] = [];
   expandedRowIds: Set<string> = new Set<string>();
   expandedDetailRowIds: Set<string> = new Set<string>();
   loadingRowIds: Set<string> = new Set<string>();
-  private _treeConfig?: { idKey: string; parentIdKey: string; childrenKey?: string };
-  get treeConfig(): { idKey: string; parentIdKey: string; childrenKey?: string } | undefined {
+  private _treeConfig?: { idKey: string; parentIdKey: string; childrenKey?: string; treeColumn?: string; treeLevelExpanded?: number };
+  get treeConfig(): { idKey: string; parentIdKey: string; childrenKey?: string; treeColumn?: string; treeLevelExpanded?: number } | undefined {
     return this._treeConfig;
   }
-  set treeConfig(value: { idKey: string; parentIdKey: string; childrenKey?: string } | undefined) {
+  set treeConfig(value: { idKey: string; parentIdKey: string; childrenKey?: string; treeColumn?: string; treeLevelExpanded?: number } | undefined) {
     this._treeConfig = value;
     if (this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
       this.initTreeRows();
@@ -490,9 +535,12 @@ export class AcDatagridApi {
   masterDetailConfig?: { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string };
   onDemandTreeFunction?: (args: { parentRow: IAcDatagridRow, successCallback: (children: any[]) => void, errorCallback: (err: any) => void }) => void;
   onDemandGroupFunction?: (args: { groupBy: string[], successCallback: (groups: any[]) => void, errorCallback: (err: any) => void }) => void;
+  onDemandGroupExpandFunction?: (args: { groupRow: IAcDatagridRow, groupField?: string, groupValue?: any, successCallback: (children: any[]) => void, errorCallback: (err: any) => void }) => void;
   pinnedTopRowIds: string[] = [];
   pinnedBottomRowIds: string[] = [];
   sidePanelOpen: boolean = false;
+  lastActiveRowIndex?: number;
+  lastActiveColumnIndex?: number;
   private _stateChangeTimer: any;
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {
@@ -501,6 +549,19 @@ export class AcDatagridApi {
     this.events = datagrid.events;
     this.dataManager.events = this.events;
     this.dataManager.hooks = this.hooks;
+    this.dataManager.hooks.subscribe({
+      hook: AC_DATA_MANAGER_HOOK.GetOnDemandDataSuccessCallback,
+      callback: () => {
+        this.syncRowProperties();
+        if (this.treeConfig) {
+          this.initTreeRows();
+        }
+        if (this.hasTreeOrGroup) {
+          this.processTreeVisibility();
+          this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+        }
+      }
+    });
     this.events.on({
       event: 'beforeexecute', callback: ({ event, args }: { event: string, args: any }) => {
         if (args['dataRow'] != undefined) {
@@ -750,6 +811,10 @@ export class AcDatagridApi {
 
   enableExtension({ extensionName }: { extensionName: string }): AcDatagridExtension | null {
     this.logger.log('Enabling extension', { extensionName });
+    if (this.extensions[extensionName]) {
+      this.logger.log('Extension already enabled, returning existing instance', { extensionName });
+      return this.extensions[extensionName];
+    }
     if (AcDatagridExtensionManager.hasExtension({ extensionName: extensionName })) {
       this.logger.log('Extension found, creating instance');
       const extensionInstance = AcDatagridExtensionManager.createInstance({ extensionName: extensionName });
@@ -928,6 +993,13 @@ export class AcDatagridApi {
   }
 
   setColumnFilter({ datagridColumn, filter, filterGroup }: { datagridColumn: IAcDatagridColumn, filter?: IAcFilter, filterGroup?: IAcFilterGroup }) {
+    if (this.activeEditRowId) {
+      this.cancelRowEdit();
+    }
+    this.activeDatagridCell = undefined;
+    this.hoverRowId = undefined;
+    this.hoverCellId = undefined;
+
     this.logger.log('Setting column filter', { field: datagridColumn.columnDefinition.field, filter: filter });
     const oldFilterGroup: IAcFilterGroup | undefined = datagridColumn.filterGroup;
     if (datagridColumn.filterGroup == undefined) {
@@ -963,6 +1035,13 @@ export class AcDatagridApi {
   }
 
   setColumnSortOrder({ datagridColumn, sortOrder }: { datagridColumn: IAcDatagridColumn, sortOrder: AcEnumSortOrder }) {
+    if (this.activeEditRowId) {
+      this.cancelRowEdit();
+    }
+    this.activeDatagridCell = undefined;
+    this.hoverRowId = undefined;
+    this.hoverCellId = undefined;
+
     this.logger.log('Setting column sort order', { field: datagridColumn.columnDefinition.field, oldOrder: datagridColumn.sortOrder, newOrder: sortOrder });
     const oldSortOrder: AcEnumSortOrder = datagridColumn.sortOrder!;
     datagridColumn.sortOrder = sortOrder;
@@ -1019,6 +1098,12 @@ export class AcDatagridApi {
       }
       datagridCell.isActive = true;
       this.activeDatagridCell = datagridCell;
+      if (datagridCell.datagridRow?.index !== undefined && datagridCell.datagridRow.index >= 0) {
+        this.lastActiveRowIndex = datagridCell.datagridRow.index;
+      }
+      if (datagridCell.datagridColumn?.index !== undefined && datagridCell.datagridColumn.index >= 0) {
+        this.lastActiveColumnIndex = datagridCell.datagridColumn.index;
+      }
       if ((previousActiveCell && previousActiveCell.cellId != datagridCell.cellId) || previousActiveCell == undefined) {
         const args: any = {
           oldActiveDatagridCell: previousActiveCell,
@@ -1088,13 +1173,18 @@ export class AcDatagridApi {
     this.logger.log('Updating row', { rowId, key, addIfMissing, highlightCells, dataProvided: !!data, valueProvided: !!value });
     const datagridRow: IAcDatagridRow | undefined = this.dataManager.updateRow({ data, value, key, rowId, addIfMissing }) as IAcDatagridRow;
     if (datagridRow) {
-      if (highlightCells && datagridRow.datagridCells) {
+      const rowEl: any = (datagridRow.element as any) ?? this.datagrid?.datagridBody?.currentRows?.find(r => r.datagridRow?.rowId === datagridRow.rowId);
+      if (rowEl && typeof rowEl.refresh === 'function') {
+        rowEl.refresh();
+      } else if (datagridRow.datagridCells) {
         for (const cell of datagridRow.datagridCells) {
-          if (cell.element) {
-            cell.element!.refresh();
+          if (cell.element && typeof cell.element.refresh === 'function') {
+            cell.element.refresh();
           }
           this.logger.log('Refreshed cell', { cellId: cell.cellId });
         }
+      }
+      if (highlightCells) {
         // Flash the entire updated row
         this.flashCells({ rowIds: [datagridRow.rowId], color: 'green' });
       }
@@ -1226,7 +1316,7 @@ export class AcDatagridApi {
   }
 
   get hasTreeOrGroup(): boolean {
-    return (this.groupBy && this.groupBy.length > 0) || !!this.treeConfig || this.datagridRows.some((r: any) => r.hasChildren || r.isGroupHeader);
+    return (this.groupBy && this.groupBy.length > 0) || !!this.treeConfig || !!this.onDemandGroupExpandFunction || this.datagridRows.some((r: any) => r.hasChildren || r.isGroupHeader) || ((this.dataManager?.allRows as any[]) || []).some((r: any) => r && (r.hasChildren || r.isGroupHeader || r.data?.isGroupHeader || r.data?.hasChildren));
   }
 
   get hasMasterDetail(): boolean {
@@ -1248,16 +1338,74 @@ export class AcDatagridApi {
     return this.selectedRowIds.has(rowId);
   }
 
+  isColumnFocusable(col: IAcDatagridColumn): boolean {
+    if (!col || !col.visible) return false;
+    if (col.rawColumnDefinition?.allowFocus === false) return false;
+    if ((col.rawColumnDefinition as any)?.suppressFocus === true) return false;
+    if ((col.columnDefinition as any)?.suppressFocus === true) return false;
+    if (col.allowFocus === false && !col.allowEdit && !col.columnDefinition?.allowEdit && !col.columnDefinition?.editable) return false;
+    return true;
+  }
+
+  isCellEditable({ row, column }: { row: IAcDatagridRow, column: IAcDatagridColumn }): boolean {
+    if (!column || !row) return false;
+    if (!this.isColumnFocusable(column)) return false;
+    const colDef = column.columnDefinition;
+    if (!colDef) return false;
+
+    if (typeof colDef.editable === 'function') {
+      return !!colDef.editable({ row, column, datagridApi: this });
+    }
+    if (colDef.allowEdit !== undefined) {
+      return colDef.allowEdit === true;
+    }
+    if (colDef.editable !== undefined) {
+      return colDef.editable === true;
+    }
+    return column.allowEdit === true;
+  }
+
   getActiveCellCoordinate(): { rowIndex: number, columnIndex: number } {
     const visibleCols = this.datagridColumns.filter(c => c.visible);
     if (!this.activeDatagridCell) {
+      if (this.lastActiveRowIndex !== undefined && this.lastActiveRowIndex >= 0 && this.lastActiveRowIndex < this.displayedDatagridRows.length) {
+        return {
+          rowIndex: this.lastActiveRowIndex,
+          columnIndex: this.lastActiveColumnIndex !== undefined && this.lastActiveColumnIndex >= 0 && this.lastActiveColumnIndex < visibleCols.length ? this.lastActiveColumnIndex : 0
+        };
+      }
       return { rowIndex: 0, columnIndex: 0 };
     }
-    const rowIdx = this.displayedDatagridRows.findIndex(r => r.rowId === this.activeDatagridCell?.datagridRow.rowId);
-    const colIdx = visibleCols.findIndex(c => c.columnId === this.activeDatagridCell?.datagridColumn.columnId);
+    let rowIdx = this.displayedDatagridRows.findIndex(r => r.rowId === this.activeDatagridCell?.datagridRow?.rowId);
+    if (rowIdx < 0 && this.activeDatagridRow?.rowId) {
+      rowIdx = this.displayedDatagridRows.findIndex(r => r.rowId === this.activeDatagridRow.rowId);
+    }
+    if (rowIdx < 0 && this.activeDatagridCell?.datagridRow?.index !== undefined) {
+      const idx = this.activeDatagridCell.datagridRow.index;
+      if (idx >= 0 && idx < this.displayedDatagridRows.length) {
+        rowIdx = idx;
+      }
+    }
+    if (rowIdx < 0 && this.lastActiveRowIndex !== undefined && this.lastActiveRowIndex >= 0 && this.lastActiveRowIndex < this.displayedDatagridRows.length) {
+      rowIdx = this.lastActiveRowIndex;
+    }
+
+    let colIdx = visibleCols.findIndex(c => c.columnId === this.activeDatagridCell?.datagridColumn?.columnId);
+    if (colIdx < 0 && this.activeDatagridCell?.datagridColumn?.columnKey) {
+      colIdx = visibleCols.findIndex(c => c.columnKey === this.activeDatagridCell?.datagridColumn?.columnKey);
+    }
+    if (colIdx < 0 && this.lastActiveColumnIndex !== undefined && this.lastActiveColumnIndex >= 0 && this.lastActiveColumnIndex < visibleCols.length) {
+      colIdx = this.lastActiveColumnIndex;
+    }
+
+    const finalRowIndex = rowIdx >= 0 ? rowIdx : 0;
+    const finalColIndex = colIdx >= 0 ? colIdx : 0;
+    this.lastActiveRowIndex = finalRowIndex;
+    this.lastActiveColumnIndex = finalColIndex;
+
     return {
-      rowIndex: rowIdx >= 0 ? rowIdx : 0,
-      columnIndex: colIdx >= 0 ? colIdx : 0
+      rowIndex: finalRowIndex,
+      columnIndex: finalColIndex
     };
   }
 
@@ -1269,7 +1417,10 @@ export class AcDatagridApi {
     if (this.datagrid?.datagridBody) {
       const rowEl = (this.datagrid.datagridBody as any).currentRows?.find((r: any) => r.datagridRow?.rowId === rowId);
       if (rowEl) {
-        const cellEl = rowEl.datagridCells?.find((c: any) => c.datagridCell?.datagridColumn?.columnId === columnId);
+        const cellEl = rowEl.datagridCells?.find((c: any) =>
+          c.datagridCell?.datagridColumn?.columnId === columnId ||
+          c.datagridCell?.datagridColumn?.columnKey === col.columnKey
+        );
         if (cellEl) {
           this.setActiveCell({ datagridCell: cellEl.datagridCell });
           cellEl.focus();
@@ -1281,36 +1432,89 @@ export class AcDatagridApi {
     this.setActiveCell({ rowIndex: row.index, columnIndex: col.index });
   }
 
-  navigateCell({ rowDelta, colDelta }: { rowDelta: number, colDelta: number }) {
+  navigateCell({ rowDelta, colDelta, edit }: { rowDelta: number, colDelta: number, edit?: boolean }) {
     const visibleCols = this.datagridColumns.filter(c => c.visible);
     if (visibleCols.length === 0 || this.displayedDatagridRows.length === 0) return;
 
+    const isEditing = edit !== undefined ? edit : (!!(this.activeDatagridCell?.element as any)?.isEditing || !!this.activeEditRowId);
     const currentCoord = this.getActiveCellCoordinate();
-    let nextRowIdx = currentCoord.rowIndex + rowDelta;
-    let nextColIdx = currentCoord.columnIndex + colDelta;
 
-    if (nextColIdx >= visibleCols.length) {
-      if (nextRowIdx < this.displayedDatagridRows.length - 1) {
-        nextColIdx = 0;
-        nextRowIdx++;
-      } else {
-        nextColIdx = visibleCols.length - 1;
+    // Vertical navigation (ArrowUp / ArrowDown)
+    if (rowDelta !== 0 && colDelta === 0) {
+      let nextRowIdx = currentCoord.rowIndex + rowDelta;
+      nextRowIdx = Math.max(0, Math.min(this.displayedDatagridRows.length - 1, nextRowIdx));
+      const targetRow = this.displayedDatagridRows[nextRowIdx];
+      const targetCol = visibleCols[currentCoord.columnIndex];
+      if (targetRow && targetCol) {
+        this.focusCell({ rowId: targetRow.rowId, columnId: targetCol.columnId });
+        if (isEditing && this.isCellEditable({ row: targetRow, column: targetCol })) {
+          const cellEl = this.activeDatagridCell?.element as any;
+          if (cellEl && !cellEl.isEditing) {
+            cellEl.startEdit?.();
+          }
+        }
       }
-    } else if (nextColIdx < 0) {
-      if (nextRowIdx > 0) {
-        nextColIdx = visibleCols.length - 1;
-        nextRowIdx--;
-      } else {
-        nextColIdx = 0;
-      }
+      return;
     }
 
-    nextRowIdx = Math.max(0, Math.min(this.displayedDatagridRows.length - 1, nextRowIdx));
+    // Horizontal navigation (Tab / Shift-Tab / ArrowLeft / ArrowRight)
+    const step = colDelta > 0 ? 1 : -1;
+    let currRow = currentCoord.rowIndex;
+    let currCol = currentCoord.columnIndex;
+    let found = false;
 
-    const targetRow = this.displayedDatagridRows[nextRowIdx];
-    const targetCol = visibleCols[nextColIdx];
-    if (targetRow && targetCol) {
-      this.focusCell({ rowId: targetRow.rowId, columnId: targetCol.columnId });
+    const totalRows = this.displayedDatagridRows.length;
+    const totalCols = visibleCols.length;
+
+    while (true) {
+      currCol += step;
+
+      if (currCol >= totalCols) {
+        if (currRow < totalRows - 1) {
+          currRow++;
+          currCol = 0;
+        } else {
+          break;
+        }
+      } else if (currCol < 0) {
+        if (currRow > 0) {
+          currRow--;
+          currCol = totalCols - 1;
+        } else {
+          break;
+        }
+      }
+
+      const candidateRow = this.displayedDatagridRows[currRow];
+      const candidateCol = visibleCols[currCol];
+      if (!candidateRow || !candidateCol) break;
+
+      // Must be focusable
+      if (!this.isColumnFocusable(candidateCol)) {
+        continue;
+      }
+
+      // If in edit mode, must also be editable
+      if (isEditing && !this.isCellEditable({ row: candidateRow, column: candidateCol })) {
+        continue;
+      }
+
+      found = true;
+      break;
+    }
+
+    if (found) {
+      const targetRow = this.displayedDatagridRows[currRow];
+      const targetCol = visibleCols[currCol];
+      if (targetRow && targetCol) {
+        this.focusCell({ rowId: targetRow.rowId, columnId: targetCol.columnId });
+        if (isEditing && this.isCellEditable({ row: targetRow, column: targetCol })) {
+          const cellEl = this.activeDatagridCell?.element as any;
+          if (cellEl && !cellEl.isEditing) {
+            cellEl.startEdit?.();
+          }
+        }
+      }
     }
   }
 
@@ -1425,9 +1629,57 @@ export class AcDatagridApi {
     }
   }
 
+  syncRowProperties() {
+    const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || [];
+    for (const r of allRows) {
+      if (!r || !r.data) continue;
+      if (r.data.isGroupHeader !== undefined) r.isGroupHeader = r.data.isGroupHeader;
+      if (r.data.groupField !== undefined) r.groupField = r.data.groupField;
+      if (r.data.groupValue !== undefined) r.groupValue = r.data.groupValue;
+      if (r.data.groupCount !== undefined) r.groupCount = r.data.groupCount;
+      if (r.data.groupAggregates !== undefined) r.groupAggregates = r.data.groupAggregates;
+      if (r.data.hasChildren !== undefined) r.hasChildren = r.data.hasChildren;
+      if (r.data.parentId !== undefined) r.parentId = r.data.parentId;
+      if (r.data.level !== undefined) r.level = r.data.level;
+    }
+  }
+
   expandRow({ rowId }: { rowId: string }) {
     const row = this.getRow({ rowId });
     if (!row) return;
+
+    if (row.isGroupHeader && this.onDemandGroupExpandFunction && !this.hasChildrenLoaded(row)) {
+      this.loadingRowIds.add(rowId);
+      this.refreshInternalCells();
+      this.onDemandGroupExpandFunction({
+        groupRow: row,
+        groupField: row.groupField,
+        groupValue: row.groupValue,
+        successCallback: (children: any[]) => {
+          this.loadingRowIds.delete(rowId);
+          if (!children || children.length === 0) {
+            row.hasChildren = false;
+            row.isExpanded = false;
+            this.refreshInternalCells();
+            return;
+          }
+          this.insertChildrenRows(row, children);
+          this.expandedRowIds.add(rowId);
+          row.isExpanded = true;
+          this.processTreeVisibility();
+          this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+          this.refreshInternalCells();
+          this.events.execute({ event: AC_DATAGRID_EVENT.RowExpand, args: { row, datagridApi: this } });
+          this.notifyStateChange({ source: 'group' });
+        },
+        errorCallback: (err: any) => {
+          this.loadingRowIds.delete(rowId);
+          this.refreshInternalCells();
+          console.error('Failed to load group child rows', err);
+        }
+      });
+      return;
+    }
 
     if (this.onDemandTreeFunction && row.hasChildren && !this.hasChildrenLoaded(row)) {
       this.loadingRowIds.add(rowId);
@@ -1436,6 +1688,12 @@ export class AcDatagridApi {
         parentRow: row,
         successCallback: (children: any[]) => {
           this.loadingRowIds.delete(rowId);
+          if (!children || children.length === 0) {
+            row.hasChildren = false;
+            row.isExpanded = false;
+            this.refreshInternalCells();
+            return;
+          }
           this.insertChildrenRows(row, children);
           this.expandedRowIds.add(rowId);
           row.isExpanded = true;
@@ -1511,7 +1769,7 @@ export class AcDatagridApi {
     const parentIdx = allRows.findIndex((r: any) => r && r.rowId === parentRow.rowId);
     if (parentIdx === -1) return;
 
-    const idKey = this.treeConfig?.idKey || 'id';
+    const idKey = this.treeConfig?.idKey || (children[0]?.['ledger_account_id'] ? 'ledger_account_id' : (children[0]?.['id'] ? 'id' : this.dataManager.uniqueIdKey));
     const childRows: IAcDatagridRow[] = children.map((c, i) => {
       const rowId = String(c[idKey] ?? c[this.dataManager.uniqueIdKey] ?? Autocode.uuid());
       return {
@@ -1544,15 +1802,34 @@ export class AcDatagridApi {
       if (!r || !r.data) continue;
       const rowId = String(r.data[idKey] ?? r.rowId);
       r.rowId = rowId;
-      const pId = r.data[parentIdKey];
-      r.parentId = pId != null ? String(pId) : undefined;
       rowMap.set(rowId, r);
+    }
+
+    const childrenMap = new Map<string, IAcDatagridRow[]>();
+    const rootRows: IAcDatagridRow[] = [];
+
+    for (const r of allRows) {
+      if (!r || !r.data) continue;
+      const pId = r.data[parentIdKey];
+      const hasValidParent = pId !== undefined && pId !== null && String(pId).trim() !== '' && String(pId) !== '0' && rowMap.has(String(pId)) && String(pId) !== r.rowId;
+      r.parentId = hasValidParent ? String(pId) : undefined;
+      if (r.parentId) {
+        if (!childrenMap.has(r.parentId)) {
+          childrenMap.set(r.parentId, []);
+        }
+        childrenMap.get(r.parentId)!.push(r);
+      } else {
+        rootRows.push(r);
+      }
     }
 
     for (const r of allRows) {
       if (!r || !r.data) continue;
-      const hasDirectChildren = allRows.some(child => child && child.parentId === r.rowId);
-      const hasChildrenProp = !!r.data.hasChildren || !!(r.data[childrenKey] && r.data[childrenKey].length > 0);
+      const directChildren = childrenMap.get(r.rowId);
+      const hasDirectChildren = directChildren !== undefined && directChildren.length > 0;
+      const hasChildrenProp = r.data.hasChildren !== undefined
+        ? !!r.data.hasChildren
+        : (this.onDemandTreeFunction ? true : !!(r.data[childrenKey] && r.data[childrenKey].length > 0));
       r.hasChildren = hasDirectChildren || hasChildrenProp;
 
       let level = 0;
@@ -1567,17 +1844,57 @@ export class AcDatagridApi {
       r.level = level;
     }
 
+    // Sort allRows in DFS pre-order (parent, then recursively its children)
+    const orderedRows: IAcDatagridRow[] = [];
+    const visitedRows = new Set<string>();
+    const addRowAndChildren = (row: IAcDatagridRow) => {
+      if (visitedRows.has(row.rowId)) return;
+      visitedRows.add(row.rowId);
+      orderedRows.push(row);
+      const children = childrenMap.get(row.rowId);
+      if (children) {
+        for (const child of children) {
+          addRowAndChildren(child);
+        }
+      }
+    };
+    for (const root of rootRows) {
+      addRowAndChildren(root);
+    }
+    for (const r of allRows) {
+      if (!visitedRows.has(r.rowId)) {
+        addRowAndChildren(r);
+      }
+    }
+    allRows.splice(0, allRows.length, ...orderedRows);
+
+    // Initial expansion by treeLevelExpanded
+    const treeLevelExpanded = (this.treeConfig as any)?.treeLevelExpanded;
+    if (treeLevelExpanded !== undefined && this.expandedRowIds.size === 0) {
+      for (const r of allRows) {
+        if (!r || !r.hasChildren) continue;
+        if (treeLevelExpanded === -1 || (treeLevelExpanded > 0 && (r.level || 0) < treeLevelExpanded)) {
+          this.expandedRowIds.add(r.rowId);
+          r.isExpanded = true;
+        }
+      }
+    }
+
     this.processTreeVisibility();
   }
 
   processTreeVisibility() {
+    this.syncRowProperties();
     if (!this.hasTreeOrGroup) {
       return;
     }
     const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || [];
     const rowMap = new Map<string, IAcDatagridRow>();
     for (const r of allRows) {
-      if (r) rowMap.set(r.rowId, r);
+      if (r) {
+        rowMap.set(r.rowId, r);
+        r.isExpanded = this.expandedRowIds.has(r.rowId);
+      }
     }
 
     let visibleIndex = 0;
@@ -1666,9 +1983,14 @@ export class AcDatagridApi {
     return true;
   }
 
-  cancelRowEdit({ rowId }: { rowId: string }) {
-    const row = this.getRow({ rowId });
-    if (!row) return;
+  cancelRowEdit({ rowId }: { rowId?: string } = {}) {
+    const targetRowId = rowId ?? this.activeEditRowId;
+    if (!targetRowId) return;
+    const row = this.getRow({ rowId: targetRowId });
+    if (!row) {
+      this.activeEditRowId = null;
+      return;
+    }
     if (row.originalDataBackup) {
       row.data = { ...row.originalDataBackup };
     }
@@ -1940,4 +2262,58 @@ export class AcDatagridApi {
       this.datagrid.datagridBody.setDisplayedRows();
     }
   }
+
+  async getDataAsCsv(params?: IAcDatagridCsvExportParams): Promise<string> {
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.BeforeExport, args: { format: 'csv', params } });
+    const csv = await AcDatagridExportHelper.getDataAsCsv(this, params);
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.AfterExport, args: { format: 'csv', params, content: csv } });
+    return csv;
+  }
+
+  async exportDataAsCsv(params?: IAcDatagridCsvExportParams): Promise<void> {
+    const content = await this.getDataAsCsv(params);
+    const rawFileName = params?.fileName ?? 'export.csv';
+    const filename = rawFileName.toLowerCase().endsWith('.csv') ? rawFileName : `${rawFileName}.csv`;
+    AcBrowser.downloadFile({ content, filename });
+  }
+
+  async getDataAsExcel(params?: IAcDatagridExcelExportParams): Promise<Blob> {
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.BeforeExport, args: { format: 'xlsx', params } });
+    const blob = await AcDatagridExportHelper.getDataAsExcel(this, params);
+    this.hooks.execute({ hook: AC_DATAGRID_HOOK.AfterExport, args: { format: 'xlsx', params, content: blob } });
+    return blob;
+  }
+
+  async exportDataAsExcel(params?: IAcDatagridExcelExportParams): Promise<void> {
+    const blob = await this.getDataAsExcel(params);
+    const rawFileName = params?.fileName ?? 'export.xlsx';
+    const filename = rawFileName.toLowerCase().endsWith('.xlsx') ? rawFileName : `${rawFileName}.xlsx`;
+    AcBrowser.downloadFile({ content: blob, filename });
+  }
+
+  async exportMultipleSheetsAsExcel(params: IAcDatagridExcelExportMultipleSheetsParams): Promise<void> {
+    if (!params || !params.sheets || params.sheets.length === 0) {
+      throw new Error("exportMultipleSheetsAsExcel requires at least one sheet definition.");
+    }
+    const sheetDefs: IAcExcelSheetExportDef[] = [];
+    for (const sheetDef of params.sheets) {
+      const columns = AcDatagridExportHelper.resolveColumns(sheetDef.api, sheetDef.params);
+      const rows = await AcDatagridExportHelper.resolveRows(sheetDef.api, sheetDef.params);
+      const table = AcDatagridExportHelper.buildTableMatrix(sheetDef.api, columns, rows, sheetDef.params);
+      const colDefs = AcDatagridExportHelper.toColExportDefs(columns);
+      sheetDefs.push({
+        sheetName: sheetDef.sheetName,
+        table,
+        columns: colDefs,
+        autoSizeColumns: sheetDef.params?.autoSizeColumns !== false
+      });
+    }
+
+    const workbook = AcExcelExportService.createMultiSheetWorkbook(sheetDefs);
+    const blob = AcExcelExportService.toBlob(workbook, 'xlsx');
+    const rawFileName = params.fileName ?? 'export.xlsx';
+    const filename = rawFileName.toLowerCase().endsWith('.xlsx') ? rawFileName : `${rawFileName}.xlsx`;
+    AcBrowser.downloadFile({ content: blob, filename });
+  }
 }
+

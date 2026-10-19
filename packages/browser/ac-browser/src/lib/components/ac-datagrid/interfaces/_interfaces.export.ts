@@ -12,3 +12,4 @@ export * from './ac-datagrid-extension.interface';
 export * from './ac-datagrid-state.interface';
 export * from './options/ac-datagrid-size-columns-to-fit-options.interface';
 export * from './options/ac-datagrid-auto-size-columns-options.interface';
+export * from './export/_export.export';

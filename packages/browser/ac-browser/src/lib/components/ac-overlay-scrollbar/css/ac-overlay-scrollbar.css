@@ -1,0 +1,127 @@
+/* === Overlay Scrollbar Styles === */
+
+:root {
+  --ac-os-thumb-bg: rgba(0, 0, 0, 0.35);
+  --ac-os-thumb-hover-bg: rgba(0, 0, 0, 0.65);
+  --ac-os-thumb-active-bg: rgba(0, 0, 0, 0.85);
+  --ac-os-track-bg: transparent;
+  --ac-os-size: 6px;
+  --ac-os-hover-size: 10px;
+  --ac-os-border-radius: 4px;
+  --ac-os-z-index: 25;
+}
+
+/* Hide native scrollbars on the target container */
+.ac-overlay-scroll-container {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.ac-overlay-scroll-container::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Vertical Track */
+.ac-os-track-v {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--ac-os-hover-size);
+  background: var(--ac-os-track-bg);
+  pointer-events: auto;
+  z-index: var(--ac-os-z-index);
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Vertical Thumb */
+.ac-os-thumb-v {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: var(--ac-os-size);
+  background-color: var(--ac-os-thumb-bg);
+  border-radius: var(--ac-os-border-radius);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: default;
+  box-sizing: border-box;
+  touch-action: none;
+  transition: opacity 0.25s ease, width 0.15s ease, right 0.15s ease, background-color 0.15s ease;
+}
+
+.ac-os-track-v:hover .ac-os-thumb-v,
+.ac-os-thumb-v:hover,
+.ac-os-thumb-v.dragging {
+  width: var(--ac-os-hover-size);
+  right: 0px;
+  background-color: var(--ac-os-thumb-hover-bg);
+}
+
+.ac-os-thumb-v.dragging {
+  background-color: var(--ac-os-thumb-active-bg);
+}
+
+/* Horizontal Track */
+.ac-os-track-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--ac-os-hover-size);
+  background: var(--ac-os-track-bg);
+  pointer-events: auto;
+  z-index: var(--ac-os-z-index);
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Horizontal Thumb */
+.ac-os-thumb-h {
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  height: var(--ac-os-size);
+  background-color: var(--ac-os-thumb-bg);
+  border-radius: var(--ac-os-border-radius);
+  opacity: 0;
+  pointer-events: auto;
+  cursor: default;
+  box-sizing: border-box;
+  touch-action: none;
+  transition: opacity 0.25s ease, height 0.15s ease, bottom 0.15s ease, background-color 0.15s ease;
+}
+
+.ac-os-track-h:hover .ac-os-thumb-h,
+.ac-os-thumb-h:hover,
+.ac-os-thumb-h.dragging {
+  height: var(--ac-os-hover-size);
+  bottom: 0px;
+  background-color: var(--ac-os-thumb-hover-bg);
+}
+
+.ac-os-thumb-h.dragging {
+  background-color: var(--ac-os-thumb-active-bg);
+}
+
+/* Visibility when active or hovering */
+.ac-os-visible .ac-os-thumb-v,
+.ac-os-visible .ac-os-thumb-h,
+.ac-os-thumb-v.dragging,
+.ac-os-thumb-h.dragging {
+  opacity: 1;
+}
+
+/* Offset track when both vertical and horizontal scrollbars are present */
+.ac-os-track-v.has-both {
+  bottom: var(--ac-os-hover-size);
+}
+
+.ac-os-track-h.has-both {
+  right: var(--ac-os-hover-size);
+}

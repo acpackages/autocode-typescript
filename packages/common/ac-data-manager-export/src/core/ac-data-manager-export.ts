@@ -2,22 +2,18 @@ import * as XLSX from "xlsx";
 import { AcDataManager } from "@autocode-ts/autocode";
 import { IAcDataManagerColExportDef } from "../interfaces/_interfaces.export";
 import { AcDataManagerExportFormat } from "../enums/ac-data-manager-export-format.enum";
-import { AcExportDataType } from "../enums/ac-export-data-type.enum";
+import { AcCsvExportService } from "./ac-csv-export-service";
+import { AcExcelExportService } from "./ac-excel-export-service";
+import { IAcCsvExportOptions } from "../interfaces/ac-csv-export-options.interface";
 
 export class AcDataManagerExport {
-    dataManager:AcDataManager;
+    dataManager: AcDataManager;
 
-    constructor({dataManager}:{dataManager: AcDataManager}){
-      this.dataManager = dataManager;
+    constructor({ dataManager }: { dataManager: AcDataManager }) {
+        this.dataManager = dataManager;
     }
 
-    async toWorkbook({
-        columns,
-        sheetName
-    }: {
-        columns: IAcDataManagerColExportDef[];
-        sheetName?: string;
-    }): Promise<XLSX.WorkBook> {
+    async toTable(columns: IAcDataManagerColExportDef[]): Promise<any[][]> {
         if (!columns || columns.length === 0) {
             throw new Error("Export columns must not be empty.");
         }
@@ -26,39 +22,102 @@ export class AcDataManagerExport {
                 throw new Error(`Column "${col.title}" must have either a field or a valueGetter.`);
             }
         }
+        return await this.buildTable(columns);
+    }
 
-        const table = await this.buildTable(columns);
-        const worksheet = XLSX.utils.aoa_to_sheet(table, { cellDates: true });
-        this.applyFormatting(worksheet, columns);
+    async toCsvString({
+        columns,
+        options
+    }: {
+        columns: IAcDataManagerColExportDef[];
+        options?: IAcCsvExportOptions;
+    }): Promise<string> {
+        const table = await this.toTable(columns);
+        return AcCsvExportService.tableToCsv(table, options);
+    }
 
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(
-            workbook,
-            worksheet,
-            sheetName ?? "Sheet1"
-        );
+    async toCsvBlob({
+        columns,
+        options
+    }: {
+        columns: IAcDataManagerColExportDef[];
+        options?: IAcCsvExportOptions;
+    }): Promise<Blob> {
+        const table = await this.toTable(columns);
+        return AcCsvExportService.tableToBlob(table, options);
+    }
 
-        return workbook;
+    async toWorkbook({
+        columns,
+        sheetName,
+        autoSizeColumns = true
+    }: {
+        columns: IAcDataManagerColExportDef[];
+        sheetName?: string;
+        autoSizeColumns?: boolean;
+    }): Promise<XLSX.WorkBook> {
+        const table = await this.toTable(columns);
+        return AcExcelExportService.createWorkbook({
+            table,
+            columns,
+            sheetName: sheetName ?? "Sheet1",
+            autoSizeColumns
+        });
+    }
+
+    async toBlob({
+        columns,
+        sheetName,
+        format,
+        autoSizeColumns = true
+    }: {
+        columns: IAcDataManagerColExportDef[];
+        sheetName?: string;
+        format?: AcDataManagerExportFormat;
+        autoSizeColumns?: boolean;
+    }): Promise<Blob> {
+        const exportFormat = format ?? AcDataManagerExportFormat.Xlsx;
+        if (exportFormat === AcDataManagerExportFormat.Csv) {
+            return await this.toCsvBlob({ columns });
+        }
+        const workbook = await this.toWorkbook({ columns, sheetName, autoSizeColumns });
+        const bookType = this.getBookType(exportFormat);
+        return AcExcelExportService.toBlob(workbook, bookType);
     }
 
     async export({
         columns,
         fileName,
         sheetName,
-        format
+        format,
+        autoSizeColumns = true
     }: {
         columns: IAcDataManagerColExportDef[];
         fileName: string;
         sheetName?: string;
         format?: AcDataManagerExportFormat;
+        autoSizeColumns?: boolean;
     }): Promise<void> {
         if (!fileName) {
             throw new Error("fileName must not be empty.");
         }
-        const workbook =await this.toWorkbook({ columns, sheetName });
         const exportFormat = format ?? AcDataManagerExportFormat.Xlsx;
         const bookType = this.getBookType(exportFormat);
 
+        if (exportFormat === AcDataManagerExportFormat.Csv && typeof window !== 'undefined') {
+            const csvBlob = await this.toCsvBlob({ columns });
+            const url = URL.createObjectURL(csvBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileName}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            return;
+        }
+
+        const workbook = await this.toWorkbook({ columns, sheetName, autoSizeColumns });
         XLSX.writeFile(
             workbook,
             `${fileName}.${bookType}`,
@@ -75,7 +134,7 @@ export class AcDataManagerExport {
         table.push(headers);
 
         // Data rows
-        const rows = await this.dataManager.getRows({startIndex:0,rowsCount:this.dataManager.totalRows});
+        const rows = await this.dataManager.getRows({ startIndex: 0, rowsCount: this.dataManager.totalRows });
         for (const row of rows) {
             const tableRow: any[] = [];
             for (const col of columns) {
@@ -109,63 +168,6 @@ export class AcDataManagerExport {
             case AcDataManagerExportFormat.Slk: return "slk";
             case AcDataManagerExportFormat.Prn: return "prn";
             default: return "xlsx";
-        }
-    }
-
-    private applyFormatting(worksheet: XLSX.WorkSheet, columns: IAcDataManagerColExportDef[]): void {
-        const ref = worksheet['!ref'];
-        if (!ref) return;
-
-        const range = XLSX.utils.decode_range(ref);
-        for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                const colDef = columns[C];
-                if (!colDef) continue;
-
-                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                const cell = worksheet[cellAddress];
-                if (!cell) continue;
-
-                let numFmt = colDef.format;
-                if (!numFmt && colDef.type !== undefined) {
-                    switch (colDef.type) {
-                        case AcExportDataType.Number:
-                            numFmt = '0.00';
-                            break;
-                        case AcExportDataType.Currency:
-                            numFmt = '$#,##0.00';
-                            break;
-                        case AcExportDataType.Percentage:
-                            numFmt = '0.00%';
-                            break;
-                        case AcExportDataType.Date:
-                            numFmt = 'yyyy-mm-dd';
-                            if (cell.v instanceof Date) {
-                                cell.t = 'd';
-                            }
-                            break;
-                        case AcExportDataType.DateTime:
-                            numFmt = 'yyyy-mm-dd hh:mm:ss';
-                            if (cell.v instanceof Date) {
-                                cell.t = 'd';
-                            }
-                            break;
-                        case AcExportDataType.Time:
-                            numFmt = 'hh:mm:ss';
-                            break;
-                        case AcExportDataType.Boolean:
-                            cell.t = 'b';
-                            break;
-                        case AcExportDataType.Text:
-                            cell.t = 's';
-                            break;
-                    }
-                }
-
-                if (numFmt) {
-                    cell.z = numFmt;
-                }
-            }
         }
     }
 }

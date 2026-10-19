@@ -298,8 +298,10 @@ export class AcDatagridOnAgGridEventHandler {
 
   private onSortChanged = (event: SortChangedEvent) => {
     if (this.ignoreEvents) return;
-    if (!event.columns || event.columns.length === 0) return;
-    if (this.agGridExtension!.isClientSideData) return;
+    if (this.agGridExtension!.isClientSideData) {
+      this.gridApi?.refreshCells({ columns: ['__internal_ac_datagrid__'], force: true });
+      return;
+    }
 
     const column: any = event.columns[0];
     let order: AcEnumSortOrder = AcEnumSortOrder.None;

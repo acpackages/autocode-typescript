@@ -857,4 +857,78 @@ describe('Nested ac:for and ac:if rendering isolation', () => {
     expect(styleElsAfter.length).toBe(1);
     el3.destroy();
   });
+
+  it('prevents RangeError: Maximum call stack size exceeded when boundary comments are missing in parent', () => {
+    const rootRenderer = new AcElementRenderer({
+      targetId: 'root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+
+    const childIfRenderer = new AcElementRenderer({
+      targetId: 'ac-if-738e23fe',
+      startComment: 'ac-if-738e23fe-start',
+      endComment: 'ac-if-738e23fe-end',
+      parentRenderer: rootRenderer,
+      context: {},
+      rootElement,
+    });
+
+    // Neither 'ac-if-738e23fe-start' nor 'ac-if-738e23fe-end' are in host/DOM
+    expect(() => {
+      const res = (childIfRenderer as any).findComment('ac-if-738e23fe-start');
+      expect(res).toBeNull();
+    }).not.toThrow();
+
+    expect(() => {
+      const res = (childIfRenderer as any).findComment('ac-if-738e23fe-end');
+      expect(res).toBeNull();
+    }).not.toThrow();
+
+    expect(() => {
+      const res = (childIfRenderer as any).findComment('some-nonexistent-comment');
+      expect(res).toBeNull();
+    }).not.toThrow();
+  });
+
+  it('resolves boundary comments and inner comments properly when boundary comments exist', () => {
+    const startComment = document.createComment('if-valid-start');
+    const innerComment = document.createComment('inner-target');
+    const endComment = document.createComment('if-valid-end');
+    host.appendChild(startComment);
+    host.appendChild(innerComment);
+    host.appendChild(endComment);
+
+    const rootRenderer = new AcElementRenderer({
+      targetId: 'root',
+      rootElement,
+      context: {},
+      isRoot: true,
+    });
+    rootRenderer.nodes = [host];
+
+    const childRenderer = new AcElementRenderer({
+      targetId: 'if-valid',
+      startComment: 'if-valid-start',
+      endComment: 'if-valid-end',
+      parentRenderer: rootRenderer,
+      context: {},
+      rootElement,
+    });
+
+    const foundStart = (childRenderer as any).findComment('if-valid-start');
+    expect(foundStart).toBe(startComment);
+
+    const foundEnd = (childRenderer as any).findComment('if-valid-end');
+    expect(foundEnd).toBe(endComment);
+
+    const foundInner = (childRenderer as any).findComment('inner-target');
+    expect(foundInner).toBe(innerComment);
+
+    // Evicts disconnected comment from cache
+    innerComment.remove();
+    const afterRemoval = (childRenderer as any).findComment('inner-target');
+    expect(afterRemoval).toBeNull();
+  });
 });

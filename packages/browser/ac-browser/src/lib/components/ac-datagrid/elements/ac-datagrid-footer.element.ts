@@ -4,6 +4,7 @@ import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "..
 import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { AC_DATAGRID_ICON_CLASS } from "../consts/ac-datagrid-icon-class.const";
+import { AC_DATAGRID_EXTENSION_NAME } from "../consts/ac-datagrid-extension-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 
 export class AcDatagridFooterElement extends AcElementBase {
@@ -23,15 +24,11 @@ export class AcDatagridFooterElement extends AcElementBase {
   searchContainer!: HTMLElement;
   aggregatesContainer!: HTMLElement;
   settingsBtn!: HTMLElement;
+  exportBtn?: HTMLElement;
 
   override init(): void {
     super.init();
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooter, element: this });
-    this.style.display = 'flex';
-    this.style.alignItems = 'center';
-    this.style.gap = '12px';
-    this.style.borderTop = '1px solid #e2e8f0';
-    this.style.backgroundColor = '#f8fafc';
 
     this.searchInput = this.ownerDocument.createElement('input');
     this.paginationContainer = this.ownerDocument.createElement('div');
@@ -60,13 +57,29 @@ export class AcDatagridFooterElement extends AcElementBase {
       });
     });
 
-    this.settingsBtn = this.ownerDocument.createElement('i');
-    this.settingsBtn.setAttribute('class', AC_DATAGRID_ICON_CLASS.settings);
+    this.exportBtn = this.ownerDocument.createElement('button');
+      this.exportBtn.innerHTML = `<i class="${AC_DATAGRID_ICON_CLASS.download}"></i>`;
+      this.exportBtn.setAttribute('type','button' );
+      this.exportBtn.title = 'Export Data';
+      this.exportBtn.classList.add('ac-datagrid-footer-btn');
+      this.exportBtn.addEventListener('click', () => {
+        const ext: any =
+          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExport] ||
+          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] ||
+          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportCsv];
+
+        if (ext && ext.allowXlsxExport !== false) {
+          this.datagridApi?.exportDataAsExcel({ fileName: ext.fileName });
+        } else {
+          this.datagridApi?.exportDataAsCsv({ fileName: ext?.fileName });
+        }
+      });
+
+    this.settingsBtn = this.ownerDocument.createElement('button');
+    this.settingsBtn.innerHTML = `<i class="${AC_DATAGRID_ICON_CLASS.settings}"></i>`;
+    this.settingsBtn.setAttribute('type','button' );
+    this.settingsBtn.classList.add('ac-datagrid-footer-btn');
     this.settingsBtn.title = 'Customize Columns';
-    this.settingsBtn.style.cursor = 'pointer';
-    this.settingsBtn.style.marginLeft = 'auto';
-    this.settingsBtn.style.padding = '5px 10px';
-    this.settingsBtn.style.fontSize = '16px';
     this.settingsBtn.addEventListener('click', () => {
       this.datagridApi?.openColumnCustomizer();
     });
@@ -86,6 +99,7 @@ export class AcDatagridFooterElement extends AcElementBase {
   private bindDatagridApi() {
     if (!this.datagridApi) return;
     this.renderAggregates();
+    this.renderExportButton();
     this.datagridApi.hooks.subscribe({
       hook: AC_DATAGRID_HOOK.DisplayedRowsChange,
       callback: () => {
@@ -104,7 +118,37 @@ export class AcDatagridFooterElement extends AcElementBase {
         this.setPagination();
       }
     });
+    this.datagridApi.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.ExtensionEnable,
+      callback: () => {
+        this.renderExportButton();
+      }
+    });
     this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.FooterInit });
+  }
+
+  renderExportButton() {
+    if (!this.datagridApi) return;
+    const hasExportExt =
+      this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExport] ||
+      this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] ||
+      this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportCsv];
+
+    // if (!hasExportExt) {
+    //   if (this.exportBtn && this.exportBtn.parentElement) {
+    //     this.exportBtn.parentElement.removeChild(this.exportBtn);
+    //   }
+    //   return;
+    // }
+    if(this.exportBtn){
+      if (!hasExportExt) {
+      this.exportBtn.style.display = 'd-none';
+    }
+    else{
+      this.exportBtn.style.display = '';
+    }
+    }
+
   }
 
   renderAggregates() {
@@ -136,7 +180,8 @@ export class AcDatagridFooterElement extends AcElementBase {
       const leftContainer: HTMLElement = this.datagridApi.pagination.querySelector('.ac-pagination-left-container');
       const rightContainer: HTMLElement = this.datagridApi.pagination.querySelector('.ac-pagination-right-container');
       // leftContainer.append(this.searchInput);
-      // rightContainer.append(this.settingsBtn);
+      rightContainer.append(this.exportBtn);
+      rightContainer.append(this.settingsBtn);
     }
   }
 }

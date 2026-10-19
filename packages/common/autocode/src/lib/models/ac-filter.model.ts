@@ -24,7 +24,7 @@ export class AcFilter {
   }: {
     key: string;
     operator: AcEnumConditionOperator;
-    value: any;
+    value?: any;
   }):AcFilter {
     const result= new AcFilter();
     result.key = key;

@@ -74,7 +74,7 @@ ac-tom-select-input .ts-control.disabled {
 
 .ts-dropdown .option.active,
 .ts-dropdown .option:hover {
-  background-color: #e9ecef;
+  background-color: #d8d8d8;
   color: #1e2125;
 }
 

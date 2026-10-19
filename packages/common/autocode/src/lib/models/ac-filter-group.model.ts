@@ -39,7 +39,7 @@ export class AcFilterGroup {
     return result;
   }
 
-  addFilter({ key, operator, value }: { key: string; operator: AcEnumConditionOperator; value: any; }): this {
+  addFilter({ key, operator, value }: { key: string; operator: AcEnumConditionOperator; value?: any; }): this {
     this.addFilterModel({
       filter: AcFilter.instanceWithValues({
         key: key,

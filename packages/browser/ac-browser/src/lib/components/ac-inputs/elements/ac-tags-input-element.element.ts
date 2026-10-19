@@ -312,7 +312,7 @@ export class AcTagsInputElement extends AcInputBase {
 
 
 
-  override setValueListener() {
+  setValueListener() {
     Object.defineProperty(this, 'value', {
       get() {
         return this._value;

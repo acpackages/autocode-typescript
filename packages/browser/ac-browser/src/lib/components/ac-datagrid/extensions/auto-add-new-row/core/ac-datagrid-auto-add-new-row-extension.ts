@@ -25,17 +25,28 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
         value: value
       };
       this.datagridApi.hooks.execute({ hook: AcEnumDatagridAutoAddNewRowHook.AutoAddNewRowValueChange, args: hookArgs });
+      if (value && this.datagridApi.dataManager.totalRows === 0) {
+        this.addRow();
+      }
     }
   }
   autoAddNewRowData: any = {};
   private lastAutoAddRowId?: string;
   private delayedCallback: AcDelayedCallback = new AcDelayedCallback();
 
+  override init(): void {
+    super.init();
+    if (this.autoAddNewRow && this.datagridApi && this.datagridApi.dataManager.totalRows === 0) {
+      this.addRow();
+    }
+  }
+
   private addRow() {
-    if (this.autoAddNewRow) {
+    if (this.autoAddNewRow && this.datagridApi) {
       // console.trace();
       this.delayedCallback.add({
         callback: () => {
+          if (!this.datagridApi) return;
           const lastRow = this.datagridApi.addRow({ data: { ...this.autoAddNewRowData }, rowId: '___auto_add_row___' });
           this.lastAutoAddRowId = lastRow.rowId;
         }, duration: 10,key:'addRow'
@@ -54,9 +65,9 @@ export class AcDatagridAutoAddNewRowExtension extends AcDatagridExtension {
         this.addRow();
       }
       else if (this.datagridApi && stringEqualsIgnoreCase(hook, AC_DATAGRID_HOOK.CellValueChange)) {
-        const datagridCell: IAcDatagridCell = args.datagridCell;
-        const datagridRow: IAcDatagridRow = datagridCell.datagridRow;
-        if (datagridRow.index == this.datagridApi.dataManager.totalRows - 1) {
+        const datagridCell: IAcDatagridCell = args?.datagridCell;
+        const datagridRow: IAcDatagridRow = datagridCell?.datagridRow ?? args?.datagridRow;
+        if (datagridRow && (datagridRow.index == this.datagridApi.dataManager.totalRows - 1 || datagridRow.rowId === this.lastAutoAddRowId)) {
           this.addRow();
         }
       }

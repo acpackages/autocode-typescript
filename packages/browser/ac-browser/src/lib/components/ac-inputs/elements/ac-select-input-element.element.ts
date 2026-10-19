@@ -83,8 +83,11 @@ export class AcSelectInputElement extends AcInputBase {
   }
 
   override set value(val: any) {
+    const updateLabel = val != this._value;
     this.setValue({ value: val, emitEvent: false });
-    this.setValueLabel();
+    if(updateLabel){
+      this.setValueLabel();
+    }
   }
 
   dataManager: AcDataManager = new AcDataManager();

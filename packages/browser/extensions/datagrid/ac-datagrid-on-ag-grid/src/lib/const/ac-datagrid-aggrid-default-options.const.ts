@@ -6,6 +6,8 @@ export const AC_DATAGRID_AGGRID_DEFAULT_OPTIONS: GridOptions = {
   // suppressPaginationPanel: true,
   suppressContextMenu: true,
   animateRows: true,
+  enterNavigatesVertically: false,
+  enterNavigatesVerticallyAfterEdit: false,
   // suppressColumnVirtualisation:false,
   // cellFadeDuration:0,
   // suppressAnimationFrame:false

@@ -24,9 +24,9 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
   applyPinning() {
     this.style.flexShrink = '0';
     if (this.datagridColumn && this.datagridColumn.pinnedOn) {
-      this.style.position = 'sticky';
-      this.style.zIndex = '12';
-      this.style.backgroundColor = 'var(--ac-datagrid-header-bg, #f4f5f7)';
+      // this.style.position = 'sticky';
+      // this.style.zIndex = '12';
+      // this.style.backgroundColor = 'var(--ac-datagrid-header-bg, #f4f5f7)';
       if (this.datagridColumn.pinnedOn === 'LEFT') {
         const offset = this.datagridApi?.getPinnedLeftOffset(this.datagridColumn) ?? 0;
         this.style.left = `${offset}px`;

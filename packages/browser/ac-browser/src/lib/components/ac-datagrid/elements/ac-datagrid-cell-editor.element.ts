@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { acAddClassToElement, acClearElement } from "../../../utils/ac-element-functions";
-import { AcDatagridApi, IAcDatagridColumn, IAcDatagridRow, AC_DATAGRID_HOOK, IAcDatagridCellEditor, IAcDatagridCellElementArgs, IAcDatagridColumnDefinition } from "../_ac-datagrid.export";
+import { AcDatagridApi, IAcDatagridColumn, IAcDatagridRow, AC_DATAGRID_HOOK, IAcDatagridCellEditor, IAcDatagridCellElementArgs, IAcDatagridColumnDefinition, AcEnumDatagridColumnDataType } from "../_ac-datagrid.export";
 import { AcDatagridAttributeName } from "../consts/ac-datagrid-attribute-name.const";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { IAcDatagridCell } from "../interfaces/ac-datagrid-cell.interface";
@@ -17,12 +17,20 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
 
   blur() {
     this.element.blur();
-    (this.datagridCell.datagridRow as any).data[this.datagridCell.datagridColumn.columnDefinition.field] = this.element.value;
+    const key = this.datagridCell.datagridColumn.columnKey || this.datagridCell.datagridColumn.columnDefinition.field;
+    if (key) {
+      const val = this.getValue();
+      (this.datagridCell.datagridRow as any).data[key] = val;
+    }
   }
 
   destroy(): void {
-    acClearElement({ element: this.element });
-    this.element.remove();
+    if (this.element) {
+      this.element.removeEventListener('input', this.onInputChange);
+      this.element.removeEventListener('change', this.onInputChange);
+      acClearElement({ element: this.element });
+      this.element.remove();
+    }
     Object.freeze(this);
     acNullifyInstanceProperties({ instance: this });
   }
@@ -36,10 +44,18 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   }
 
   getValue() {
-    if (this.datagridColumn && this.datagridColumn.columnDefinition.dataType == 'BOOLEAN') {
-      return this.element.value == 'true' || this.element.value == true;
+    if (this.datagridColumn && (this.datagridColumn.columnDefinition?.dataType === 'BOOLEAN' || (this.datagridColumn as any)?.dataType === AcEnumDatagridColumnDataType.Boolean)) {
+      return this.element.value === 'true' || this.element.value === true;
     }
-    return this.element.value;
+    const isNumber = this.columnDefinition?.dataType === 'NUMBER' || (this.datagridColumn as any)?.dataType === AcEnumDatagridColumnDataType.Number;
+    if (isNumber) {
+      const val = this.element ? this.element.value : '';
+      if (val !== '' && val !== null && val !== undefined && !isNaN(Number(val))) {
+        return Number(val);
+      }
+      return val === '' ? undefined : val;
+    }
+    return this.element ? this.element.value : '';
   }
 
   init(args: IAcDatagridCellElementArgs): void {
@@ -67,8 +83,12 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
       this.element.append(optTrue, optFalse);
     } else {
       this.element = ownerDoc.createElement('input');
-      if (this.columnDefinition.dataType == 'NUMBER') {
+      const isNumber = this.columnDefinition?.dataType === 'NUMBER' || (this.datagridColumn as any)?.dataType === AcEnumDatagridColumnDataType.Number;
+      if (isNumber) {
         this.element.setAttribute('type', 'number');
+        if (!this.element.hasAttribute('step')) {
+          this.element.setAttribute('step', 'any');
+        }
       } else if (this.columnDefinition.dataType == 'DATE') {
         this.element.setAttribute('type', 'date');
       } else if (this.columnDefinition.dataType == 'DATETIME') {
@@ -95,11 +115,22 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
     const value = args.rawValue !== undefined
       ? args.rawValue
       : args.datagridCell.datagridRow.data[args.datagridCell.datagridColumn.columnKey];
-    this.element.value = value ?? '';
+    this.element.value = value;
     if (this.datagridApi) {
       this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.CellEditorRefresh, args: this });
     }
   }
+
+  private onInputChange = (e: Event) => {
+    if (!this.datagridCell) return;
+    const colKey = this.datagridCell.datagridColumn.columnKey;
+    const val = this.getValue();
+    this.datagridCell.datagridRow.data[colKey] = val;
+    if (this.datagridCell.element) {
+      (this.datagridCell.element as any).previousValue = val;
+    }
+    this.datagridApi?.eventHandler?.handleCellValueChange({ datagridCell: this.datagridCell, event: e });
+  };
 
   initElement(initialValue?: any) {
     this.element.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput);
@@ -110,6 +141,9 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
     this.element.style.height = "100%";
     this.element.style.width = "100%";
     this.element.value = initialValue ?? this.datagridCell.datagridRow.data[this.datagridCell.datagridColumn.columnKey] ?? '';
+
+    this.element.addEventListener('input', this.onInputChange);
+    this.element.addEventListener('change', this.onInputChange);
   }
 
 }

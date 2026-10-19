@@ -32,6 +32,10 @@ export class AcDatagridRowNumberCell {
     this.element.innerHTML = `${this.datagridRow.index + 1}`;
   }
 
+  refresh() {
+    this.render();
+  }
+
   setCellWidth() {
       const width = this.datagridInternalColumn.width;
       // if (this.datagridApi.isTreeData && this.datagridInternalColumn.index == 0) {

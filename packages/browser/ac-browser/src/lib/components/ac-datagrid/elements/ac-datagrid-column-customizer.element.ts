@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { IAcDatagridColumn } from "../interfaces/ac-datagrid-column.interface";

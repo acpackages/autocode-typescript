@@ -322,6 +322,12 @@ export class AcDatagridEventHandler {
 
   handlePaginationChange() {
     if (!this.datagridApi || !this.datagridApi.pagination) return;
+    if (this.datagridApi.activeEditRowId) {
+      this.datagridApi.cancelRowEdit();
+    }
+    this.datagridApi.activeDatagridCell = undefined;
+    this.datagridApi.hoverRowId = undefined;
+    this.datagridApi.hoverCellId = undefined;
     const eventArgs: IAcDatagridPaginationChangeEvent = {
       datagridApi: this.datagridApi,
       pagination: this.datagridApi.pagination,
@@ -598,8 +604,16 @@ export class AcDatagridEventHandler {
         if (this.datagridApi.activeEditRowId) {
           this.datagridApi.saveRowEdit({ rowId: this.datagridApi.activeEditRowId });
         } else if ((this.datagridApi.activeDatagridCell?.element as any)?.isEditing) {
-          (this.datagridApi.activeDatagridCell!.element as any).commitEdit();
-          this.datagridApi.navigateCell({ rowDelta: 1, colDelta: 0 });
+          const activeCell = this.datagridApi.activeDatagridCell;
+          (activeCell!.element as any).commitEdit();
+          if (this.datagridApi.enterNavigatesVertically || this.datagridApi.enterNavigation) {
+            this.datagridApi.navigateCell({ rowDelta: 1, colDelta: 0 });
+          } else {
+            const el = activeCell?.element;
+            if (el) {
+              HTMLElement.prototype.focus.call(el);
+            }
+          }
         }
         return;
       } else if (key === 'Escape') {
@@ -612,10 +626,11 @@ export class AcDatagridEventHandler {
         return;
       } else if (key === 'Tab') {
         event.preventDefault();
+        const wasEditing = !!(this.datagridApi.activeDatagridCell?.element as any)?.isEditing || !!this.datagridApi.activeEditRowId;
         if ((this.datagridApi.activeDatagridCell?.element as any)?.isEditing) {
           (this.datagridApi.activeDatagridCell!.element as any).commitEdit();
         }
-        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: event.shiftKey ? -1 : 1 });
+        this.datagridApi.navigateCell({ rowDelta: 0, colDelta: event.shiftKey ? -1 : 1, edit: wasEditing });
         return;
       }
       return;

@@ -27,6 +27,9 @@ export class AcDatagridRowElement extends AcElementBase {
     }
     acClearElement({ element: this });
     this.datagridCells = [];
+    if (this.datagridRow?.datagridCells) {
+      this.datagridRow.datagridCells = [];
+    }
     this.detailContainer = undefined;
   }
 
@@ -41,6 +44,7 @@ export class AcDatagridRowElement extends AcElementBase {
     this.clearRow();
     if (this.datagridRow) {
       this.datagridRow.element = null;
+      this.datagridRow.datagridCells = undefined;
     }
     super.destroy();
   }
@@ -85,9 +89,19 @@ export class AcDatagridRowElement extends AcElementBase {
   refresh() {
     if (!this.datagridRow || !this.datagridApi) return;
     this.classList.toggle('ac-datagrid-row-selected', this.datagridApi.isRowSelected(this.datagridRow.rowId));
+    this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowEven, this.datagridRow.index % 2 === 0);
+    this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowOdd, this.datagridRow.index % 2 !== 0);
     this.applyRowHeight();
     if (this.internalCell) {
       this.internalCell.refresh();
+    }
+    const groupToggle = this.querySelector('.ac-datagrid-group-toggle');
+    if (groupToggle) {
+      if (this.datagridApi.loadingRowIds.has(this.datagridRow.rowId)) {
+        groupToggle.textContent = '⏳';
+      } else {
+        groupToggle.textContent = this.datagridRow.isExpanded ? '▼' : '▶';
+      }
     }
     for (const cell of this.datagridCells) {
       cell.refresh();
@@ -150,8 +164,35 @@ export class AcDatagridRowElement extends AcElementBase {
     if (this.datagridRow.isGroupHeader) {
       const groupBanner = document.createElement('div');
       groupBanner.className = `${AC_DATAGRID_CLASS_NAME.acDatagridGroupHeaderRow} ac-datagrid-group-banner`;
-      groupBanner.innerHTML = `<span>${this.datagridRow.groupField}: <strong>${this.datagridRow.groupValue}</strong></span>
-        <span class="ac-datagrid-group-count">(${this.datagridRow.groupCount} items)</span>`;
+
+      const toggleIcon = document.createElement('span');
+      toggleIcon.className = 'ac-datagrid-group-toggle';
+      toggleIcon.style.cursor = 'pointer';
+      toggleIcon.style.userSelect = 'none';
+      toggleIcon.style.display = 'inline-flex';
+      toggleIcon.style.alignItems = 'center';
+      toggleIcon.style.justifyContent = 'center';
+      toggleIcon.style.width = '18px';
+      toggleIcon.style.marginRight = '6px';
+      if (this.datagridApi.loadingRowIds.has(this.datagridRow.rowId)) {
+        toggleIcon.textContent = '⏳';
+      } else {
+        toggleIcon.textContent = this.datagridRow.isExpanded ? '▼' : '▶';
+      }
+      groupBanner.appendChild(toggleIcon);
+
+      const titleSpan = document.createElement('span');
+      const groupTitle = this.datagridRow.groupValue ?? (this.datagridRow.data ? this.datagridRow.data[this.datagridRow.groupField || ''] : '');
+      const groupFieldPrefix = this.datagridRow.groupField ? `${this.datagridRow.groupField}: ` : '';
+      titleSpan.innerHTML = `<span><strong>${groupTitle}</strong></span>`;
+      groupBanner.appendChild(titleSpan);
+
+      if (this.datagridRow.groupCount !== undefined && this.datagridRow.groupCount !== null) {
+        const countSpan = document.createElement('span');
+        countSpan.className = 'ac-datagrid-group-count';
+        countSpan.textContent = `(${this.datagridRow.groupCount} items)`;
+        groupBanner.appendChild(countSpan);
+      }
 
       if (this.datagridRow.groupAggregates && Object.keys(this.datagridRow.groupAggregates).length > 0) {
         const aggSpan = document.createElement('span');
@@ -161,8 +202,19 @@ export class AcDatagridRowElement extends AcElementBase {
         }
         groupBanner.appendChild(aggSpan);
       }
+
+      groupBanner.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.datagridApi?.toggleRow({ rowId: this.datagridRow.rowId });
+      });
+
       rowContainer.appendChild(groupBanner);
     } else {
+      if (!this.datagridRow.datagridCells) {
+        this.datagridRow.datagridCells = [];
+      } else {
+        this.datagridRow.datagridCells.length = 0;
+      }
       for (const column of this.datagridApi.datagridColumns) {
         if (column.visible) {
           const datagridCell = this.ownerDocument.createElement('ac-datagrid-cell') as AcDatagridCellElement;
@@ -172,6 +224,7 @@ export class AcDatagridRowElement extends AcElementBase {
             datagridColumn: column,
             element: datagridCell
           };
+          this.datagridRow.datagridCells.push(cell);
           datagridCell.setCell({ datagridApi: this.datagridApi, datagridCell: cell });
           this.datagridCells.push(datagridCell);
           rowContainer.appendChild(datagridCell);
