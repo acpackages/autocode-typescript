@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcDelayedCallback } from "../core/ac-delayed-callback";
 import { AcEnumConditionOperator } from "../enums/ac-enum-condition-operator.enum";
 import { AcEnumLogicalOperator } from "../enums/ac-enum-logical-operator.enum";
@@ -174,47 +174,46 @@ export function acEvaluateFilter({ filter, data }: { filter: IAcFilter, data: an
   return result;
 }
 
+/**
+ * Evaluates a filter group against a data object.
+ * Phase 5 (Task 5.3): Uses short-circuit AND/OR logic — exits immediately on
+ * first decisive result, eliminating the results[] array allocation entirely.
+ */
 export function acEvaluateFilterGroup({ group, data }: { group: IAcFilterGroup, data: any }): boolean {
-  const results: boolean[] = [];
+  const isOr = group.operator === AcEnumLogicalOperator.Or;
 
   if (group.filters) {
     for (const filter of group.filters) {
-      results.push(acEvaluateFilter({ filter, data }));
+      const r = acEvaluateFilter({ filter, data });
+      if (isOr && r) return true;    // OR: first true wins
+      if (!isOr && !r) return false; // AND: first false wins
     }
   }
 
   if (group.filterGroups) {
     for (const subGroup of group.filterGroups) {
-      results.push(acEvaluateFilterGroup({ group: subGroup, data }));
+      const r = acEvaluateFilterGroup({ group: subGroup, data });
+      if (isOr && r) return true;
+      if (!isOr && !r) return false;
     }
   }
 
-  let combinedResult: boolean;
-  if (group.operator === AcEnumLogicalOperator.Or) {
-    combinedResult = results.some(Boolean);
-  } else {
-    combinedResult = results.every(Boolean);
-  }
-  return combinedResult;
+  // AND with all true -> true; OR with no true -> false
+  return !isOr;
 }
 
+/**
+ * Returns true if any field in data contains searchQuery (case-insensitive).
+ * Phase 5 (Task 5.4): Normalises searchQuery once before the loop — the old
+ * implementation called .toLowerCase() on every field iteration.
+ */
 export function acEvaluateSearch({ searchQuery, data, searchKeys }: { searchQuery: string, data: any, searchKeys?: string[] }): boolean {
-  let isValid: boolean = true;
-  if (searchKeys == undefined) {
-    searchKeys = Object.keys(data);
+  if (!searchQuery) return true;
+  const q = searchQuery.toString().toLowerCase();
+  const keys = searchKeys ?? Object.keys(data);
+  for (const field of keys) {
+    const value = data[field];
+    if (value != null && value.toString().toLowerCase().includes(q)) return true;
   }
-  if (searchQuery) {
-    isValid = false;
-    for (const field of searchKeys) {
-      if (!isValid) {
-        const value = data[field];
-        const valid: boolean = value != null && searchQuery != null && value.toString().toLowerCase().includes(searchQuery.toString().toLowerCase());
-        if (valid) {
-          isValid = true;
-          break;
-        }
-      }
-    }
-  }
-  return isValid;
+  return false;
 }

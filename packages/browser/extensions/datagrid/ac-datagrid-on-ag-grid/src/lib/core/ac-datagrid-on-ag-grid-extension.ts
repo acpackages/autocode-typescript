@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -710,12 +710,8 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       data: data
     };
     this.datagridApi.hooks.execute({ hook: AcEnumDatagridOnAgGridHook.BeforeRowUpdate, args: hookArgs });
-    let rowNode: any;
-    this.gridApi.forEachNode((node: IRowNode, index: number) => {
-      if (node.data[this.rowKey] == args.datagridRow.rowId) {
-        rowNode = node;
-      }
-    });
+    // PERF FIX (C4): Use O(1) getRowNode() instead of O(n) forEachNode() scan
+    const rowNode: any = this.gridApi.getRowNode(args.datagridRow.rowId);
     if (rowNode) {
       if (this.isClientSideData) {
         //
@@ -796,18 +792,9 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
     this.setAddButtonDisplay();
     this.setSearchInputDisplay();
 
-    this.datagridApi.dataManager.on({
-      event: 'FILTER_GROUP_CHANGE',
-      callback: () => this.refreshRows(),
-    });
-    this.datagridApi.dataManager.on({
-      event: 'DISPLAYED_ROWS_CHANGE',
-      callback: () => this.refreshRows(),
-    });
-    this.datagridApi.dataManager.on({
-      event: 'SORT_ORDER_CHANGE',
-      callback: () => this.refreshRows(),
-    });
+    // PERF FIX (H1): Removed redundant FILTER_GROUP_CHANGE / DISPLAYED_ROWS_CHANGE / SORT_ORDER_CHANGE
+    // subscriptions - these are already handled via hooks in handleHook(). Keeping them caused
+    // a double refreshRows() call on every filter/sort/display change.
   }
 
   initAgGrid() {
@@ -883,7 +870,7 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
         this.gridApi.setGridOption('quickFilterText', dataManager.searchQuery);
       }
       this.gridApi.setGridOption('rowData', rowData);
-      this.gridApi.refreshClientSideRowModel();
+      // PERF FIX: setGridOption(rowData) already triggers a full model refresh - refreshClientSideRowModel() is redundant
     }
     else {
       this.datagridApi.dataManager.reset();

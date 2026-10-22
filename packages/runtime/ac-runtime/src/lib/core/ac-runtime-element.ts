@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-this-alias */
+﻿/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcElementRenderer } from './ac-element-renderer';
 import { AcReactivity } from '@autocode-ts/ac-reactivity';
@@ -8,14 +8,20 @@ export class AcRuntimeElement extends HTMLElement {
   arrayPropertyChangeListeners: Record<string, Record<string, (args: any) => void>> = {};
   changeSubscribers: any[] = [];
   instanceInputs: any[] = [];
+  /** Lowercased input names for O(1) attribute lookup (PERF-3) */
+  private _inputNamesLower: Map<string, string> = new Map();
   instanceOutputs: any[] = [];
+  /** Unsubscribe handles for @AcOutput subscriptions (LEAK-1) */
+  private _outputUnsubscribers: Array<() => void> = [];
   instanceViewChildren: any = {};
   propertyToListenForChanges: string[] = [];
   templateOutlets: any = {};
   templates: Record<string, { targetId: any; bindingId: string, html: string, ownerInstance: any }> = {};
 
   pathSubscriptions: Record<string, Set<() => void>> = {};
+  /** PERF-8: Double-buffer for microtask batching — avoids allocating a new Set() on every flush. */
   private pendingUpdates = new Set<() => void>();
+  private pendingUpdatesBack = new Set<() => void>();
   private isBatchScheduled = false;
 
   viewChildren: any = {};
@@ -26,10 +32,9 @@ export class AcRuntimeElement extends HTMLElement {
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue === newValue) return;
-    if (this.acRuntimeInstance && this.instanceInputs) {
-      const matchingInput = this.instanceInputs.find(
-        (inputName) => inputName.toLowerCase() === name.toLowerCase()
-      );
+    if (this.acRuntimeInstance && this._inputNamesLower.size > 0) {
+      // PERF-3: Use pre-built lowercase map — O(1) instead of O(n) scan with toLowerCase each time
+      const matchingInput = this._inputNamesLower.get(name.toLowerCase());
       if (matchingInput) {
         this.acRuntimeInstance[matchingInput] = newValue;
       }
@@ -45,18 +50,17 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   disconnectedCallback(): void {
+    // LEAK-1: Clean up @AcOutput subscriptions
+    for (const unsub of this._outputUnsubscribers) { unsub(); }
+    this._outputUnsubscribers = [];
+    // LEAK-5: Clear array property change listeners
+    this.arrayPropertyChangeListeners = {};
     if (this.acRuntimeInstance && (this.acRuntimeInstance as any).acOnDestroy) {
       (this.acRuntimeInstance as any).acOnDestroy();
       (this.acRuntimeInstance as any).acOnDestroy = undefined;
     }
-    const nestedElements = this.querySelectorAll?.('[ac-runtime-element]');
-    if (nestedElements) {
-      nestedElements.forEach((el: any) => {
-        if (el !== this && typeof el.destroy === 'function') {
-          el.destroy();
-        }
-      });
-    }
+    // PERF-4: Removed O(n²) querySelectorAll — the browser already calls
+    // disconnectedCallback on nested custom elements when the parent is removed from DOM.
     if (this.elementRenderer) {
       this.elementRenderer.destroy();
     }
@@ -83,6 +87,11 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   init() {
+    // PERF-3: Build lowercase input name map once at init time
+    this._inputNamesLower.clear();
+    for (const name of this.instanceInputs) {
+      this._inputNamesLower.set((name as string).toLowerCase(), name);
+    }
     this.setInputValuesFromAttributes();
     for (const key of this.instanceInputs) {
       if ((this as any)[key] != undefined) {
@@ -90,10 +99,12 @@ export class AcRuntimeElement extends HTMLElement {
       }
     }
     for (const eventName of this.instanceOutputs as string[]) {
-      (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
+      // Store the unsubscribe handle so we can clean up in disconnectedCallback (LEAK-1)
+      const unsub = (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
         const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
         this.dispatchEvent(event);
       });
+      this._outputUnsubscribers.push(unsub);
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {
@@ -332,9 +343,8 @@ export class AcRuntimeElement extends HTMLElement {
 
   private setInputValuesFromAttributes() {
     Array.from(this.attributes).forEach((attr: Attr) => {
-      const matchingInput = this.instanceInputs.find(
-        (inputName) => inputName.toLowerCase() === attr.name.toLowerCase()
-      );
+      // PERF-3: Use pre-built lowercase map
+      const matchingInput = this._inputNamesLower.get(attr.name.toLowerCase());
       if (matchingInput) {
         this.acRuntimeInstance[matchingInput] = attr.value;
       }
@@ -357,13 +367,23 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   scheduleUpdate(callback: () => void) {
+    if (this.isDestroyed) return; // LEAK-6: don't queue work after destroy
     this.pendingUpdates.add(callback);
     if (!this.isBatchScheduled) {
       this.isBatchScheduled = true;
       queueMicrotask(() => {
         this.isBatchScheduled = false;
+        if (this.isDestroyed) {
+          // Element was destroyed while microtask was queued — discard all pending work
+          this.pendingUpdates.clear();
+          return;
+        }
+        // PERF-8: Swap buffers — move pending work to the back-buffer and clear the front.
+        // This avoids allocating a new Set() on every flush cycle.
         const updates = this.pendingUpdates;
-        this.pendingUpdates = new Set();
+        this.pendingUpdates = this.pendingUpdatesBack;
+        this.pendingUpdatesBack = updates;
+        this.pendingUpdates.clear();
         for (const update of updates) {
           update();
         }

@@ -1,32 +1,14 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcBindJsonProperty } from "../annotations/ac-bind-json-property.annotation";
-import { AcResult } from "./ac-result.model";
+import { AcDispatchResult } from './ac-dispatch-result.model';
 
-export class AcHookExecutionResult extends AcResult {
-  static readonly KeyContinueOperation = "continueOperation";
-  static readonly KeyHasResults = "hasResults";
-  static readonly KeyResults = "results";
-
-  @AcBindJsonProperty({ key: AcHookExecutionResult.KeyContinueOperation })
-  continueOperation: boolean = true;
-
-  @AcBindJsonProperty({ key: AcHookExecutionResult.KeyHasResults })
-  hasResults: boolean = false;
-
-  results: { [key: string]: any } = {};
-
-  constructor({
-    continueOperation = true,
-    hasResults = false,
-    results = {},
-  }: {
-    continueOperation?: boolean;
-    hasResults?: boolean;
-    results?: { [key: string]: any };
-  } = {}) {
-    super();
-    this.continueOperation = continueOperation;
-    this.hasResults = hasResults;
-    this.results = results;
-  }
+/**
+ * AcHookExecutionResult
+ * Re-parented onto AcDispatchResult (Phase 3) to eliminate the heavy AcResult
+ * base class (two arrays + AcLogger + serialisation overhead) from every dispatch call.
+ * Static key constants are kept for backward compatibility.
+ */
+export class AcHookExecutionResult extends AcDispatchResult {
+  static readonly KeyContinueOperation = 'continueOperation';
+  static readonly KeyHasResults = 'hasResults';
+  static readonly KeyResults = 'results';
 }

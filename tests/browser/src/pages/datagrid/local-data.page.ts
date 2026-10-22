@@ -33,6 +33,8 @@ export class DatagridLocalPage {
 
   acOnInit() {
     const api = this.grid.datagridApi;
+    api.animateRows = false;
+    api.useVirtualScrolling = false;
 
     // Enable Extensions
     api.enableExtension({ extensionName: AC_DATAGRID_EXTENSION_NAME.RowDragging });
@@ -65,7 +67,12 @@ export class DatagridLocalPage {
 
   loadData() {
     const data = customersData.map((row, i) => ({ index: i + 1, ...row }));
-    this.grid.datagridApi.data = data;
+    let result:any[] = [];
+    for(let i=0;i<10;i++){
+      result = [...result,...data];
+    }
+    this.grid.datagridApi.data = result;
+    console.log(result);
   }
 
   onSearch(event: any) {

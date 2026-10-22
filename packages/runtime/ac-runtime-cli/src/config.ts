@@ -7,6 +7,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * Thrown by loadConfig() when ac-runtime.json is missing or invalid.
+ * Callers can catch this error instead of the process being terminated by process.exit.
+ */
+export class ConfigError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConfigError';
+  }
+}
+
 export type AssetMapping = {
   /** Directory path relative to project root. Must exist. */
   directory: string;
@@ -48,7 +59,18 @@ export type AcRuntimeConfig = {
   buildFormats?: ('es' | 'cjs' | 'umd' | 'iife')[];
   /** Optional mapping of external package names to global variables. */
   externalGlobals?: Record<string, string>;
-  /** Additional directories to watch for changes during development. Resolved to absolute paths. Default: []. */
+  /**
+   * Additional directories to watch for changes during development.
+   *
+   * Each path is resolved relative to the project root (where `ac-runtime.json` lives)
+   * and de-duplicated against the project root itself. Non-existent directories are
+   * silently skipped so that optional feature directories do not break startup.
+   *
+   * **Alias:** `watchDirs` may be used as a shorthand key in `ac-runtime.json` —
+   * both `watchDirectories` and `watchDirs` are accepted and produce the same result.
+   *
+   * Default: `[]`
+   */
   watchDirectories: string[];
 };
 
@@ -59,16 +81,14 @@ export type AcRuntimeConfig = {
 export function loadConfig(startDir: string): AcRuntimeConfig {
   const configPath = findConfigFile(startDir);
   if (!configPath) {
-    console.error(`ERROR: ac-runtime.json not found. Searched from: ${startDir}`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: ac-runtime.json not found. Searched from: ${startDir}`);
   }
 
   let raw: any;
   try {
     raw = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   } catch (err: any) {
-    console.error(`ERROR: ac-runtime.json contains invalid JSON: ${err.message}`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: ac-runtime.json contains invalid JSON: ${err.message}`);
   }
 
   const projectRoot = path.dirname(configPath);
@@ -76,35 +96,28 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
   // --- Required fields ---
 
   if (!raw.name || typeof raw.name !== 'string') {
-    console.error('ERROR: ac-runtime.json: "name" is required (non-empty string)');
-    process.exit(1);
+    throw new ConfigError('ERROR: ac-runtime.json: "name" is required (non-empty string)');
   }
   if (!raw.version || typeof raw.version !== 'string') {
-    console.error('ERROR: ac-runtime.json: "version" is required (non-empty string)');
-    process.exit(1);
+    throw new ConfigError('ERROR: ac-runtime.json: "version" is required (non-empty string)');
   }
   if (!raw.type || typeof raw.type !== 'string') {
-    console.error('ERROR: ac-runtime.json: "type" is required');
-    process.exit(1);
+    throw new ConfigError('ERROR: ac-runtime.json: "type" is required');
   }
   if (raw.type !== 'app' && raw.type !== 'library') {
-    console.error(`ERROR: ac-runtime.json: unsupported type "${raw.type}". Only "app" and "library" are supported.`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: ac-runtime.json: unsupported type "${raw.type}". Only "app" and "library" are supported.`);
   }
   const buildFile = raw.buildFile;
   if (raw.type === 'library' && !buildFile) {
-    console.error('ERROR: ac-runtime.json: "buildFile" is required when type is "library"');
-    process.exit(1);
+    throw new ConfigError('ERROR: ac-runtime.json: "buildFile" is required when type is "library"');
   }
   if (!raw.entryFile || typeof raw.entryFile !== 'string') {
-    console.error('ERROR: ac-runtime.json: "entryFile" is required (relative path to entry file)');
-    process.exit(1);
+    throw new ConfigError('ERROR: ac-runtime.json: "entryFile" is required (relative path to entry file)');
   }
 
   const entryFile = path.resolve(projectRoot, raw.entryFile);
   if (!fs.existsSync(entryFile)) {
-    console.error(`ERROR: Entry file does not exist: ${entryFile}`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: Entry file does not exist: ${entryFile}`);
   }
 
   // --- Optional fields with defaults ---
@@ -114,14 +127,12 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
 
   // Validate buildDirectory and cacheDirectory don't overlap
   if (buildDirectory === cacheDirectory) {
-    console.error(`ERROR: "buildDirectory" and "cacheDirectory" cannot be the same ("${buildDirectory}")`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: "buildDirectory" and "cacheDirectory" cannot be the same ("${buildDirectory}")`);
   }
 
   // Validate buildDirectory doesn't overlap source directories
   if (buildDirectory === 'src' || buildDirectory.startsWith('src/') || buildDirectory.startsWith('src\\')) {
-    console.error(`ERROR: "buildDirectory" cannot overlap source directory ("${buildDirectory}")`);
-    process.exit(1);
+    throw new ConfigError(`ERROR: "buildDirectory" cannot overlap source directory ("${buildDirectory}")`);
   }
 
   // --- Asset validation ---
@@ -135,36 +146,30 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
       const entry = raw.assets[i];
 
       if (!entry.directory || typeof entry.directory !== 'string') {
-        console.error(`ERROR: ac-runtime.json: assets[${i}].directory is required`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: assets[${i}].directory is required`);
       }
       if (!entry.url || typeof entry.url !== 'string') {
-        console.error(`ERROR: ac-runtime.json: assets[${i}].url is required`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: assets[${i}].url is required`);
       }
       if (!entry.url.startsWith('/')) {
-        console.error(`ERROR: ac-runtime.json: assets[${i}].url must start with / (got "${entry.url}")`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: assets[${i}].url must start with / (got "${entry.url}")`);
       }
 
       // Check directory exists
       const absDir = path.resolve(projectRoot, entry.directory);
       if (!fs.existsSync(absDir)) {
-        console.error(`ERROR: ac-runtime.json: assets[${i}].directory does not exist: ${absDir}`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: assets[${i}].directory does not exist: ${absDir}`);
       }
 
       // Check for duplicate URLs
       if (seenUrls.has(entry.url)) {
-        console.error(`ERROR: ac-runtime.json: duplicate asset url "${entry.url}"`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: duplicate asset url "${entry.url}"`);
       }
 
       // Check for overlapping URLs
       for (const existing of seenUrls) {
         if (entry.url.startsWith(existing + '/') || existing.startsWith(entry.url + '/')) {
-          console.error(`ERROR: ac-runtime.json: overlapping asset urls "${entry.url}" and "${existing}"`);
-          process.exit(1);
+          throw new ConfigError(`ERROR: ac-runtime.json: overlapping asset urls "${entry.url}" and "${existing}"`);
         }
       }
 
@@ -179,12 +184,15 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
     for (let i = 0; i < raw.staticResources.length; i++) {
       const entry = raw.staticResources[i];
       if (!entry.path || typeof entry.path !== 'string') {
-        console.error(`ERROR: ac-runtime.json: staticResources[${i}].path is required`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: staticResources[${i}].path is required`);
       }
       if (!entry.buildPath || typeof entry.buildPath !== 'string') {
-        console.error(`ERROR: ac-runtime.json: staticResources[${i}].buildPath is required`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: staticResources[${i}].buildPath is required`);
+      }
+      // CFG-3: Validate source path exists at config-load time for early, clear errors
+      const absStaticPath = path.resolve(projectRoot, entry.path);
+      if (!fs.existsSync(absStaticPath)) {
+        throw new ConfigError(`ac-runtime.json: staticResources[${i}].path does not exist: ${absStaticPath}`);
       }
       staticResources.push({ path: entry.path, buildPath: entry.buildPath });
     }
@@ -194,14 +202,12 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
   let buildFormats: ('es' | 'cjs' | 'umd' | 'iife')[] | undefined = undefined;
   if (raw.buildFormats) {
     if (!Array.isArray(raw.buildFormats)) {
-      console.error('ERROR: ac-runtime.json: "buildFormats" must be an array of strings');
-      process.exit(1);
+      throw new ConfigError('ERROR: ac-runtime.json: "buildFormats" must be an array of strings');
     }
     const validFormats = ['es', 'cjs', 'umd', 'iife'] as const;
     for (const fmt of raw.buildFormats) {
       if (!validFormats.includes(fmt)) {
-        console.error(`ERROR: ac-runtime.json: invalid format "${fmt}" in "buildFormats". Valid formats are: ${validFormats.join(', ')}`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: invalid format "${fmt}" in "buildFormats". Valid formats are: ${validFormats.join(', ')}`);
       }
     }
     buildFormats = raw.buildFormats;
@@ -211,14 +217,12 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
   let externalGlobals: Record<string, string> | undefined = undefined;
   if (raw.externalGlobals) {
     if (typeof raw.externalGlobals !== 'object' || Array.isArray(raw.externalGlobals)) {
-      console.error('ERROR: ac-runtime.json: "externalGlobals" must be a key-value object');
-      process.exit(1);
+      throw new ConfigError('ERROR: ac-runtime.json: "externalGlobals" must be a key-value object');
     }
     externalGlobals = {};
     for (const [key, val] of Object.entries(raw.externalGlobals)) {
       if (typeof val !== 'string') {
-        console.error(`ERROR: ac-runtime.json: externalGlobals["${key}"] must be a string`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: externalGlobals["${key}"] must be a string`);
       }
       externalGlobals[key] = val;
     }
@@ -229,24 +233,20 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
   const rawWatchDirs = raw.watchDirectories ?? raw.watchDirs;
   if (rawWatchDirs !== undefined) {
     if (!Array.isArray(rawWatchDirs)) {
-      console.error('ERROR: ac-runtime.json: "watchDirectories" must be an array of directory paths');
-      process.exit(1);
+      throw new ConfigError('ERROR: ac-runtime.json: "watchDirectories" must be an array of directory paths');
     }
     for (let i = 0; i < rawWatchDirs.length; i++) {
       const entry = rawWatchDirs[i];
       if (!entry || typeof entry !== 'string') {
-        console.error(`ERROR: ac-runtime.json: watchDirectories[${i}] must be a non-empty string`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: watchDirectories[${i}] must be a non-empty string`);
       }
       const absDir = path.resolve(projectRoot, entry);
       if (!fs.existsSync(absDir)) {
-        console.error(`ERROR: ac-runtime.json: watch directory does not exist: ${absDir} (specified as "${entry}")`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: watch directory does not exist: ${absDir} (specified as "${entry}")`);
       }
       const stat = fs.statSync(absDir);
       if (!stat.isDirectory()) {
-        console.error(`ERROR: ac-runtime.json: watch path is not a directory: ${absDir} (specified as "${entry}")`);
-        process.exit(1);
+        throw new ConfigError(`ERROR: ac-runtime.json: watch path is not a directory: ${absDir} (specified as "${entry}")`);
       }
       if (!watchDirectories.includes(absDir) && absDir !== projectRoot) {
         watchDirectories.push(absDir);
@@ -272,14 +272,15 @@ export function loadConfig(startDir: string): AcRuntimeConfig {
   };
 }
 
-/** Walk up from startDir looking for ac-runtime.json. */
-function findConfigFile(startDir: string): string | null {
+/** Walk up from startDir looking for ac-runtime.json, stopping at filesystem root or after maxDepth levels. */
+function findConfigFile(startDir: string, maxDepth = 20): string | null {
   let dir = path.resolve(startDir);
-  while (true) {
+  for (let depth = 0; depth < maxDepth; depth++) {
     const candidate = path.join(dir, 'ac-runtime.json');
     if (fs.existsSync(candidate)) return candidate;
     const parent = path.dirname(dir);
-    if (parent === dir) return null;
+    if (parent === dir) return null; // reached filesystem root
     dir = parent;
   }
+  return null; // exceeded max depth
 }

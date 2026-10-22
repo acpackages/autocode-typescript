@@ -42,7 +42,8 @@ function getHostOption(): boolean | string {
         }
         return true;
     }
-    return true;
+    // Default: bind to localhost only. Pass --host or --host=0.0.0.0 to expose to the network.
+    return false;
 }
 
 if (!command || command === '--help' || command === '-h') {
@@ -67,8 +68,14 @@ if (!command || command === '--help' || command === '-h') {
 const config = loadConfig(process.cwd());
 
 if (command === 'serve') {
+    const portStr = getOption('port', '3000');
+    const port = parseInt(portStr, 10);
+    if (isNaN(port) || port < 1 || port > 65535) {
+        console.error(`ERROR: Invalid port "${portStr}". Must be a number between 1 and 65535.`);
+        process.exit(1);
+    }
     serve(config, {
-        port: parseInt(getOption('port', '3000'), 10),
+        port,
         host: getHostOption(),
         open: getFlag('open'),
     });

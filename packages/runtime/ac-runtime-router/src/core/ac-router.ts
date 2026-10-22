@@ -37,6 +37,19 @@ export class AcRouter {
   lastSnapshot?: IAcRouteSnapshot;
   basePath: string = '';
 
+  /**
+   * Cache of compiled route RegExps keyed by route.path string.
+   * Avoids rebuilding the same RegExp on every navigation (PERF-2).
+   */
+  private regexCache = new Map<string, RegExp>();
+
+  /**
+   * Bound listener references retained so they can be removed via
+   * removeEventListener on destroy (LEAK-2).
+   */
+  private readonly boundHashChange: () => void;
+  private readonly boundLoad: () => void;
+
   get currentRoute(): any {
     return this.lastSnapshot;
   }
@@ -44,10 +57,12 @@ export class AcRouter {
   /**
    * Private constructor — listens for `hashchange` to handle
    * browser navigation (back/forward, hash link clicks).
+   *
+   * Listener references are stored so they can be removed on destroy.
    */
   private constructor() {
-    window.addEventListener('hashchange', () => this.handleHashChange());
-    window.addEventListener('load', () => {
+    this.boundHashChange = () => this.handleHashChange();
+    this.boundLoad = () => {
       if (!this.basePath) {
         this.basePath = window.location.origin;
       }
@@ -57,7 +72,7 @@ export class AcRouter {
       }
       let queryString: string = "";
       if (hash.indexOf("?") > 0) {
-        queryString = hash.substring(hash.indexOf("?")+1);
+        queryString = hash.substring(hash.indexOf("?") + 1);
         hash = hash.substring(0, hash.indexOf('?'));
       }
       if (hash.indexOf("#") >= 0) {
@@ -67,9 +82,11 @@ export class AcRouter {
         hash += "?" + queryString;
       }
       window.history.replaceState({}, '', `${this.basePath}/#`);
-      // console.log(hash);
       this.navigateTo({ path: hash });
-    });
+    };
+
+    window.addEventListener('hashchange', this.boundHashChange);
+    window.addEventListener('load', this.boundLoad);
   }
 
   /**
@@ -78,6 +95,17 @@ export class AcRouter {
   static getInstance(): AcRouter {
     if (!this.instance) this.instance = new AcRouter();
     return this.instance;
+  }
+
+  /**
+   * Remove window event listeners and clear internal state.
+   * Call this during application teardown or in tests.
+   */
+  destroy(): void {
+    window.removeEventListener('hashchange', this.boundHashChange);
+    window.removeEventListener('load', this.boundLoad);
+    this.regexCache.clear();
+    this.routes = [];
   }
 
   /** Temporarily pause route processing. */
@@ -98,10 +126,39 @@ export class AcRouter {
    */
   registerRoutes({ routes }: { routes: IAcRoute[] }): void {
     this.routes = routes;
+    // Pre-compile all route regexes into the cache
+    this.regexCache.clear();
+    for (const route of routes) {
+      if (route.path !== '**' && route.path !== '*') {
+        this.regexCache.set(route.path, this.buildRegex(route.path));
+      }
+    }
     // Trigger initial check if already loaded
     if (document.readyState === 'complete' && !this.isPaused) {
       this.handleHashChange();
     }
+  }
+
+  /**
+   * Build and return a RegExp for a route path pattern.
+   * Results are stored in `regexCache` — call this only from `registerRoutes`.
+   */
+  private buildRegex(routePath: string): RegExp {
+    const regexPath = routePath.replace(/:([^/]+)/g, '([^/]+)');
+    return new RegExp(`^${regexPath}$`);
+  }
+
+  /**
+   * Get a cached regex for the given route path, or build one on demand
+   * as a fallback (e.g. for routes added after initial registration).
+   */
+  private getRegex(routePath: string): RegExp {
+    let re = this.regexCache.get(routePath);
+    if (!re) {
+      re = this.buildRegex(routePath);
+      this.regexCache.set(routePath, re);
+    }
+    return re;
   }
 
   /**
@@ -140,9 +197,7 @@ export class AcRouter {
     // Try exact/parameterized match first
     for (const route of this.routes) {
       if (route.path === '**' || route.path === '*') continue;
-      const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
-      const regex = new RegExp(`^${regexPath}$`);
-      if (regex.test(url)) return route;
+      if (this.getRegex(route.path).test(url)) return route;
     }
     // Fallback to wildcard
     return this.routes.find(r => r.path === '**' || r.path === '*');
@@ -162,9 +217,7 @@ export class AcRouter {
    * Handle a hash change event by matching the route and emitting snapshots.
    */
   private handleHashChange(): void {
-
     const path = this.getCurrentPath();
-    // console.log("Route Changed", path, this.isPaused);
     if (this.isPaused) return;
     this.matchRoute(path);
   }
@@ -179,9 +232,7 @@ export class AcRouter {
     // Find all matching routes (supports multiple outlets)
     let matchedRoutes = this.routes.filter(route => {
       if (route.path === '**' || route.path === '*') return false;
-      const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
-      const regex = new RegExp(`^${regexPath}$`);
-      return regex.test(url);
+      return this.getRegex(route.path).test(url);
     });
 
     // Fallback to wildcard if no match
@@ -205,8 +256,7 @@ export class AcRouter {
       const params: Record<string, string> = {};
 
       if (route.path !== '**' && route.path !== '*') {
-        const regexPath = route.path.replace(/:([^/]+)/g, '([^/]+)');
-        const regex = new RegExp(`^${regexPath}$`);
+        const regex = this.getRegex(route.path);
         const match = url.match(regex);
 
         if (match) {

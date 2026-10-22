@@ -4,14 +4,12 @@ import { AcNgIframeContentComponent } from './components/ac-iframe-content/ac-if
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
     AcNgIframeContentComponent
   ],
   exports: [
     AcNgIframeContentComponent
-  ],
-  imports: [
-    CommonModule
   ]
 })
 export class AcNgRuntimeModule { }

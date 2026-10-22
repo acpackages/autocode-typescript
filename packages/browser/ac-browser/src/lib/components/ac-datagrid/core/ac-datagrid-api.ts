@@ -188,6 +188,13 @@ export class AcDatagridApi {
       this.logger.log('Executed DatagridColumnCreate hook for column', { field: colDef.field });
     }
 
+    // PERF FIX (P3): Rebuild O(1) lookup maps after columns are finalised
+    this._columnByKey.clear();
+    this._columnById.clear();
+    for (const col of this.datagridColumns) {
+      if (col.columnKey) this._columnByKey.set(col.columnKey, col);
+      if (col.columnId) this._columnById.set(col.columnId, col);
+    }
     this.hooks.execute({ hook: AC_DATAGRID_HOOK.ColumnDefinitionsChange, args: hookArgs });
     this.logger.log('Executed ColumnDefinitionsChange hook');
     const event: IAcDatagridColumnDefinitionsSetEvent = {
@@ -205,8 +212,9 @@ export class AcDatagridApi {
     return this.dataManager.data;
   }
   set data(value: any[]) {
+    // PERF FIX (P3): setRows() (called by dataManager.data setter) already calls processRows() internally.
+    // Calling it again here was a double-compute on every data assignment.
     this.dataManager.data = value;
-    this.dataManager.processRows();
     this.syncRowProperties();
     if (this.treeConfig) {
       this.initTreeRows();
@@ -334,9 +342,14 @@ export class AcDatagridApi {
 
   get displayedDatagridRows(): IAcDatagridRow[] {
     if (this.hasTreeOrGroup && this.dataManager?.allRows && this.dataManager.allRows.length > 0) {
-      return (this.dataManager.allRows as IAcDatagridRow[])
-        .filter(r => r && r.index !== -1)
-        .sort((a, b) => a.index - b.index);
+      // PERF FIX (1.2): cache sorted+filtered array; invalidated by _displayedRowsDirty flag
+      if (this._displayedRowsDirty || !this._cachedDisplayedRows) {
+        this._cachedDisplayedRows = (this.dataManager.allRows as IAcDatagridRow[])
+          .filter(r => r && r.index !== -1)
+          .sort((a, b) => a.index - b.index);
+        this._displayedRowsDirty = false;
+      }
+      return this._cachedDisplayedRows;
     }
     if (this.useVirtualScrolling && this.dataManager) {
       return this.dataManager.rows as any[];
@@ -493,6 +506,12 @@ export class AcDatagridApi {
   dataTypeIdentified: boolean = false;
   datagrid!: AcDatagridElement;
   datagridColumns: IAcDatagridColumn[] = [];
+  // PERF FIX (P3): O(1) column lookup maps — rebuilt in columnDefinitions setter
+  private _columnByKey: Map<string, IAcDatagridColumn> = new Map();
+  private _columnById: Map<string, IAcDatagridColumn> = new Map();
+  // PERF FIX (1.2): Cache for tree/group displayedDatagridRows — avoids O(n log n) sort on every call
+  private _cachedDisplayedRows: IAcDatagridRow[] | undefined;
+  private _displayedRowsDirty = true;
   datagridState: AcDatagridState;
   dataManager: AcDataManager = new AcDataManager();
   defaultColumnDefiniation: Partial<IAcDatagridColumnDefinition> = { ...AC_DATAGRID_DEFAULT_COLUMN_DEFINITION };
@@ -569,6 +588,11 @@ export class AcDatagridApi {
     this.events = datagrid.events;
     this.dataManager.events = this.events;
     this.dataManager.hooks = this.hooks;
+    // PERF FIX (1.2): Invalidate displayedDatagridRows cache on every DisplayedRowsChange
+    this.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.DisplayedRowsChange,
+      callback: () => { this._displayedRowsDirty = true; }
+    });
     this.dataManager.hooks.subscribe({
       hook: AC_DATA_MANAGER_HOOK.GetOnDemandDataSuccessCallback,
       callback: () => {
@@ -719,8 +743,9 @@ export class AcDatagridApi {
     skipHeader?: boolean;
     additionalPadding?: number;
   }) {
+    // PERF FIX (1.3): O(1) Map lookup instead of O(n) .find()
     const col: IAcDatagridColumn | undefined = typeof datagridColumn === 'string'
-      ? this.datagridColumns.find(c => c.columnKey === datagridColumn || c.columnId === datagridColumn || c.columnDefinition.field === datagridColumn)
+      ? (this._columnByKey.get(datagridColumn) ?? this._columnById.get(datagridColumn) ?? this.datagridColumns.find(c => c.columnDefinition.field === datagridColumn))
       : datagridColumn;
     if (!col) return;
 
@@ -748,8 +773,9 @@ export class AcDatagridApi {
   autoSizeColumns(options?: IAcDatagridAutoSizeColumnsOptions | string[]) {
     const opts: IAcDatagridAutoSizeColumnsOptions = Array.isArray(options) ? { columnKeys: options } : (options || {});
     const keys = opts.columnKeys;
+    // PERF FIX (5.3): O(1) Map lookup for key-based column resolution
     const targets = keys && keys.length > 0
-      ? this.datagridColumns.filter(c => keys.includes(c.columnKey) || keys.includes(c.columnDefinition.field) || keys.includes(c.columnId))
+      ? (keys.map(k => this._columnByKey.get(k) ?? this._columnById.get(k) ?? this.datagridColumns.find(c => c.columnDefinition.field === k)).filter(Boolean) as IAcDatagridColumn[])
       : this.datagridColumns.filter(c => c.visible);
 
     const updates: { datagridColumn: IAcDatagridColumn; width: number }[] = [];
@@ -936,26 +962,15 @@ export class AcDatagridApi {
   }
 
   getColumn({ columnId, index, originalIndex, key }: { key?: string, columnId?: string, index?: number, originalIndex?: number }): IAcDatagridColumn | undefined {
-    let result: IAcDatagridColumn | undefined;
+    // PERF FIX (P3): Use O(1) map lookups for key/columnId; fall back to linear scan for index/originalIndex
+    if (key != undefined) return this._columnByKey.get(key);
+    if (columnId != undefined) return this._columnById.get(columnId);
+    // index/originalIndex lookups are less frequent — linear scan is acceptable
     for (const column of this.datagridColumns) {
-      if (column.columnKey == key) {
-        result = column;
-        break;
-      }
-      else if (columnId != undefined && column.columnId == columnId) {
-        result = column;
-        break;
-      }
-      else if (index != undefined && column.index == index) {
-        result = column;
-        break;
-      }
-      else if (originalIndex != undefined && column.originalIndex == originalIndex) {
-        result = column;
-        break;
-      }
+      if (index != undefined && column.index == index) return column;
+      if (originalIndex != undefined && column.originalIndex == originalIndex) return column;
     }
-    return result;
+    return undefined;
   }
 
   getCell({ rowIndex, columnIndex, rowId, columnId, row, column, createIfMissing = true, key, value }: { row?: IAcDatagridRow, column?: IAcDatagridColumn, rowIndex?: number, columnIndex?: number, rowId?: string, columnId?: string, createIfMissing?: boolean, key?: string, value?: any }): IAcDatagridCell | undefined {
@@ -992,30 +1007,21 @@ export class AcDatagridApi {
   }
 
   getRow({ data, rowId, index, key, value }: { data?: any, rowId?: string, index?: number, key?: string, value?: any }): IAcDatagridRow | undefined {
-    let result: IAcDatagridRow | undefined;
+    // PERF FIX (P3): When rowId is given, delegate to the data-manager's O(1) _rowById map via getRowById().
+    // For other lookup types fall back to allRows linear scan (avoids filter+sort cost of this.rows getter).
+    if (rowId != undefined) {
+      return this.dataManager.getRowById(rowId) as IAcDatagridRow | undefined;
+    }
     const sourceRows = (this.dataManager?.allRows && this.dataManager.allRows.length > 0)
       ? (this.dataManager.allRows as IAcDatagridRow[])
       : this.datagridRows;
     for (const row of sourceRows) {
       if (!row) continue;
-      if (data != undefined && row.data === data) {
-        result = row;
-        break;
-      }
-      else if (rowId != undefined && row.rowId == rowId) {
-        result = row;
-        break;
-      }
-      else if (index != undefined && row.index == index) {
-        result = row;
-        break;
-      }
-      else if (key != undefined && value != undefined && row.data && row.data[key] == value) {
-        result = row;
-        break;
-      }
+      if (data != undefined && row.data === data) return row as IAcDatagridRow;
+      if (index != undefined && row.index == index) return row as IAcDatagridRow;
+      if (key != undefined && value != undefined && row.data && row.data[key] == value) return row as IAcDatagridRow;
     }
-    return result;
+    return undefined;
   }
 
   getState(): IAcDatagridState {
@@ -1699,15 +1705,25 @@ export class AcDatagridApi {
   }
 
   getDescendantRowIds(parentId: string): Set<string> {
-    const descendants = new Set<string>();
+    // PERF FIX (P3): Build a parentId -> children adjacency map in O(n) then walk it in O(descendants).
+    // The old BFS re-scanned all rows once per level — O(n * depth).
     const allRows = (this.dataManager?.allRows as IAcDatagridRow[]) || [];
+    const childrenOf = new Map<string, string[]>();
+    for (const r of allRows) {
+      if (!r || !r.parentId) continue;
+      let children = childrenOf.get(r.parentId);
+      if (!children) { children = []; childrenOf.set(r.parentId, children); }
+      children.push(r.rowId);
+    }
+    const descendants = new Set<string>();
     const queue = [parentId];
     while (queue.length > 0) {
       const curr = queue.shift()!;
-      for (const r of allRows) {
-        if (r && r.parentId === curr) {
-          descendants.add(r.rowId);
-          queue.push(r.rowId);
+      const children = childrenOf.get(curr);
+      if (children) {
+        for (const childId of children) {
+          descendants.add(childId);
+          queue.push(childId);
         }
       }
     }

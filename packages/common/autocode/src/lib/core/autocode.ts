@@ -13,22 +13,11 @@ export class Autocode {
     Reset: '\x1B[0m',
   };
 
-  private static _uniqueIds: Record<string, Set<string>> = {};
-
-  private static _characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  private static _randomInt({ max }: { max: number }): number {
-    if (this.isBrowser()) {
-      const array = new Uint32Array(1);
-      globalThis.crypto.getRandomValues(array);
-      return array[0] % max;
-    } else {
-      // Node.js
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const crypto = require('crypto');
-      return crypto.randomInt(0, max);
-    }
-  }
+  // Phase 1 (Task 1.1): Replaced crypto-heavy uniqueId with a monotonic counter.
+  // Old implementation called crypto.getRandomValues() 10 times per call and stored
+  // every generated ID in a static Set that grew forever (memory leak).
+  private static readonly _sessionPrefix: string = Math.random().toString(36).slice(2, 8);
+  private static _idCounter: number = 0;
 
   static enumToObject<T>({ enumType }: { enumType: any }): Record<string, T[keyof T]> {
     return Object.keys(enumType)
@@ -43,33 +32,12 @@ export class Autocode {
     return typeof window !== 'undefined' || typeof self !== 'undefined';
   }
 
+  /**
+   * Returns a session-unique, monotonically increasing ID string.
+   * O(1), zero crypto calls, zero static memory growth.
+   */
   static uniqueId(): string {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const timestampHex = timestamp.toString(16);
-    const randomPart = this.uuid();
-    let id = `ac_${this.generateRandomString({ length: 10 })}${timestampHex}${randomPart}`;
-
-    const tsKey = timestamp.toString();
-    if (!this._uniqueIds[tsKey]) {
-      this._uniqueIds[tsKey] = new Set();
-    }
-
-    while (this._uniqueIds[tsKey].has(id)) {
-      const newRandom = this.uuid();
-      id = `ac_${this.generateRandomString({ length: 10 })}${timestampHex}${newRandom}`;
-    }
-    this._uniqueIds[tsKey].add(id);
-
-    return id;
-  }
-
-  static generateRandomString({ length = 10 }: { length?: number } = {}): string {
-    let buffer = '';
-    for (let i = 0; i < length; i++) {
-      const index = this._randomInt({ max: this._characters.length });
-      buffer += this._characters.charAt(index);
-    }
-    return buffer;
+    return `ac_${Autocode._sessionPrefix}_${++Autocode._idCounter}`;
   }
 
   static getClassNameFromInstance({ instance }: { instance: object }): string {
@@ -100,4 +68,3 @@ export class Autocode {
     return uuidv4();
   }
 }
-

@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @angular-eslint/component-selector */
 /* eslint-disable @nx/enforce-module-boundaries */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @angular-eslint/prefer-inject */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 /* eslint-disable @angular-eslint/prefer-standalone */
-import { ApplicationRef, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { acAddClassToElement, AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
 import { AcRuntimeService } from '@autocode-ts/ac-ng-runtime';
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcDelayedCallback, acNullifyInstanceProperties, IAcOnDemandRequestArgs } from '@autocode-ts/autocode';
@@ -679,34 +679,41 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
   rowNumbersExtension?: AcDatagridRowNumbersExtension;
   rowSelectionExtension?: AcDatagridRowSelectionExtension;
 
-  constructor(private runtimeService: AcRuntimeService, private appRef: ApplicationRef) {
+  constructor(
+    private runtimeService: AcRuntimeService,
+    private appRef: ApplicationRef,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {
     super();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.datagrid && this.datagridApi) {
+      // PERF FIX (P4): Use independent if-blocks so ALL changed inputs are applied in one cycle.
+      // The previous else-if chain silently dropped any changes after the first matched branch.
       if (changes['rowHeight']) {
         this.datagridApi.rowHeight = this.rowHeight;
       }
-      else if (changes['headerHeight']) {
+      if (changes['headerHeight']) {
         this.datagridApi.headerHeight = this.headerHeight;
       }
-      else if (changes['onDemandFunction']) {
+      if (changes['onDemandFunction']) {
         this.dataManager.onDemandFunction = this.onDemandFunction;
       }
-      else if (changes['data']) {
+      if (changes['data']) {
         this.dataManager.data = this.data;
       }
-      else if (changes['columnDefinitions'] || changes['columnEditorTemplates'] || changes['columnRendererTemplates'] || changes['flexColumn']) {
+      if (changes['columnDefinitions'] || changes['columnEditorTemplates'] || changes['columnRendererTemplates'] || changes['flexColumn']) {
         this.setColumnDefinitions();
       }
-      else if (changes['usePagination']) {
+      if (changes['usePagination']) {
         this.datagridApi.usePagination = this.usePagination;
       }
-      else if (changes['showAddButton']) {
+      if (changes['showAddButton']) {
         this.datagridApi.showAddButton = this.showAddButton;
       }
-      else if (changes['showSearchInput']) {
+      if (changes['showSearchInput']) {
         this.datagridApi.showSearchInput = this.showSearchInput;
       }
     }
@@ -725,6 +732,11 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
 
   ngOnInit(): void {
     this.initDatagrid();
+  }
+
+  /** Emit an @Output inside NgZone so Angular's OnPush change detection is triggered. */
+  private zoneEmit(emitter: EventEmitter<any>, args: any): void {
+    this.ngZone.run(() => emitter.emit(args));
   }
 
   private async initDatagrid() {
@@ -752,7 +764,12 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
       this.rowSelectionExtension = this.datagridApi.enableExtension({ extensionName: AC_DATAGRID_EXTENSION_NAME.RowSelection }) as AcDatagridRowSelectionExtension;
       this.rowDraggingExtension = this.datagridApi.enableExtension({ extensionName: AC_DATAGRID_EXTENSION_NAME.RowDragging }) as AcDatagridRowDraggingExtension;
       this.columnsCustomizerExtension.showColumnCustomizerPanel = true;
-      this.registerListeners(this.datagridApi);
+      // PERF FIX (P4): Run all event-bus subscriptions outside Angular's zone.
+      // The datagrid event bus fires frequently (cell hover, mouse moves etc).
+      // Callbacks that need to trigger Angular CD call ngZone.run() explicitly.
+      this.ngZone.runOutsideAngular(() => {
+        this.registerListeners(this.datagridApi);
+      });
       if (this.data) {
         this.dataManager.data = this.data;
       }
@@ -770,8 +787,13 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
 
   private setColumnDefinitions() {
     const columns: IAcDatagridColumnDefinition[] = [];
-    for (const colDef of this.columnDefinitions) {
-       if (this.columnRendererTemplates[colDef.field]) {
+    for (const rawColDef of this.columnDefinitions) {
+      // PERF FIX (P4): Shallow-clone each colDef so we never mutate the @Input reference.
+      // Mutating @Input objects causes ghost state on the next change-detection pass.
+      // Cast to the base interface (IAcDatagridColumnDefinition) since the extended
+      // IAcNgDatagridColumnDefinition type does not declare all runtime fields.
+      const colDef = { ...rawColDef } as IAcDatagridColumnDefinition & IAcNgDatagridColumnDefinition;
+      if (this.columnRendererTemplates[colDef.field]) {
         colDef.cellRendererTemplateRef = this.columnRendererTemplates[colDef.field];
       }
       if (this.columnEditorTemplates[colDef.field]) {
@@ -779,11 +801,11 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
       }
       if (colDef.cellEditorComponent || colDef.cellEditorTemplateRef) {
         colDef.cellEditorElement = AcNgDatagridCellEditor;
-      if (!colDef.cellEditorElementParams) {
-        colDef.cellEditorElementParams = {};
-      }
-      colDef.cellEditorElementParams['___appRef___'] = this.appRef;
-      colDef.cellEditorElementParams['___runtimeService___'] = this.runtimeService;
+        if (!colDef.cellEditorElementParams) {
+          colDef.cellEditorElementParams = {};
+        }
+        colDef.cellEditorElementParams['___appRef___'] = this.appRef;
+        colDef.cellEditorElementParams['___runtimeService___'] = this.runtimeService;
       }
       if (colDef.cellRendererComponent || colDef.cellRendererTemplateRef) {
         colDef.cellRendererElement = AcNgDatagridCellRenderer;

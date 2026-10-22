@@ -23,7 +23,7 @@ import { AcRepeaterEventHandler } from "./ac-repeater-event-handler";
 import { AcRepeaterElement } from "../elements/ac-repeater.element";
 import { AcEnumDataSourceType } from "../../../enums/ac-enum-data-source-type.enum";
 
-export class AcRepeaterApi{
+export class AcRepeaterApi {
 
   get data(): any[] {
     return this.dataManager.data;
@@ -53,7 +53,7 @@ export class AcRepeaterApi{
     set showAddButton(value: boolean) {
       if (this._showAddButton != value) {
         this._showAddButton = value;
-        if(this.pagination){
+        if (this.pagination) {
           this.pagination.showAddButton = value;
         }
       }
@@ -74,8 +74,8 @@ export class AcRepeaterApi{
       this.pagination = new AcPaginationElement();
       this.pagination.bindDataManager({ dataManager: this.dataManager });
       this.pagination.showAddButton = this.showAddButton;
-      this.pagination.addEventListener('add',()=>{
-        this.events.execute({event:AcEnumRepeaterEvent.AddClick});
+      this.pagination.addEventListener('add', () => {
+        this.events.execute({ event: AcEnumRepeaterEvent.AddClick });
       });
     } else {
       this.pagination = undefined;
@@ -83,11 +83,11 @@ export class AcRepeaterApi{
     this.hooks.execute({ hook: AcEnumRepeaterHook.UsePaginationChange, args: hookArgs });
   }
 
-  activeRepeaterRow:IAcRepeaterRow | undefined;
+  activeRepeaterRow: IAcRepeaterRow | undefined;
   repeater!: AcRepeaterElement;
-  repeaterState:AcRepeaterState;
+  repeaterState: AcRepeaterState;
   dataManager: AcDataManager = new AcDataManager();
-  eventHandler!:AcRepeaterEventHandler;
+  eventHandler!: AcRepeaterEventHandler;
   events: AcEvents = new AcEvents();
   extensions: Record<string, AcRepeaterExtension> = {};
   hooks: AcHooks = new AcHooks();
@@ -96,7 +96,11 @@ export class AcRepeaterApi{
   hoverRowId?: string;
   pagination?: AcPaginationElement;
   sortOrder: AcSortOrder = new AcSortOrder();
-  rowRendererFunction?:any;
+  rowRendererFunction?: any;
+
+  // PERF FIX (1.4): O(1) row lookup Maps — rebuilt on every DisplayedRowsChange
+  private _rowByIdMap: Map<string, IAcRepeaterRow> = new Map();
+  private _rowByIndexMap: Map<number, IAcRepeaterRow> = new Map();
 
   private _fields: IAcRepeaterField[] = [];
   get fields(): IAcRepeaterField[] {
@@ -134,6 +138,13 @@ export class AcRepeaterApi{
           displayedRows: args.displayedRows as any[],
           repeaterApi: this
         };
+        // PERF FIX (1.4): Rebuild O(1) lookup Maps on each displayed rows change
+        this._rowByIdMap.clear();
+        this._rowByIndexMap.clear();
+        for (const row of this.repeaterRows) {
+          this._rowByIdMap.set(row.rowId, row);
+          this._rowByIndexMap.set(row.index, row);
+        }
         this.hooks.execute({ hook: AcEnumRepeaterHook.DisplayedRowsChange, args: hookArgs });
         this.events.execute({ event: AcEnumRepeaterEvent.DisplayedRowsChange, args: hookArgs });
       }
@@ -249,26 +260,15 @@ export class AcRepeaterApi{
   }
 
   getRowById({ rowId }: { rowId: string }): IAcRepeaterRow | undefined {
-    let result: IAcRepeaterRow | undefined;
-    for (const row of this.repeaterRows) {
-      if (row.rowId == rowId) {
-        result = row;
-        break;
-      }
-    }
-    return result;
+    // PERF FIX (1.4): O(1) Map lookup instead of O(n) loop
+    return this._rowByIdMap.get(rowId);
   }
 
   getRowByIndex({ index }: { index: number }): IAcRepeaterRow | undefined {
-    let result: IAcRepeaterRow | undefined;
-    for (const row of this.repeaterRows) {
-      if (row.index == index) {
-        result = row;
-        break;
-      }
-    }
-    if(result == undefined){
-      console.error(`Cannot find row for index : ${index}`)
+    // PERF FIX (1.4): O(1) Map lookup instead of O(n) loop
+    const result = this._rowByIndexMap.get(index);
+    if (result === undefined) {
+      console.error(`Cannot find row for index : ${index}`);
     }
     return result;
   }
@@ -284,15 +284,14 @@ export class AcRepeaterApi{
     return result;
   }
 
-  getState():IAcRepeaterState{
+  getState(): IAcRepeaterState {
     this.repeaterState.refresh();
     return this.repeaterState.toJson();
   }
 
-  setState({state}:{state:IAcRepeaterState}){
+  setState({ state }: { state: IAcRepeaterState }) {
     this.repeaterState.apply(state);
   }
-
 
   updateRowPosition({ repeaterRow, oldRepeaterRow }: { repeaterRow: IAcRepeaterRow, oldRepeaterRow: IAcRepeaterRow }) {
     const eventArgs: IIAcRepeaterRowPositionChangeEvent = {

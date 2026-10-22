@@ -12,11 +12,14 @@ export class AcRepeaterRowElement extends AcElementBase {
   private repeaterApi: AcRepeaterApi;
   private repeaterRow!: IAcRepeaterRow;
   swappingRowPosition: boolean = false;
-  private renderingElement:HTMLElement|null = null;
-  private hookSubscriptionIds:string[] = [];
+  private renderingElement: HTMLElement | null = null;
+  // PERF FIX (2.1): hookSubscriptionIds kept for extension use; RowUpdate moved to body-level delegation
+  private hookSubscriptionIds: string[] = [];
+  // PERF FIX (2.1): Exposed so AcRepeaterBodyElement can route delegated RowUpdate without closure capture
+  repeaterRowId: string = '';
 
-  private clearRenderingElement(){
-    if(this.renderingElement){
+  private clearRenderingElement() {
+    if (this.renderingElement) {
       this.renderingElement.remove();
       this.renderingElement = null;
     }
@@ -24,11 +27,13 @@ export class AcRepeaterRowElement extends AcElementBase {
 
   override destroy(): void {
     this.repeaterRow.instance = null;
-    this.repeaterApi.hooks.unsubscribe({subscriptionIds:this.hookSubscriptionIds});
+    this.repeaterApi.hooks.unsubscribe({ subscriptionIds: this.hookSubscriptionIds });
     super.destroy();
   }
 
   initElement() {
+    // PERF FIX (2.1): Store rowId for body-level RowUpdate delegation
+    this.repeaterRowId = this.repeaterRow.rowId;
     this.setAttribute(AcRepeaterAttributeName.IAcRepeaterRowId, this.repeaterRow.rowId);
     acAddClassToElement({ class_: AcRepeaterCssClassName.IAcRepeaterRow, element: this });
     if (this.repeaterRow.index == 0 || this.repeaterRow.index % 2 == 0) {
@@ -37,14 +42,9 @@ export class AcRepeaterRowElement extends AcElementBase {
     else {
       acAddClassToElement({ class_: AcRepeaterCssClassName.IAcRepeaterRowOdd, element: this });
     }
-    this.hookSubscriptionIds.push(this.repeaterApi.hooks.subscribe({
-      hook: AcEnumRepeaterHook.RowUpdate,
-      callback: (args: any) => {
-        if (args.repeaterRow.rowId == this.repeaterRow.rowId) {
-          this.refresh();
-        }
-      }
-    }));
+    // PERF FIX (2.1): RowUpdate hook is now handled by a single delegation subscription in AcRepeaterBodyElement
+    // to prevent N dangling subscriptions accumulating on clearBody()+rebuild cycles.
+    // Extensions may still use hookSubscriptionIds via hooks.subscribe() in their own init().
     // this.registerListeners();
     this.render();
   }
@@ -113,7 +113,7 @@ export class AcRepeaterRowElement extends AcElementBase {
   render() {
     this.clearRenderingElement();
     if (this.repeaterApi.rowRendererFunction) {
-      acClearElement({element:this});
+      acClearElement({ element: this });
       const args: IAcRepeaterRowRendererElementArgs = {
         rowElement: this,
         row: this.repeaterRow
@@ -121,7 +121,8 @@ export class AcRepeaterRowElement extends AcElementBase {
       this.renderingElement = this.repeaterApi.rowRendererFunction(args);
       this.append(this.renderingElement);
     } else {
-      this.innerHTML = JSON.stringify(this.repeaterRow.data);
+      // PERF FIX (3.2): textContent avoids HTML parsing overhead and XSS risk vs innerHTML
+      this.textContent = JSON.stringify(this.repeaterRow.data);
     }
   }
 
@@ -133,4 +134,3 @@ export class AcRepeaterRowElement extends AcElementBase {
 }
 
 acRegisterCustomElement({ tag: AC_REPEATER_TAG.repeaterRow, type: AcRepeaterRowElement });
-

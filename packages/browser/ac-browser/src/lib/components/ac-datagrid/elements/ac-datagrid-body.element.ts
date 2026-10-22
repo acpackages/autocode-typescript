@@ -19,6 +19,10 @@ export class AcDatagridBody extends AcElementBase {
   currentRows: AcDatagridRowElement[] = [];
   renderedRowsMap: Map<string, AcDatagridRowElement> = new Map();
   private isScrollScheduled: boolean = false;
+  // PERF FIX (1.1): Cached normal-row filter result — rebuilt once per call site, not N times
+  private _normalRowsCache: IAcDatagridRow[] = [];
+  // PERF FIX (4.1/4.2): Columns fingerprint — changes trigger full row re-render; otherwise refresh() in-place
+  private _columnsFingerprint: string = '';
 
   private pinnedTopContainer?: HTMLElement;
   private rowsContainer?: HTMLElement;
@@ -39,6 +43,12 @@ export class AcDatagridBody extends AcElementBase {
     if (this.rowDropIndicator) {
       this.rowDropIndicator.classList.remove('show');
     }
+  }
+
+  /** Returns the non-pinned rows, caching the result for the duration of the calling method. */
+  private getNormalRows(): IAcDatagridRow[] {
+    this._normalRowsCache = this.datagridApi?.displayedDatagridRows.filter(r => !r.pinned) ?? [];
+    return this._normalRowsCache;
   }
 
   private autoBindDatagrid() {
@@ -288,13 +298,12 @@ export class AcDatagridBody extends AcElementBase {
       }
     }
 
-    this.clearBody();
     if (!this.datagridApi || !this.rowsContainer) return;
 
     this.renderPinnedRows();
 
     // Normal displayed rows (excluding pinned rows)
-    const normalRows = this.datagridApi.displayedDatagridRows.filter(r => !r.pinned);
+    const normalRows = this.getNormalRows();
     const rowHeight = this.datagridApi.rowHeight || 36;
     const totalHeight = normalRows.length * rowHeight;
     this.rowsContainer.style.height = `${totalHeight}px`;
@@ -302,31 +311,69 @@ export class AcDatagridBody extends AcElementBase {
     if (this.datagridApi.useVirtualScrolling) {
       this.renderVirtualRows();
     } else {
-      const fragment = document.createDocumentFragment();
-      for (const row of normalRows) {
-        const datagridRow = new AcDatagridRowElement();
-        if (this.datagridApi.animateRows) {
-          datagridRow.style.position = 'absolute';
-          datagridRow.style.top = '0';
-          datagridRow.style.left = '0';
-          datagridRow.style.width = 'fit-content';
-          datagridRow.style.minWidth = '100%';
-          datagridRow.style.transform = `translateY(${row.index * rowHeight}px)`;
-        }
-        datagridRow.setRow({
-          datagridApi: this.datagridApi,
-          datagridRow: row
-        });
-        this.currentRows.push(datagridRow);
-        this.renderedRowsMap.set(row.rowId, datagridRow);
-        fragment.appendChild(datagridRow);
+      // PERF FIX (4.1): Key-based reconciliation — reuse row elements that are still visible.
+      // Full clearBody()+rebuild only happens when column definitions change (fingerprint mismatch).
+      const newFingerprint = this.datagridApi.datagridColumns.filter(c => c.visible).map(c => c.columnId).join(',');
+      const columnsChanged = newFingerprint !== this._columnsFingerprint;
+      if (columnsChanged) {
+        this._columnsFingerprint = newFingerprint;
       }
-      this.rowsContainer.appendChild(fragment);
+
+      const newIds = new Set(normalRows.map(r => r.rowId));
+
+      // Remove stale rows
+      for (const [rowId, rowEl] of this.renderedRowsMap) {
+        if (!newIds.has(rowId)) {
+          rowEl.remove();
+          rowEl.destroy();
+          this.renderedRowsMap.delete(rowId);
+        }
+      }
+
+      // Add new rows via DocumentFragment; refresh or re-render existing rows
+      const fragment = document.createDocumentFragment();
+      const newCurrentRows: AcDatagridRowElement[] = [];
+      for (const row of normalRows) {
+        let rowEl = this.renderedRowsMap.get(row.rowId);
+        if (!rowEl) {
+          rowEl = new AcDatagridRowElement();
+          if (this.datagridApi.animateRows) {
+            rowEl.style.position = 'absolute';
+            rowEl.style.top = '0';
+            rowEl.style.left = '0';
+            rowEl.style.width = 'fit-content';
+            rowEl.style.minWidth = '100%';
+          }
+          rowEl.setRow({ datagridApi: this.datagridApi, datagridRow: row });
+          this.renderedRowsMap.set(row.rowId, rowEl);
+          fragment.appendChild(rowEl);
+        } else {
+          // Update the data reference (sort/filter may change which data row maps to this rowId)
+          rowEl.datagridRow = row;
+          if (this.datagridApi.animateRows) {
+            rowEl.style.transform = `translateY(${row.index * rowHeight}px)`;
+          }
+          if (columnsChanged) {
+            // Column set changed — need full cell rebuild
+            (rowEl as any).render();
+          } else {
+            rowEl.refresh();
+          }
+        }
+        newCurrentRows.push(rowEl);
+      }
+
+      if (fragment.childNodes.length > 0) {
+        this.rowsContainer.appendChild(fragment);
+      }
+      // PERF FIX (4.2): Maintain currentRows as ordered array; avoid Array.from().sort() every render
+      this.currentRows = newCurrentRows;
     }
 
     // Restore active cell, editing state, and focus on the counterpart row/cell
     if (activeRowId || (activeRowIndex !== undefined && activeRowIndex >= 0)) {
-      const newRowEl = this.currentRows.find(r => r.datagridRow?.rowId === activeRowId)
+      // PERF FIX (5.1): O(1) Map lookup instead of O(n) .find()
+      const newRowEl = (activeRowId ? this.renderedRowsMap.get(activeRowId) : undefined)
         || (activeRowIndex !== undefined && activeRowIndex >= 0 && activeRowIndex < this.currentRows.length ? this.currentRows[activeRowIndex] : undefined);
 
       if (newRowEl) {
@@ -379,7 +426,7 @@ export class AcDatagridBody extends AcElementBase {
 
   renderVirtualRows(customScrollTop?: number) {
     if (!this.datagridApi || !this.rowsContainer) return;
-    const normalRows = this.datagridApi.displayedDatagridRows.filter(r => !r.pinned);
+    const normalRows = this.getNormalRows();
     const totalRows = normalRows.length;
     const rowHeight = this.datagridApi.rowHeight || 36;
     const totalHeight = totalRows * rowHeight;
@@ -445,6 +492,7 @@ export class AcDatagridBody extends AcElementBase {
       }
     }
 
+    // PERF FIX (4.2): Keep sort here for virtual scroll since renderedRowsMap is the source of truth
     this.currentRows = Array.from(this.renderedRowsMap.values()).sort(
       (a, b) => (a.datagridRow?.index ?? 0) - (b.datagridRow?.index ?? 0)
     );
@@ -457,7 +505,7 @@ export class AcDatagridBody extends AcElementBase {
       const rowHeight = this.datagridApi?.rowHeight || 36;
       const rowEl = rowElement || this.renderedRowsMap.get(rowId) || this.currentRows.find(r => r.datagridRow?.rowId === rowId);
 
-      const normalRows = this.datagridApi?.displayedDatagridRows.filter(r => !r.pinned) || [];
+      const normalRows = this.getNormalRows();
       const remainingRows = this.currentRows.filter(r => r !== rowEl);
       for (let i = 0; i < remainingRows.length; i++) {
         const mountedEl = remainingRows[i];
@@ -506,7 +554,7 @@ export class AcDatagridBody extends AcElementBase {
   }
 
   resequenceRows() {
-    const normalRows = this.datagridApi?.displayedDatagridRows.filter(r => !r.pinned) || [];
+    const normalRows = this.getNormalRows();
     const rh = this.datagridApi?.rowHeight || 36;
     for (let i = 0; i < this.currentRows.length; i++) {
       const el = this.currentRows[i];
@@ -526,12 +574,13 @@ export class AcDatagridBody extends AcElementBase {
   animateRowExpansion({ parentRow, childRows }: { parentRow: IAcDatagridRow, childRows: IAcDatagridRow[] }) {
     const rowHeight = this.datagridApi?.rowHeight || 36;
     const parentTop = parentRow.index * rowHeight;
-    const normalRows = this.datagridApi?.displayedDatagridRows.filter(r => !r.pinned) || [];
+    const normalRows = this.getNormalRows();
     if (this.rowsContainer) {
       this.rowsContainer.style.height = `${normalRows.length * rowHeight}px`;
     }
 
-    const parentEl = this.renderedRowsMap.get(parentRow.rowId) || this.currentRows.find(r => r.datagridRow?.rowId === parentRow.rowId);
+    // PERF FIX (5.2): renderedRowsMap is source of truth — remove O(n) .find() fallback
+    const parentEl = this.renderedRowsMap.get(parentRow.rowId);
     if (parentEl) {
       parentEl.classList.add('ac-datagrid-row-expanded');
       parentEl.refresh();
@@ -575,15 +624,22 @@ export class AcDatagridBody extends AcElementBase {
         }
       });
     });
-    this.currentRows = Array.from(this.renderedRowsMap.values()).sort((a, b) => (a.datagridRow?.index ?? 0) - (b.datagridRow?.index ?? 0));
+    // PERF FIX (4.2): Push new rows + sort once instead of Array.from(Map.values()).sort() each time
+    for (const childEl of newChildEls) {
+      if (!this.currentRows.includes(childEl)) {
+        this.currentRows.push(childEl);
+      }
+    }
+    this.currentRows.sort((a, b) => (a.datagridRow?.index ?? 0) - (b.datagridRow?.index ?? 0));
   }
 
   animateRowCollapse({ parentRow, childRowIds }: { parentRow: IAcDatagridRow, childRowIds: Set<string> }) {
     const rowHeight = this.datagridApi?.rowHeight || 36;
     const parentTop = parentRow.index * rowHeight;
-    const normalRows = this.datagridApi?.displayedDatagridRows.filter(r => !r.pinned) || [];
+    const normalRows = this.getNormalRows();
 
-    const parentEl = this.renderedRowsMap.get(parentRow.rowId) || this.currentRows.find(r => r.datagridRow?.rowId === parentRow.rowId);
+    // PERF FIX (5.2): renderedRowsMap is source of truth — remove O(n) .find() fallback
+    const parentEl = this.renderedRowsMap.get(parentRow.rowId);
     if (parentEl) {
       parentEl.classList.remove('ac-datagrid-row-expanded');
       parentEl.refresh();
@@ -591,7 +647,8 @@ export class AcDatagridBody extends AcElementBase {
 
     const collapsingEls: AcDatagridRowElement[] = [];
     for (const childId of childRowIds) {
-      const childEl = this.renderedRowsMap.get(childId) || this.currentRows.find(e => e.datagridRow?.rowId === childId);
+      // PERF FIX (5.2): O(1) Map lookup
+      const childEl = this.renderedRowsMap.get(childId);
       if (childEl) {
         childEl.style.transform = `translateY(${parentTop}px)`;
         childEl.style.opacity = '0';
@@ -621,7 +678,12 @@ export class AcDatagridBody extends AcElementBase {
           this.renderedRowsMap.delete(childEl.datagridRow.rowId);
         }
       }
-      this.currentRows = Array.from(this.renderedRowsMap.values()).sort((a, b) => (a.datagridRow?.index ?? 0) - (b.datagridRow?.index ?? 0));
+      // PERF FIX (4.2): Splice collapsed rows from currentRows + sort once, avoid full Array.from rebuild
+      for (const childEl of collapsingEls) {
+        const idx = this.currentRows.indexOf(childEl);
+        if (idx >= 0) this.currentRows.splice(idx, 1);
+      }
+      this.currentRows.sort((a, b) => (a.datagridRow?.index ?? 0) - (b.datagridRow?.index ?? 0));
     }, 250);
   }
 

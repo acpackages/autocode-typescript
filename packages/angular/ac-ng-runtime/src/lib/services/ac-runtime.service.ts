@@ -1,8 +1,8 @@
-/* eslint-disable @angular-eslint/prefer-inject */
+﻿/* eslint-disable @angular-eslint/prefer-inject */
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { CommonModule } from '@angular/common';
-import { Injectable, Injector, NgModuleRef, Type, StaticProvider, ComponentFactoryResolver, ApplicationRef, ComponentRef, Compiler, Component, EventEmitter, Input, Output, ViewContainerRef, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { createNgModule, ApplicationRef, ChangeDetectorRef, Component, ComponentRef, ElementRef, EventEmitter, Injectable, Input, Injector, NgModuleRef, Output, StaticProvider, Type, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import * as ts from 'typescript';
 
 @Injectable({ providedIn: 'root' })
@@ -19,18 +19,22 @@ export class AcRuntimeService {
 
   static registerComponentType(componentType: Type<any>, name: string = ""): void {
     if (name == "") {
-      name = componentType.prototype.constructor.name.substring(1);
+      // ANG-9: Safely strip leading $ prefix (generated class names begin with $$$ClassName)
+      const rawName = componentType.prototype.constructor.name;
+      name = rawName.replace(/^\$+/, "") || rawName;
     }
     AcRuntimeService.componentRegistry[name] = componentType;
+  }
+
+  /** ANG-9: Clear component registry (for HMR/hot module replacement). */
+  static clearRegistry(): void {
+    AcRuntimeService.componentRegistry = {};
   }
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
-    private injector: Injector,
-    private compiler: Compiler,
-
-  ) { }
+    private injector: Injector,) { }
 
   createComponent(nameOrType: string | Type<any>, data?: any): ComponentRef<any> | null {
     const componentType = typeof nameOrType === 'string' ? AcRuntimeService.componentRegistry[nameOrType] : nameOrType;
@@ -94,6 +98,9 @@ export class AcRuntimeService {
           //
         }
       }
+      // ANG-5: Destroy the temp component to avoid memory leak
+      this.appRef.detachView(componentRef!.hostView);
+      componentRef!.destroy();
     }
     return {
       className:className,
@@ -113,7 +120,7 @@ export class AcRuntimeService {
       return this.loadedModules.get(moduleType)!;
     }
     const moduleInjector = Injector.create({ providers, parent: this.injector });
-    const moduleRef = new moduleType(moduleInjector) as NgModuleRef<T>;
+    const moduleRef = createNgModule<T>(moduleType, moduleInjector);
     this.loadedModules.set(moduleType, moduleRef);
     return moduleRef;
   }

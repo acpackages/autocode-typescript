@@ -15,7 +15,9 @@ import { AC_REPEATER_TAG } from "../consts/ac-repeater-tag.const";
 export class AcRepeaterBodyElement extends AcElementBase {
   private repeater: AcRepeaterElement;
   private repeaterApi: AcRepeaterApi;
-  private currentRows:AcRepeaterRowElement[] = [];
+  private currentRows: AcRepeaterRowElement[] = [];
+  // PERF FIX (3.1): Key-based row reconciliation — avoids full DOM teardown on every render
+  private _renderedRowMap: Map<string, AcRepeaterRowElement> = new Map();
 
   private autoBindRepeater() {
     if (this.isConnected) {
@@ -29,6 +31,18 @@ export class AcRepeaterBodyElement extends AcElementBase {
             this.setDisplayedRows();
           }
         });
+        // PERF FIX (2.1): Single delegated RowUpdate subscription instead of N per-row subscriptions.
+        // This eliminates the accumulation of dangling subscriptions when rows are destroyed and recreated.
+        this.repeaterApi.hooks.subscribe({
+          hook: AcEnumRepeaterHook.RowUpdate,
+          callback: (args: any) => {
+            const rowId = args?.repeaterRow?.rowId;
+            if (rowId) {
+              const rowEl = this._renderedRowMap.get(rowId);
+              rowEl?.refresh();
+            }
+          }
+        });
         const hookArgs: IAcRepeaterBodyHookArgs = {
           repeaterApi: this.repeaterApi,
           datagridBody: this
@@ -36,19 +50,22 @@ export class AcRepeaterBodyElement extends AcElementBase {
         this.repeaterApi.hooks.execute({ hook: AcEnumRepeaterHook.BodyCreate, args: hookArgs });
       }
     }
-    else{
-      this.delayedCallback.add({callback:()=>{
-        this.autoBindRepeater();
-      },duration:50,key:'autoInit'});
+    else {
+      this.delayedCallback.add({
+        callback: () => {
+          this.autoBindRepeater();
+        }, duration: 50, key: 'autoInit'
+      });
     }
   }
 
-  private clearBody(){
-    for(const row of this.currentRows){
+  private clearBody() {
+    for (const row of this.currentRows) {
       row.remove();
       row.destroy();
     }
-    acClearElement({element:this});
+    this._renderedRowMap.clear();
+    acClearElement({ element: this });
     this.currentRows = [];
   }
 
@@ -96,16 +113,40 @@ export class AcRepeaterBodyElement extends AcElementBase {
   }
 
   setDisplayedRows() {
-    this.clearBody();
-    for (const row of this.repeaterApi.displayedRepeaterRows) {
-      const repeaterRow = new AcRepeaterRowElement();
-      repeaterRow.setRow({
-        repeaterApi: this.repeaterApi,
-        repeaterRow: row
-      })
-      this.currentRows.push(repeaterRow);
-      this.append(repeaterRow);
+    // PERF FIX (3.1): Key-based reconciliation — reuse existing row elements instead of full teardown.
+    // At 200 rows this reduces element destructions+creations from 200 to only the delta (adds/removes).
+    const newRows = this.repeaterApi.displayedRepeaterRows;
+    const newIds = new Set(newRows.map(r => r.rowId));
+
+    // Step 1: Remove rows no longer in the displayed set
+    for (const [rowId, el] of this._renderedRowMap) {
+      if (!newIds.has(rowId)) {
+        el.remove();
+        el.destroy();
+        this._renderedRowMap.delete(rowId);
+      }
     }
+
+    // Step 2: Add new rows via DocumentFragment, refresh existing rows in-place
+    const fragment = document.createDocumentFragment();
+    const newCurrentRows: AcRepeaterRowElement[] = [];
+    for (const row of newRows) {
+      let el = this._renderedRowMap.get(row.rowId);
+      if (!el) {
+        el = new AcRepeaterRowElement();
+        el.setRow({ repeaterApi: this.repeaterApi, repeaterRow: row });
+        this._renderedRowMap.set(row.rowId, el);
+        fragment.appendChild(el);
+      } else {
+        el.refresh();
+      }
+      newCurrentRows.push(el);
+    }
+
+    if (fragment.childNodes.length > 0) {
+      this.appendChild(fragment);
+    }
+    this.currentRows = newCurrentRows;
   }
 }
 

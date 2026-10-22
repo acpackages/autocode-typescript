@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcRuntimeElement } from './ac-runtime-element';
 import { evaluateAcPipeExpression } from '@autocode-ts/ac-pipes';
 export class AcElementRenderer {
+  /** PERF-1: Shared Function cache across all renderer instances. Keyed by expression string. */
+  static readonly _fnCache = new Map<string, Function>();
   context: any;
   parentRenderer?: AcElementRenderer;
   rootElement!: AcRuntimeElement;
@@ -19,6 +21,8 @@ export class AcElementRenderer {
   ownedTargetIds: string[] = [];
   childRendererClass?: any;
   private subscriptions: (() => void)[] = [];
+  /** LEAK-7: Track subscribed paths to prevent duplicate registrations on re-init. */
+  private _subscribedPaths = new Set<string>();
   commentCache: Map<string, Comment> = new Map();
   private activeCommentSearches: Set<string> = new Set();
 
@@ -101,7 +105,8 @@ export class AcElementRenderer {
   }
 
   updateContext(contextUpdates: any): void {
-    this.context = { ...this.context, ...contextUpdates };
+    // PERF-7: Object.assign avoids creating a new object on every context update
+    Object.assign(this.context, contextUpdates);
     for (const key of Object.keys(this.childRenderers)) {
       this.childRenderers[key].updateContext(contextUpdates);
     }
@@ -128,6 +133,7 @@ export class AcElementRenderer {
     this.nodes = [];
 
     this.commentCache.clear();
+    this._subscribedPaths.clear();
     for (const unsub of this.subscriptions) {
       unsub();
     }
@@ -135,6 +141,9 @@ export class AcElementRenderer {
   }
 
   protected subscribe(path: string, callback: () => void): void {
+    // LEAK-7: Skip if this exact path is already subscribed in this renderer instance
+    if (this._subscribedPaths.has(path)) return;
+    this._subscribedPaths.add(path);
     const unsub = this.rootElement.subscribePath(path, callback);
     this.subscriptions.push(unsub);
   }
@@ -201,14 +210,19 @@ export class AcElementRenderer {
       });
     }
     try {
-      const fn = new Function(
-        'scope',
-        'context',
-        `with (context) { with (scope) { return ${expression} } }`
-      );
-      const result = fn.call(this.rootElement.acRuntimeInstance, context, this.rootElement.acRuntimeInstance);
-      // console.log("[AcRuntimeRenderer] Evaluating Expression",normalizedExpr,scope,this.context,result);
-      return result;
+      // PERF-1: Cache compiled Function objects by expression string.
+      // new Function() is expensive; the same expression (e.g. `this.count > 5`) is
+      // evaluated many times per second during reactive updates.
+      let fn = AcElementRenderer._fnCache.get(expression);
+      if (!fn) {
+        fn = new Function(
+          'scope',
+          'context',
+          `with (context) { with (scope) { return ${expression} } }`
+        );
+        AcElementRenderer._fnCache.set(expression, fn);
+      }
+      return fn.call(this.rootElement.acRuntimeInstance, context, this.rootElement.acRuntimeInstance);
     } catch (e) {
       console.error(this);
       console.error(`Error evaluating expression: ${expression} `, e);
@@ -727,7 +741,8 @@ export class AcElementArrayRenderer extends AcElementRenderer {
   }
 
   override updateContext(contextUpdates: any): void {
-    this.context = { ...this.context, ...contextUpdates };
+    // PERF-7: Object.assign avoids creating a new object on every context update
+    Object.assign(this.context, contextUpdates);
     for (const key of Object.keys(this.childRenderers)) {
       this.childRenderers[key].updateContext(contextUpdates);
     }
@@ -735,7 +750,7 @@ export class AcElementArrayRenderer extends AcElementRenderer {
 
   refreshLoop({ items, context }: { items: any[]; context?: any }) {
     if (context) {
-      this.context = { ...this.context, ...context };
+      Object.assign(this.context, context);
     }
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
@@ -753,11 +768,13 @@ export class AcElementArrayRenderer extends AcElementRenderer {
     const deleteCount = items.length;
     const keysToDelete: string[] = this.loopItemOrder.splice(startIdx, deleteCount);
     if (keysToDelete.length === 0) {
+      // PERF-5: Build inverted index once for O(1) lookup instead of O(n) scan
+      const invertedMap = new Map<number, string>();
+      for (const k of Object.keys(this.loopItemRendererMap)) {
+        invertedMap.set(this.loopItemRendererMap[k], k);
+      }
       for (let i = 0; i < deleteCount; i++) {
-        const targetIdx = startIdx + i;
-        const key = Object.keys(this.loopItemRendererMap).find(
-          k => this.loopItemRendererMap[k] === targetIdx
-        );
+        const key = invertedMap.get(startIdx + i);
         if (key) keysToDelete.push(key);
       }
     }

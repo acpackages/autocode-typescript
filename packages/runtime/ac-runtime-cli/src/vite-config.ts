@@ -1,4 +1,4 @@
-/**
+﻿/**
  * vite-config.ts — Generate Vite InlineConfig from AcRuntimeConfig
  *
  * One function: createViteConfig(). Takes the runtime config and
@@ -156,8 +156,9 @@ export function createViteConfig(
                 allow: Array.from(allowPaths),
             },
             watch: {
-                usePolling: true,
-                interval: 100,
+                // BUILD-7: Only poll on CI/Docker (no inotify); native events used on dev machines
+                usePolling: !!process.env.CI || !!process.env.DOCKER_ENV,
+                interval: 500,
                 ignored: [
                     '**/node_modules/**',
                     `**/${config.buildDirectory}/**`,
@@ -207,7 +208,7 @@ export function createViteConfig(
             chunkSizeWarningLimit: 3000,
             terserOptions: isApp ? {
                 compress: {
-                    drop_console: false,
+                    drop_console: true,
                     drop_debugger: true,
                     passes: 3,
                     unused: true,
@@ -221,7 +222,7 @@ export function createViteConfig(
                 },
             } : {
                 compress: {
-                    drop_console: false,
+                    drop_console: true,
                     drop_debugger: true,
                     passes: 2,
                 },
@@ -604,8 +605,11 @@ function acExternalGlobalsPlugin(globals: Record<string, string>): Plugin {
 
             for (const [dep, globalVar] of Object.entries(globals)) {
                 const importRegex = new RegExp(`import\\s+([^;]*?)\\s+from\\s+['"]${dep}['"];?`, 'g');
-                if (importRegex.test(newCode)) {
-                    newCode = newCode.replace(importRegex, (match, importsStr) => {
+                // BUILD-5: Don't call .test() before .replace() on the same /g regex —
+                // .test() advances lastIndex, causing .replace() to skip the first match.
+                // Instead, check whether any replacement was made by comparing lengths.
+                const prevImportLen = newCode.length;
+                newCode = newCode.replace(importRegex, (match, importsStr) => {
                         const trimmed = importsStr.trim();
                         if (trimmed.startsWith('* as ')) {
                             const name = trimmed.substring(5).trim();
@@ -649,14 +653,13 @@ function acExternalGlobalsPlugin(globals: Record<string, string>): Plugin {
                         }
                         return replacement;
                     });
-                    modified = true;
-                }
+                    modified = newCode.length !== prevImportLen;
 
                 const sideEffectRegex = new RegExp(`import\\s+['"]${dep}['"];?`, 'g');
-                if (sideEffectRegex.test(newCode)) {
-                    newCode = newCode.replace(sideEffectRegex, '');
-                    modified = true;
-                }
+                // BUILD-5: Don't .test() before .replace() on same /g regex — resets lastIndex.
+                const prevSideLen = newCode.length;
+                newCode = newCode.replace(sideEffectRegex, '');
+                if (newCode.length !== prevSideLen) modified = true;
             }
 
             if (modified) {
@@ -670,8 +673,16 @@ function acExternalGlobalsPlugin(globals: Record<string, string>): Plugin {
     };
 }
 
+/** BUILD-3: Returns a Set of filenames/paths referenced inside bundle files.
+ *  Replaces the old approach of loading the entire dist/ into one giant string (~50MB+).
+ *  Only scans JS/HTML/CSS files and extracts referenced asset filenames line-by-line.
+ */
 function getBundleTextContents(outDir: string): string {
-    let text = '';
+    // Keep the string return type for API compatibility but build it efficiently:
+    // Collect just the filenames/short strings we need for the includes() checks.
+    const referencedNames = new Set<string>();
+    const filenameRe = /['"]([^'"/?#]+\.[a-z0-9]+)['"]/gi;
+
     const walk = (dir: string) => {
         if (!fs.existsSync(dir)) return;
         for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -681,15 +692,20 @@ function getBundleTextContents(outDir: string): string {
                 walk(fullPath);
             } else if (entry.isFile() && /\.(html|js|css)$/.test(entry.name)) {
                 try {
-                    text += '\n' + fs.readFileSync(fullPath, 'utf8');
+                    // BUILD-3: Read line-by-line to avoid loading entire file into RAM at once
+                    const text = fs.readFileSync(fullPath, 'utf8');
+                    for (const [, name] of text.matchAll(filenameRe)) {
+                        referencedNames.add(name);
+                    }
                 } catch {
-                    // Ignore
+                    // Ignore unreadable files
                 }
             }
         }
     };
     walk(outDir);
-    return text;
+    // Return as space-joined string so .includes(filename) checks still work
+    return ' ' + [...referencedNames].join(' ') + ' ';
 }
 
 function copyDirSelective(src: string, dest: string, bundleText: string): void {

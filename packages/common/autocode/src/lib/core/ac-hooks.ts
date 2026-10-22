@@ -2,14 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
-import { AcHookExecutionResult } from "../models/ac-hook-execution-result.model";
-import { acNullifyInstanceProperties } from "../utils/ac-utility-functions";
-import { Autocode } from "./autocode";
+import { AcDispatchResult } from '../models/ac-dispatch-result.model';
+import { AcHookExecutionResult } from '../models/ac-hook-execution-result.model';
+import { acNullifyInstanceProperties } from '../utils/ac-utility-functions';
+import { Autocode } from './autocode';
 
 export class AcHooks {
   // Map<lowercaseHookName, Map<subscriptionId, callback>>
   private hooks = new Map<string, Map<string, Function>>();
-  private internalEvents = new Map<string, Map<string, Function>>();
+
+  // Phase 4 (Task 4.2): Reverse index for O(1) unsubscribe by subscriptionId.
+  private _subToHook = new Map<string, string>();
+
+  // Phase 4 (Task 4.3): Replaced nested internalEvents map with a dedicated flat map.
+  private _beforeExecuteCallbacks = new Map<string, Function>();
 
   // Global ("all hooks") listeners: subscriptionId → callback
   private allHookCallbacks = new Map<string, Function>();
@@ -18,32 +24,51 @@ export class AcHooks {
   clearSubscriptions() {
     this.hooks.clear();
     this.allHookCallbacks.clear();
+    this._subToHook.clear();
+    this._beforeExecuteCallbacks.clear();
   }
 
-  destroy(){
-    acNullifyInstanceProperties({instance:this});
+  destroy() {
+    acNullifyInstanceProperties({ instance: this });
   }
 
   hasSubscribers({ hook }: { hook: string }): boolean {
     const name = hook.toLowerCase();
     const hookListeners = this.hooks.get(name);
-    return (hookListeners && hookListeners.size > 0) || this.allHookCallbacks.size > 0;
+    return (hookListeners !== undefined && hookListeners.size > 0) || this.allHookCallbacks.size > 0;
   }
 
   /**
-   * Execute a hook with arguments
-   * Hook handlers can return AcHookExecutionResult or any value
-   * If any handler sets .continueOperation = false → execution stops early
+   * Execute a hook with arguments.
+   * Hook handlers can return AcHookExecutionResult or any value.
+   * If any handler sets .continueOperation = false → execution stops early.
+   *
+   * Phase 3 (Task 3.3): Returns AcDispatchResult.EMPTY (frozen sentinel) when
+   * there are zero subscribers — zero allocations on the fast path.
    */
   execute({ hook, args = [] }: { hook: string; args?: any }): AcHookExecutionResult {
-    const result = new AcHookExecutionResult();
     const name = hook.toLowerCase();
+
+    // ── Zero-subscriber fast path (Phase 3) ───────────────────────────────────
+    const hookListeners = this.hooks.get(name);
+    const hasListeners =
+      (hookListeners !== undefined && hookListeners.size > 0) ||
+      this.allHookCallbacks.size > 0 ||
+      this._beforeExecuteCallbacks.size > 0;
+
+    if (!hasListeners) return AcDispatchResult.EMPTY as AcHookExecutionResult;
+    // ──────────────────────────────────────────────────────────────────────────
+
+    const result = new AcHookExecutionResult();
+    // Phase 2 (Task 2.3): boolean flag instead of Object.keys() allocation
+    let hasResults = false;
     const functionResults: Record<string, any> = {};
     let continueOperation = true;
+
     try {
-      const beforeListeners = this.internalEvents.get("beforeexecute");
-      if (beforeListeners) {
-        for (const callback of beforeListeners.values()) {
+      // Phase 4 (Task 4.3): direct map, no nested lookup
+      if (this._beforeExecuteCallbacks.size > 0) {
+        for (const callback of this._beforeExecuteCallbacks.values()) {
           try {
             callback({ hook: name, args });
           } catch (ex: any) {
@@ -53,20 +78,20 @@ export class AcHooks {
       }
 
       // Execute specific hook listeners
-      const hookListeners = this.hooks.get(name);
       if (hookListeners) {
         for (const [subId, callback] of hookListeners.entries()) {
           if (!continueOperation) break;
 
           try {
-            if(typeof callback == 'function'){
+            // Phase 2 (Task 2.2): typeof guard removed — Map<string, Function> already typed
             const res = callback(args);
 
             if (res !== undefined && res !== null) {
               functionResults[subId] = res;
+              hasResults = true; // Phase 2 (Task 2.3)
 
               // Support both AcHookExecutionResult and plain objects
-              const isFailure = typeof (res as any).isFailure === "function" && (res as any).isFailure();
+              const isFailure = typeof (res as any).isFailure === 'function' && (res as any).isFailure();
               const shouldStop = (res as any).continueOperation === false;
 
               if (isFailure || shouldStop) {
@@ -74,7 +99,6 @@ export class AcHooks {
                 result.continueOperation = false;
               }
             }
-          }
           } catch (ex: any) {
             console.error(`Hook handler failed [${name}] (id: ${subId}):`, ex);
           }
@@ -86,13 +110,14 @@ export class AcHooks {
         if (!continueOperation) break;
 
         try {
-          if(typeof callback == 'function'){
+          // Phase 2 (Task 2.2): typeof guard removed
           const res = callback(name, args);
 
           if (res !== undefined && res !== null) {
             functionResults[subId] = res;
+            hasResults = true; // Phase 2 (Task 2.3)
 
-            const isFailure = typeof (res as any).isFailure === "function" && (res as any).isFailure();
+            const isFailure = typeof (res as any).isFailure === 'function' && (res as any).isFailure();
             const shouldStop = (res as any).continueOperation === false;
 
             if (isFailure || shouldStop) {
@@ -100,13 +125,13 @@ export class AcHooks {
               result.continueOperation = false;
             }
           }
-        }
         } catch (ex: any) {
           console.error(`Global hook handler failed (id: ${subId}):`, ex);
         }
       }
 
-      if (Object.keys(functionResults).length > 0) {
+      // Phase 2 (Task 2.3): boolean flag — no Object.keys() array allocation
+      if (hasResults) {
         result.hasResults = true;
         result.results = functionResults;
       }
@@ -114,31 +139,27 @@ export class AcHooks {
       result.setSuccess();
     } catch (ex: any) {
       result.setException({ exception: ex });
-      console.error("Critical error in AcHooks.execute():", ex);
+      console.error('Critical error in AcHooks.execute():', ex);
     }
-    (args as any) = null;
+    // Phase 1 (Task 1.2): removed (args as any) = null — was a no-op
     return result;
   }
 
   /**
-   * Subscribe to an internal event (e.g., "beforeexecute")
+   * Subscribe to the beforeExecute internal lifecycle event.
+   * Phase 4 (Task 4.3): now backed by _beforeExecuteCallbacks directly.
    * @returns subscriptionId
    */
   on({ event, callback }: { event: string; callback: Function }): string {
-    const name = event.toLowerCase();
-    let eventMap = this.internalEvents.get(name);
-    if (!eventMap) {
-      eventMap = new Map<string, Function>();
-      this.internalEvents.set(name, eventMap);
+    const id = Autocode.uniqueId();
+    if (event.toLowerCase() === 'beforeexecute') {
+      this._beforeExecuteCallbacks.set(id, callback);
     }
-
-    const subscriptionId = Autocode.uniqueId();
-    eventMap.set(subscriptionId, callback);
-    return subscriptionId;
+    return id;
   }
 
   /**
-   * Unsubscribe from an internal event
+   * Unsubscribe from the beforeExecute internal event.
    * @returns true if something was removed
    */
   off({
@@ -150,40 +171,23 @@ export class AcHooks {
     callback?: Function;
     subscriptionId?: string;
   }): boolean {
-    if (!subscriptionId && !event) return false;
-
     if (subscriptionId) {
-      // Fast path: remove by ID from all internal events
-      for (const map of this.internalEvents.values()) {
-        if (map.delete(subscriptionId)) {
+      return this._beforeExecuteCallbacks.delete(subscriptionId);
+    }
+    if (callback) {
+      for (const [id, cb] of this._beforeExecuteCallbacks.entries()) {
+        if (cb === callback) {
+          this._beforeExecuteCallbacks.delete(id);
           return true;
         }
       }
-      return false;
     }
-
-    // Slower path: find by event + callback
-    if (event) {
-      const name = event.toLowerCase();
-      const map = this.internalEvents.get(name);
-      if (!map) return false;
-
-      if (callback) {
-        for (const [id, cb] of map.entries()) {
-          if (cb === callback) {
-            map.delete(id);
-            return true;
-          }
-        }
-      }
-    }
-
     return false;
   }
 
-
   /**
-   * Subscribe to a specific hook
+   * Subscribe to a specific hook.
+   * Phase 4 (Task 4.2): also registers in _subToHook reverse index.
    * @returns subscriptionId — save this to unsubscribe later!
    */
   subscribe({ hook, callback }: { hook: string; callback: Function }): string {
@@ -197,11 +201,12 @@ export class AcHooks {
 
     const subscriptionId = Autocode.uniqueId();
     hookMap.set(subscriptionId, callback);
+    this._subToHook.set(subscriptionId, name); // Phase 4: reverse index
     return subscriptionId;
   }
 
   /**
-   * Subscribe to ALL hooks (receives hook name + args)
+   * Subscribe to ALL hooks (receives hook name + args).
    */
   subscribeAllHooks({ callback }: { callback: Function }): string {
     const subscriptionId = Autocode.uniqueId();
@@ -210,42 +215,51 @@ export class AcHooks {
   }
 
   /**
-   * Unsubscribe using subscriptionId (only reliable way)
+   * Unsubscribe using subscriptionId (only reliable way).
+   * Phase 4 (Task 4.2): O(1) via reverse index when subscriptionId is provided.
+   * Phase 2 (Task 2.4): (hook, callback) path now deletes directly from the correct map.
    */
-  unsubscribe({ hook, callback, subscriptionId, subscriptionIds }: { hook?: string; callback?: Function; subscriptionId?: string,subscriptionIds?: string[] }): boolean {
-    if(subscriptionIds && subscriptionIds.length > 0){
-      for(const id of subscriptionIds){
-        this.unsubscribe({subscriptionId:id});
+  unsubscribe({ hook, callback, subscriptionId, subscriptionIds }: {
+    hook?: string;
+    callback?: Function;
+    subscriptionId?: string;
+    subscriptionIds?: string[];
+  }): boolean {
+    if (subscriptionIds && subscriptionIds.length > 0) {
+      for (const id of subscriptionIds) {
+        this.unsubscribe({ subscriptionId: id });
       }
       return true;
     }
 
+    // Phase 2 (Task 2.4): direct delete — no second scan loop
     if (hook && callback) {
       const name = hook.toLowerCase();
       const hookMap = this.hooks.get(name);
       if (hookMap) {
         for (const [id, cb] of hookMap.entries()) {
           if (cb === callback) {
-            subscriptionId = id;
-            break;
+            hookMap.delete(id);
+            this._subToHook.delete(id); // keep reverse index consistent
+            return true;
           }
         }
       }
+      return false;
     }
 
     if (!subscriptionId) return false;
 
-    let removed = false;
-
-    // Remove from specific events
-    for (const eventMap of this.hooks.values()) {
-      if (eventMap.delete(subscriptionId)) {
-        removed = true;
-      }
+    // Phase 4 (Task 4.2): O(1) reverse-index lookup
+    const hookName = this._subToHook.get(subscriptionId);
+    if (hookName !== undefined) {
+      const removed = this.hooks.get(hookName)?.delete(subscriptionId) ?? false;
+      if (removed) this._subToHook.delete(subscriptionId);
+      return removed;
     }
 
-
-    return removed;
+    // Fallback: scan allHookCallbacks (not indexed)
+    return this.allHookCallbacks.delete(subscriptionId);
   }
 
   unsubscribeAllHooks({ callback, subscriptionId }: { callback?: Function; subscriptionId?: string } = {}): boolean {
@@ -261,16 +275,23 @@ export class AcHooks {
     return this.allHookCallbacks.delete(subscriptionId);
   }
 
-
   /**
-   * Remove an entire hook and all its listeners
+   * Remove an entire hook and all its listeners.
    */
   removeHook({ hook }: { hook: string }): void {
-    this.hooks.delete(hook.toLowerCase());
+    const name = hook.toLowerCase();
+    const hookMap = this.hooks.get(name);
+    if (hookMap) {
+      // Clean up reverse index entries for this hook
+      for (const subId of hookMap.keys()) {
+        this._subToHook.delete(subId);
+      }
+    }
+    this.hooks.delete(name);
   }
 
   /**
-   * Debug: Get subscription stats
+   * Debug: Get subscription stats.
    */
   getSubscriptionCount(): {
     total: number;
@@ -293,5 +314,5 @@ export class AcHooks {
   }
 }
 
-/** Global singleton — safe now */
+/** Global singleton */
 export const acHooks = new AcHooks();

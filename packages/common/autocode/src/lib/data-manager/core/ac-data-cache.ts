@@ -35,9 +35,14 @@ export class AcDataCache {
     return result;
   }
 
-  clearAllCollections(){
-    for(const collection of Object.keys(this.collections)){
-      this.collections.get(collection)!.rows = [];
+  /**
+   * Clears all rows from every registered collection.
+   * Phase 8 (Task 8.2): Fixed bug — Object.keys() on a Map always returns [].
+   * Now iterates Map.values() correctly.
+   */
+  clearAllCollections(): void {
+    for (const collection of this.collections.values()) {
+      collection.rows = [];
     }
   }
 
@@ -93,22 +98,37 @@ export class AcDataCache {
     return exists;
   }
 
+  /**
+   * Clears and repopulates a collection via the onDemandFunction.
+   * Phase 8 (Task 8.5): Fixed async contract — the returned Promise now resolves
+   * only after successCallback fires, and rejects on error. Previously the method
+   * resolved immediately (fire-and-forget), causing silent data loss with async impls.
+   */
   async refreshCollection({ collection }: { collection: string }): Promise<void> {
     const cacheCollection = this.collections.get(collection);
     if (!cacheCollection) {
       throw new Error(`Collection ${collection} not found`);
     }
-    if (this.onDemandFunction) {
-      cacheCollection.rows = [];
+    if (!this.onDemandFunction) return;
+
+    cacheCollection.rows = [];
+
+    return new Promise<void>((resolve, reject) => {
       const requestArgs: IAcOnDemandRequestArgs = {
         successCallback: (response: IAcOnDemandResponseArgs) => {
           cacheCollection.rows = response.data;
+          resolve();
+        },
+        errorCallback: (error: any) => {
+          reject(error);
         }
       };
-      this.onDemandFunction({ collection, args: requestArgs });
-    } else {
-      //
-    }
+      try {
+        this.onDemandFunction!({ collection, args: requestArgs });
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   registerCollection({ collection, uniqueRowKey,rows }: { collection: string, uniqueRowKey: string,rows?:any[] }) {
