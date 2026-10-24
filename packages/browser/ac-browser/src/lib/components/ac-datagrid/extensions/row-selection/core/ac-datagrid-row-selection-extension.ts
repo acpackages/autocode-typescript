@@ -54,7 +54,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedRows: IAcDatagridRow[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
+      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
         selectedRows.push(row);
       }
     }
@@ -66,7 +66,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedData: any[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
+      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
         selectedData.push(row.data);
       }
     }
@@ -78,7 +78,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedKeyValues: any[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected && row.data[key] != undefined) {
+      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected && row.data[key] != undefined) {
         selectedKeyValues.push(row.data[key]);
       }
     }
@@ -94,6 +94,9 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
       datagridRow = this.datagridApi.getRow({ key: key, value: value });
     }
     if (datagridRow) {
+      if (!datagridRow.extensionData) {
+        datagridRow.extensionData = {};
+      }
       if(!datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]){
         datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] = {};
       }

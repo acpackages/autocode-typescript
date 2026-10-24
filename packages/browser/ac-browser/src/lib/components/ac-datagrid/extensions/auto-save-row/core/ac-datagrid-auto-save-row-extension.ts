@@ -67,7 +67,11 @@ export class AcDatagridAutoSaveRowExtension extends AcDatagridExtension {
   override handleHook({ hook, args }: { hook: string; args: any; }): void {
     if (this.datagridApi) {
       if (stringEqualsIgnoreCase(hook, AC_DATA_MANAGER_HOOK.RowCreate)) {
-        const datagridRow: IAcDatagridRow = args.datagridRow;
+        const datagridRow: IAcDatagridRow = args?.datagridRow ?? args?.dataRow;
+        if (!datagridRow) return;
+        if (!datagridRow.extensionData) {
+          datagridRow.extensionData = {};
+        }
         const extensionData: IAcDatagridAutoSaveRowData = {
           status: "NOT_CHANGED",
         };

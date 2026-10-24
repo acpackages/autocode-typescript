@@ -46,8 +46,8 @@ export class AcDatagridRowSelectionCell {
   }
 
   setSelectionFromInstance(){
-    if(this.input && this.input.checked != this.datagridRow.extensionData![AC_DATAGRID_EXTENSION_NAME.RowSelection]){
-      this.input.checked = this.datagridRow.extensionData![AC_DATAGRID_EXTENSION_NAME.RowSelection];
+    if(this.input && this.datagridRow.extensionData && this.input.checked != this.datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]){
+      this.input.checked = this.datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection];
     }
   }
 

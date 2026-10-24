@@ -1328,6 +1328,9 @@ export class AcDatagridOnAgGridExtension extends AcDatagridExtension {
       this.gridApi.forEachNode((node) => {
         const row = this.datagridApi.getRow({ rowId: node.data['__ac_row_id__'] });
         if (row) {
+          if (!row.extensionData) {
+            row.extensionData = {};
+          }
           if (!row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]) {
             row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] = {};
           }
