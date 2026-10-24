@@ -377,8 +377,12 @@ export class AcDatagridBody extends AcElementBase {
         newCurrentRows.push(rowEl);
       }
 
-      for (const rowEl of newCurrentRows) {
-        this.rowsContainer.appendChild(rowEl);
+      for (let i = 0; i < newCurrentRows.length; i++) {
+        const rowEl = newCurrentRows[i];
+        const currentChild = this.rowsContainer.children[i];
+        if (currentChild !== rowEl) {
+          this.rowsContainer.insertBefore(rowEl, currentChild ?? null);
+        }
       }
       // PERF FIX (4.2): Maintain currentRows as ordered array; avoid Array.from().sort() every render
       this.currentRows = newCurrentRows;

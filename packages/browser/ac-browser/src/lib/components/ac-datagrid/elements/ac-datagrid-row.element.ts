@@ -13,9 +13,11 @@ export class AcDatagridRowElement extends AcElementBase {
   datagridRow!: IAcDatagridRow;
   datagridCells: AcDatagridCellElement[] = [];
   internalCell?: AcDatagridInternalCellElement;
+  isRendered: boolean = false;
   private detailContainer?: HTMLElement;
 
   private clearRow() {
+    this.isRendered = false;
     if (this.internalCell) {
       this.internalCell.remove();
       this.internalCell.destroy();
@@ -35,7 +37,7 @@ export class AcDatagridRowElement extends AcElementBase {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    if (this.datagridRow && this.datagridApi) {
+    if (this.datagridRow && this.datagridApi && !this.isRendered) {
       this.render();
     }
   }
@@ -51,7 +53,6 @@ export class AcDatagridRowElement extends AcElementBase {
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.clearRow();
   }
 
   initElement() {
@@ -138,6 +139,7 @@ export class AcDatagridRowElement extends AcElementBase {
   render() {
     if (!this.datagridRow || !this.datagridApi) return;
     this.clearRow();
+    this.isRendered = true;
 
     const rowHeight = this.datagridApi?.rowHeight || 36;
     this.style.display = 'flex';

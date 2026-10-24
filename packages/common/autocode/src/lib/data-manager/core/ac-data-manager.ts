@@ -881,7 +881,13 @@ export class AcDataManager {
       }
       this._invalidateRowCache();
       this.allDataAvailable = this.allRows.filter((row) => { return row == undefined || row.isPlaceholder == false }).length == 0;
-      this.totalRows = this.allRows.length;
+      this._totalRows = this.allRows.length;
+      const totalRowsEventArgs: IAcDataManagerTotalRowsChangeEvent = {
+        totalRows: this._totalRows,
+        dataManager: this
+      };
+      this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.TotalRowsChange, args: totalRowsEventArgs });
+      this.events.execute({ event: AC_DATA_MANAGER_EVENT.TotalRowsChange, args: totalRowsEventArgs });
       this.setDisplayedRows({
         startIndex: this.displayStartIndex >= 0 ? this.displayStartIndex : startIndex,
         rowsCount: this.displayCount > 0 ? this.displayCount : data.length

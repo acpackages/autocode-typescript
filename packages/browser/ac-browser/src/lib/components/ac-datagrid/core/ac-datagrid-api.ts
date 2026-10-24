@@ -600,7 +600,13 @@ export class AcDatagridApi {
     this.dataManager.logger = this.logger;
     this.events = datagrid.events;
     this.dataManager.events = this.events;
-    this.dataManager.hooks = this.hooks;
+    this.dataManager.hooks.subscribeAllHooks({
+      callback: (hook: string, args: any) => {
+        if (hook.toLowerCase() !== AC_DATA_MANAGER_HOOK.DisplayedRowsChange.toLowerCase()) {
+          this.hooks.execute({ hook, args });
+        }
+      }
+    });
     // PERF FIX (1.2): Invalidate displayedDatagridRows cache on every DisplayedRowsChange
     this.hooks.subscribe({
       hook: AC_DATAGRID_HOOK.DisplayedRowsChange,

@@ -99,7 +99,7 @@ export class AcPaginationElement extends AcElementBase {
     });
     dataManager.on({
       event: AC_DATA_MANAGER_EVENT.OnDemandFunctionSet, callback: () => {
-        this.dataManager?.getRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
+        this.dataManager?.getRows({ startIndex: Math.max(0, this.startRow - 1), rowsCount: this.activePageSize });
       }
     });
   }

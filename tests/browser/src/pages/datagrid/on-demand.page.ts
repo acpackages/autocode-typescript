@@ -2,7 +2,8 @@
 import { AcElement, AcViewChild } from "@autocode-ts/ac-runtime";
 import {
   AcDatagridElement,
-  AC_DATAGRID_EXTENSION_NAME
+  AC_DATAGRID_EXTENSION_NAME,
+  IAcDatagridCellElementArgs
 } from "@autocode-ts/ac-browser";
 import {
   AcDataManager,
@@ -140,7 +141,13 @@ export class DatagridOnDemandPage {
         width: 80,
         cellClass: 'text-center',
         headerCellClass: 'text-center',
-        allowSort: true
+        allowSort: true,
+        cellRendererFunction: (args: IAcDatagridCellElementArgs) => {
+          const element: HTMLElement = document.createElement("span");
+          console.log("Generating SR No");
+          element.innerHTML = `${args.datagridCell.datagridRow?.data['index']}`;
+          return element;
+        }
       },
       { field: 'first_name', title: 'First Name', allowEdit: true, allowSort: true },
       { field: 'last_name', title: 'Last Name', allowEdit: true, allowSort: true },
@@ -205,8 +212,10 @@ export class DatagridOnDemandPage {
       }, this.latency);
     };
 
-    // Initial load
-    api.dataManager.refreshRows();
+    // Initial load (if not using pagination, which auto-requests page 1 on onDemandFunction set)
+    if (!api.usePagination) {
+      api.dataManager.refreshRows();
+    }
   }
 
   onSearch(event: any) {
