@@ -64,6 +64,7 @@ export const SIDEBAR_NAV: IAppNavItem[] = [
     children: [
       { label: 'Kitchen Sink', route: APP_ROUTES.datagrid.kitchenSink },
       { label: 'Local Data', route: APP_ROUTES.datagrid.local },
+      { label: 'On Demand Data', route: APP_ROUTES.datagrid.onDemand },
       { label: 'Column Resizing', route: APP_ROUTES.datagrid.columnResizing },
       { label: 'Column Dragging', route: APP_ROUTES.datagrid.columnDragging },
       { label: 'Row Dragging', route: APP_ROUTES.datagrid.rowDragging },

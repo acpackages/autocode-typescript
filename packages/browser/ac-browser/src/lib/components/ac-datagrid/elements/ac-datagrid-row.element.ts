@@ -79,10 +79,12 @@ export class AcDatagridRowElement extends AcElementBase {
       this.style.height = `${rh}px`;
       this.style.minHeight = `${rh}px`;
       this.style.maxHeight = `${rh}px`;
+      this.classList.remove('ac-datagrid-row-detail-expanded');
     } else {
       this.style.height = 'auto';
       this.style.minHeight = `${rh}px`;
       this.style.maxHeight = 'none';
+      this.classList.add('ac-datagrid-row-detail-expanded');
     }
   }
 
@@ -99,7 +101,7 @@ export class AcDatagridRowElement extends AcElementBase {
       rowNumCell.textContent = `${newIndex + 1}`;
     }
     const rh = this.datagridApi?.rowHeight || 36;
-    if (this.datagridApi?.useVirtualScrolling) {
+    if (this.datagridApi?.useVirtualScrolling || (this.datagridApi?.animateRows && !this.datagridApi?.hasMasterDetail)) {
       this.style.transform = `translateY(${newIndex * rh}px)`;
     }
   }
@@ -110,6 +112,7 @@ export class AcDatagridRowElement extends AcElementBase {
     this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowEven, this.datagridRow.index % 2 === 0);
     this.classList.toggle(AC_DATAGRID_CLASS_NAME.acDatagridRowOdd, this.datagridRow.index % 2 !== 0);
     this.classList.toggle('ac-datagrid-row-expanded', !!this.datagridRow.isExpanded);
+    this.classList.toggle('ac-datagrid-row-detail-expanded', !!this.datagridRow.isDetailExpanded);
     this.applyRowHeight();
     if (this.internalCell) {
       this.internalCell.refresh();
@@ -265,6 +268,9 @@ export class AcDatagridRowElement extends AcElementBase {
     }
     if (!this.datagridApi?.masterDetailConfig?.detailTemplate || !this.datagridRow) return;
 
+    this.classList.add('ac-datagrid-row-detail-expanded');
+    this.applyRowHeight();
+
     this.detailContainer = document.createElement('div');
     this.detailContainer.className = AC_DATAGRID_CLASS_NAME.acDatagridDetailRow;
 
@@ -282,6 +288,8 @@ export class AcDatagridRowElement extends AcElementBase {
       this.detailContainer.remove();
       this.detailContainer = undefined;
     }
+    this.classList.remove('ac-datagrid-row-detail-expanded');
+    this.applyRowHeight();
   }
 
   enterRowEditMode() {

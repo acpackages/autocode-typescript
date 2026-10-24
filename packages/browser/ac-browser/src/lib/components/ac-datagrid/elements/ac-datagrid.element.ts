@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acClearElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_DATAGRID_HOOK } from "../_ac-datagrid.export";
+import { AC_DATAGRID_HOOK, IAcDatagridState } from "../_ac-datagrid.export";
 import { AC_DATAGRID_CLASS_NAME } from "../consts/ac-datagrid-css-class-name.const";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { AcDatagridBody } from "./ac-datagrid-body.element";
@@ -37,6 +37,26 @@ export class AcDatagridElement extends AcElementBase {
   }
   set enterNavigation(value: boolean) {
     this.datagridApi.enterNavigation = value;
+  }
+
+  getState(): IAcDatagridState {
+    return this.datagridApi.getState();
+  }
+
+  setState(state: IAcDatagridState | { state: IAcDatagridState }): void {
+    this.datagridApi.setState(state);
+  }
+
+  applyState(state: IAcDatagridState): void {
+    this.datagridApi.applyState(state);
+  }
+
+  get state(): IAcDatagridState {
+    return this.datagridApi.getState();
+  }
+
+  set state(value: IAcDatagridState) {
+    this.datagridApi.applyState(value);
   }
 
   get enterNavigatesVertically(): boolean {

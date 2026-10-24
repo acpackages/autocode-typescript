@@ -1,4 +1,5 @@
 export * from './local-data.page';
+export * from './on-demand.page';
 export * from './column-resizing.page';
 export * from './column-dragging.page';
 export * from './row-dragging.page';

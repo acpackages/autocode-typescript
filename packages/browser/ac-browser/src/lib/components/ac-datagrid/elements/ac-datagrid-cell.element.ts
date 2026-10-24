@@ -478,7 +478,7 @@ export class AcDatagridCellElement extends AcElementBase {
       if ((this.datagridApi as any).loadingRowIds?.has(this.datagridRow.rowId)) {
         this.treeToggleElement.textContent = '⏳';
       } else {
-        this.treeToggleElement.innerHTML = this.datagridRow.isExpanded ? `<i class="${AC_DATAGRID_ICON_CLASS.treeExpanded}"></i>` : `<i class="${AC_DATAGRID_ICON_CLASS.treeCollapsed}"></i>`;
+        this.treeToggleElement.textContent = this.datagridRow.isExpanded ? '▼' : '▶';
       }
       this.treeToggleElement.addEventListener('click', (e) => {
         e.stopPropagation();

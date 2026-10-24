@@ -26,6 +26,8 @@ import { IAcDatagridRowHookArgs } from "../interfaces/hook-args/ac-datagrid-row-
 import { IAcDatagridExtensionEnabledHookArgs } from "../interfaces/hook-args/ac-datagrid-extension-enabled-hook-args.interface";
 import { IAcDatagridRowFocusHookArgs } from "../interfaces/hook-args/ac-datagrid-row-focus-hook-args.interface";
 import { IAcDatagridState } from "../interfaces/ac-datagrid-state.interface";
+import { IAcDatagridStateChangeEvent } from "../interfaces/event-args/ac-datagrid-state-change-event.interface";
+import { IAcDatagridColumnState } from "../interfaces/ac-datagrid-column-state.interface";
 import { IAcDatagridColumnDefinitionsSetEvent } from "../interfaces/event-args/ac-datagrid-column-definitions-set-event.interface";
 import { AC_DATAGRID_DEFAULT_COLUMN_DEFINITION, AcEnumDatagridColumnDataType, IAcDatagridActiveRowChangeEvent, IAcDatagridCell, IAcDatagridColumn } from "../_ac-datagrid.export";
 import { isValidDateString, isValidDateTimeString } from "@autocode-ts/ac-extensions";
@@ -571,7 +573,17 @@ export class AcDatagridApi {
       this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
     }
   }
-  masterDetailConfig?: { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string };
+  private _masterDetailConfig?: { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string };
+  get masterDetailConfig(): { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string } | undefined {
+    return this._masterDetailConfig;
+  }
+  set masterDetailConfig(value: { detailTemplate: (row: IAcDatagridRow) => HTMLElement | string } | undefined) {
+    this._masterDetailConfig = value;
+    if (this.datagrid?.datagridHeader?.internalHeaderCell) {
+      this.datagrid.datagridHeader.internalHeaderCell.applyStyles();
+    }
+    this.refreshInternalCells();
+  }
   onDemandTreeFunction?: (args: { parentRow: IAcDatagridRow, successCallback: (children: any[]) => void, errorCallback: (err: any) => void }) => void;
   onDemandGroupFunction?: (args: { groupBy: string[], successCallback: (groups: any[]) => void, errorCallback: (err: any) => void }) => void;
   onDemandGroupExpandFunction?: (args: { groupRow: IAcDatagridRow, groupField?: string, groupValue?: any, successCallback: (children: any[]) => void, errorCallback: (err: any) => void }) => void;
@@ -581,6 +593,7 @@ export class AcDatagridApi {
   lastActiveRowIndex?: number;
   lastActiveColumnIndex?: number;
   private _stateChangeTimer: any;
+  private _previousNotifiedStateJson: string = "";
 
   constructor({ datagrid }: { datagrid: AcDatagridElement }) {
     this.datagrid = datagrid;
@@ -591,7 +604,21 @@ export class AcDatagridApi {
     // PERF FIX (1.2): Invalidate displayedDatagridRows cache on every DisplayedRowsChange
     this.hooks.subscribe({
       hook: AC_DATAGRID_HOOK.DisplayedRowsChange,
-      callback: () => { this._displayedRowsDirty = true; }
+      callback: () => {
+        this._displayedRowsDirty = true;
+        this._cachedDisplayedRows = undefined;
+      }
+    });
+    this.dataManager.on({
+      event: AC_DATA_MANAGER_EVENT.DisplayedRowsChange,
+      callback: () => {
+        if (this.hasTreeOrGroup) {
+          this.processTreeVisibility();
+        }
+        this._displayedRowsDirty = true;
+        this._cachedDisplayedRows = undefined;
+        this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+      }
     });
     this.dataManager.hooks.subscribe({
       hook: AC_DATA_MANAGER_HOOK.GetOnDemandDataSuccessCallback,
@@ -704,6 +731,22 @@ export class AcDatagridApi {
       this.pagination.addEventListener('add', () => {
         this.dataManager.addRow();
       });
+        this.pagination.events.subscribe({
+      event: 'pageChange', callback: () => this.notifyStateChange({ source: 'pagination' })
+    });
+    this.pagination.events.subscribe({
+      event: 'pageSizeChange', callback: () => this.notifyStateChange({ source: 'pagination' })
+    });
+    if (this.dataManager.sortOrder) {
+      this.dataManager.sortOrder.events.subscribe({
+        event: 'change', callback: () => this.notifyStateChange({ source: 'sort' })
+      });
+    }
+    if (this.dataManager.filterGroup) {
+      this.dataManager.filterGroup.events.subscribe({
+        event: 'change', callback: () => this.notifyStateChange({ source: 'filter' })
+      });
+    }
     AcDatagridExtensionManager.registerBuiltInExtensions();
   }
 
@@ -1007,16 +1050,16 @@ export class AcDatagridApi {
   }
 
   getRow({ data, rowId, index, key, value }: { data?: any, rowId?: string, index?: number, key?: string, value?: any }): IAcDatagridRow | undefined {
-    // PERF FIX (P3): When rowId is given, delegate to the data-manager's O(1) _rowById map via getRowById().
-    // For other lookup types fall back to allRows linear scan (avoids filter+sort cost of this.rows getter).
     if (rowId != undefined) {
-      return this.dataManager.getRowById(rowId) as IAcDatagridRow | undefined;
+      const cached = this.dataManager?.getRowById?.(rowId) as IAcDatagridRow | undefined;
+      if (cached && cached.rowId === rowId) return cached;
     }
     const sourceRows = (this.dataManager?.allRows && this.dataManager.allRows.length > 0)
       ? (this.dataManager.allRows as IAcDatagridRow[])
       : this.datagridRows;
     for (const row of sourceRows) {
       if (!row) continue;
+      if (rowId != undefined && row.rowId == rowId) return row as IAcDatagridRow;
       if (data != undefined && row.data === data) return row as IAcDatagridRow;
       if (index != undefined && row.index == index) return row as IAcDatagridRow;
       if (key != undefined && value != undefined && row.data && row.data[key] == value) return row as IAcDatagridRow;
@@ -1026,7 +1069,7 @@ export class AcDatagridApi {
 
   getState(): IAcDatagridState {
     this.logger.log('Getting datagrid state');
-    this.datagridState.refresh();
+    this.datagridState.refreshSync();
     this.logger.log('Refreshed datagrid state');
     const state = this.datagridState.toJson();
     this.logger.log('Retrieved state', { keys: Object.keys(state) });
@@ -1203,8 +1246,9 @@ export class AcDatagridApi {
     return datagridCell;
   }
 
-  setState({ state }: { state: IAcDatagridState }) {
-    this.datagridState.apply(state);
+  setState(arg: { state: IAcDatagridState } | IAcDatagridState) {
+    const state: IAcDatagridState = (arg && (arg as any).state !== undefined) ? (arg as any).state : (arg as IAcDatagridState);
+    this.applyState(state);
   }
 
   updateColumnPosition({ datagidColumn, oldDatagridColumn }: { datagidColumn: IAcDatagridColumn, oldDatagridColumn: IAcDatagridColumn }) {
@@ -1388,8 +1432,23 @@ export class AcDatagridApi {
       clearTimeout(this._stateChangeTimer);
     }
     this._stateChangeTimer = setTimeout(() => {
-      if (this.datagridState) {
-        this.datagridState.refresh();
+      this._stateChangeTimer = undefined;
+      if (!this.datagridState) return;
+
+      this.datagridState.refreshSync();
+      const currentState = this.datagridState.toJson();
+      const currentStateJson = JSON.stringify(currentState);
+
+      if (currentStateJson !== this._previousNotifiedStateJson) {
+        this._previousNotifiedStateJson = currentStateJson;
+        const eventArgs: IAcDatagridStateChangeEvent = {
+          datagridApi: this,
+          datagridState: currentState,
+          currentState: currentState,
+          source: info?.source
+        };
+        this.events.execute({ event: AC_DATAGRID_EVENT.StateChange, args: eventArgs });
+        this.hooks.execute({ hook: AC_DATAGRID_HOOK.StateChange, args: eventArgs });
       }
     }, 150);
   }
@@ -1900,6 +1959,9 @@ export class AcDatagridApi {
     });
 
     allRows.splice(parentIdx + 1, 0, ...childRows);
+    for (const childRow of childRows) {
+      (this.dataManager as any)._rowById?.set(childRow.rowId, childRow);
+    }
     parentRow.hasChildren = true;
   }
 
@@ -1918,6 +1980,7 @@ export class AcDatagridApi {
       const rowId = String(r.data[idKey] ?? r.rowId);
       r.rowId = rowId;
       rowMap.set(rowId, r);
+      (this.dataManager as any)._rowById?.set(rowId, r);
     }
 
     const childrenMap = new Map<string, IAcDatagridRow[]>();
@@ -1999,6 +2062,8 @@ export class AcDatagridApi {
   }
 
   processTreeVisibility() {
+    this._displayedRowsDirty = true;
+    this._cachedDisplayedRows = undefined;
     this.syncRowProperties();
     if (!this.hasTreeOrGroup) {
       return;
@@ -2052,6 +2117,7 @@ export class AcDatagridApi {
     row.isDetailExpanded = true;
     if (row.element) {
       (row.element as any).renderDetail?.();
+      (row.element as any).refresh?.();
     }
     this.refreshInternalCells();
     this.events.execute({ event: AC_DATAGRID_EVENT.DetailRowExpand, args: { row, datagridApi: this } });
@@ -2065,6 +2131,7 @@ export class AcDatagridApi {
     row.isDetailExpanded = false;
     if (row.element) {
       (row.element as any).removeDetail?.();
+      (row.element as any).refresh?.();
     }
     this.refreshInternalCells();
     this.events.execute({ event: AC_DATAGRID_EVENT.DetailRowCollapse, args: { row, datagridApi: this } });
@@ -2321,6 +2388,10 @@ export class AcDatagridApi {
       newAllRows.push(...childRows);
     }
 
+    for (const r of newAllRows) {
+      (this.dataManager as any)._rowById?.set(r.rowId, r);
+    }
+
     this.dataManager.allRows = newAllRows as any;
   }
 
@@ -2339,8 +2410,10 @@ export class AcDatagridApi {
 
   applyState(state: IAcDatagridState) {
     if (!state) return;
+    this.logger.log('Applying datagrid state', { state });
+
     if (state.columns && state.columns.length > 0) {
-      const colMap = new Map<string, any>();
+      const colMap = new Map<string, IAcDatagridColumnState>();
       for (const c of state.columns) {
         if (c.field) colMap.set(c.field, c);
       }
@@ -2348,12 +2421,41 @@ export class AcDatagridApi {
         const saved = colMap.get(col.columnDefinition.field);
         if (saved) {
           if (saved.width !== undefined) col.width = saved.width;
-          if (saved.isVisible !== undefined) col.visible = saved.isVisible;
-          if (saved.pinnedOn !== undefined) col.pinnedOn = saved.pinnedOn;
+          if (saved.flexSize !== undefined) col.flexSize = saved.flexSize;
+          if (saved.isVisible !== undefined) {
+            col.visible = saved.isVisible;
+            col.columnDefinition.visible = saved.isVisible;
+          }
+          if (saved.pinnedOn !== undefined) {
+            col.pinnedOn = saved.pinnedOn;
+            col.columnDefinition.pinnedOn = saved.pinnedOn;
+          }
           if (saved.index !== undefined) col.index = saved.index;
+          if (saved.sortOrder !== undefined) col.sortOrder = saved.sortOrder;
         }
       }
       this.datagridColumns.sort((a, b) => a.index - b.index);
+    }
+
+    if (state.sortOrder) {
+      if (this.dataManager && this.dataManager.sortOrder) {
+        this.dataManager.sortOrder.fromJson({ jsonData: state.sortOrder });
+      }
+    }
+
+    if (state.filterGroup) {
+      if (this.dataManager && this.dataManager.filterGroup) {
+        this.dataManager.filterGroup.fromJson({ jsonData: state.filterGroup });
+      }
+    }
+
+    if (state.pagination && this.pagination) {
+      if (state.pagination.activePage !== undefined) {
+        this.pagination.activePage = state.pagination.activePage;
+      }
+      if (state.pagination.activePageSize !== undefined) {
+        this.pagination.activePageSize = state.pagination.activePageSize;
+      }
     }
 
     if (state.groupBy) {
@@ -2363,19 +2465,59 @@ export class AcDatagridApi {
     if (state.expandedRowIds) {
       this.expandedRowIds = new Set(state.expandedRowIds);
       this.processTreeVisibility();
+      this.hooks.execute({ hook: AC_DATAGRID_HOOK.DisplayedRowsChange, args: { datagridApi: this, displayedRows: this.displayedDatagridRows } });
+      this.refreshInternalCells();
+    }
+
+    if (state.expandedDetailRowIds) {
+      this.expandedDetailRowIds = new Set(state.expandedDetailRowIds);
+      for (const row of this.datagridRows) {
+        row.isDetailExpanded = this.expandedDetailRowIds.has(row.rowId);
+      }
+      this.refreshInternalCells();
+    }
+
+    if (state.pinnedRows) {
+      this.pinnedTopRowIds = state.pinnedRows.top ? [...state.pinnedRows.top] : [];
+      this.pinnedBottomRowIds = state.pinnedRows.bottom ? [...state.pinnedRows.bottom] : [];
+      for (const row of this.datagridRows) {
+        if (this.pinnedTopRowIds.includes(row.rowId)) {
+          row.pinned = 'top';
+        } else if (this.pinnedBottomRowIds.includes(row.rowId)) {
+          row.pinned = 'bottom';
+        } else {
+          row.pinned = undefined;
+        }
+      }
+      if (this.datagrid?.datagridBody) {
+        (this.datagrid.datagridBody as any).renderPinnedRows?.();
+      }
     }
 
     if (state.sidePanelOpen !== undefined) {
       this.toggleSidePanel(state.sidePanelOpen);
     }
 
+    if (state.extensionStates && this.extensions) {
+      for (const extensionName of Object.keys(state.extensionStates)) {
+        if (this.extensions[extensionName] && typeof this.extensions[extensionName].setState === 'function') {
+          this.extensions[extensionName].setState({ state: this.datagridState, extensionState: state.extensionStates[extensionName] });
+        }
+      }
+    }
+
     this.updatePinnedOffsets();
+    this.dataManager.processRows();
+    if (this.hasTreeOrGroup) {
+      this.processTreeVisibility();
+    }
     if (this.datagrid?.datagridHeader) {
       this.datagrid.datagridHeader.render();
     }
     if (this.datagrid?.datagridBody) {
       this.datagrid.datagridBody.setDisplayedRows();
     }
+    this.datagridState.refreshSync();
   }
 
   async getDataAsCsv(params?: IAcDatagridCsvExportParams): Promise<string> {

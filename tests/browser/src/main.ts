@@ -31,6 +31,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         { path: APP_ROUTES.nodeflow.designer, element: { selector: 'nodeflow-designer-page' } },
         { path: APP_ROUTES.databaseDesigner, element: { selector: 'database-designer-page' } },
         { path: APP_ROUTES.datagrid.local, element: { selector: 'datagrid-local-page' } },
+        { path: APP_ROUTES.datagrid.onDemand, element: { selector: 'datagrid-on-demand-page' } },
         { path: APP_ROUTES.datagrid.columnResizing, element: { selector: 'datagrid-column-resizing-page' } },
         { path: APP_ROUTES.datagrid.columnDragging, element: { selector: 'datagrid-column-dragging-page' } },
         { path: APP_ROUTES.datagrid.rowDragging, element: { selector: 'datagrid-row-dragging-page' } },

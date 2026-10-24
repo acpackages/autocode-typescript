@@ -88,7 +88,7 @@ export class AcDataManager {
   // PERF FIX (D1): _cachedRows is sorted by index ascending after applySort(), so
   // position === index. A direct slice is O(1) vs the previous O(n) filter scan.
   get displayedRows(): IAcDataRow[] {
-    const cached = this._cachedRows;
+    const cached = this.rows;
     if (this.displayCount <= 0 || (this.displayStartIndex === -1 && this.displayEndIndex === -1)) {
       return cached;
     }
@@ -704,7 +704,7 @@ export class AcDataManager {
         this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.TotalRowsChange, args: eventArgs });
         this.events.execute({ event: AC_DATA_MANAGER_EVENT.TotalRowsChange, args: eventArgs });
       }
-      this.setDisplayedRows({ startIndex: this.displayStartIndex, rowsCount: this.displayCount });
+      this.setDisplayedRows({ startIndex: this.displayStartIndex, rowsCount: this.displayCount, force: true });
     } else {
       await this.refreshRows();
     }
@@ -951,8 +951,8 @@ export class AcDataManager {
    * when startIndex and rowsCount haven't changed. Repeated renders of the same
    * viewport triggered redundant DisplayedRowsChange events.
    */
-  async setDisplayedRows({ startIndex = 0, rowsCount = -1 }: { startIndex?: number; rowsCount?: number; } = {}) {
-    if (startIndex === this.displayStartIndex && rowsCount === this.displayCount) return;
+  async setDisplayedRows({ startIndex = 0, rowsCount = -1, force = false }: { startIndex?: number; rowsCount?: number; force?: boolean } = {}) {
+    if (!force && startIndex === this.displayStartIndex && rowsCount === this.displayCount) return;
 
     this.displayStartIndex = startIndex;
     this.displayEndIndex = (startIndex + rowsCount) - 1;

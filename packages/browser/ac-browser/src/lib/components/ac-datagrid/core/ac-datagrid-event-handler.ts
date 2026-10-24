@@ -334,6 +334,7 @@ export class AcDatagridEventHandler {
       event: undefined
     };
     this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.PaginationChange, args: eventArgs });
+    this.notifyStateChange();
   }
 
   handleRowBlur({ datagridRow, event }: { datagridRow: IAcDatagridRow, event?: any }) {
@@ -579,17 +580,7 @@ export class AcDatagridEventHandler {
 
   private notifyStateChange() {
     if (!this.datagridApi) return;
-    this.datagridApi.datagridState.refresh();
-    const currentState = this.datagridApi.datagridState.toJson();
-    if (JSON.stringify(currentState) != JSON.stringify(this.previousNotifiedState)) {
-      this.previousNotifiedState = currentState;
-      const eventArgs: IAcDatagridStateChangeEvent = {
-        datagridApi: this.datagridApi,
-        datagridState: currentState,
-        event: undefined
-      };
-      this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.StateChange, args: eventArgs });
-    }
+    this.datagridApi.notifyStateChange();
   }
 
   handleKeyDown(event: KeyboardEvent) {

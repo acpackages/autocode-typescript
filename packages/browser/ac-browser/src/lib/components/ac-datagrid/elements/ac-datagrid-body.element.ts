@@ -305,8 +305,13 @@ export class AcDatagridBody extends AcElementBase {
     // Normal displayed rows (excluding pinned rows)
     const normalRows = this.getNormalRows();
     const rowHeight = this.datagridApi.rowHeight || 36;
-    const totalHeight = normalRows.length * rowHeight;
-    this.rowsContainer.style.height = `${totalHeight}px`;
+    const isMasterDetail = !!this.datagridApi.hasMasterDetail;
+    if (isMasterDetail) {
+      this.rowsContainer.style.height = 'auto';
+    } else {
+      const totalHeight = normalRows.length * rowHeight;
+      this.rowsContainer.style.height = `${totalHeight}px`;
+    }
 
     if (this.datagridApi.useVirtualScrolling) {
       this.renderVirtualRows();
@@ -330,28 +335,37 @@ export class AcDatagridBody extends AcElementBase {
         }
       }
 
-      // Add new rows via DocumentFragment; refresh or re-render existing rows
-      const fragment = document.createDocumentFragment();
+      const useAbsolute = this.datagridApi.animateRows && !isMasterDetail;
       const newCurrentRows: AcDatagridRowElement[] = [];
       for (const row of normalRows) {
         let rowEl = this.renderedRowsMap.get(row.rowId);
         if (!rowEl) {
           rowEl = new AcDatagridRowElement();
-          if (this.datagridApi.animateRows) {
+          if (useAbsolute) {
             rowEl.style.position = 'absolute';
             rowEl.style.top = '0';
             rowEl.style.left = '0';
             rowEl.style.width = 'fit-content';
             rowEl.style.minWidth = '100%';
+            rowEl.style.transform = `translateY(${row.index * rowHeight}px)`;
+          } else {
+            rowEl.style.position = '';
+            rowEl.style.top = '';
+            rowEl.style.left = '';
+            rowEl.style.transform = '';
           }
           rowEl.setRow({ datagridApi: this.datagridApi, datagridRow: row });
           this.renderedRowsMap.set(row.rowId, rowEl);
-          fragment.appendChild(rowEl);
         } else {
           // Update the data reference (sort/filter may change which data row maps to this rowId)
           rowEl.datagridRow = row;
-          if (this.datagridApi.animateRows) {
+          if (useAbsolute) {
             rowEl.style.transform = `translateY(${row.index * rowHeight}px)`;
+          } else {
+            rowEl.style.position = '';
+            rowEl.style.top = '';
+            rowEl.style.left = '';
+            rowEl.style.transform = '';
           }
           if (columnsChanged) {
             // Column set changed — need full cell rebuild
@@ -363,8 +377,8 @@ export class AcDatagridBody extends AcElementBase {
         newCurrentRows.push(rowEl);
       }
 
-      if (fragment.childNodes.length > 0) {
-        this.rowsContainer.appendChild(fragment);
+      for (const rowEl of newCurrentRows) {
+        this.rowsContainer.appendChild(rowEl);
       }
       // PERF FIX (4.2): Maintain currentRows as ordered array; avoid Array.from().sort() every render
       this.currentRows = newCurrentRows;

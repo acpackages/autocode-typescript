@@ -14,5 +14,6 @@ export interface IAcDatagridState {
     bottom?: string[];
   };
   expandedRowIds?: string[];
+  expandedDetailRowIds?: string[];
   sidePanelOpen?: boolean;
 }

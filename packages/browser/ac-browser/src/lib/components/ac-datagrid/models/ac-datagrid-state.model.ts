@@ -1,33 +1,46 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDelayedCallback, AcJsonUtils, acNullifyInstanceProperties } from "@autocode-ts/autocode";
-import { AC_DATAGRID_EVENT, AcDatagridApi, IAcDatagridColumnState, IAcDatagridState } from "../_ac-datagrid.export";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AcJsonUtils, acNullifyInstanceProperties } from "@autocode-ts/autocode";
+import { AcDatagridApi, IAcDatagridColumnState, IAcDatagridState } from "../_ac-datagrid.export";
 
 export class AcDatagridState {
   static readonly KeyColumns = "columns";
   static readonly KeyExtensionStates = "extensionStates";
   static readonly KeyPagination = "pagination";
   static readonly KeySortOrder = "sortOrder";
+  static readonly KeyGroupBy = "groupBy";
+  static readonly KeyFilterGroup = "filterGroup";
+  static readonly KeySearchQuery = "searchQuery";
+  static readonly KeyPinnedRows = "pinnedRows";
+  static readonly KeyExpandedRowIds = "expandedRowIds";
+  static readonly KeyExpandedDetailRowIds = "expandedDetailRowIds";
+  static readonly KeySidePanelOpen = "sidePanelOpen";
+  static readonly KeyVersion = "version";
 
   datagridApi!: AcDatagridApi;
+
+  private _version: number = 1;
+  get version(): number {
+    return this._version;
+  }
+  set version(value: number) {
+    this._version = value;
+  }
 
   private _columns: IAcDatagridColumnState[] = [];
   get columns(): IAcDatagridColumnState[] {
     return this._columns;
   }
   set columns(value: IAcDatagridColumnState[]) {
-    if (value != this._columns) {
-      this._columns = value;
-    }
+    this._columns = value;
   }
 
-  private _extensionStates: any = {};
-  get extensionStates(): any {
+  private _extensionStates: Record<string, any> = {};
+  get extensionStates(): Record<string, any> {
     return this._extensionStates;
   }
-  set extensionStates(value: any) {
-    if (value != this._extensionStates) {
-      this._extensionStates = value;
-    }
+  set extensionStates(value: Record<string, any>) {
+    this._extensionStates = value;
   }
 
   private _pagination: any = {};
@@ -35,9 +48,7 @@ export class AcDatagridState {
     return this._pagination;
   }
   set pagination(value: any) {
-    if (value != this._pagination) {
-      this._pagination = value;
-    }
+    this._pagination = value;
   }
 
   private _sortOrder: any = {};
@@ -45,104 +56,205 @@ export class AcDatagridState {
     return this._sortOrder;
   }
   set sortOrder(value: any) {
-    if (value != this._sortOrder) {
-      this._sortOrder = value;
-    }
+    this._sortOrder = value;
   }
 
-  private refreshNotifyTimeout: any;
-  private delayedCallback:AcDelayedCallback = new AcDelayedCallback();
+  private _groupBy: string[] = [];
+  get groupBy(): string[] {
+    return this._groupBy;
+  }
+  set groupBy(value: string[]) {
+    this._groupBy = value;
+  }
+
+  private _filterGroup: any = {};
+  get filterGroup(): any {
+    return this._filterGroup;
+  }
+  set filterGroup(value: any) {
+    this._filterGroup = value;
+  }
+
+  private _searchQuery: string = '';
+  get searchQuery(): string {
+    return this._searchQuery;
+  }
+  set searchQuery(value: string) {
+    this._searchQuery = value;
+  }
+
+  private _pinnedRows: { top?: string[]; bottom?: string[] } = {};
+  get pinnedRows(): { top?: string[]; bottom?: string[] } {
+    return this._pinnedRows;
+  }
+  set pinnedRows(value: { top?: string[]; bottom?: string[] }) {
+    this._pinnedRows = value;
+  }
+
+  private _expandedRowIds: string[] = [];
+  get expandedRowIds(): string[] {
+    return this._expandedRowIds;
+  }
+  set expandedRowIds(value: string[]) {
+    this._expandedRowIds = value;
+  }
+
+  private _expandedDetailRowIds: string[] = [];
+  get expandedDetailRowIds(): string[] {
+    return this._expandedDetailRowIds;
+  }
+  set expandedDetailRowIds(value: string[]) {
+    this._expandedDetailRowIds = value;
+  }
+
+  private _sidePanelOpen: boolean = false;
+  get sidePanelOpen(): boolean {
+    return this._sidePanelOpen;
+  }
+  set sidePanelOpen(value: boolean) {
+    this._sidePanelOpen = value;
+  }
 
   constructor({ datagridApi }: { datagridApi: AcDatagridApi }) {
     this.datagridApi = datagridApi;
   }
 
   apply(state: any) {
-    if (state) {
-      if (state[AcDatagridState.KeyColumns]) {
-        this.columns = state[AcDatagridState.KeyColumns];
-        for (const column of this.columns) {
-          // const datagridColumn: AcDatagridColumn | undefined = this.datagridApi.datagridColumns.find((col) => {
-          //   return col.columnDefinition.field == column.field;
-          // });
-          // if (datagridColumn) {
-          //   datagridColumn.width = column.width;
-          //   datagridColumn.index = column.index;
-          // }
-        }
-      }
-      if (state[AcDatagridState.KeyExtensionStates]) {
-        for (const extensionName of Object.keys(state[AcDatagridState.KeyExtensionStates])) {
-          if (this.datagridApi.extensions) {
-            if (this.datagridApi.extensions[extensionName]) {
-              this.datagridApi.extensions[extensionName].setState({ state:this,extensionState:state[AcDatagridState.KeyExtensionStates][extensionName] });
-            }
-          }
-        }
-      }
-    }
+    if (!state) return;
+    this.datagridApi.applyState(state);
   }
 
   destroy() {
-    this.delayedCallback.destroy();
-    acNullifyInstanceProperties({instance:this});
+    acNullifyInstanceProperties({ instance: this });
   }
 
   refresh() {
-    if (this.refreshNotifyTimeout) {
-      clearTimeout(this.refreshNotifyTimeout);
-    }
-    this.refreshNotifyTimeout = this.delayedCallback.add({callback:() => {
-      clearTimeout(this.refreshNotifyTimeout);
-      const previousState = this.toJson();
-      this.setColumnsState();
-      this.setExtensionsState();
-      const currentState: IAcDatagridState = this.toJson();
-      if (JSON.stringify(previousState) != JSON.stringify(currentState)) {
-        this.datagridApi.events.execute({ event: AC_DATAGRID_EVENT.StateChange, args: { currentState } });
-        this.datagridApi.hooks.execute({ hook: AC_DATAGRID_EVENT.StateChange, args: { currentState } });
-      }
-    }, duration:300});
+    this.refreshSync();
+  }
+
+  refreshSync() {
+    if (!this.datagridApi) return;
+    this.setColumnsState();
+    this.setExtensionsState();
+    this.setPaginationState();
+    this.setSortOrderState();
+    this.setFilterGroupState();
+    this.setOtherStates();
   }
 
   toJson(): IAcDatagridState {
-    return {
+    const json: IAcDatagridState = {
+      version: this.version,
       columns: this.columns,
       extensionStates: this.extensionStates,
       pagination: this.pagination,
       sortOrder: this.sortOrder
     };
+    if (this.groupBy && this.groupBy.length > 0) {
+      json.groupBy = [...this.groupBy];
+    }
+    if (this.filterGroup && Object.keys(this.filterGroup).length > 0) {
+      json.filterGroup = this.filterGroup;
+    }
+    if (this.searchQuery) {
+      json.searchQuery = this.searchQuery;
+    }
+    if (this.pinnedRows && ((this.pinnedRows.top && this.pinnedRows.top.length > 0) || (this.pinnedRows.bottom && this.pinnedRows.bottom.length > 0))) {
+      json.pinnedRows = {
+        top: this.pinnedRows.top ? [...this.pinnedRows.top] : [],
+        bottom: this.pinnedRows.bottom ? [...this.pinnedRows.bottom] : []
+      };
+    }
+    if (this.expandedRowIds && this.expandedRowIds.length > 0) {
+      json.expandedRowIds = [...this.expandedRowIds];
+    }
+    if (this.expandedDetailRowIds && this.expandedDetailRowIds.length > 0) {
+      json.expandedDetailRowIds = [...this.expandedDetailRowIds];
+    }
+    if (this.sidePanelOpen !== undefined) {
+      json.sidePanelOpen = this.sidePanelOpen;
+    }
+    return json;
   }
 
   toString(): string {
-    return AcJsonUtils.prettyEncode({object:this.toJson()});
+    return AcJsonUtils.prettyEncode({ object: this.toJson() });
   }
 
   private setColumnsState() {
-    const columns: any[] = [];
-    for (const datagridColumn of this.datagridApi.datagridColumns) {
-      const columnState: IAcDatagridColumnState = {
-        field: datagridColumn.columnDefinition.field,
-        width: datagridColumn.width,
-        flexSize: datagridColumn.flexSize ?? datagridColumn.columnDefinition.flexSize,
-        index: datagridColumn.index,
-        isVisible:datagridColumn.visible
-      };
-      columns.push(columnState)
+    const columns: IAcDatagridColumnState[] = [];
+    if (this.datagridApi.datagridColumns) {
+      for (const datagridColumn of this.datagridApi.datagridColumns) {
+        const columnState: IAcDatagridColumnState = {
+          field: datagridColumn.columnDefinition?.field,
+          width: datagridColumn.width,
+          flexSize: datagridColumn.flexSize ?? datagridColumn.columnDefinition?.flexSize,
+          index: datagridColumn.index,
+          isVisible: datagridColumn.visible,
+          pinnedOn: datagridColumn.pinnedOn,
+          sortOrder: datagridColumn.sortOrder,
+          sortPriority: (datagridColumn as any).sortPriority
+        };
+        columns.push(columnState);
+      }
     }
     this.columns = columns;
   }
 
   private setExtensionsState() {
-    const extensions: any = {};
-    for (const extensionName of Object.keys(this.datagridApi.extensions)) {
-      const extensionInstance = this.datagridApi.extensions[extensionName];
-      const extensionState = extensionInstance.getState({state:this});
-      if (extensionState != undefined) {
-        extensions[extensionName] = extensionState;
+    const extensions: Record<string, any> = {};
+    if (this.datagridApi.extensions) {
+      for (const extensionName of Object.keys(this.datagridApi.extensions)) {
+        const extensionInstance = this.datagridApi.extensions[extensionName];
+        if (extensionInstance && typeof extensionInstance.getState === 'function') {
+          const extensionState = extensionInstance.getState({ state: this });
+          if (extensionState !== undefined) {
+            extensions[extensionName] = extensionState;
+          }
+        }
       }
     }
     this.extensionStates = extensions;
   }
 
+  private setPaginationState() {
+    if (this.datagridApi.pagination && this.datagridApi.usePagination) {
+      this.pagination = {
+        activePage: this.datagridApi.pagination.activePage,
+        activePageSize: this.datagridApi.pagination.activePageSize,
+        usePagination: this.datagridApi.usePagination
+      };
+    } else {
+      this.pagination = {
+        usePagination: !!this.datagridApi.usePagination
+      };
+    }
+  }
+
+  private setSortOrderState() {
+    if (this.datagridApi.dataManager?.sortOrder) {
+      this.sortOrder = this.datagridApi.dataManager.sortOrder.toJson();
+    } else {
+      this.sortOrder = {};
+    }
+  }
+
+  private setFilterGroupState() {
+    if (this.datagridApi.dataManager?.filterGroup && typeof this.datagridApi.dataManager.filterGroup.hasFilters === 'function' && this.datagridApi.dataManager.filterGroup.hasFilters()) {
+      this.filterGroup = this.datagridApi.dataManager.filterGroup.toJson();
+    } else {
+      this.filterGroup = {};
+    }
+  }
+
+  private setOtherStates() {
+    this.groupBy = this.datagridApi.groupBy ? [...this.datagridApi.groupBy] : [];
+    this.expandedRowIds = this.datagridApi.expandedRowIds ? Array.from(this.datagridApi.expandedRowIds) : [];
+    this.expandedDetailRowIds = this.datagridApi.expandedDetailRowIds ? Array.from(this.datagridApi.expandedDetailRowIds) : [];
+    this.sidePanelOpen = !!this.datagridApi.sidePanelOpen;
+    this.pinnedRows = {
+      top: this.datagridApi.pinnedTopRowIds ? [...this.datagridApi.pinnedTopRowIds] : [],
+      bottom: this.datagridApi.pinnedBottomRowIds ? [...this.datagridApi.pinnedBottomRowIds] : []
+    };
+  }
 }

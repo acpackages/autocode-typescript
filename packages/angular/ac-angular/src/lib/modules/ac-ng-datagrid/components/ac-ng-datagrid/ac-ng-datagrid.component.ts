@@ -6,7 +6,7 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 /* eslint-disable @angular-eslint/prefer-standalone */
 import { ApplicationRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { acAddClassToElement, AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, IAcDatagridColumnDefinition } from '@autocode-ts/ac-browser';
+import { acAddClassToElement, AcDatagridElement, AcDatagridApi, AcDatagridColumnDraggingExtension, AcDatagridColumnsCustomizerExtension, AcDatagridDataExportXlsxExtension, AcDatagridRowDraggingExtension, AcDatagridRowNumbersExtension, AcDatagridRowSelectionExtension, AC_DATAGRID_EVENT, AC_DATAGRID_EXTENSION_NAME, IAcDatagridColumnDefinition, IAcDatagridState, IAcDatagridStateChangeEvent } from '@autocode-ts/ac-browser';
 import { AcRuntimeService } from '@autocode-ts/ac-ng-runtime';
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcDelayedCallback, acNullifyInstanceProperties, IAcOnDemandRequestArgs } from '@autocode-ts/autocode';
 import { IAcNgDatagridColumnDefinition } from '../../interfaces/ac-datagrid-column-definition.interface';
@@ -666,6 +666,7 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
   @Input() showAddButton: boolean = false;
   @Input() showSearchInput: boolean = true;
   @Input() usePagination: boolean = true;
+  @Input() state?: IAcDatagridState;
 
   datagrid?: AcDatagridElement;
   datagridApi?: AcDatagridApi;
@@ -692,6 +693,9 @@ export class AcNgDatagridComponent extends AcNgDatagridEvents implements OnChang
     if (this.datagrid && this.datagridApi) {
       // PERF FIX (P4): Use independent if-blocks so ALL changed inputs are applied in one cycle.
       // The previous else-if chain silently dropped any changes after the first matched branch.
+      if (changes['state'] && this.state) {
+        this.datagridApi.applyState(this.state);
+      }
       if (changes['rowHeight']) {
         this.datagridApi.rowHeight = this.rowHeight;
       }
