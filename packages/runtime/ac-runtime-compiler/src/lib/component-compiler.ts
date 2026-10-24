@@ -1,4 +1,4 @@
-﻿/* eslint-disable prefer-const */
+/* eslint-disable prefer-const */
 /**
  * @module component-compiler
  *
@@ -820,15 +820,6 @@ export class ComponentCompiler {
     filePath?: string,
     resolveImport?: (originalPath: string, importerPath: string) => string,
   ): Record<string, string> {
-    // COMP-4: Return cached result if file hasn't changed since last compilation
-    if (filePath) {
-      try {
-        const mtime = fs.statSync(filePath).mtimeMs;
-        const cacheKey = `${filePath}:${mtime}`;
-        const cached = resolvedConstantsCache.get(cacheKey);
-        if (cached) return cached;
-      } catch { /* ignore, fall through */ }
-    }
     const constants: Record<string, string> = {};
 
     // Helper to add constants from a class or enum declaration under a prefix (e.g. "ActVwSaleInvoices")
@@ -937,13 +928,6 @@ export class ComponentCompiler {
       }
     }
 
-    // COMP-4: Store result in cache
-    if (filePath) {
-      try {
-        const mtime = fs.statSync(filePath).mtimeMs;
-        resolvedConstantsCache.set(`${filePath}:${mtime}`, constants);
-      } catch { /* ignore */ }
-    }
     return constants;
   }
 
@@ -991,18 +975,7 @@ export class ComponentCompiler {
   }
 }
 
-/**
- * COMP-1: File parse cache with mtime-based invalidation.
- * The cache is checked against the file's last-modified time; if the file has
- * changed on disk (e.g. during HMR), the stale AST is discarded and re-parsed.
- * This prevents the compiler from returning an outdated base-class definition
- * during hot module reload in development.
- */
 const sourceFileCache = new Map<string, ts.SourceFile>();
-const sourceFileMtimeCache = new Map<string, number>();
-
-/** COMP-4: Cache for collectResolvedConstants results, keyed by "filePath:mtime". */
-const resolvedConstantsCache = new Map<string, Record<string, string>>();
 
 function findFileWithExtensions(basePath: string): string | null {
   if (fs.existsSync(basePath) && fs.statSync(basePath).isFile()) {
@@ -1050,27 +1023,7 @@ function getSourceFile(
 ): ts.SourceFile | null {
   const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
   if (sourceFileCache.has(normalizedPath)) {
-    // COMP-1: Validate the cached entry against the file's mtime.
-    // If the file was modified since we last parsed it, discard the stale AST.
-    if (sourceCode === undefined) {
-      try {
-        const mtime = fs.statSync(normalizedPath).mtimeMs;
-        if (sourceFileMtimeCache.get(normalizedPath) === mtime) {
-          return sourceFileCache.get(normalizedPath)!;
-        }
-        // File changed — fall through to re-parse
-        sourceFileCache.delete(normalizedPath);
-        sourceFileMtimeCache.delete(normalizedPath);
-      } catch {
-        // File no longer exists; clear and fall through
-        sourceFileCache.delete(normalizedPath);
-        sourceFileMtimeCache.delete(normalizedPath);
-        return null;
-      }
-    } else {
-      // Caller provided source directly (e.g. from HMR read) — always re-parse
-      sourceFileCache.delete(normalizedPath);
-    }
+    return sourceFileCache.get(normalizedPath)!;
   }
 
   let code = sourceCode;
@@ -1092,8 +1045,6 @@ function getSourceFile(
     true
   );
   sourceFileCache.set(normalizedPath, sf);
-  // COMP-1: Record the mtime at the time of parsing for subsequent invalidation checks
-  try { sourceFileMtimeCache.set(normalizedPath, fs.statSync(normalizedPath).mtimeMs); } catch { /* ignore */ }
   return sf;
 }
 
@@ -1186,7 +1137,8 @@ function resolveSymbol(
               if (resolvedModulePath) {
                 const importedSF = getSourceFile(resolvedModulePath);
                 if (importedSF) {
-                  const resolved = resolveSymbol(importName, importedSF, resolvedModulePath, resolveImport, visitedFiles);
+                  const nextVisited = new Set(visitedFiles);
+                  const resolved = resolveSymbol(importName, importedSF, resolvedModulePath, resolveImport, nextVisited);
                   if (resolved) return resolved;
                 }
               }
@@ -1199,7 +1151,8 @@ function resolveSymbol(
           if (resolvedModulePath) {
             const importedSF = getSourceFile(resolvedModulePath);
             if (importedSF) {
-              const resolved = resolveSymbol('default', importedSF, resolvedModulePath, resolveImport, visitedFiles);
+              const nextVisited = new Set(visitedFiles);
+              const resolved = resolveSymbol('default', importedSF, resolvedModulePath, resolveImport, nextVisited);
               if (resolved) return resolved;
             }
           }
@@ -1226,19 +1179,22 @@ function resolveSymbol(
           for (const element of stmt.exportClause.elements) {
             if (element.name.text === name) {
               const exportName = element.propertyName ? element.propertyName.text : element.name.text;
-              const resolved = resolveSymbol(exportName, importedSF, resolvedModulePath, resolveImport, visitedFiles);
+              const nextVisited = new Set(visitedFiles);
+              const resolved = resolveSymbol(exportName, importedSF, resolvedModulePath, resolveImport, nextVisited);
               if (resolved) return resolved;
             }
           }
         } else if (!stmt.exportClause) {
-          const resolved = resolveSymbol(name, importedSF, resolvedModulePath, resolveImport, visitedFiles);
+          const nextVisited = new Set(visitedFiles);
+          const resolved = resolveSymbol(name, importedSF, resolvedModulePath, resolveImport, nextVisited);
           if (resolved) return resolved;
         }
       } else if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
         for (const element of stmt.exportClause.elements) {
           if (element.name.text === name) {
             const localName = element.propertyName ? element.propertyName.text : element.name.text;
-            const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, visitedFiles);
+            const nextVisited = new Set(visitedFiles);
+            const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, nextVisited);
             if (resolved) return resolved;
           }
         }
@@ -1322,13 +1278,15 @@ function getModuleExports(
               for (const element of stmt.exportClause.elements) {
                 const exportedName = element.name.text;
                 const localName = element.propertyName ? element.propertyName.text : element.name.text;
-                const resolved = resolveSymbol(localName, importedSF, resolvedModulePath, resolveImport, visitedFiles);
+                const nextVisited = new Set(visitedFiles);
+                const resolved = resolveSymbol(localName, importedSF, resolvedModulePath, resolveImport, nextVisited);
                 if (resolved) {
                   exportsMap.set(exportedName, { name: exportedName, node: resolved.node, sourceFile: resolved.sourceFile });
                 }
               }
             } else if (!stmt.exportClause) {
-              const subExports = getModuleExports(importedSF, resolvedModulePath, resolveImport, visitedFiles);
+              const nextVisited = new Set(visitedFiles);
+              const subExports = getModuleExports(importedSF, resolvedModulePath, resolveImport, nextVisited);
               for (const [key, val] of subExports.entries()) {
                 if (key !== 'default') {
                   exportsMap.set(key, val);
@@ -1341,7 +1299,8 @@ function getModuleExports(
         for (const element of stmt.exportClause.elements) {
           const exportedName = element.name.text;
           const localName = element.propertyName ? element.propertyName.text : element.name.text;
-          const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, visitedFiles);
+          const nextVisited = new Set(visitedFiles);
+          const resolved = resolveSymbol(localName, sourceFile, filePath, resolveImport, nextVisited);
           if (resolved) {
             exportsMap.set(exportedName, { name: exportedName, node: resolved.node, sourceFile: resolved.sourceFile });
           }

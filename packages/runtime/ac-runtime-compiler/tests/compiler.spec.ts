@@ -991,6 +991,7 @@ describe('Compile-time event/model/pipe migration', () => {
     expect(results).toHaveLength(1);
     expect(results[0].code).toContain('this.evaluateExpression');
     expect(results[0].code).toContain('amount | currency');
+    expect(results[0].code).toMatch(/private async update\$\w+\(force = false\): Promise<void>/);
   });
 
   it('should handle chained pipe expressions via evaluateExpression at runtime', () => {

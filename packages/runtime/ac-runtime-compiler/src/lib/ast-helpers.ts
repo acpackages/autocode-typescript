@@ -89,18 +89,13 @@ export function getComponentMetadata(node: ts.ClassDeclaration): ComponentMetada
   for (const prop of config.properties) {
     // Only handle simple property assignments like `selector: 'my-el'`
     if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name)) {
-      // ── String value: `selector: 'my-el'` ──
-      // Use the `.text` property (already unquoted, unescaped) for string literals
-      // and no-substitution template literals. This is more reliable than
-      // getText().slice(1,-1) which is fragile for multi-line or escaped strings.
-      if (ts.isStringLiteral(prop.initializer) || ts.isNoSubstitutionTemplateLiteral(prop.initializer)) {
-        metadata[prop.name.text] = prop.initializer.text;
-      }
-      // ── Template expression: `template: `<div>${expr}</div>`` ──
-      // For template literals with interpolations, fall back to getText() since
-      // we need the raw source including the `${}` spans.
-      else if (ts.isTemplateExpression(prop.initializer)) {
-        // Strip opening and closing backtick with slice(1,-1)
+      // ── String value: `selector: 'my-el'` or template literals ──
+      if (
+        ts.isStringLiteral(prop.initializer)
+        || ts.isNoSubstitutionTemplateLiteral(prop.initializer)
+        || ts.isTemplateExpression(prop.initializer)
+      ) {
+        // Use getText() and slice off the quotes (first and last character)
         metadata[prop.name.text] = prop.initializer.getText().slice(1, -1);
       }
       // ── Array value: `styleUrls: ['./style1.css', './style2.css']` ──
@@ -127,27 +122,6 @@ export function getComponentMetadata(node: ts.ClassDeclaration): ComponentMetada
 }
 
 /**
- * Collect all binding names introduced by a destructuring pattern
- * (object or array) into `vars`. Used by `collectTopLevelIdentifiers`
- * to handle `const { a, b } = obj` and `const [x, y] = arr`.
- */
-function collectBindingNames(pattern: ts.BindingName, vars: Set<string>): void {
-  if (ts.isIdentifier(pattern)) {
-    vars.add(pattern.text);
-  } else if (ts.isObjectBindingPattern(pattern)) {
-    for (const el of pattern.elements) {
-      collectBindingNames(el.name, vars);
-    }
-  } else if (ts.isArrayBindingPattern(pattern)) {
-    for (const el of pattern.elements) {
-      if (!ts.isOmittedExpression(el)) {
-        collectBindingNames(el.name, vars);
-      }
-    }
-  }
-}
-
-/**
  * Scan a top-level statement and record any identifiers it introduces.
  *
  * These identifiers are needed so the expression prefixer knows NOT to
@@ -160,8 +134,6 @@ function collectBindingNames(pattern: ts.BindingName, vars: Set<string>): void {
  * - `import { a, b } from '...'` → collects `a`, `b` (named imports)
  * - `import * as ns from '...'` → collects `ns` (namespace import)
  * - `const x = ...` / `let y = ...` → collects `x`, `y` (variables)
- * - `const { a, b } = obj` → collects `a`, `b` (destructured variables)
- * - `const [x, y] = arr` → collects `x`, `y` (destructured array)
  * - `function fn() {...}` → collects `fn` (function declaration)
  * - `class Cls {...}` → collects `Cls` (class declaration)
  *
@@ -189,11 +161,11 @@ export function collectTopLevelIdentifiers(node: ts.Statement, vars: Set<string>
       }
     }
   }
-  // ── Variable statements: `const x = 1`, `let { a, b } = obj`, `const [x] = arr` ──
+  // ── Variable statements: `const x = 1`, `let y = 'hello'` ──
   else if (ts.isVariableStatement(node)) {
     for (const decl of node.declarationList.declarations) {
-      // collectBindingNames handles both simple identifiers and destructuring patterns
-      collectBindingNames(decl.name, vars);
+      // Only handle simple names (not destructuring patterns)
+      if (ts.isIdentifier(decl.name)) vars.add(decl.name.text);
     }
   }
   // ── Function declarations: `function helper() {...}` ──
@@ -207,8 +179,7 @@ export function collectTopLevelIdentifiers(node: ts.Statement, vars: Set<string>
 }
 
 /**
- * Extract all user-defined identifiers referenced in template binding expressions
- * using the TypeScript AST for precision.
+ * Extract all user-defined identifiers referenced in template binding expressions.
  *
  * Walks all binding expressions (including nested `childBindings` from
  * structural directives like `ac:if` and `ac:for`) and collects identifiers
@@ -217,12 +188,6 @@ export function collectTopLevelIdentifiers(node: ts.Statement, vars: Set<string>
  * The resulting set tells the compiler which class properties need to be
  * made reactive (backed by signals). If a property name appears in this set,
  * it means the template reads from it, so changes to it must trigger re-renders.
- *
- * Uses AST parsing to correctly distinguish:
- * - Top-level identifiers: `count`, `items` (collected — need reactivity)
- * - Property names after `.`: `items.length` → only `items` collected
- * - Local variable names inside object literals: `{ active: isActive }` → only `isActive`
- * - String literal words: `"hello world"` → NOT collected
  *
  * @param templateBindings - The flat binding array from the template compiler
  * @returns Set of identifier names referenced in template expressions
@@ -237,64 +202,22 @@ export function extractUsedIdentifiers(templateBindings: Binding[]): Set<string>
   const identifiers = new Set<string>();
 
   /**
-   * Walk a TypeScript AST node and collect all top-level identifier references
-   * that are not globals, property names, or object keys.
-   */
-  const collectFromNode = (node: ts.Node): void => {
-    // ── Property access: `foo.bar` — only collect `foo`, skip `bar` ──
-    if (ts.isPropertyAccessExpression(node)) {
-      collectFromNode(node.expression);
-      // do NOT visit node.name — it's a property key, not a variable reference
-      return;
-    }
-
-    // ── Computed access: `foo[key]` — collect both `foo` and `key` ──
-    if (ts.isElementAccessExpression(node)) {
-      collectFromNode(node.expression);
-      collectFromNode(node.argumentExpression);
-      return;
-    }
-
-    // ── Object property: `{ key: value }` — collect value only, not key ──
-    if (ts.isPropertyAssignment(node)) {
-      collectFromNode(node.initializer);
-      return;
-    }
-
-    // ── Shorthand property: `{ name }` — `name` is used as a value ──
-    if (ts.isShorthandPropertyAssignment(node)) {
-      const name = node.name.text;
-      if (!GLOBAL_IDENTIFIERS.has(name)) identifiers.add(name);
-      return;
-    }
-
-    // ── Bare identifier ──
-    if (ts.isIdentifier(node)) {
-      const name = node.text;
-      if (!GLOBAL_IDENTIFIERS.has(name)) identifiers.add(name);
-      return;
-    }
-
-    // ── Skip string / template literal text content ──
-    // (We don't want words inside strings collected as identifiers)
-    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-      return;
-    }
-
-    // For everything else, recurse into children
-    ts.forEachChild(node, collectFromNode);
-  };
-
-  /**
-   * Parse an expression string and collect identifiers from its AST.
+   * Scan a single expression string for identifier names.
+   * Uses a regex to find all word-like tokens, then filters out globals.
    */
   const processExpression = (expr: string): void => {
     if (!expr) return;
-    try {
-      const sf = ts.createSourceFile('expr.ts', `(${expr})`, ts.ScriptTarget.Latest, true);
-      ts.forEachChild(sf, collectFromNode);
-    } catch {
-      // Malformed expression — skip silently
+
+    // Match all identifier-like tokens in the expression
+    // Pattern: starts with letter/underscore/$, followed by alphanumerics
+    const matches = expr.matchAll(/[a-zA-Z_$][a-zA-Z0-9_$]*/g);
+
+    for (const match of matches) {
+      // Only keep identifiers that are NOT built-in globals
+      // (we don't want Math, console, true, false, etc.)
+      if (!GLOBAL_IDENTIFIERS.has(match[0])) {
+        identifiers.add(match[0]);
+      }
     }
   };
 

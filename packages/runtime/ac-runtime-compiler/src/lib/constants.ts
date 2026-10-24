@@ -24,7 +24,6 @@
  * - Language literals (`true`, `false`, `null`, `undefined`)
  * - Built-in objects (`Math`, `JSON`, `Array`, `Object`, etc.)
  * - Built-in functions (`parseInt`, `parseFloat`, `setTimeout`, etc.)
- * - Web APIs (`fetch`, `URL`, `localStorage`, `navigator`, etc.)
  * - Special template variable (`$event` — the event object in handlers)
  * - AC Runtime internals (`evaluateAcPipeExpression` - the pipe transform helper)
  *
@@ -55,65 +54,20 @@ export const GLOBAL_IDENTIFIERS = new Set([
   'Map',            // Map collections
   'Set',            // Set collections
   'Promise',        // Async operations
-  'Symbol',         // Symbol() unique values
-  'WeakMap',        // WeakMap collections
-  'WeakSet',        // WeakSet collections
-  'WeakRef',        // Weak references
-  'Proxy',          // Object proxies
-  'Reflect',        // Reflect API
-  'Intl',           // Internationalization API
-  'BigInt',         // Arbitrary-precision integers
 
   // ── Special Values ──
   'NaN',            // Not-a-Number
   'Infinity',       // Infinite number value
 
   // ── Built-in Functions ──
-  'parseInt',           // Parse integer from string
-  'parseFloat',         // Parse float from string
-  'isNaN',              // Check if value is NaN
-  'isFinite',           // Check if value is finite
-  'encodeURI',          // Encode URI
-  'encodeURIComponent', // Encode URI component
-  'decodeURI',          // Decode URI
-  'decodeURIComponent', // Decode URI component
-  'atob',               // Base64 decode
-  'btoa',               // Base64 encode
-  'structuredClone',    // Deep clone
-  'queueMicrotask',     // Schedule microtask
-
-  // ── Timer / Animation ──
-  'setTimeout',             // Delayed execution
-  'setInterval',            // Repeated execution
-  'clearTimeout',           // Cancel setTimeout
-  'clearInterval',          // Cancel setInterval
-  'requestAnimationFrame',  // Animation frame callback
-  'cancelAnimationFrame',   // Cancel animation frame
-
-  // ── Web APIs ──
-  'fetch',              // HTTP requests
-  'URL',                // URL parsing/construction
-  'URLSearchParams',    // URL query parameters
-  'FormData',           // Multipart form data
-  'Blob',               // Binary large object
-  'File',               // File API
-  'FileReader',         // Read File/Blob contents
-  'Event',              // DOM Event base class
-  'CustomEvent',        // Custom DOM events
-  'MouseEvent',         // Mouse events
-  'KeyboardEvent',      // Keyboard events
-  'MutationObserver',   // DOM mutation observer
-  'IntersectionObserver', // Intersection observer
-  'ResizeObserver',     // Resize observer
-  'AbortController',    // Abort fetch/async ops
-  'crypto',             // Web Crypto API
-  'performance',        // Performance API
-  'navigator',          // Browser navigator info
-  'location',           // Browser location
-  'history',            // Browser history API
-  'localStorage',       // Persistent local storage
-  'sessionStorage',     // Session-scoped storage
-  'screen',             // Screen information
+  'parseInt',       // Parse integer from string
+  'parseFloat',     // Parse float from string
+  'isNaN',          // Check if value is NaN
+  'isFinite',       // Check if value is finite
+  'setTimeout',     // Delayed execution
+  'setInterval',    // Repeated execution
+  'clearTimeout',   // Cancel setTimeout
+  'clearInterval',  // Cancel setInterval
 
   // ── JavaScript Keywords ──
   'let', 'const', 'var',                       // Variable declarations
