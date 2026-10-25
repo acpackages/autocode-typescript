@@ -335,7 +335,7 @@ export class AcDatagridBody extends AcElementBase {
         }
       }
 
-      const useAbsolute = this.datagridApi.animateRows && !isMasterDetail;
+      const useAbsolute = this.datagridApi.animateRows && !isMasterDetail && !this.datagridApi.usePagination;
       const newCurrentRows: AcDatagridRowElement[] = [];
       for (const row of normalRows) {
         let rowEl = this.renderedRowsMap.get(row.rowId);

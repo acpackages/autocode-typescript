@@ -102,7 +102,7 @@ export class AcDatagridRowElement extends AcElementBase {
       rowNumCell.textContent = `${newIndex + 1}`;
     }
     const rh = this.datagridApi?.rowHeight || 36;
-    if (this.datagridApi?.useVirtualScrolling || (this.datagridApi?.animateRows && !this.datagridApi?.hasMasterDetail)) {
+    if (!this.datagridApi?.usePagination && (this.datagridApi?.useVirtualScrolling || (this.datagridApi?.animateRows && !this.datagridApi?.hasMasterDetail))) {
       this.style.transform = `translateY(${newIndex * rh}px)`;
     }
   }

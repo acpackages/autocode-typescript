@@ -88,10 +88,24 @@ export class AcDataManager {
   // PERF FIX (D1): _cachedRows is sorted by index ascending after applySort(), so
   // position === index. A direct slice is O(1) vs the previous O(n) filter scan.
   get displayedRows(): IAcDataRow[] {
-    const cached = this.rows;
     if (this.displayCount <= 0 || (this.displayStartIndex === -1 && this.displayEndIndex === -1)) {
-      return cached;
+      return this.rows;
     }
+    if (this.type === 'ondemand') {
+      const result: IAcDataRow[] = [];
+      const start = Math.max(0, this.displayStartIndex);
+      const end = this.displayEndIndex >= 0
+        ? Math.min(this.allRows.length - 1, this.displayEndIndex)
+        : (this.displayCount > 0 ? start + this.displayCount - 1 : start);
+      for (let i = start; i <= end; i++) {
+        const row = this.allRows[i];
+        if (row && row.index >= 0) {
+          result.push(row);
+        }
+      }
+      return result;
+    }
+    const cached = this.rows;
     const start = Math.max(0, this.displayStartIndex);
     const end   = Math.min(cached.length, this.displayEndIndex + 1); // slice end is exclusive
     return cached.slice(start, end);
@@ -540,6 +554,18 @@ export class AcDataManager {
     this.lastStartIndex = startIndex;
     this.lastRowsCount = rowsCount;
     const setResultFromRows = () => {
+      if (this.type === 'ondemand') {
+        const fromIndex: number = startIndex ?? 0;
+        const count: number = rowsCount > -1 ? rowsCount : (this.totalRows > 0 ? this.totalRows - fromIndex : 0);
+        const toIndex: number = fromIndex + count - 1;
+        for (let index = fromIndex; index <= toIndex && index < this.allRows.length; index++) {
+          const row = this.allRows[index];
+          if (row && row.index >= 0) {
+            result.push(row);
+          }
+        }
+        return;
+      }
       // PERF FIX (G1): Capture rows cache once — avoids re-checking _rowsDirty on every iteration
       // and the previous double-access (this.rows[index] checked then pushed separately).
       // slice() is O(1) pointer arithmetic; filter(Boolean) removes any sparse undefined slots.
@@ -641,6 +667,10 @@ export class AcDataManager {
    * Position in the cache array == row.index, so a direct array access suffices.
    */
   getRowAtIndex({ index }: { index: number }): IAcDataRow | undefined {
+    if (this.type === 'ondemand') {
+      const row = this.allRows[index];
+      return row && row.index === index ? row : undefined;
+    }
     const cached = this.rows; // uses cache, no recompute if clean
     if (index < 0 || index >= cached.length) return undefined;
     const row = cached[index];
@@ -889,8 +919,8 @@ export class AcDataManager {
       this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.TotalRowsChange, args: totalRowsEventArgs });
       this.events.execute({ event: AC_DATA_MANAGER_EVENT.TotalRowsChange, args: totalRowsEventArgs });
       this.setDisplayedRows({
-        startIndex: this.displayStartIndex >= 0 ? this.displayStartIndex : startIndex,
-        rowsCount: this.displayCount > 0 ? this.displayCount : data.length
+        startIndex: startIndex,
+        rowsCount: data.length > 0 ? data.length : (this.displayCount > 0 ? this.displayCount : 50)
       });
     }
     this.isFirstRowsSet = true;

@@ -89,4 +89,47 @@ describe('AcDatagridElement - On-Demand Data', () => {
 
     expect(receivedQuery).toBe('Alice');
   });
+
+  it('should display rows when directly navigating to the last page', async () => {
+    const api = grid.datagridApi;
+    api.usePagination = true;
+    api.columnDefinitions = [
+      { field: 'id', title: 'ID' },
+      { field: 'name', title: 'Name' }
+    ];
+
+    // 150 items, page size 50 -> 3 pages
+    const mockServerData = Array.from({ length: 150 }, (_, i) => ({
+      id: `${i + 1}`,
+      name: `Person ${i + 1}`
+    }));
+
+    api.dataManager.onDemandFunction = (args: IAcOnDemandRequestArgs) => {
+      const start = args.startIndex ?? 0;
+      const count = args.rowsCount ?? 50;
+      const slice = mockServerData.slice(start, start + count);
+      args.successCallback({
+        data: slice,
+        totalCount: mockServerData.length
+      });
+    };
+
+    // Wait for initial page (page 1) to load
+    await new Promise((r) => setTimeout(r, 50));
+    expect(api.pagination.totalPages).toBe(3);
+    expect(api.pagination.activePage).toBe(1);
+    expect(api.displayedDatagridRows.length).toBe(50);
+
+    // Directly navigate to last page (page 3) without loading page 2
+    api.pagination.activePage = 3;
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(api.pagination.activePage).toBe(3);
+    expect(api.displayedDatagridRows.length).toBe(50);
+    expect(api.displayedDatagridRows[0].data.name).toBe('Person 101');
+    expect(api.displayedDatagridRows[49].data.name).toBe('Person 150');
+
+    const domRows = grid.querySelectorAll('ac-datagrid-row');
+    expect(domRows.length).toBe(50);
+  });
 });
