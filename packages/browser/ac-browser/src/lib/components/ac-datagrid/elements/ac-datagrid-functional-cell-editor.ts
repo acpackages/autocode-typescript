@@ -76,10 +76,19 @@ export class AcDatagridFunctionalCellEditor implements IAcDatagridCellEditor {
     }
 
     const handleInput = (e: Event) => {
-      this.currentValue = (e.target as any)?.value;
+      const val = this.getValue() !== undefined ? this.getValue() : (e.target as any)?.value;
       if (this.args?.datagridCell) {
         const colKey = this.args.datagridCell.datagridColumn.columnKey;
-        this.args.datagridCell.datagridRow.data[colKey] = this.currentValue;
+        const oldVal = this.args.datagridCell.datagridRow.data[colKey];
+        const isBothEmpty = (oldVal === undefined || oldVal === null || oldVal === '') && (val === undefined || val === null || val === '');
+        if (isBothEmpty || oldVal === val) {
+          return;
+        }
+        this.currentValue = val;
+        this.args.datagridCell.datagridRow.data[colKey] = val;
+        if (this.args.datagridCell.element) {
+          (this.args.datagridCell.element as any).previousValue = val;
+        }
         this.args.datagridApi?.eventHandler?.handleCellValueChange({ datagridCell: this.args.datagridCell, event: e });
       }
     };

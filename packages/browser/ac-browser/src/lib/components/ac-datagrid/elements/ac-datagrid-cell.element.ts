@@ -237,6 +237,12 @@ export class AcDatagridCellElement extends AcElementBase {
       }
       const onInputChange = (e: Event) => {
         const val = 'value' in (inputEl as any) ? (inputEl as any).value : undefined;
+        const oldVal = this.datagridRow.data[this.datagridColumn.columnKey];
+        const isBothEmpty = (oldVal === undefined || oldVal === null || oldVal === '') && (val === undefined || val === null || val === '');
+        if (isBothEmpty || oldVal === val) {
+          return;
+        }
+        this.previousValue = val;
         this.datagridRow.data[this.datagridColumn.columnKey] = val;
         this.datagridApi?.eventHandler?.handleCellValueChange({ datagridCell: this.datagridCell, event: e });
       };

@@ -468,10 +468,12 @@ export class AcInputBase extends AcElementBase {
             this.elementInternals.setFormValue(this._value ?? '');
           }
         }
-        if (this.dispatchEvent) {
+        if (emitEvent) {
+          if (this.dispatchEvent) {
             this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
           }
           this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+        }
         this.validate();
       }
     }

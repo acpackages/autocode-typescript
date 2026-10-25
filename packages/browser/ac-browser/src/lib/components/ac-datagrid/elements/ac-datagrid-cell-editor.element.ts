@@ -14,6 +14,7 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   private datagridRow!: IAcDatagridRow;
   private columnDefinition!: IAcDatagridColumnDefinition;
   public element!: HTMLInputElement | any;
+  private ignoreValueChange:boolean = false;
 
   blur() {
     this.element.blur();
@@ -122,9 +123,14 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   }
 
   private onInputChange = (e: Event) => {
-    if (!this.datagridCell) return;
+    if (!this.datagridCell || this.ignoreValueChange) return;
     const colKey = this.datagridCell.datagridColumn.columnKey;
+    const oldVal = this.datagridCell.datagridRow.data[colKey];
     const val = this.getValue();
+    const isBothEmpty = (oldVal === undefined || oldVal === null || oldVal === '') && (val === undefined || val === null || val === '');
+    if (isBothEmpty || oldVal === val) {
+      return;
+    }
     this.datagridCell.datagridRow.data[colKey] = val;
     if (this.datagridCell.element) {
       (this.datagridCell.element as any).previousValue = val;
