@@ -14,6 +14,16 @@ export class AcInputBase extends AcElementBase {
     return ['ac-context', 'ac-context-key', 'class', 'value', 'placeholder', 'disabled', 'readonly', 'name', 'style', 'required'];
   }
 
+  protected _onChangeCallbacks: Set<(value: any) => void> = new Set();
+
+  registerOnChange(fn: (value: any) => void): void {
+    this._onChangeCallbacks.add(fn);
+  }
+
+  writeValue(value: any): void {
+    this.setValue({ value, emitEvent: false });
+  }
+
   get value(): any {
     return this._value;
   }
@@ -344,10 +354,13 @@ export class AcInputBase extends AcElementBase {
     }
     if(dispatch){
       this.setValue({ value: this.inputElement.value, emitEvent: false });
-    if (this.dispatchEvent) {
-      this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-    }
-    this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+      if (this.dispatchEvent) {
+        this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+      }
+      this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+      for (const callback of this._onChangeCallbacks) {
+        callback(this._value);
+      }
     }
   }
 
@@ -357,6 +370,9 @@ export class AcInputBase extends AcElementBase {
       this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     }
     this.events.execute({ event: AcEnumInputEvent.Input, args: this._value });
+    for (const callback of this._onChangeCallbacks) {
+      callback(this._value);
+    }
   }
 
   override init(): void {
@@ -473,6 +489,9 @@ export class AcInputBase extends AcElementBase {
             this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
           }
           this.events.execute({ event: AcEnumInputEvent.Change, args: this._value });
+          for (const callback of this._onChangeCallbacks) {
+            callback(this._value);
+          }
         }
         this.validate();
       }

@@ -78,6 +78,8 @@ describe('AcDatagrid cell editing with allowEdit', () => {
     const input = cellEl.querySelector('input');
     expect(input).not.toBeNull();
     expect(input?.value).toBe('Alice');
+    expect(input?.getAttribute('ac-cell-editor-row-id')).toBe(api.displayedDatagridRows[0].rowId);
+    expect(input?.getAttribute('ac-cell-editor-column-key')).toBe('first_name');
 
     // Change input value
     input!.value = 'Bob';

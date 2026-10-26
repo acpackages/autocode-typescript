@@ -190,16 +190,38 @@ export class AcRuntimeElement extends HTMLElement {
         }
       }
 
-      // for (const subPath of Object.keys(this.pathSubscriptions)) {
-      //   if (property === subPath || property.startsWith(subPath + '.') || subPath.startsWith(property + '.')) {
-      //     const cbs = this.pathSubscriptions[subPath];
-      //     if (cbs) {
-      //       for (const cb of cbs) {
-      //         this.scheduleUpdate(cb);
-      //       }
-      //     }
-      //   }
-      // }
+      this.notifyPathSubscriptions(property);
+      if (fullPath && fullPath !== property) {
+        this.notifyPathSubscriptions(fullPath);
+      }
+    }
+  }
+
+  private notifyPathSubscriptions(property: string): void {
+    if (!this.pathSubscriptions || !property) return;
+
+    let currentPrefix = '';
+    const segments = property.split('.');
+    for (const seg of segments) {
+      currentPrefix = currentPrefix ? `${currentPrefix}.${seg}` : seg;
+      const cbs = this.pathSubscriptions[currentPrefix];
+      if (cbs) {
+        for (const cb of cbs) {
+          this.scheduleUpdate(cb);
+        }
+      }
+    }
+
+    const prefix = property + '.';
+    for (const subPath of Object.keys(this.pathSubscriptions)) {
+      if (subPath.startsWith(prefix)) {
+        const cbs = this.pathSubscriptions[subPath];
+        if (cbs) {
+          for (const cb of cbs) {
+            this.scheduleUpdate(cb);
+          }
+        }
+      }
     }
   }
 
@@ -223,12 +245,7 @@ export class AcRuntimeElement extends HTMLElement {
     if (this.elementRenderer) {
       const property = path;
 
-      const cbs = this.pathSubscriptions[property];
-      if (cbs) {
-        for (const cb of cbs) {
-          this.scheduleUpdate(cb);
-        }
-      }
+      this.notifyPathSubscriptions(property);
 
       if (this.acRuntimeInstance.acOnChange) {
         this.acRuntimeInstance.acOnChange({ key:rootKey, property, oldValue, newValue });

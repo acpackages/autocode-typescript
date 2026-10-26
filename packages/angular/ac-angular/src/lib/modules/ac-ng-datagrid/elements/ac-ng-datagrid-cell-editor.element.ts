@@ -119,6 +119,13 @@ export class AcNgDatagridCellEditor implements IAcDatagridCellEditor {
     const colDef = this.columnDefinition;
     this.element.style.height = '100%';
     this.element.style.width = '100%';
+    if (this.datagridRow?.rowId) {
+      this.element.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+    }
+    const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+    if (colKey) {
+      this.element.setAttribute('ac-cell-editor-column-key', colKey);
+    }
     if (colDef.cellEditorTemplateRef) {
       this.renderTemplate(colDef.cellEditorTemplateRef);
     } else if (colDef.cellEditorComponent) {
@@ -138,6 +145,13 @@ export class AcNgDatagridCellEditor implements IAcDatagridCellEditor {
     this.datagridColumn = args.datagridCell.datagridColumn;
     this.datagridRow = args.datagridCell.datagridRow;
     this.columnDefinition = this.datagridColumn.columnDefinition;
+    if (this.datagridRow?.rowId) {
+      this.element.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+    }
+    const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+    if (colKey) {
+      this.element.setAttribute('ac-cell-editor-column-key', colKey);
+    }
     if (this.viewRef) {
       this.viewRef.context = this.getContext();
     }
@@ -167,6 +181,13 @@ export class AcNgDatagridCellEditor implements IAcDatagridCellEditor {
   private renderDefault() {
     const input = document.createElement('input');
     input.style.width = '100%';
+    if (this.datagridRow?.rowId) {
+      input.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+    }
+    const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+    if (colKey) {
+      input.setAttribute('ac-cell-editor-column-key', colKey);
+    }
     input.value =
       this.datagridRow.data[
       this.datagridCell.datagridColumn.columnDefinition.field

@@ -150,7 +150,17 @@ export class AcDatagridCellElement extends AcElementBase {
       if (rendererEl) rendererEl.style.display = 'none';
       if (this.treeToggleElement) this.treeToggleElement.style.display = 'none';
       if (this.treeIndentElement) this.treeIndentElement.style.display = 'none';
-      this.append(this.cellEditor.getElement());
+      const editorEl = this.cellEditor.getElement();
+      if (editorEl) {
+        if (this.datagridRow?.rowId && !editorEl.hasAttribute('ac-cell-editor-row-id')) {
+          editorEl.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+        }
+        const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+        if (colKey && !editorEl.hasAttribute('ac-cell-editor-column-key')) {
+          editorEl.setAttribute('ac-cell-editor-column-key', colKey);
+        }
+      }
+      this.append(editorEl);
       this.activeComponent = this.cellEditor;
     }
     this.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridCellEditing);
@@ -226,6 +236,13 @@ export class AcDatagridCellElement extends AcElementBase {
       const inputEl: HTMLElement = typeof colDef.cellInputElement === 'string'
         ? this.ownerDocument.createElement(colDef.cellInputElement)
         : new colDef.cellInputElement();
+      if (this.datagridRow?.rowId) {
+        inputEl.setAttribute(AcDatagridAttributeName.acCellEditorRowId, this.datagridRow.rowId);
+      }
+      const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+      if (colKey) {
+        inputEl.setAttribute(AcDatagridAttributeName.acCellEditorColumnKey, colKey);
+      }
       // Apply attrs and params
       if (colDef.cellInputElementAttrs) {
         for (const [k, v] of Object.entries(colDef.cellInputElementAttrs)) {
@@ -390,6 +407,16 @@ export class AcDatagridCellElement extends AcElementBase {
     const handleFocusIn = (e: FocusEvent) => {
       if (this.useEditorForRenderer && this.cellEditor) {
         this.previousValue = this.cellEditor.getValue();
+        const editorEl = this.cellEditor.getElement();
+        if (editorEl) {
+          if (this.datagridRow?.rowId && !editorEl.hasAttribute('ac-cell-editor-row-id')) {
+            editorEl.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+          }
+          const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+          if (colKey && !editorEl.hasAttribute('ac-cell-editor-column-key')) {
+            editorEl.setAttribute('ac-cell-editor-column-key', colKey);
+          }
+        }
       }
       this.datagridApi?.eventHandler?.handleCellFocus?.({ datagridCell: this.datagridCell, event: e });
     };
@@ -634,6 +661,16 @@ export class AcDatagridCellElement extends AcElementBase {
         this.cellRenderer = this.cellEditor;
         this.isEditing = true;
         this.previousValue = this.cellEditor.getValue();
+        const editorEl = this.cellEditor.getElement();
+        if (editorEl) {
+          if (this.datagridRow?.rowId && !editorEl.hasAttribute('ac-cell-editor-row-id')) {
+            editorEl.setAttribute('ac-cell-editor-row-id', this.datagridRow.rowId);
+          }
+          const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+          if (colKey && !editorEl.hasAttribute('ac-cell-editor-column-key')) {
+            editorEl.setAttribute('ac-cell-editor-column-key', colKey);
+          }
+        }
       } else {
         this.cellRenderer = new AcDatagridCellRendererElement();
         this.useEditorForRenderer = false;

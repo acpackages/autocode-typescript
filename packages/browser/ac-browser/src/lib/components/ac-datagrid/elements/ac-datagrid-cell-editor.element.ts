@@ -113,10 +113,22 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
   }
 
   refresh(args: IAcDatagridCellElementArgs): void {
+    if (args.datagridCell) {
+      this.datagridCell = args.datagridCell;
+      this.datagridColumn = args.datagridCell.datagridColumn;
+      this.datagridRow = args.datagridCell.datagridRow;
+      if (this.datagridRow?.rowId) {
+        this.element.setAttribute(AcDatagridAttributeName.acCellEditorRowId, this.datagridRow.rowId);
+      }
+      const colKey = this.datagridColumn?.columnKey || this.datagridColumn?.columnDefinition?.field;
+      if (colKey) {
+        this.element.setAttribute(AcDatagridAttributeName.acCellEditorColumnKey, colKey);
+      }
+    }
     const value = args.rawValue !== undefined
       ? args.rawValue
-      : args.datagridCell.datagridRow.data[args.datagridCell.datagridColumn.columnKey];
-    this.element.value = value;
+      : args.datagridCell?.datagridRow?.data?.[args.datagridCell?.datagridColumn?.columnKey];
+    this.element.value = (value === undefined || value === null) ? '' : value;
     if (this.datagridApi) {
       this.datagridApi.hooks.execute({ hook: AC_DATAGRID_HOOK.CellEditorRefresh, args: this });
     }
@@ -143,6 +155,11 @@ export class AcDatagridCellEditorElement implements IAcDatagridCellEditor {
     this.element.setAttribute(AcDatagridAttributeName.acDatagridCellId, this.datagridCell.cellId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridColumnId, this.datagridCell.datagridColumn.columnId);
     this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId, this.datagridCell.datagridRow.rowId);
+    this.element.setAttribute(AcDatagridAttributeName.acCellEditorRowId, this.datagridCell.datagridRow.rowId);
+    const colKey = this.datagridCell.datagridColumn.columnKey || this.datagridCell.datagridColumn.columnDefinition?.field;
+    if (colKey) {
+      this.element.setAttribute(AcDatagridAttributeName.acCellEditorColumnKey, colKey);
+    }
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridCellEditorInput, element: this.element });
     this.element.style.height = "100%";
     this.element.style.width = "100%";

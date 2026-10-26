@@ -28,12 +28,20 @@ export class AcTomSelectInputElement extends AcInputBase {
       this.setAttribute("placeholder", value);
       if (this.tomSelect) {
         (this.tomSelect as any).settings.placeholder = value;
+        if (this.tomSelect.control_input) {
+          this.tomSelect.control_input.placeholder = value;
+          this.tomSelect.control_input.setAttribute('placeholder', value);
+        }
         this.tomSelect.inputState();
       }
     } else {
       this.removeAttribute("placeholder");
       if (this.tomSelect) {
         (this.tomSelect as any).settings.placeholder = "";
+        if (this.tomSelect.control_input) {
+          this.tomSelect.control_input.placeholder = "";
+          this.tomSelect.control_input.removeAttribute('placeholder');
+        }
         this.tomSelect.inputState();
       }
     }
@@ -217,8 +225,15 @@ export class AcTomSelectInputElement extends AcInputBase {
   private async setSelectedRowsFromValue(): Promise<void> {
     if (!this.value || this.value === 'null' || this.value === 'undefined') {
       this.selectedRows = [];
-      if (this.tomSelect && this.tomSelect.getValue() !== '') {
-        this.tomSelect.clear(true);
+      if (this.tomSelect) {
+        if (this.tomSelect.getValue() !== '' || this.tomSelect.items.length > 0) {
+          this.tomSelect.clear(true);
+        }
+        if (this.placeholder && this.tomSelect.control_input) {
+          this.tomSelect.control_input.placeholder = this.placeholder;
+          this.tomSelect.control_input.setAttribute('placeholder', this.placeholder);
+        }
+        this.tomSelect.inputState();
       }
       return;
     }
@@ -680,6 +695,12 @@ export class AcTomSelectInputElement extends AcInputBase {
     };
 
     this.tomSelect = new TomSelect(this.selectEl, tomOptions);
+
+    if (this.placeholder && this.tomSelect.control_input) {
+      this.tomSelect.control_input.placeholder = this.placeholder;
+      this.tomSelect.control_input.setAttribute('placeholder', this.placeholder);
+      this.tomSelect.inputState();
+    }
 
     const originalPosition = this.tomSelect.position;
     this.tomSelect.position = function () {

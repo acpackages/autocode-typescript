@@ -374,13 +374,17 @@ function generateBlockRenderers(
       const acRuntimeInstance = ctx;\n
       ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
       const el = this.${getElementPropertyName({ targetId })} as any;\n
+      const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
+      el.addEventListener('input', __modelUpdate);\n
+      el.addEventListener('change', __modelUpdate);\n
       if (typeof el.registerOnChange === 'function') {
         el.registerOnChange((val: any) => { ${modelPrefixed} = val; });
-      } else {
-        const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
-        el.addEventListener('input', __modelUpdate);\n
-        el.addEventListener('change', __modelUpdate);\n
       }
+      try {
+        if (el.value !== undefined && el.value !== null && el.value !== '' && (${modelPrefixed}) === undefined) {
+          ${modelPrefixed} = el.value;
+        }
+      } catch (e) {}
       el.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
             `;

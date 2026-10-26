@@ -59,6 +59,14 @@ export class AcDatagridFunctionalCellEditor implements IAcDatagridCellEditor {
         this.element.setAttribute(AcDatagridAttributeName.acDatagridRowId, args.row.rowId);
       }
     }
+    const rowId = args.row?.rowId || args.datagridCell?.datagridRow?.rowId;
+    if (rowId) {
+      this.element.setAttribute(AcDatagridAttributeName.acCellEditorRowId, rowId);
+    }
+    const columnKey = args.column?.columnKey || args.column?.columnDefinition?.field || args.datagridCell?.datagridColumn?.columnKey || args.datagridCell?.datagridColumn?.columnDefinition?.field;
+    if (columnKey) {
+      this.element.setAttribute(AcDatagridAttributeName.acCellEditorColumnKey, columnKey);
+    }
     this.element.style.height = "100%";
     this.element.style.width = "100%";
 
@@ -98,6 +106,14 @@ export class AcDatagridFunctionalCellEditor implements IAcDatagridCellEditor {
 
   refresh(args: IAcDatagridCellElementArgs): void {
     this.args = args;
+    const rowId = args.row?.rowId || args.datagridCell?.datagridRow?.rowId;
+    if (rowId) {
+      this.element.setAttribute(AcDatagridAttributeName.acCellEditorRowId, rowId);
+    }
+    const columnKey = args.column?.columnKey || args.column?.columnDefinition?.field || args.datagridCell?.datagridColumn?.columnKey || args.datagridCell?.datagridColumn?.columnDefinition?.field;
+    if (columnKey) {
+      this.element.setAttribute(AcDatagridAttributeName.acCellEditorColumnKey, columnKey);
+    }
     const resolvedValue = args.rawValue !== undefined ? args.rawValue : args.value;
     this.currentValue = resolvedValue;
     if (this.element) {

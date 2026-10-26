@@ -4,7 +4,7 @@ import { acClearElement, AcInputBase, acRegisterCustomElement } from "@autocode-
 import { AcDDInputElement } from "./ac-dd-input-element.element";
 import { AcDDInputFieldBaseElement } from "./ac-dd-input-field-base-element.element";
 import { AcDDInputManager } from "../core/ac-dd-input-manager";
-import { AcDDTableColumn } from "@autocode-ts/ac-data-dictionary";
+import { AcDataDictionary, AcDDTableColumn } from "@autocode-ts/ac-data-dictionary";
 
 export class AcDDInputFieldElement extends AcInputBase {
   static override get observedAttributes() {
@@ -173,6 +173,18 @@ export class AcDDInputFieldElement extends AcInputBase {
     super();
     this.ddInputField = new AcDDInputManager.inputFieldElementClass();
     this.ddInputField.ddInputFieldElement = this;
+    this.ddInput.addEventListener('change', (e: Event) => {
+      e.stopPropagation();
+      if (this._value !== this.ddInput.value) {
+        this.setValue({ value: this.ddInput.value, emitEvent: true });
+      }
+    });
+    this.ddInput.addEventListener('input', (e: Event) => {
+      e.stopPropagation();
+      if (this._value !== this.ddInput.value) {
+        this.setValue({ value: this.ddInput.value, emitEvent: false });
+      }
+    });
     this.ddInput.on({
       event: 'change', callback: () => {
         if (this._value !== this.ddInput.value) {
@@ -319,6 +331,20 @@ export class AcDDInputFieldElement extends AcInputBase {
     if (this.ddInput) {
       this.ddInput.inputStyle = this.inputStyle;
     }
+  }
+
+  override writeValue(value: any): void {
+    if (value === undefined) {
+      const col = this.ddTableColumn || this.ddInput?.ddTableColumn || (this.tableName && this.columnName ? AcDataDictionary.getTableColumn({ tableName: this.tableName, columnName: this.columnName, dataDictionaryName: this.dataDictionary }) : undefined);
+      if (col) {
+        const defaultValue = col.getDefaultValue();
+        if (defaultValue !== undefined && defaultValue !== null && defaultValue !== '') {
+          this.setValue({ value: defaultValue, emitEvent: true });
+          return;
+        }
+      }
+    }
+    this.setValue({ value: value, emitEvent: false });
   }
 
   override setValue({ value, emitEvent = true}:{ value:any, emitEvent?: boolean }): void {
