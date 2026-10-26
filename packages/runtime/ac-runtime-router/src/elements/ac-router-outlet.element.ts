@@ -38,6 +38,7 @@ export class AcRouterOutletElement extends HTMLElement {
   disconnectedCallback(): void {
     this._unsubscribe?.();
     this._unsubscribe = null;
+    this.clearContent();
   }
 
   /** Temporarily stop reacting to route changes. */
@@ -116,6 +117,9 @@ export class AcRouterOutletElement extends HTMLElement {
   /** Remove current child component from the DOM. */
   private clearContent(): void {
     if (this.currentComponent) {
+      if (typeof (this.currentComponent as any).destroy === 'function') {
+        (this.currentComponent as any).destroy();
+      }
       this.currentComponent.remove();
       this.currentComponent = null;
       this.currentSelector = null;
@@ -123,7 +127,11 @@ export class AcRouterOutletElement extends HTMLElement {
     }
     // Also clear any remaining children
     while (this.firstChild) {
-      this.removeChild(this.firstChild);
+      const child = this.firstChild;
+      if (typeof (child as any).destroy === 'function') {
+        (child as any).destroy();
+      }
+      this.removeChild(child);
     }
   }
 }

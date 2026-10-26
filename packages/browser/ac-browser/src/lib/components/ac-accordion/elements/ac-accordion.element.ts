@@ -29,6 +29,7 @@ export class AcAccordion extends AcElementBase {
     for (const collapse of this.collapses) {
       collapse.removeEventListener(AcEnumCollapseEvent.Open,this.collapseOpenListener)
     }
+    super.disconnectedCallback();
   }
 
   override init(){

@@ -14,6 +14,7 @@ export class AcElementRenderer {
   rendererEndCommentText: string = '';
   childRenderers: Record<string, AcElementRenderer> = {};
   isRendered?: boolean = false;
+  isDestroyed: boolean = false;
   isRoot?: boolean = false;
   protected targetId?: string = '';
   ownedTargetIds: string[] = [];
@@ -108,30 +109,55 @@ export class AcElementRenderer {
   }
 
   destroy(): void {
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
+
     for (const key of Object.keys(this.childRenderers)) {
       this.destroyChildRenderer(key);
     }
     this.childRenderers = {};
 
-    if (this.startComment && this.endComment && this.parentRenderer) {
-      this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
-    } else if (this.rendererStartCommentText && this.rendererEndCommentText) {
-      this.removeNodesBetweenComments({ startComment: this.rendererStartCommentText, endComment: this.rendererEndCommentText });
+    try {
+      if (this.startComment && this.endComment && this.parentRenderer) {
+        this.parentRenderer.removeNodesBetweenComments({ startComment: this.startComment, endComment: this.endComment });
+      } else if (this.rendererStartCommentText && this.rendererEndCommentText) {
+        this.removeNodesBetweenComments({ startComment: this.rendererStartCommentText, endComment: this.rendererEndCommentText });
+      }
+    } catch (err) {
+      console.error('Error removing nodes between comments on destroy:', err);
     }
 
     for (const node of this.nodes) {
-      this.destroyNestedElements(node);
-      if (node.parentNode) {
-        node.parentNode.removeChild(node);
+      try {
+        this.destroyNestedElements(node);
+        if (node.parentNode) {
+          node.parentNode.removeChild(node);
+        }
+      } catch (err) {
+        console.error('Error destroying node on renderer destroy:', err);
       }
     }
     this.nodes = [];
 
     this.commentCache.clear();
     for (const unsub of this.subscriptions) {
-      unsub();
+      if (typeof unsub === "function") {
+        try {
+          unsub();
+        } catch {}
+      }
     }
     this.subscriptions = [];
+
+    for (const key of Object.keys(this)) {
+      if (key.startsWith("el$")) {
+        (this as any)[key] = null;
+      }
+    }
+    (this.rootElement as any) = null;
+    (this.context as any) = null;
+    (this.parentRenderer as any) = null;
+    this.currentBindingValues = {};
   }
 
   protected subscribe(path: string, callback: () => void): void {
@@ -162,8 +188,16 @@ export class AcElementRenderer {
   destroyChildRenderer(targetId: string): void {
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
-      delete this.childRenderers[targetId];
-      childRenderer.destroy();
+      for (const k of Object.keys(this.childRenderers)) {
+        if (this.childRenderers[k] === childRenderer) {
+          delete this.childRenderers[k];
+        }
+      }
+      try {
+        childRenderer.destroy();
+      } catch (err) {
+        console.error(`Error destroying childRenderer [${targetId}]:`, err);
+      }
     }
   }
 
@@ -321,6 +355,9 @@ export class AcElementRenderer {
 
       // 5. Fallback: search within rootElement if isRoot or no parentRenderer
       if (this.isRoot || !this.parentRenderer) {
+        if (!this.rootElement || !(this.rootElement instanceof Node)) {
+          return null;
+        }
         const walker = document.createTreeWalker(
           this.rootElement,
           NodeFilter.SHOW_COMMENT
@@ -382,6 +419,7 @@ export class AcElementRenderer {
     const templateOutlets = new Set<string>();
 
     for (const root of roots) {
+      if (!root || !(root instanceof Node)) continue;
       const walker = document.createTreeWalker(
         root,
         NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT

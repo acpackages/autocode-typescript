@@ -17,6 +17,7 @@ export class AcRuntimeElement extends HTMLElement {
   pathSubscriptions: Record<string, Set<() => void>> = {};
   private pendingUpdates = new Set<() => void>();
   private isBatchScheduled = false;
+  private outputSubscriptions: any[] = [];
 
   viewChildren: any = {};
   protected elementRenderer!: AcElementRenderer;
@@ -45,22 +46,9 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   disconnectedCallback(): void {
-    if (this.acRuntimeInstance && (this.acRuntimeInstance as any).acOnDestroy) {
-      (this.acRuntimeInstance as any).acOnDestroy();
-      (this.acRuntimeInstance as any).acOnDestroy = undefined;
+    if (!this.isDestroyed) {
+      this.destroy();
     }
-    const nestedElements = this.querySelectorAll?.('[ac-runtime-element]');
-    if (nestedElements) {
-      nestedElements.forEach((el: any) => {
-        if (el !== this && typeof el.destroy === 'function') {
-          el.destroy();
-        }
-      });
-    }
-    if (this.elementRenderer) {
-      this.elementRenderer.destroy();
-    }
-    (this.elementRenderer as any) = null;
   }
 
   private isDestroyed = false;
@@ -68,10 +56,68 @@ export class AcRuntimeElement extends HTMLElement {
   destroy(): void {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
+
+    if (this.acRuntimeInstance && (this.acRuntimeInstance as any).acOnDestroy) {
+      try {
+        (this.acRuntimeInstance as any).acOnDestroy();
+      } catch (err) {
+        console.error('Error in acOnDestroy:', err);
+      }
+      (this.acRuntimeInstance as any).acOnDestroy = undefined;
+    }
+
+    const nestedElements = this.querySelectorAll?.('*');
+    if (nestedElements) {
+      nestedElements.forEach((el: any) => {
+        if (el !== this && typeof el.destroy === 'function' && !el.isDestroyed) {
+          try {
+            el.destroy();
+          } catch (err) {
+            console.error('Error destroying nested element:', err);
+          }
+        }
+      });
+    }
+
+    if (this.elementRenderer) {
+      try {
+        this.elementRenderer.destroy();
+      } catch (err) {
+        console.error('Error destroying elementRenderer:', err);
+      }
+      (this.elementRenderer as any) = null;
+    }
+
+    for (const sub of this.outputSubscriptions) {
+      try {
+        if (typeof sub === 'function') {
+          sub();
+        } else if (typeof sub?.unsubscribe === 'function') {
+          sub.unsubscribe();
+        }
+      } catch {}
+    }
+    this.outputSubscriptions = [];
+
+    this.pathSubscriptions = {};
+    this.pendingUpdates.clear();
+    this.arrayPropertyChangeListeners = {};
+    this.changeSubscribers = [];
+    this.changeMethodCallbacks = {};
+    this.templates = {};
+    this.templateOutlets = {};
+    this.viewChildren = {};
+    this.instanceViewChildren = {};
+
+    if (this.acRuntimeInstance) {
+      if (this.acRuntimeInstance.element === this) {
+        this.acRuntimeInstance.element = null;
+      }
+      this.acRuntimeInstance = null;
+    }
+
     if (this.parentNode) {
       this.remove();
-    } else {
-      this.disconnectedCallback();
     }
   }
 
@@ -90,10 +136,16 @@ export class AcRuntimeElement extends HTMLElement {
       }
     }
     for (const eventName of this.instanceOutputs as string[]) {
-      (this.acRuntimeInstance as any)[eventName].subscribe((args: any) => {
-        const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
-        this.dispatchEvent(event);
-      });
+      const output = (this.acRuntimeInstance as any)?.[eventName];
+      if (output && typeof output.subscribe === 'function') {
+        const sub = output.subscribe((args: any) => {
+          const event = new AcRuntimeElementEvent(eventName.toLowerCase(), args, { bubbles: true, cancelable: true, composed: true }) as any;
+          this.dispatchEvent(event);
+        });
+        if (sub) {
+          this.outputSubscriptions.push(sub);
+        }
+      }
     }
     this.setAttribute('ac-runtime-element', '');
     this.render().then(() => {

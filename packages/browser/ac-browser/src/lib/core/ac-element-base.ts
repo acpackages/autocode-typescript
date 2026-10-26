@@ -53,7 +53,9 @@ export class AcElementBase extends HTMLElement {
   }
 
   disconnectedCallback(): void {
-    // Derived classes can perform cleanup in disconnectedCallback
+    if (this.autoDestroyOnDisconnect && !this.isDestroyed) {
+      this.destroy();
+    }
   }
 
   init(): void {
