@@ -2,7 +2,7 @@
 
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
-import { AC_DATAGRID_CLASS_NAME, AC_DATAGRID_TAG } from "../consts/_consts.export";
+import { AC_DATAGRID_CLASS_NAME, AC_DATAGRID_ICON_CLASS, AC_DATAGRID_TAG } from "../consts/_consts.export";
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { IAcDatagridRow } from "../interfaces/ac-datagrid-row.interface";
 
@@ -206,14 +206,15 @@ export class AcDatagridInternalCellElement extends AcElementBase {
 
     if (this.datagridApi.hasTreeOrGroup && !treeHandledByColumn) {
       if (hasChildren) {
-        const chevron = document.createElement('span');
-        chevron.className = AC_DATAGRID_CLASS_NAME.acDatagridRowExpandIcon;
+        const chevron = document.createElement('i');
+
 
         if (this.datagridApi.loadingRowIds.has(this.datagridRow.rowId)) {
           chevron.textContent = '⏳';
         } else {
-          chevron.textContent = this.datagridRow.isExpanded ? '▼' : '▶';
+          chevron.setAttribute('class',this.datagridRow.isExpanded ? AC_DATAGRID_ICON_CLASS.treeExpanded : AC_DATAGRID_ICON_CLASS.treeCollapsed);
         }
+        chevron.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridRowExpandIcon);
 
         chevron.addEventListener('click', (e) => {
           e.stopPropagation();

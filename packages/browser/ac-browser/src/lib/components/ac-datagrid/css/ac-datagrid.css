@@ -323,12 +323,6 @@
   transform-origin: center;
 }
 
-.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-row-expand-icon,
-.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-group-toggle,
-.ac-datagrid-row.ac-datagrid-row-expanded .ac-datagrid-cell-tree-toggle {
-  transform: rotate(90deg);
-}
-
 .ac-datagrid-row-container {
   display: flex;
   flex-direction: row;

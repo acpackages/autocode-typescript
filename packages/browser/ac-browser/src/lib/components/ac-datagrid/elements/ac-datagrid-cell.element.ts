@@ -504,15 +504,16 @@ export class AcDatagridCellElement extends AcElementBase {
     }
 
     // Toggle / spacer
-    this.treeToggleElement = this.ownerDocument.createElement('span');
+    this.treeToggleElement = this.ownerDocument.createElement('i');
     const hasChildren = this.datagridRow.hasChildren || this.datagridRow.isGroupHeader;
     if (hasChildren) {
-      this.treeToggleElement.className = 'ac-datagrid-cell-tree-toggle';
       if ((this.datagridApi as any).loadingRowIds?.has(this.datagridRow.rowId)) {
         this.treeToggleElement.textContent = '⏳';
       } else {
-        this.treeToggleElement.textContent = this.datagridRow.isExpanded ? '▼' : '▶';
+        this.treeToggleElement.setAttribute('class',this.datagridRow.isExpanded ? AC_DATAGRID_ICON_CLASS.treeExpanded : AC_DATAGRID_ICON_CLASS.treeCollapsed);
       }
+
+      this.treeToggleElement.classList.add('ac-datagrid-cell-tree-toggle');
       this.treeToggleElement.addEventListener('click', (e) => {
         e.stopPropagation();
         this.datagridApi?.toggleRow({ rowId: this.datagridRow.rowId });
