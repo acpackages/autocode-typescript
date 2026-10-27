@@ -246,6 +246,13 @@ export class AcDDInputElement extends AcInputBase {
           const newVal = (this.inputElement as any).value;
           if (this._value !== newVal) {
             super.setValue({ value: newVal, emitEvent: false });
+            if (this.dispatchEvent) {
+              this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+            }
+            this.events.execute({ event: 'input', args: this._value });
+            for (const callback of this._onChangeCallbacks) {
+              callback(this._value);
+            }
           }
         });
         this.inputElement.addEventListener('change', (e: Event) => {

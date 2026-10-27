@@ -183,6 +183,13 @@ export class AcDDInputFieldElement extends AcInputBase {
       e.stopPropagation();
       if (this._value !== this.ddInput.value) {
         this.setValue({ value: this.ddInput.value, emitEvent: false });
+        if (this.dispatchEvent) {
+          this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+        }
+        this.events.execute({ event: 'input', args: this._value });
+        for (const callback of this._onChangeCallbacks) {
+          callback(this._value);
+        }
       }
     });
     this.ddInput.on({
@@ -196,6 +203,13 @@ export class AcDDInputFieldElement extends AcInputBase {
       event: 'input', callback: () => {
         if (this._value !== this.ddInput.value) {
           this.setValue({ value: this.ddInput.value, emitEvent: false });
+          if (this.dispatchEvent) {
+            this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+          }
+          this.events.execute({ event: 'input', args: this._value });
+          for (const callback of this._onChangeCallbacks) {
+            callback(this._value);
+          }
         }
       }
     });

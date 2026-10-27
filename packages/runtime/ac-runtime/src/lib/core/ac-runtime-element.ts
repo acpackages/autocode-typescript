@@ -416,6 +416,7 @@ export class AcRuntimeElement extends HTMLElement {
     }
     this.pathSubscriptions[path].add(callback);
     return () => {
+      this.pendingUpdates.delete(callback);
       if (this.pathSubscriptions[path]) {
         this.pathSubscriptions[path].delete(callback);
         if (this.pathSubscriptions[path].size === 0) {
@@ -426,15 +427,24 @@ export class AcRuntimeElement extends HTMLElement {
   }
 
   scheduleUpdate(callback: () => void) {
+    if (this.isDestroyed) return;
     this.pendingUpdates.add(callback);
     if (!this.isBatchScheduled) {
       this.isBatchScheduled = true;
       queueMicrotask(() => {
         this.isBatchScheduled = false;
+        if (this.isDestroyed) {
+          this.pendingUpdates.clear();
+          return;
+        }
         const updates = this.pendingUpdates;
         this.pendingUpdates = new Set();
         for (const update of updates) {
-          update();
+          try {
+            update();
+          } catch (err) {
+            console.error('Error during scheduled update:', err);
+          }
         }
       });
     }

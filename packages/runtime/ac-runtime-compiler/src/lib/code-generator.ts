@@ -184,11 +184,11 @@ function generateBlockRenderers(
     }
     else if (binding.type === 'viewChildren') {
       // Generate a renderer sub-class for the template's inner content
-      rootViewChildCode += `if((this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
+      rootViewChildCode += `if(this.rootElement && (this.rootElement as any).acRuntimeInstance && (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
               this.rootElement.viewChildren['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
             }
-            else{
+            else if(this.rootElement && (this.rootElement as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${binding.expression}'] = this.${getElementPropertyName({ targetId: binding.targetId })};
               this.rootElement.viewChildren['${binding.expression}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any);
             }`;
@@ -200,7 +200,7 @@ function generateBlockRenderers(
         for (const viewChild of templateResult.viewChildren) {
           if (viewChild.elementRefId == binding.targetId) {
             viewChildCode += `
-          if(this.${getElementPropertyName({ targetId: binding.targetId })}){
+          if(this.${getElementPropertyName({ targetId: binding.targetId })} && this.rootElement && (this.rootElement as any).acRuntimeInstance){
             if((this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance){
               (this.rootElement as any).acRuntimeInstance['${viewChild.propName}'] = (this.${getElementPropertyName({ targetId: binding.targetId })} as any).acRuntimeInstance;
             }
@@ -344,6 +344,7 @@ function generateBlockRenderers(
         eventRegistrationCode += `
         if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
       this.${getElementPropertyName({ targetId })}.addEventListener('${binding.target?.toLowerCase()}', (event: any) => {\n
+        if (this.isDestroyed || !this.rootElement || !this.rootElement.acRuntimeInstance) return;\n
         const ctx = this.rootElement.acRuntimeInstance;\n
         const acRuntimeInstance = ctx;\n
         ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
@@ -370,21 +371,35 @@ function generateBlockRenderers(
         }\n`;
         eventRegistrationCode += `
     if (this.${getElementPropertyName({ targetId })} && !this.${getElementPropertyName({ targetId })}.hasAttribute('ac-event-${binding.bindingId}')) {\n
-      const ctx = this.rootElement.acRuntimeInstance;\n
-      const acRuntimeInstance = ctx;\n
-      ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
       const el = this.${getElementPropertyName({ targetId })} as any;\n
-      const __modelUpdate = () => { ${modelPrefixed} = el.value; };\n
+      const __modelUpdate = () => {\n
+        if (this.isDestroyed || !this.rootElement || !this.rootElement.acRuntimeInstance) return;\n
+        const ctx = this.rootElement.acRuntimeInstance;\n
+        const acRuntimeInstance = ctx;\n
+        ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
+        ${modelPrefixed} = el.value;\n
+      };\n
       el.addEventListener('input', __modelUpdate);\n
       el.addEventListener('change', __modelUpdate);\n
-      if (typeof el.registerOnChange === 'function') {
-        el.registerOnChange((val: any) => { ${modelPrefixed} = val; });
-      }
-      try {
-        if (el.value !== undefined && el.value !== null && el.value !== '' && (${modelPrefixed}) === undefined) {
-          ${modelPrefixed} = el.value;
-        }
-      } catch (e) {}
+      if (typeof el.registerOnChange === 'function') {\n
+        el.registerOnChange((val: any) => {\n
+          if (this.isDestroyed || !this.rootElement || !this.rootElement.acRuntimeInstance) return;\n
+          const ctx = this.rootElement.acRuntimeInstance;\n
+          const acRuntimeInstance = ctx;\n
+          ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
+          ${modelPrefixed} = val;\n
+        });\n
+      }\n
+      try {\n
+        if (this.rootElement && this.rootElement.acRuntimeInstance) {\n
+          const ctx = this.rootElement.acRuntimeInstance;\n
+          const acRuntimeInstance = ctx;\n
+          ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
+          if (el.value !== undefined && el.value !== null && el.value !== '' && (${modelPrefixed}) === undefined) {\n
+            ${modelPrefixed} = el.value;\n
+          }\n
+        }\n
+      } catch (e) {}\n
       el.setAttribute('ac-event-${binding.bindingId}', 'true');\n
     }\n
             `;
@@ -425,6 +440,7 @@ function generateBlockRenderers(
       const updaterName = `update$${binding.bindingId}`;
       updaterMethods += `
   private async ${updaterName}(force = false): Promise<void> {
+    if (this.isDestroyed || !this.rootElement || !this.rootElement.acRuntimeInstance) return;
     const ctx = this.rootElement.acRuntimeInstance;
     const acRuntimeInstance = ctx;
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}

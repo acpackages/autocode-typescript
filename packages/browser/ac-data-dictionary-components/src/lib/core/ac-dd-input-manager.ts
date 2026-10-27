@@ -65,7 +65,7 @@ export class AcDDInputManager {
         else {
           const options: any[] = ddTableColumn.getValueOptions();
           if (options.length > 0) {
-            result.inputElement = AcSelectInputElement;
+            result.inputElement = this.inputDefinitions['select'].inputElement;
             result.defaultProperties['options'] = options;
           }
         }

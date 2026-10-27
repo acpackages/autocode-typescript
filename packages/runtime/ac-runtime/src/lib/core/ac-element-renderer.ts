@@ -161,7 +161,12 @@ export class AcElementRenderer {
   }
 
   protected subscribe(path: string, callback: () => void): void {
-    const unsub = this.rootElement.subscribePath(path, callback);
+    if (this.isDestroyed || !this.rootElement) return;
+    const safeCallback = () => {
+      if (this.isDestroyed || !this.rootElement) return;
+      callback();
+    };
+    const unsub = this.rootElement.subscribePath(path, safeCallback);
     this.subscriptions.push(unsub);
   }
 
