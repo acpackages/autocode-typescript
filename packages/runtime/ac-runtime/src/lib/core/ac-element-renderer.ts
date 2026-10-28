@@ -615,7 +615,9 @@ export class AcElementRenderer {
   }
 
   triggerUpdate(force = true) {
-    // this.executeChangeListener({ targetIds: this.ownedTargetIds, force });
+    for (const key of Object.keys(this.childRenderers)) {
+      this.childRenderers[key]?.triggerUpdate(force);
+    }
   }
 
 }
@@ -837,6 +839,7 @@ export class AcElementArrayRenderer extends AcElementRenderer {
     const childRenderer = this.childRenderers[targetId];
     if (childRenderer) {
       childRenderer.updateContext(contextUpdates);
+      childRenderer.triggerUpdate(true);
     }
   }
 }

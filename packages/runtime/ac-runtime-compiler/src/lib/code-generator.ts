@@ -219,6 +219,7 @@ function generateBlockRenderers(
   let eventRegistrationCode = '';
   let updaterMethods = '';
   let subscriptionCode = '';
+  const generatedUpdaters: string[] = [];
   // Model assignement code will be executed first to set default value of the input;
   let modelCode = '';
   for (const binding of bindings) {
@@ -437,7 +438,12 @@ function generateBlockRenderers(
     }
 
     if (updateStatement) {
-      const updaterName = `update$${binding.bindingId}`;
+      const updaterName = `update$` + `${binding.bindingId}`;
+      generatedUpdaters.push(updaterName);
+      const isFor = binding.type === 'for';
+      const condition = isFor
+        ? `oldValue !== newValue || force`
+        : `oldValue !== newValue || force || (newValue !== null && typeof newValue === 'object')`;
       updaterMethods += `
   private async ${updaterName}(force = false): Promise<void> {
     if (this.isDestroyed || !this.rootElement || !this.rootElement.acRuntimeInstance) return;
@@ -446,7 +452,7 @@ function generateBlockRenderers(
     ${localVars.size > 0 ? `const { ${[...localVars].join(', ')} } = this.context || {};` : ''}
     const newValue = ${expression};
     const oldValue = this.currentBindingValues['${binding.bindingId}'];
-    if (oldValue !== newValue || force || (newValue !== null && typeof newValue === 'object')) {
+    if (${condition}) {
       this.currentBindingValues['${binding.bindingId}'] = newValue;
       ${updateStatement}
     }
@@ -582,6 +588,14 @@ class ${classNameSub} extends AcElementRenderer {
     classCode += `
     override resolveTemplateOutlets(){
       ${templateOutletCode}
+    }`;
+  }
+
+  if (generatedUpdaters.length > 0) {
+    classCode += `
+    override triggerUpdate(force = true): void {
+      super.triggerUpdate(force);
+      ${generatedUpdaters.map(fn => `this.${fn}(force);`).join('\r\n      ')}
     }`;
   }
 
