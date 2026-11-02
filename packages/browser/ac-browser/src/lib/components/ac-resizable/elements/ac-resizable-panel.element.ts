@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AcResizableAttributeName } from "../consts/ac-resizable-attribute-name.const";
+import { AcResizableCssClassName } from "../consts/ac-resizable-css-class-name.const";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { acRegisterCustomElement } from "../../../utils/ac-element-functions";
 import { AC_RESIZABLE_TAG } from "../consts/ac-resizable-tag.const";
@@ -56,7 +57,8 @@ export class AcResizablePanel extends AcElementBase {
 
   private resizeObserver!: ResizeObserver;
   resizablePanels?: AcResizablePanels;
-  private resizeHandle?:HTMLElement;
+  private resizeHandle?: HTMLElement;
+  private activeResizeCleanup?: () => void;
 
   constructor() {
     super();
@@ -77,14 +79,15 @@ export class AcResizablePanel extends AcElementBase {
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.resizeObserver.disconnect();
+    if (this.activeResizeCleanup) {
+      this.activeResizeCleanup();
+    }
   }
 
   override init(): void {
     super.init();
     this.notifyResizablePanels();
   }
-
-
 
   private notifyResizablePanels() {
     const resizablePanelsParent = this.closest(AC_RESIZABLE_TAG.resizablePanels);
@@ -129,40 +132,110 @@ export class AcResizablePanel extends AcElementBase {
       let startSizes: number[] = [];
       let originalCursor = '';
       let originalUserSelect = '';
+      let dragOverlay: HTMLDivElement | null = null;
+      let isResizing = false;
+
+      const cleanupResize = () => {
+        if (!isResizing) return;
+        isResizing = false;
+        this.activeResizeCleanup = undefined;
+
+        if (dragOverlay && dragOverlay.parentNode) {
+          dragOverlay.remove();
+        }
+        dragOverlay = null;
+
+        const doc = this.ownerDocument;
+        const win = doc.defaultView ?? window;
+
+        if (doc && doc.body) {
+          doc.body.classList.remove(AcResizableCssClassName.acResizing);
+        }
+
+        doc.removeEventListener('mousemove', onMouseMove);
+        doc.removeEventListener('mouseup', onMouseUp);
+        win.removeEventListener('blur', onBlur);
+
+        this.style.userSelect = originalUserSelect;
+        this.style.cursor = originalCursor;
+
+        this.events.execute({ event: 'endresize', args: { startPos, startSizes } });
+      };
 
       const onMouseDown = (e: MouseEvent) => {
+        if (e.button !== 0) return;
+        if (!this.nextSiblingPanel) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        isResizing = true;
+        this.activeResizeCleanup = cleanupResize;
+
+        const doc = this.ownerDocument;
+        const win = doc.defaultView ?? window;
+
         startPos = this.isHorizontal ? e.clientX : e.clientY;
-        startSizes = [this.getBoundingClientRect()[this.isHorizontal ? 'width' : 'height'], this.nextSiblingPanel!.getBoundingClientRect()[this.isHorizontal ? 'width' : 'height']];
+        startSizes = [
+          this.getBoundingClientRect()[this.isHorizontal ? 'width' : 'height'],
+          this.nextSiblingPanel.getBoundingClientRect()[this.isHorizontal ? 'width' : 'height']
+        ];
         this.events.execute({ event: 'startresize', args: { startPos, startSizes } });
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+
+        // Add class to body to disable pointer events on all iframes and prevent text selection
+        if (doc && doc.body) {
+          doc.body.classList.add(AcResizableCssClassName.acResizing);
+        }
+
+        // Create transparent full-screen overlay to intercept all pointer events
+        dragOverlay = doc.createElement('div');
+        dragOverlay.classList.add(AcResizableCssClassName.acResizableDragOverlay);
+        dragOverlay.style.position = 'fixed';
+        dragOverlay.style.top = '0';
+        dragOverlay.style.left = '0';
+        dragOverlay.style.width = '100vw';
+        dragOverlay.style.height = '100vh';
+        dragOverlay.style.zIndex = '999999';
+        dragOverlay.style.cursor = this.resizeHandle!.style.cursor;
+        dragOverlay.style.userSelect = 'none';
+        dragOverlay.style.background = 'transparent';
+
+        if (doc && doc.body) {
+          doc.body.appendChild(dragOverlay);
+        }
+
         originalCursor = this.style.cursor;
         originalUserSelect = this.style.userSelect;
         this.style.cursor = this.resizeHandle!.style.cursor;
         this.style.userSelect = 'none';
+
+        doc.addEventListener('mousemove', onMouseMove);
+        doc.addEventListener('mouseup', onMouseUp);
+        win.addEventListener('blur', onBlur);
       };
 
       const onMouseMove = (e: MouseEvent) => {
+        if (!isResizing || !this.nextSiblingPanel) return;
         const delta = (this.isHorizontal ? e.clientX : e.clientY) - startPos;
         const total = startSizes[0] + startSizes[1];
         const firstCurrentPercent = this.size;
-        const secondCurrentPercent = this.nextSiblingPanel!.size;
+        const secondCurrentPercent = this.nextSiblingPanel.size;
         const currentPanelsTotal = firstCurrentPercent + secondCurrentPercent;
         let firstNewSize = ((startSizes[0] + delta) / total) * currentPanelsTotal;
         let secondNewSize = ((startSizes[1] - delta) / total) * currentPanelsTotal;
         firstNewSize = Math.max(5, Math.min(95, firstNewSize));
         secondNewSize = currentPanelsTotal - firstNewSize;
         this.size = firstNewSize;
-        this.nextSiblingPanel!.size = secondNewSize;
+        this.nextSiblingPanel.size = secondNewSize;
         this.events.execute({ event: 'resize', args: { startPos, startSizes, firstNewSize, secondNewSize } });
       };
 
       const onMouseUp = () => {
-        this.events.execute({ event: 'endresize', args: { startPos, startSizes } });
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-        this.style.userSelect = originalUserSelect;
-        this.style.cursor = originalCursor;
+        cleanupResize();
+      };
+
+      const onBlur = () => {
+        cleanupResize();
       };
 
       this.resizeHandle.addEventListener('mousedown', onMouseDown);
@@ -204,8 +277,6 @@ export class AcResizablePanel extends AcElementBase {
       }, duration:300});
     }
   }
-
-
 
 }
 

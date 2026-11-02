@@ -2,33 +2,41 @@
 /* eslint-disable @angular-eslint/prefer-standalone */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 /* eslint-disable @angular-eslint/directive-selector */
-import { Directive, ElementRef, Renderer2, NgZone, Output, EventEmitter } from '@angular/core';
+import { Directive, ElementRef, Renderer2, NgZone, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { AcBase } from '../_base/ac-base.component';
 import { AutocodeService } from '../services/autocode.service';
 
 @Directive({
   selector: '[acResizableElement]',
-  standalone:false
+  standalone: false
 })
-export class AcResizableElementDirective extends AcBase {
+export class AcResizableElementDirective extends AcBase implements OnDestroy {
   @Output() onResize = new EventEmitter<{ width: number; height: number }>();
 
   private resizing = false;
   private element: HTMLElement;
   private resizeHandle!: HTMLDivElement;
+  private dragOverlay?: HTMLDivElement;
   private startX = 0;
   private startY = 0;
   private startWidth = 0;
   private startHeight = 0;
 
-  constructor(elementRef: ElementRef,autocodeService:AutocodeService, private renderer: Renderer2, private ngZone: NgZone) {
-    super(elementRef,autocodeService);
+  constructor(elementRef: ElementRef, autocodeService: AutocodeService, private renderer: Renderer2, private ngZone: NgZone) {
+    super(elementRef, autocodeService);
     this.element = this.elementRef.nativeElement;
   }
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
     this.createResizeHandle();
+  }
+
+  override ngOnDestroy(): void {
+    if (this.resizing) {
+      this.handleMouseUp();
+    }
+    super.ngOnDestroy();
   }
 
   private createResizeHandle(): void {
@@ -44,6 +52,7 @@ export class AcResizableElementDirective extends AcBase {
   }
 
   private startResize(event: MouseEvent): void {
+    if (event.button !== 0) return;
     event.preventDefault();
     this.resizing = true;
     this.startX = event.clientX;
@@ -51,9 +60,19 @@ export class AcResizableElementDirective extends AcBase {
     this.startWidth = this.element.offsetWidth;
     this.startHeight = this.element.offsetHeight;
 
+    const doc = this.element.ownerDocument;
+    if (doc && doc.body) {
+      doc.body.classList.add('ac-resizing');
+      this.dragOverlay = doc.createElement('div');
+      this.dragOverlay.className = 'ac-resizable-drag-overlay';
+      this.dragOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;cursor:col-resize;user-select:none;background:transparent;';
+      doc.body.appendChild(this.dragOverlay);
+    }
+
     this.ngZone.runOutsideAngular(() => {
-      document.addEventListener('mousemove', this.handleMouseMove);
-      document.addEventListener('mouseup', this.handleMouseUp);
+      doc.addEventListener('mousemove', this.handleMouseMove);
+      doc.addEventListener('mouseup', this.handleMouseUp);
+      (doc.defaultView ?? window).addEventListener('blur', this.handleMouseUp);
     });
   }
 
@@ -70,8 +89,21 @@ export class AcResizableElementDirective extends AcBase {
   };
 
   private handleMouseUp = () => {
+    if (!this.resizing) return;
     this.resizing = false;
-    document.removeEventListener('mousemove', this.handleMouseMove);
-    document.removeEventListener('mouseup', this.handleMouseUp);
+
+    if (this.dragOverlay && this.dragOverlay.parentNode) {
+      this.dragOverlay.remove();
+      this.dragOverlay = undefined;
+    }
+
+    const doc = this.element.ownerDocument;
+    if (doc && doc.body) {
+      doc.body.classList.remove('ac-resizing');
+    }
+
+    doc.removeEventListener('mousemove', this.handleMouseMove);
+    doc.removeEventListener('mouseup', this.handleMouseUp);
+    (doc.defaultView ?? window).removeEventListener('blur', this.handleMouseUp);
   };
 }

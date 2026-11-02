@@ -11,7 +11,7 @@ import { IAppMenuItem } from "src/_app.export";
         [dropdownItems]="dropdownItems"
       ></app-header>
       <div class="container py-4 flex-fill overflow-auto">
-        <p>This page demonstrates <code>AcResizablePanels</code> component with horizontal and vertical layouts.</p>
+        <p>This page demonstrates <code>AcResizablePanels</code> component with horizontal, vertical, and iframe-embedded layouts.</p>
 
         <h5 class="mt-4 mb-3">Horizontal Layout</h5>
         <div style="width: 100%; height: 250px; display: flex; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
@@ -19,6 +19,17 @@ import { IAppMenuItem } from "src/_app.export";
             <ac-resizable-panel class="d-flex align-items-center justify-content-center bg-light border-end">Panel Left</ac-resizable-panel>
             <ac-resizable-panel class="d-flex align-items-center justify-content-center bg-white border-end">Panel Center</ac-resizable-panel>
             <ac-resizable-panel class="d-flex align-items-center justify-content-center" style="background-color: #f1f3f9;">Panel Right</ac-resizable-panel>
+          </ac-resizable-panels>
+        </div>
+
+        <h5 class="mt-5 mb-3">Panels with Embedded IFrame</h5>
+        <div style="width: 100%; height: 250px; display: flex; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+          <ac-resizable-panels id="iframePanels" direction="horizontal">
+            <ac-resizable-panel class="d-flex align-items-center justify-content-center bg-light border-end">Left Sidebar</ac-resizable-panel>
+            <ac-resizable-panel style="padding: 0;">
+              <iframe style="width: 100%; height: 100%; border: none;" srcdoc="<html><body style='font-family:sans-serif;padding:20px;background:#f9f9f9;'><h3>IFrame Content</h3><p>Dragging over this iframe will not stutter, stick, or lose mouseup events.</p></body></html>"></iframe>
+            </ac-resizable-panel>
+            <ac-resizable-panel class="d-flex align-items-center justify-content-center" style="background-color: #f1f3f9;">Right Panel</ac-resizable-panel>
           </ac-resizable-panels>
         </div>
 

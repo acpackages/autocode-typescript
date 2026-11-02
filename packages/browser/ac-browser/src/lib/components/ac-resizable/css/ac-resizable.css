@@ -84,3 +84,24 @@ ac-resizable,
   cursor: nwse-resize;
 }
 
+
+body.ac-resizing {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+body.ac-resizing iframe {
+  pointer-events: none !important;
+}
+
+.ac-resizable-drag-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
