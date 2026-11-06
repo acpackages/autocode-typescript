@@ -1,4 +1,4 @@
-export * from './callback-args/_callback-args.export';
+﻿export * from './callback-args/_callback-args.export';
 export * from './event-args/_event_params.export';
 export * from './hook-args/_hook-args.export';
 export * from './ac-datagrid-cell-editor-element.interface';
@@ -13,3 +13,4 @@ export * from './ac-datagrid-state.interface';
 export * from './options/ac-datagrid-size-columns-to-fit-options.interface';
 export * from './options/ac-datagrid-auto-size-columns-options.interface';
 export * from './export/_export.export';
+export * from './ac-datagrid-state-options.interface';

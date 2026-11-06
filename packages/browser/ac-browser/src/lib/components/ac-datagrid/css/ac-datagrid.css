@@ -1101,3 +1101,9 @@ ac-datagrid-side-panel.open,
   background: #fef3c7;
 }
 
+
+/* Filter active indicator */
+.ac-datagrid-header-cell-filter--active {
+  color: var(--ac-datagrid-filter-active-color, #e67e22);
+  opacity: 1;
+}

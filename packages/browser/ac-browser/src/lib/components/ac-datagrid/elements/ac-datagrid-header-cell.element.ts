@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
@@ -119,6 +119,26 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     this.applyReflectedHeaderClasses();
   }
 
+  updateFilterIcon(): void {
+    const filterEl = this.querySelector('.' + AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellFilter) as HTMLElement | null;
+    if (!filterEl || !this.datagridColumn) return;
+    const colField = this.datagridColumn.columnDefinition.field;
+    const dmFilters = this.datagridApi?.dataManager?.filterGroup?.filters ?? [];
+    const hasFilters =
+      dmFilters.some((f: any) => f.key === colField || f.field === colField) ||
+      (this.datagridColumn.filterGroup?.filters?.length ?? 0) > 0 ||
+      (this.datagridColumn.filterGroup?.filterGroups?.length ?? 0) > 0;
+    filterEl.setAttribute('class',
+      hasFilters ? AC_DATAGRID_ICON_CLASS.appliedFilter : AC_DATAGRID_ICON_CLASS.filter
+    );
+    filterEl.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellFilter);
+    if (hasFilters) {
+      filterEl.classList.add('ac-datagrid-header-cell-filter--active');
+    } else {
+      filterEl.classList.remove('ac-datagrid-header-cell-filter--active');
+    }
+  }
+
   registerListeners() {
     // Column dragging / reordering
     this.addEventListener('pointerdown', (e: PointerEvent) => {
@@ -226,9 +246,12 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     // Filter icon
     if (this.datagridColumn.columnDefinition.allowFilter !== false) {
       const filterElement = this.ownerDocument.createElement('i');
-      const hasFilters = this.datagridColumn.filterGroup && this.datagridColumn.filterGroup.filters && this.datagridColumn.filterGroup.filters.length > 0;
+      const colField = this.datagridColumn.columnDefinition.field;
+      const dmFilters = this.datagridApi?.dataManager?.filterGroup?.filters ?? [];
+      const hasFilters = dmFilters.some((f: any) => f.key === colField || f.field === colField);
       filterElement.setAttribute('class', hasFilters ? AC_DATAGRID_ICON_CLASS.appliedFilter : AC_DATAGRID_ICON_CLASS.filter);
       filterElement.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellFilter);
+      if (hasFilters) filterElement.classList.add('ac-datagrid-header-cell-filter--active');
       this.querySelector(`.${AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellRightContainer}`)?.append(filterElement);
       filterElement.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -329,10 +352,14 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
       anchorElement: anchor,
       onApply: () => {
         this.render();
+        this.updateFilterIcon();
+        this.datagridApi?.refreshColumnFilterIndicators();
         this.datagridApi?.dataManager.refreshRows();
       },
       onClear: () => {
         this.render();
+        this.updateFilterIcon();
+        this.datagridApi?.refreshColumnFilterIndicators();
         this.datagridApi?.dataManager.refreshRows();
       },
     });

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @jest-environment jsdom
  */
 import './ac-datagrid.element';
@@ -48,8 +48,10 @@ describe('AcDatagrid state get, set and stateChange event emit', () => {
     expect(roleCol).toBeDefined();
     expect(roleCol!.isVisible).toBe(false);
 
-    expect(state.pagination).toBeDefined();
-    expect(state.sortOrder).toBeDefined();
+    // By default, only columns are included in state (pagination/sort are opt-in)
+    expect(state.pagination).toBeUndefined();
+    expect(state.sortOrder).toBeUndefined();
+    expect(state.filterGroup).toBeUndefined();
   });
 
   it('setState() restores column widths, visibility, order, and pinned status', () => {

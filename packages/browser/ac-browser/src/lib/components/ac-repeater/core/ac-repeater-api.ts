@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const */
+﻿/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcEvents, AcHooks, AcSortOrder, IAcDataManagerDisplayedRowsChangeEvent } from "@autocode-ts/autocode";
 import { AcPaginationElement } from "../../ac-pagination/_ac-pagination.export";
@@ -101,6 +101,7 @@ export class AcRepeaterApi {
   // PERF FIX (1.4): O(1) row lookup Maps — rebuilt on every DisplayedRowsChange
   private _rowByIdMap: Map<string, IAcRepeaterRow> = new Map();
   private _rowByIndexMap: Map<number, IAcRepeaterRow> = new Map();
+  private _applyingState: boolean = false;
 
   private _fields: IAcRepeaterField[] = [];
   get fields(): IAcRepeaterField[] {
@@ -160,6 +161,16 @@ export class AcRepeaterApi {
         this.events.execute({ event: AcEnumRepeaterEvent.TotalRowsChange, args: eventArgs });
       }
     });
+    // Reset pagination to page 1 when sort changes
+    this.sortOrder.events.subscribe({
+      event: 'change', callback: () => this.resetPaginationToFirstPage()
+    });
+    // Reset pagination to page 1 when filter changes
+    if (this.dataManager.filterGroup) {
+      this.dataManager.filterGroup.events.subscribe({
+        event: 'change', callback: () => this.resetPaginationToFirstPage()
+      });
+    }
   }
 
   addRow({ data, append = true, highlightRow = false, index }: { data?: any, append?: boolean, highlightRow?: boolean, index?: number } = {}) {
@@ -333,5 +344,12 @@ export class AcRepeaterApi {
       ext.destroy();
     }
     this.extensions = {};
+  }
+
+  private resetPaginationToFirstPage(): void {
+    if (this._applyingState) return;
+    if (this.pagination && this.usePagination && this.pagination.activePage !== 0) {
+      this.pagination.activePage = 0;
+    }
   }
 }

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AcJsonUtils, acNullifyInstanceProperties } from "@autocode-ts/autocode";
 import { AcDatagridApi, IAcDatagridColumnState, IAcDatagridState } from "../_ac-datagrid.export";
@@ -134,44 +134,59 @@ export class AcDatagridState {
 
   refreshSync() {
     if (!this.datagridApi) return;
-    this.setColumnsState();
-    this.setExtensionsState();
-    this.setPaginationState();
-    this.setSortOrderState();
-    this.setFilterGroupState();
-    this.setOtherStates();
+    const opts = this.datagridApi.stateOptions;
+    if (opts.includeColumns !== false) this.setColumnsState();
+    if (opts.includeExtensionStates)   this.setExtensionsState();
+    if (opts.includePagination)        this.setPaginationState();
+    if (opts.includeSort)              this.setSortOrderState();
+    if (opts.includeFilter)            this.setFilterGroupState();
+    if (opts.includeGroupBy || opts.includePinnedRows || opts.includeExpandedRows ||
+        opts.includeSidePanel || opts.includeSearchQuery) {
+      this.setOtherStates();
+    }
   }
 
   toJson(): IAcDatagridState {
-    const json: IAcDatagridState = {
-      version: this.version,
-      columns: this.columns,
-      extensionStates: this.extensionStates,
-      pagination: this.pagination,
-      sortOrder: this.sortOrder
-    };
-    if (this.groupBy && this.groupBy.length > 0) {
-      json.groupBy = [...this.groupBy];
+    const opts = this.datagridApi?.stateOptions ?? { includeColumns: true };
+    const json: IAcDatagridState = { version: this.version };
+    if (opts.includeColumns !== false) {
+      json.columns = this.columns;
     }
-    if (this.filterGroup && Object.keys(this.filterGroup).length > 0) {
+    if (opts.includeExtensionStates) {
+      json.extensionStates = this.extensionStates;
+    }
+    if (opts.includePagination) {
+      json.pagination = this.pagination;
+    }
+    if (opts.includeSort) {
+      json.sortOrder = this.sortOrder;
+    }
+    if (opts.includeFilter && this.filterGroup && Object.keys(this.filterGroup).length > 0) {
       json.filterGroup = this.filterGroup;
     }
-    if (this.searchQuery) {
+    if (opts.includeGroupBy && this.groupBy && this.groupBy.length > 0) {
+      json.groupBy = [...this.groupBy];
+    }
+    if (opts.includeSearchQuery && this.searchQuery) {
       json.searchQuery = this.searchQuery;
     }
-    if (this.pinnedRows && ((this.pinnedRows.top && this.pinnedRows.top.length > 0) || (this.pinnedRows.bottom && this.pinnedRows.bottom.length > 0))) {
+    if (opts.includePinnedRows && this.pinnedRows &&
+        ((this.pinnedRows.top && this.pinnedRows.top.length > 0) ||
+         (this.pinnedRows.bottom && this.pinnedRows.bottom.length > 0))) {
       json.pinnedRows = {
         top: this.pinnedRows.top ? [...this.pinnedRows.top] : [],
         bottom: this.pinnedRows.bottom ? [...this.pinnedRows.bottom] : []
       };
     }
-    if (this.expandedRowIds && this.expandedRowIds.length > 0) {
-      json.expandedRowIds = [...this.expandedRowIds];
+    if (opts.includeExpandedRows) {
+      if (this.expandedRowIds && this.expandedRowIds.length > 0) {
+        json.expandedRowIds = [...this.expandedRowIds];
+      }
+      if (this.expandedDetailRowIds && this.expandedDetailRowIds.length > 0) {
+        json.expandedDetailRowIds = [...this.expandedDetailRowIds];
+      }
     }
-    if (this.expandedDetailRowIds && this.expandedDetailRowIds.length > 0) {
-      json.expandedDetailRowIds = [...this.expandedDetailRowIds];
-    }
-    if (this.sidePanelOpen !== undefined) {
+    if (opts.includeSidePanel && this.sidePanelOpen !== undefined) {
       json.sidePanelOpen = this.sidePanelOpen;
     }
     return json;
