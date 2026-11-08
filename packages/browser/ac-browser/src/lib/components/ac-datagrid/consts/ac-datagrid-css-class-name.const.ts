@@ -24,6 +24,7 @@ export const AC_DATAGRID_CLASS_NAME = {
   acDatagridHeaderCellResize: 'ac-datagrid-header-cell-resize',
   acDatagridHeaderCellRightContainer: 'ac-datagrid-header-cell-right-container',
   acDatagridHeaderCellSort: 'ac-datagrid-header-cell-sort',
+  acDatagridHeaderCellSortBadge: 'ac-datagrid-header-cell-sort-badge',
   acDatagridHeaderCellTitle: 'ac-datagrid-header-cell-title',
   acDatagridInternalCell: 'ac-datagrid-internal-cell',
   acDatagridInternalCellContainer: 'ac-datagrid-internal-cell-container',

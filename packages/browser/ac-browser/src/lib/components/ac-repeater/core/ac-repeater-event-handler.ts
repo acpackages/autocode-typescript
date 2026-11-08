@@ -1,4 +1,4 @@
-import { AcEnumRepeaterEvent } from "../enums/ac-enum-repeater-event.enum";
+﻿import { AcEnumRepeaterEvent } from "../enums/ac-enum-repeater-event.enum";
 import { IAcRepeaterPaginationChangeEvent } from "../interfaces/event-args/ac-repeater-pagination-change-event.interface";
 import { IIAcRepeaterRowEvent } from "../interfaces/event-args/ac-repeater-row-event.interface";
 import { IAcRepeaterSortOrderChangeEvent } from "../interfaces/event-args/ac-repeater-sort-order-change-event.interface";
@@ -55,6 +55,9 @@ export class AcRepeaterEventHandler {
       event: event
     };
     this.repeaterApi.events.execute({ event: AcEnumRepeaterEvent.RowDoubleClick, args: eventArgs });
+    if (this.repeaterApi.allowEdit && this.repeaterApi.editMode !== 'none') {
+      this.repeaterApi.startEditingRow({ repeaterRow });
+    }
   }
 
   handleRowEditingStart({ repeaterRow, event }: { repeaterRow: IAcRepeaterRow, event?: any }) {

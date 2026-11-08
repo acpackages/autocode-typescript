@@ -25,6 +25,6 @@ export class AcDatagridColumnDraggingExtension extends AcDatagridExtension {
 }
 
 export const AC_DATAGRID_COLUMN_DRAGGING_EXTENSION: IAcDatagridExtension = {
-  extensionName: AC_DATAGRID_EXTENSION_NAME.ColumnDragging,
+  extensionName: 'COLUMN_DRAGGING',
   extensionClass: AcDatagridColumnDraggingExtension
 }

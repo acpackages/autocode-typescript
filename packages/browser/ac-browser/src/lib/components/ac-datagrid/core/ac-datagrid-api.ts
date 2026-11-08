@@ -41,6 +41,12 @@ import { AcBrowser } from "../../../core/ac-browser";
 import { AcDatagridExportHelper } from "../helpers/ac-datagrid-export-helper";
 import { AcExcelExportService, IAcExcelSheetExportDef } from "@autocode-ts/ac-data-manager-export";
 import { IAcDatagridCsvExportParams, IAcDatagridExcelExportParams, IAcDatagridExcelExportMultipleSheetsParams } from "../interfaces/export/ac-datagrid-export-params.interface";
+import { AcDatagridInternalColumn } from "../models/ac-datagrid-internal-column.model";
+import { AcDatagridRowNumberCell } from "../extensions/row-numbers/elements/ac-row-number-cell.element";
+import { AcDatagridRowNumberHeaderCell } from "../extensions/row-numbers/elements/ac-row-number-header-cell.element";
+import { AcDatagridRowSelectionCell } from "../extensions/row-selection/elements/ac-row-selection-cell.element";
+import { AcDatagridRowSelectionHeaderCell } from "../extensions/row-selection/elements/ac-row-selection-header-cell.element";
+import { AcDatagridRowDraggingEventHandler } from "./ac-datagrid-row-dragging-event-handler";
 
 export class AcDatagridApi {
   /** Controls which state slices are saved/restored by getState() / applyState(). Column size + visibility only by default. */
@@ -477,6 +483,7 @@ export class AcDatagridApi {
           datagridApi: this
         }
       });
+      this.renderInternalCells();
     }
   }
 
@@ -536,14 +543,49 @@ export class AcDatagridApi {
 
   // === New Capabilities State ===
   selectionMode: 'none' | 'single' | 'multiple' = 'multiple';
-  allowSelection: boolean = false;
-  allowMultipleSelection: boolean = true;
+  private _allowSelection: boolean = false;
+  get allowSelection(): boolean { return this._allowSelection; }
+  set allowSelection(value: boolean) {
+    if (this._allowSelection !== value) {
+      this._allowSelection = value;
+      this.hooks?.execute({ hook: 'ALLOW_SELECTION_CHANGE', args: { datagridApi: this, value } });
+      this.renderInternalCells();
+    }
+  }
+  private _allowMultipleSelection: boolean = true;
+  get allowMultipleSelection(): boolean { return this._allowMultipleSelection; }
+  set allowMultipleSelection(value: boolean) {
+    if (this._allowMultipleSelection !== value) {
+      this._allowMultipleSelection = value;
+      this.hooks?.execute({ hook: 'ALLOW_MULTIPLE_SELECTION_CHANGE', args: { datagridApi: this, value } });
+    }
+  }
   selectOnRowClick: boolean = false;
   selectedRowIds: Set<string> = new Set<string>();
+  /** True when "select all" has been activated. When true, every row is considered
+   *  selected UNLESS its rowId appears in deselectedRowIds. This survives row-ID
+   *  reassignment caused by setRows() re-loading on-demand data. */
+  isAllSelected: boolean = false;
+  /** rowIds explicitly unchecked after a selectAll(). Only meaningful when isAllSelected=true. */
+  deselectedRowIds: Set<string> = new Set<string>();
   lastSelectedRowIndex: number = -1;
-  allowRowDragging: boolean = false;
+  private _allowRowDragging: boolean = false;
+  get allowRowDragging(): boolean { return this._allowRowDragging; }
+  set allowRowDragging(value: boolean) {
+    if (this._allowRowDragging !== value) {
+      this._allowRowDragging = value;
+      this.hooks?.execute({ hook: 'ALLOW_ROW_DRAGGING_CHANGE', args: { datagridApi: this, value } });
+    }
+  }
   allowColumnResizing: boolean = true;
-  allowColumnDragging: boolean = true;
+  private _allowColumnDragging: boolean = true;
+  get allowColumnDragging(): boolean { return this._allowColumnDragging; }
+  set allowColumnDragging(value: boolean) {
+    if (this._allowColumnDragging !== value) {
+      this._allowColumnDragging = value;
+      this.hooks?.execute({ hook: 'ALLOW_COLUMN_DRAGGING_CHANGE', args: { datagridApi: this, value } });
+    }
+  }
   private _enterNavigatesVertically: boolean = false;
   get enterNavigatesVertically(): boolean {
     return this._enterNavigatesVertically;
@@ -600,7 +642,34 @@ export class AcDatagridApi {
   private _stateChangeTimer: any;
   private _previousNotifiedStateJson: string = "";
 
-  constructor({ datagrid }: { datagrid: AcDatagridElement }) {
+  // === Inlined: Columns Customizer ===
+  private _showColumnCustomizerPanel: boolean = false;
+  get showColumnCustomizerPanel(): boolean { return this._showColumnCustomizerPanel; }
+  set showColumnCustomizerPanel(value: boolean) {
+    if (this._showColumnCustomizerPanel !== value) {
+      this._showColumnCustomizerPanel = value;
+      this.hooks?.execute({ hook: 'SHOW_COLUMNS_CUSTOMIZER_PANEL_CHANGE', args: { datagridApi: this, value } });
+    }
+  }
+  private _isCustomizerOpen: boolean = false;
+  get isCustomizerOpen(): boolean { return this._isCustomizerOpen; }
+  set isCustomizerOpen(value: boolean) {
+    if (this._isCustomizerOpen !== value) {
+      this._isCustomizerOpen = value;
+      this.hooks?.execute({ hook: 'IS_CUSTOMIZER_OPEN_CHANGE', args: { datagridApi: this, value } });
+    }
+  }
+  toggleColumnCustomizer() {
+    this._isCustomizerOpen = !this._isCustomizerOpen;
+    this.hooks?.execute({ hook: 'TOGGLE_COLUMNS_CUSTOMIZER_PANEL', args: { datagridApi: this, value: this._isCustomizerOpen } });
+  }
+
+  // === Inlined: Row Selection / Row Numbers / Row Dragging / Tree Table internal columns ===
+  private _rowSelectionInternalColumn: AcDatagridInternalColumn = new AcDatagridInternalColumn({ width: 35 });
+  private _rowNumbersInternalColumn: AcDatagridInternalColumn = new AcDatagridInternalColumn({ width: 35 });
+  private _rowDraggingEventHandler: AcDatagridRowDraggingEventHandler = new AcDatagridRowDraggingEventHandler();
+
+    constructor({ datagrid }: { datagrid: AcDatagridElement }) {
     this.datagrid = datagrid;
     this.dataManager.logger = this.logger;
     this.events = datagrid.events;
@@ -763,6 +832,61 @@ export class AcDatagridApi {
       });
     }
     AcDatagridExtensionManager.registerBuiltInExtensions();
+
+    // === Inlined: Row Selection — inject checkbox cell into each row/header ===
+    this.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.BeforeRowCellsCreate,
+      callback: (args: any) => {
+        if (!this.allowSelection) return;
+        const datagridApi = args.datagridApi;
+        const datagridRow = args.datagridRow;
+        if (datagridRow && datagridRow.element) {
+          const cell = new AcDatagridRowSelectionCell({ datagridApi, datagridRow, datagridInternalColumn: this._rowSelectionInternalColumn });
+          datagridRow.element.prepend(cell.element);
+        }
+      }
+    });
+    this.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.BeforeHeaderColumnCellsCreate,
+      callback: (args: any) => {
+        if (!this.allowSelection) return;
+        const datagridApi = args.datagridApi;
+        const datagridHeader = args.datagridHeader;
+        if (datagridHeader) {
+          const cell = new AcDatagridRowSelectionHeaderCell({ datagridApi, datagridInternalColumn: this._rowSelectionInternalColumn });
+          datagridHeader.prepend(cell.element);
+        }
+      }
+    });
+
+    // === Inlined: Row Numbers — inject row-number cell into each row/header ===
+    this.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.BeforeRowCellsCreate,
+      callback: (args: any) => {
+        if (!this.showRowNumbers) return;
+        const datagridApi = args.datagridApi;
+        const datagridRow = args.datagridRow;
+        if (datagridRow && datagridRow.element) {
+          const cell = new AcDatagridRowNumberCell({ datagridApi, datagridRow, datagridInternalColumn: this._rowNumbersInternalColumn });
+          datagridRow.element.append(cell.element);
+        }
+      }
+    });
+    this.hooks.subscribe({
+      hook: AC_DATAGRID_HOOK.BeforeHeaderColumnCellsCreate,
+      callback: (args: any) => {
+        if (!this.showRowNumbers) return;
+        const datagridApi = args.datagridApi;
+        const datagridHeader = args.datagridHeader;
+        if (datagridHeader) {
+          const cell = new AcDatagridRowNumberHeaderCell({ datagridApi, datagridInternalColumn: this._rowNumbersInternalColumn });
+          datagridHeader.append(cell.element);
+        }
+      }
+    });
+
+    // === Inlined: Row Dragging event handler ===
+    this._rowDraggingEventHandler.init({ datagridApi: this });
   }
 
   addRow({ data, append = true, highlightCells = false, rowId, index }: { data?: any, append?: boolean, highlightCells?: boolean, rowId?: string, index?: number } = {}): IAcDatagridRow {
@@ -930,6 +1054,8 @@ export class AcDatagridApi {
     for (const ext of Object.values(this.extensions)) {
       ext.destroy();
     }
+
+    this._rowDraggingEventHandler?.destroy();
 
     this.datagridState.destroy();
 
@@ -1187,6 +1313,7 @@ export class AcDatagridApi {
     this.dataManager.processRows();
     this.logger.log('Processed rows after sort change');
     this.resetPaginationToFirstPage();
+    this.refreshColumnSortIndicators();
   }
 
   setDataSourceType({ dataSourceType }: { dataSourceType: AcEnumDataSourceType }) {
@@ -1471,6 +1598,9 @@ export class AcDatagridApi {
   }
 
   isRowSelected(rowId: string): boolean {
+    if (this.isAllSelected) {
+      return !this.deselectedRowIds.has(rowId);
+    }
     return this.selectedRowIds.has(rowId);
   }
 
@@ -1659,6 +1789,9 @@ export class AcDatagridApi {
     if (!row) return;
 
     if (this.selectionMode === 'single' || !this.allowMultipleSelection) {
+      // Single-selection: drop any select-all flag and pick exactly this row
+      this.isAllSelected = false;
+      this.deselectedRowIds.clear();
       this.selectedRowIds.clear();
       this.selectedRowIds.add(rowId);
       this.lastSelectedRowIndex = row.index;
@@ -1669,15 +1802,34 @@ export class AcDatagridApi {
         for (let i = start; i <= end; i++) {
           const r = this.displayedDatagridRows[i];
           if (r) {
-            this.selectedRowIds.add(r.rowId);
+            if (this.isAllSelected) {
+              this.deselectedRowIds.delete(r.rowId);
+            } else {
+              this.selectedRowIds.add(r.rowId);
+            }
           }
         }
       } else {
-        const shouldSelect = isSelected !== undefined ? isSelected : !this.selectedRowIds.has(rowId);
-        if (shouldSelect) {
-          this.selectedRowIds.add(rowId);
+        const shouldSelect = isSelected !== undefined ? isSelected : !this.isRowSelected(rowId);
+        if (this.isAllSelected) {
+          // In "select-all" mode, track only explicit deselections
+          if (shouldSelect) {
+            this.deselectedRowIds.delete(rowId);
+          } else {
+            this.deselectedRowIds.add(rowId);
+            // If all rows are now explicitly deselected, switch to explicit mode
+            if (this.deselectedRowIds.size >= this.displayedDatagridRows.length) {
+              this.isAllSelected = false;
+              this.deselectedRowIds.clear();
+              this.selectedRowIds.clear();
+            }
+          }
         } else {
-          this.selectedRowIds.delete(rowId);
+          if (shouldSelect) {
+            this.selectedRowIds.add(rowId);
+          } else {
+            this.selectedRowIds.delete(rowId);
+          }
         }
         this.lastSelectedRowIndex = row.index;
       }
@@ -1698,6 +1850,12 @@ export class AcDatagridApi {
   }
 
   selectAll() {
+    // "Select-all with exclusions" mode: future rows (new UUIDs after setRows) are
+    // automatically considered selected without needing to track every rowId.
+    this.isAllSelected = true;
+    this.deselectedRowIds.clear();
+    // Keep selectedRowIds in sync for callers that read it directly.
+    this.selectedRowIds.clear();
     for (const row of this.displayedDatagridRows) {
       this.selectedRowIds.add(row.rowId);
     }
@@ -1715,6 +1873,8 @@ export class AcDatagridApi {
   }
 
   clearSelection() {
+    this.isAllSelected = false;
+    this.deselectedRowIds.clear();
     this.selectedRowIds.clear();
     this.lastSelectedRowIndex = -1;
     this.events.execute({
@@ -1731,7 +1891,10 @@ export class AcDatagridApi {
   }
 
   toggleSelectAll() {
-    if (this.selectedRowIds.size === this.displayedDatagridRows.length && this.displayedDatagridRows.length > 0) {
+    const allDisplayedSelected = this.isAllSelected
+      ? this.deselectedRowIds.size === 0
+      : (this.selectedRowIds.size === this.displayedDatagridRows.length && this.displayedDatagridRows.length > 0);
+    if (allDisplayedSelected) {
       this.clearSelection();
     } else {
       this.selectAll();
@@ -1739,6 +1902,9 @@ export class AcDatagridApi {
   }
 
   getSelectedRows(): IAcDatagridRow[] {
+    if (this.isAllSelected) {
+      return this.datagridRows.filter(r => !this.deselectedRowIds.has(r.rowId));
+    }
     return this.datagridRows.filter(r => this.selectedRowIds.has(r.rowId));
   }
 
@@ -1753,6 +1919,22 @@ export class AcDatagridApi {
     if (this.datagrid?.datagridBody) {
       for (const rowEl of this.datagrid.datagridBody.currentRows) {
         rowEl.refresh();
+      }
+    }
+  }
+
+  renderInternalCells() {
+    if (this.datagrid?.datagridHeader?.['internalHeaderCell']) {
+      this.datagrid.datagridHeader['internalHeaderCell'].applyStyles();
+      this.datagrid.datagridHeader['internalHeaderCell'].render();
+    }
+    if (this.datagrid?.datagridBody) {
+      for (const rowEl of this.datagrid.datagridBody.currentRows) {
+        const internalCell = rowEl['internalCell'];
+        if (internalCell && typeof internalCell.render === 'function') {
+          internalCell.applyStyles();
+          internalCell.render();
+        }
       }
     }
   }
@@ -2610,6 +2792,15 @@ export class AcDatagridApi {
       .querySelectorAll<AcDatagridHeaderCellElement>('ac-datagrid-header-cell');
     for (const cell of Array.from(headerCells)) {
       cell.updateFilterIcon();
+    }
+  }
+
+  refreshColumnSortIndicators(): void {
+    if (!this.datagrid?.datagridHeader) return;
+    const headerCells = this.datagrid.datagridHeader
+      .querySelectorAll<AcDatagridHeaderCellElement>('ac-datagrid-header-cell');
+    for (const cell of Array.from(headerCells)) {
+      cell.updateSortIcon();
     }
   }
 

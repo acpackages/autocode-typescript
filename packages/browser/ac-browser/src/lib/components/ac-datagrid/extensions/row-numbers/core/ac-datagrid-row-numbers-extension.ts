@@ -63,6 +63,6 @@ export class AcDatagridRowNumbersExtension extends AcDatagridExtension {
 }
 
 export const AC_DATAGRID_ROW_NUMBERS_EXTENSION: IAcDatagridExtension = {
-  extensionName: AC_DATAGRID_EXTENSION_NAME.RowNumbers,
+  extensionName: 'ROW_NUMBERS',
   extensionClass: AcDatagridRowNumbersExtension
 }

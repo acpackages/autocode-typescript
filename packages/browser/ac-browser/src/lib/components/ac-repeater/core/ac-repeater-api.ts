@@ -1,4 +1,4 @@
-﻿/* eslint-disable prefer-const */
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { AC_DATA_MANAGER_EVENT, AcDataManager, AcEvents, AcHooks, AcSortOrder, IAcDataManagerDisplayedRowsChangeEvent } from "@autocode-ts/autocode";
 import { AcPaginationElement } from "../../ac-pagination/_ac-pagination.export";
@@ -22,6 +22,8 @@ import { AcRepeaterState } from "./ac-repeater-state";
 import { AcRepeaterEventHandler } from "./ac-repeater-event-handler";
 import { AcRepeaterElement } from "../elements/ac-repeater.element";
 import { AcEnumDataSourceType } from "../../../enums/ac-enum-data-source-type.enum";
+import { IAcRepeaterFieldDef } from "../interfaces/ac-repeater-field-def.interface";
+import { IAcRepeaterRowEditorArgs } from "../interfaces/callback-args/ac-repeater-row-editor-args.interface";
 
 export class AcRepeaterApi {
 
@@ -97,6 +99,10 @@ export class AcRepeaterApi {
   pagination?: AcPaginationElement;
   sortOrder: AcSortOrder = new AcSortOrder();
   rowRendererFunction?: any;
+  rowEditorFunction?: (args: IAcRepeaterRowEditorArgs) => HTMLElement;
+  allowEdit: boolean = false;
+  editMode: 'row' | 'none' = 'row';
+  activeEditingRow?: any;
 
   // PERF FIX (1.4): O(1) row lookup Maps — rebuilt on every DisplayedRowsChange
   private _rowByIdMap: Map<string, IAcRepeaterRow> = new Map();
@@ -161,16 +167,13 @@ export class AcRepeaterApi {
         this.events.execute({ event: AcEnumRepeaterEvent.TotalRowsChange, args: eventArgs });
       }
     });
-    // Reset pagination to page 1 when sort changes
+    // Reset pagination to page 1 when sort changes.
+    // FIX: filterGroup subscription removed here — AcDataManager already handles filter
+    // changes internally and fires DisplayedRowsChange. A direct subscription caused a
+    // double-trigger and could blank the body by resetting pagination before rows loaded.
     this.sortOrder.events.subscribe({
       event: 'change', callback: () => this.resetPaginationToFirstPage()
     });
-    // Reset pagination to page 1 when filter changes
-    if (this.dataManager.filterGroup) {
-      this.dataManager.filterGroup.events.subscribe({
-        event: 'change', callback: () => this.resetPaginationToFirstPage()
-      });
-    }
   }
 
   addRow({ data, append = true, highlightRow = false, index }: { data?: any, append?: boolean, highlightRow?: boolean, index?: number } = {}) {
@@ -332,6 +335,14 @@ export class AcRepeaterApi {
     }
   }
 
+  beginStateApplication(): void {
+    this._applyingState = true;
+  }
+
+  endStateApplication(): void {
+    this._applyingState = false;
+  }
+
   destroy() {
     this.dataManager.destroy();
     this.eventHandler.destroy();
@@ -348,8 +359,38 @@ export class AcRepeaterApi {
 
   private resetPaginationToFirstPage(): void {
     if (this._applyingState) return;
-    if (this.pagination && this.usePagination && this.pagination.activePage !== 0) {
+    // FIX: Guard with totalRows > 0 — calling activePage=0 when no rows are loaded
+    // triggers updateDisplayedRows() which zeroes out startRow/endRow and prevents
+    // the body from rendering rows after data is eventually set.
+    if (this.pagination && this.usePagination
+        && this.pagination.activePage !== 0
+        && this.pagination.totalRows > 0) {
       this.pagination.activePage = 0;
+    }
+  }
+
+  startEditingRow({ repeaterRow }: { repeaterRow: any }): void {
+    if (!this.allowEdit || this.editMode === 'none') return;
+    if (this.activeEditingRow) this.stopEditingRow({ commit: true });
+    this.activeEditingRow = repeaterRow;
+    (repeaterRow.instance as any)?.enterEditMode();
+    this.hooks.execute({ hook: AcEnumRepeaterHook.RowEditStart, args: { repeaterApi: this, repeaterRow } });
+    this.eventHandler.handleRowEditingStart({ repeaterRow });
+  }
+
+  stopEditingRow({ commit = true, changedFields }: { commit?: boolean; changedFields?: string[] } = {}): void {
+    if (!this.activeEditingRow) return;
+    const row = this.activeEditingRow;
+    this.activeEditingRow = undefined;
+    const result: any = (row.instance as any)
+      ?.exitEditMode({ committed: commit, changedFields })
+      ?? { committed: commit, changedFields: changedFields ?? [] };
+    this.hooks.execute({ hook: AcEnumRepeaterHook.RowEditStop,
+      args: { repeaterApi: this, repeaterRow: row, committed: commit, changedFields: result.changedFields } });
+    this.eventHandler.handleRowEditingStop({ repeaterRow: row });
+    if (commit && result.changedFields.length > 0) {
+      this.updateRow({ data: row.data, rowId: row.rowId, highlightRow: false });
+      this.eventHandler.handleRowDataChange({ repeaterRow: row });
     }
   }
 }

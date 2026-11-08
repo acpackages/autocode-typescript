@@ -54,7 +54,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedRows: IAcDatagridRow[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
+      if (row.extensionData && row.extensionData['ROW_SELECTION'] && row.extensionData['ROW_SELECTION'].isSelected) {
         selectedRows.push(row);
       }
     }
@@ -66,7 +66,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedData: any[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected) {
+      if (row.extensionData && row.extensionData['ROW_SELECTION'] && row.extensionData['ROW_SELECTION'].isSelected) {
         selectedData.push(row.data);
       }
     }
@@ -78,7 +78,7 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
     const selectedKeyValues: any[] = [];
     if (this.datagridApi) {
     for (const row of this.datagridApi.datagridRows) {
-      if (row.extensionData && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] && row.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected && row.data[key] != undefined) {
+      if (row.extensionData && row.extensionData['ROW_SELECTION'] && row.extensionData['ROW_SELECTION'].isSelected && row.data[key] != undefined) {
         selectedKeyValues.push(row.data[key]);
       }
     }
@@ -97,10 +97,10 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
       if (!datagridRow.extensionData) {
         datagridRow.extensionData = {};
       }
-      if(!datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection]){
-        datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection] = {};
+      if(!datagridRow.extensionData['ROW_SELECTION']){
+        datagridRow.extensionData['ROW_SELECTION'] = {};
       }
-      datagridRow.extensionData[AC_DATAGRID_EXTENSION_NAME.RowSelection].isSelected = isSelected;
+      datagridRow.extensionData['ROW_SELECTION'].isSelected = isSelected;
       if (this.datagridApi) {
       const eventArgs: IAcDatagridRowSelectionChangeEvent = {
         datagridApi: this.datagridApi,
@@ -117,6 +117,6 @@ export class AcDatagridRowSelectionExtension extends AcDatagridExtension {
 }
 
 export const AC_DATAGRID_ROW_SELECTION_EXTENSION: IAcDatagridExtension = {
-  extensionName: AC_DATAGRID_EXTENSION_NAME.RowSelection,
+  extensionName: 'ROW_SELECTION',
   extensionClass: AcDatagridRowSelectionExtension
 }

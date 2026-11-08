@@ -1,4 +1,4 @@
-export const AcEnumRepeaterHook = {
+﻿export const AcEnumRepeaterHook = {
   BeforeDataChange: 'BEFORE_DATA_CHANGE',
   BeforeGetOnDemandData: 'BEFORE_GET_ON_DEMAND_DATA',
   BodyCreate: 'BODY_CREATE',
@@ -18,5 +18,8 @@ export const AcEnumRepeaterHook = {
   RowRender: 'ROW_RENDER',
   TotalRowsChange: 'TOTAL_ROWS_CHANGE',
   UsePaginationChange: 'USE_PAGINATION_CHANGE',
-  FieldsChange: 'FIELDS_CHANGE'
+  FieldsChange: 'FIELDS_CHANGE',
+  RowEditStart: 'ROW_EDIT_START',
+  RowEditStop: 'ROW_EDIT_STOP',
+  RowFieldValueChange: 'ROW_FIELD_VALUE_CHANGE'
 }

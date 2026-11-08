@@ -1,4 +1,4 @@
-export const AcEnumRepeaterEvent = {
+﻿export const AcEnumRepeaterEvent = {
   ActiveRowChange: 'ACTIVE_ROW_CHANGE',
   DisplayedRowsChange: 'DISPLAYED_ROWS_CHANGE',
   PaginationChange: 'PAGINATION_CHANGE',
@@ -40,5 +40,6 @@ export const AcEnumRepeaterEvent = {
   StateChange: 'STATE_CHANGE',
   SortOrderChange: 'SORT_ORDER_CHANGE',
   TotalRowsChange: 'TOTAL_ROWS_CHANGE',
-  FieldsChange: 'FIELDS_CHANGE'
+  FieldsChange: 'FIELDS_CHANGE',
+  RowFieldValueChange: 'ROW_FIELD_VALUE_CHANGE'
 }

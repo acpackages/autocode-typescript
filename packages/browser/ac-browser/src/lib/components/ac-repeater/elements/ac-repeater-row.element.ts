@@ -7,6 +7,11 @@ import { IAcRepeaterRow } from "../interfaces/ac-repeater-row.interface";
 import { AcEnumRepeaterHook } from "../enums/ac-enum-repeater-hooks.enum";
 import { AcElementBase } from "../../../core/ac-element-base";
 import { AC_REPEATER_TAG, IAcRepeaterRowRendererElementArgs } from "../_ac-repeater.export";
+import { AcRepeaterRowEditForm, IAcRepeaterRowEditResult } from "./ac-repeater-row-edit-form";
+import { IAcRepeaterFieldDef } from "../interfaces/ac-repeater-field-def.interface";
+import { IAcRepeaterFieldValueChangeArgs } from "../interfaces/event-args/ac-repeater-field-value-change-event.interface";
+import { AcEnumRepeaterEvent } from "../enums/ac-enum-repeater-event.enum";
+import { IAcRepeaterRowEditorArgs } from "../interfaces/callback-args/ac-repeater-row-editor-args.interface";
 
 export class AcRepeaterRowElement extends AcElementBase {
   private repeaterApi: AcRepeaterApi;
@@ -17,6 +22,10 @@ export class AcRepeaterRowElement extends AcElementBase {
   private hookSubscriptionIds: string[] = [];
   // PERF FIX (2.1): Exposed so AcRepeaterBodyElement can route delegated RowUpdate without closure capture
   repeaterRowId: string = '';
+  public isEditing: boolean = false;
+  private _editForm?: AcRepeaterRowEditForm;
+  private _customEditElement?: HTMLElement;
+  private _dataSnapshot?: Record<string, any>;
 
   private clearRenderingElement() {
     if (this.renderingElement) {
@@ -130,6 +139,78 @@ export class AcRepeaterRowElement extends AcElementBase {
     this.repeaterApi = repeaterApi;
     this.repeaterRow = repeaterRow;
     this.initElement();
+  }
+
+  enterEditMode(): void {
+    if (this.isEditing) return;
+    this.isEditing = true;
+    this._dataSnapshot = { ...this.repeaterRow.data };
+    acClearElement({ element: this });
+    this.classList.add(AcRepeaterCssClassName.acRepeaterRowEditing);
+
+    if (this.repeaterApi.rowEditorFunction) {
+      const args: IAcRepeaterRowEditorArgs = {
+        row:          this.repeaterRow,
+        rowElement:   this,
+        fields:       this.repeaterApi.fields as IAcRepeaterFieldDef[],
+        dataSnapshot: { ...this._dataSnapshot },
+        repeaterApi:  this.repeaterApi,
+
+        notifyFieldChange: (field: IAcRepeaterFieldDef, newValue: any) => {
+          const oldValue = this._dataSnapshot![field.key];
+          this.repeaterRow.data[field.key] = newValue;
+          const changeArgs: IAcRepeaterFieldValueChangeArgs = {
+            repeaterApi: this.repeaterApi, repeaterRow: this.repeaterRow,
+            field, oldValue, newValue,
+          };
+          this.repeaterApi.hooks.execute({ hook: AcEnumRepeaterHook.RowFieldValueChange, args: changeArgs });
+          this.repeaterApi.events.execute({ event: AcEnumRepeaterEvent.RowFieldValueChange, args: changeArgs });
+        },
+
+        commit: (changedFields?: string[]) => {
+          this.repeaterApi.stopEditingRow({ commit: true, changedFields });
+        },
+
+        cancel: () => {
+          this.repeaterApi.stopEditingRow({ commit: false });
+        },
+      };
+
+      this._customEditElement = this.repeaterApi.rowEditorFunction(args);
+      this.append(this._customEditElement);
+    } else {
+      this._editForm = new AcRepeaterRowEditForm(
+        this.repeaterApi,
+        this.repeaterRow,
+        this.repeaterApi.fields as IAcRepeaterFieldDef[],
+      );
+      this.append(this._editForm.build());
+      setTimeout(() => this._editForm?.focusFirst(), 0);
+    }
+  }
+
+  exitEditMode({ committed, changedFields }: { committed: boolean; changedFields?: string[] }): IAcRepeaterRowEditResult {
+    if (!this.isEditing) return { committed, changedFields: changedFields ?? [] };
+    this.isEditing = false;
+    let result: IAcRepeaterRowEditResult;
+
+    if (this._customEditElement) {
+      if (!committed && this._dataSnapshot) {
+        Object.assign(this.repeaterRow.data, this._dataSnapshot);
+      }
+      this._customEditElement.remove();
+      this._customEditElement = undefined;
+      result = { committed, changedFields: changedFields ?? [] };
+    } else if (this._editForm) {
+      result = committed ? this._editForm.commit() : this._editForm.cancel();
+      this._editForm = undefined;
+    } else {
+      result = { committed, changedFields: [] };
+    }
+
+    this.classList.remove(AcRepeaterCssClassName.acRepeaterRowEditing);
+    this.render();
+    return result;
   }
 }
 

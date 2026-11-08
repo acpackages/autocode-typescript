@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
+﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
@@ -48,7 +48,7 @@ export class AcDatagridInternalHeaderCellElement extends AcElementBase {
       }
       let selectedCount = 0;
       for (const r of displayed) {
-        if (this.datagridApi.selectedRowIds.has(r.rowId)) {
+        if (this.datagridApi.isRowSelected(r.rowId)) {
           selectedCount++;
         }
       }

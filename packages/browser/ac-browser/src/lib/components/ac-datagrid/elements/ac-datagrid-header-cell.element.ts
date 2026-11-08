@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 
 import { AcDatagridApi } from "../core/ac-datagrid-api";
 import { acAddClassToElement, acRegisterCustomElement } from "../../../utils/ac-element-functions";
@@ -112,11 +112,71 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
     this.setCellWidth();
     this.applyPinning();
     this.applyReflectedHeaderClasses();
+    this.updateSortIcon();
   }
 
   refresh() {
     this.applyPinning();
     this.applyReflectedHeaderClasses();
+    this.updateSortIcon();
+  }
+
+  updateSortIcon(): void {
+    const sortEl = this.querySelector(
+      '.' + AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellSort
+    ) as HTMLElement | null;
+    if (!sortEl || !this.datagridColumn) return;
+
+    const sortOrder = this.datagridColumn.sortOrder;
+    const isActive =
+      sortOrder === AcEnumSortOrder.Ascending ||
+      sortOrder === AcEnumSortOrder.Descending;
+
+    // Update icon class (ascending / descending / neutral)
+    if (sortOrder === AcEnumSortOrder.Ascending) {
+      sortEl.setAttribute('class', AC_DATAGRID_ICON_CLASS.sortAscending);
+    } else if (sortOrder === AcEnumSortOrder.Descending) {
+      sortEl.setAttribute('class', AC_DATAGRID_ICON_CLASS.sortDescending);
+    } else {
+      sortEl.setAttribute('class', AC_DATAGRID_ICON_CLASS.sort);
+    }
+
+    // Always keep the structural class
+    sortEl.classList.add(AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellSort);
+
+    // Active colour class
+    if (isActive) {
+      sortEl.classList.add('ac-datagrid-header-cell-sort--active');
+    } else {
+      sortEl.classList.remove('ac-datagrid-header-cell-sort--active');
+    }
+
+    // Sort-order number badge — only shown when 2+ columns are sorted
+    let badge = sortEl.nextElementSibling as HTMLElement | null;
+    if (badge && !badge.classList.contains(AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellSortBadge)) {
+      badge = null;
+    }
+
+    if (isActive) {
+      const field = this.datagridColumn.columnDefinition.field;
+      const allSorts = (this.datagridApi?.dataManager?.sortOrder?.sortOrders ?? []) as any[];
+      const sortIndex = allSorts.findIndex((s: any) => s.key === field || s.field === field);
+      const sortNumber = sortIndex >= 0 ? sortIndex + 1 : null;
+
+      if (sortNumber !== null && allSorts.length > 1) {
+        if (!badge) {
+          badge = this.ownerDocument.createElement('span');
+          badge.className = AC_DATAGRID_CLASS_NAME.acDatagridHeaderCellSortBadge;
+          sortEl.insertAdjacentElement('afterend', badge);
+        }
+        badge.textContent = String(sortNumber);
+        badge.style.display = '';
+      } else {
+        if (badge) badge.style.display = 'none';
+      }
+    } else {
+      if (badge) badge.style.display = 'none';
+    }
   }
 
   updateFilterIcon(): void {
@@ -239,7 +299,7 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
           : (current === AcEnumSortOrder.Descending ? AcEnumSortOrder.None : AcEnumSortOrder.Ascending);
 
         this.datagridApi.setColumnSortOrder({ datagridColumn: this.datagridColumn, sortOrder: next });
-        setIcon();
+        this.datagridApi.refreshColumnSortIndicators();
       });
     }
 

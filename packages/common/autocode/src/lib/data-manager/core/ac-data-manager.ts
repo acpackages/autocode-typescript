@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -277,6 +277,7 @@ export class AcDataManager {
     }
   }
 
+  private _destroyed: boolean = false;
   allDataAvailable: boolean = true;
   allRows: IAcDataRow[] = [];
   autoSetUniqueIdToData: boolean = false;
@@ -526,6 +527,7 @@ export class AcDataManager {
   }
 
   destroy() {
+    this._destroyed = true;
     this.hooks.destroy();
     this.events.destroy();
     this.delayedCallback.destroy();
@@ -780,6 +782,7 @@ export class AcDataManager {
   }
 
   setRows({ data, startIndex, totalCount }: { data: any[], startIndex?: number, totalCount?: number }) {
+    if (this._destroyed) { return; }
     if (!this.firstDataNotified && data.length > 0) {
       this.firstDataNotified = true;
       const eventArgs: IAcDataManagerDataEvent = {

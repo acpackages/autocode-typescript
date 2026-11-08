@@ -13,3 +13,8 @@ export * from "./ac-datagrid-column-customizer.element";
 export * from "./ac-datagrid-side-panel.element";
 export * from "./ac-datagrid-functional-cell-renderer";
 export * from "./ac-datagrid-functional-cell-editor";
+// Inlined extension elements (re-exported from extension folders)
+export * from '../extensions/row-selection/elements/ac-row-selection-cell.element';
+export * from '../extensions/row-selection/elements/ac-row-selection-header-cell.element';
+export * from '../extensions/row-numbers/elements/ac-row-number-cell.element';
+export * from '../extensions/row-numbers/elements/ac-row-number-header-cell.element';

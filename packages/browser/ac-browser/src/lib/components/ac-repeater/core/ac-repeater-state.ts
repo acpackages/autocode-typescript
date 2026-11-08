@@ -46,14 +46,21 @@ export class AcRepeaterState {
 
   apply(state: any) {
     if (state) {
-      if (state[AcRepeaterState.KeyExtensionStates]) {
-        for (const extensionName of Object.keys(state[AcRepeaterState.KeyExtensionStates])) {
-          if (this.repeaterApi.extensions) {
-            if (this.repeaterApi.extensions[extensionName]) {
-              this.repeaterApi.extensions[extensionName].setState({state:state[AcRepeaterState.KeyExtensionStates][extensionName]});
+      // FIX: Set applyingState flag to prevent resetPaginationToFirstPage from firing
+      // while sort/filter state is being restored, which could blank the repeater body.
+      this.repeaterApi.beginStateApplication();
+      try {
+        if (state[AcRepeaterState.KeyExtensionStates]) {
+          for (const extensionName of Object.keys(state[AcRepeaterState.KeyExtensionStates])) {
+            if (this.repeaterApi.extensions) {
+              if (this.repeaterApi.extensions[extensionName]) {
+                this.repeaterApi.extensions[extensionName].setState({state:state[AcRepeaterState.KeyExtensionStates][extensionName]});
+              }
             }
           }
         }
+      } finally {
+        this.repeaterApi.endStateApplication();
       }
     }
   }

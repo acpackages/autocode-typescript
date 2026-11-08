@@ -51,3 +51,58 @@ ac-repeater-row {
 .ac-repeater-row-odd {
   background-color: var(--ac-repeater-row-odd-bg, #f8f9fa);
 }
+
+
+/* ── Row editing ─────────────────────────────────────────────────────── */
+.ac-repeater-row--editing {
+  background: var(--ac-repeater-edit-bg, #fffde7) !important;
+  outline: 2px solid var(--ac-repeater-edit-outline, #f9a825);
+  outline-offset: -2px;
+}
+
+.ac-repeater-row-edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 6px 8px;
+  align-items: flex-end;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ac-repeater-field-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.ac-repeater-field-editor-wrapper.--label-left {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.ac-repeater-field-editor-label {
+  font-size: 0.75em;
+  font-weight: 500;
+  color: var(--ac-repeater-edit-label-color, #555);
+  white-space: nowrap;
+}
+
+.ac-repeater-field-editor-input {
+  width: 100%;
+  padding: 3px 6px;
+  border: 1px solid var(--ac-repeater-edit-border, #bbb);
+  border-radius: 3px;
+  font-size: inherit;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: var(--ac-repeater-edit-input-bg, #fff);
+}
+
+.ac-repeater-field-editor-input:focus {
+  outline: none;
+  border-color: var(--ac-repeater-edit-focus-border, #1976d2);
+  box-shadow: 0 0 0 2px var(--ac-repeater-edit-focus-shadow, rgba(25, 118, 210, 0.2));
+}
