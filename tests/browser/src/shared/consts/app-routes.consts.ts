@@ -82,7 +82,20 @@ export const APP_ROUTES = {
     onDemand:'/repeater/on-demand'
   },
   reports: {
-    basic: '/reports/basic'
+    basic: '/reports/basic',
+    formatTest: '/reports/format-test',
+    conditional: '/reports/conditional',
+    loopsPagination: '/reports/loops-pagination',
+    tableContinuation: '/reports/table-continuation',
+    pageBreaksKeepTogether: '/reports/page-breaks-keep-together',
+    selectiveVisibility: '/reports/selective-visibility',
+    marginsWatermark: '/reports/margins-watermark',
+    mixedOrientation: '/reports/mixed-orientation',
+    subtotals: '/reports/subtotals',
+    thermalRoll: '/reports/thermal-roll',
+    runtimeReflow: '/reports/runtime-reflow',
+    customPipesExport: '/reports/custom-pipes-export',
+    tocAndSections: '/reports/toc-and-sections'
   },
   resizable:{
     basic:'/resizable',

@@ -139,10 +139,11 @@ export class ReportsBasicPage {
   }
 
   generateReport() {
+    this.report.clear();
     this.report.generate({ data: this.data });
   }
 
   printReport() {
-    window.print();
+    this.report.print();
   }
 }

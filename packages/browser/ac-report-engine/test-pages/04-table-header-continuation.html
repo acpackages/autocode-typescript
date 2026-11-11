@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>04 - Table Header Continuation on Multi-Page Tables</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #475569; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto 30px auto; padding: 20mm; font-size: 13px; position: relative; }
+    .page-footer { position: absolute; bottom: 12mm; left: 20mm; right: 20mm; border-top: 1px solid #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    th { background: #0284c7; color: white; text-align: left; padding: 10px 12px; font-weight: 600; font-size: 13px; }
+    td { padding: 9px 12px; border-bottom: 1px solid #e2e8f0; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .highlight-pill { background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h3>Functionality 04: Table Header Continuation (&lt;thead&gt; Repetition)</h3>
+      <span style="font-size: 12px; color: #64748b;">Notice the blue table header appears on Page 1 AND repeats at the top of Page 2, 3, etc.</span>
+    </div>
+  </div>
+
+  <div id="report-root" ac-report>
+    <div ac-page ac-page-size="A4">
+      <div style="border-bottom: 2px solid #0284c7; padding-bottom: 8px;">
+        <h2 style="margin: 0;">Comprehensive Sales Transactions</h2>
+        <span style="color: #64748b;">Generated on: November 2026</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px;">Tx #</th>
+            <th>Customer &amp; Description</th>
+            <th style="width: 120px;">Category</th>
+            <th style="width: 110px; text-align: right;">Amount (USD)</th>
+          </tr>
+        </thead>
+        <tbody ac:for="let tx of data.transactions; let i">
+          <tr>
+            <td>{{ i + 101 }}</td>
+            <td><strong>{{ tx.client }}</strong> - {{ tx.desc }}</td>
+            <td><span class="highlight-pill">{{ tx.category }}</span></td>
+            <td style="text-align: right; font-weight: 600;">{{ tx.amount }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="page-footer">
+        <span>Confidential - For Board Review</span>
+        <span>Page {{ page.number }} of {{ report.pages }}</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const transactions = [];
+    const categories = ['Enterprise SaaS', 'Consulting', 'Support SLA', 'Custom Module'];
+    for (let i = 1; i <= 45; i++) {
+      transactions.push({
+        client: `Client Acme Corp #${(i % 12) + 1}`,
+        desc: `Q4 Cloud Infrastructure License Service Tier ${i}`,
+        category: categories[i % categories.length],
+        amount: `$${(250 + (i * 45.25)).toFixed(2)}`
+      });
+    }
+
+    const report = new AcReport({ element: document.getElementById('report-root') });
+    report.generate({
+      data: {
+        transactions
+      }
+    });
+  </script>
+</body>
+</html>

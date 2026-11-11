@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>08 - Mixed Page Orientations (Portrait &amp; Landscape)</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #64748b; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto 30px auto; padding: 20mm; font-size: 13px; position: relative; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: #0284c7; color: white; padding: 8px; text-align: left; }
+    td { padding: 8px; border-bottom: 1px solid #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <h3>Functionality 08: Mixed Page Orientations in a Single Document</h3>
+    <span style="font-size: 12px; color: #64748b;">Page 1 is Standard Portrait (210mm wide). Page 2 is Wide Landscape (297mm wide).</span>
+  </div>
+
+  <div id="report-root" ac-report>
+    <!-- Page 1: Portrait Cover -->
+    <div ac-page ac-page-size="A4" ac-page-orientation="PORTRAIT">
+      <div style="border-bottom: 2px solid #0284c7; padding-bottom: 8px;">
+        <h2 style="margin: 0; color: #0284c7;">Page 1: Portrait Executive Briefing</h2>
+        <span style="color: #64748b;">Standard A4 Orientation</span>
+      </div>
+      <p style="margin-top: 20px; line-height: 1.6;">
+        This document demonstrates the engine's mixed-orientation capability. Wide data tables with 8+ columns can be rendered in Landscape on Page 2, while retaining Portrait dimensions for cover letters and signature blocks.
+      </p>
+    </div>
+
+    <!-- Page 2: Landscape Wide Table -->
+    <div ac-page ac-page-size="A4" ac-page-orientation="LANDSCAPE">
+      <div style="border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 14px;">
+        <h2 style="margin: 0; color: #0284c7;">Page 2: Landscape Wide Data Ledger (297mm)</h2>
+        <span style="color: #64748b;">Full Horizontal Width for Multi-Column Data</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th>Q1 Sales</th>
+            <th>Q2 Sales</th>
+            <th>Q3 Sales</th>
+            <th>Q4 Sales</th>
+            <th>Gross Margin</th>
+            <th>COGS</th>
+            <th>EBITDA</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>North America</td>
+            <td>$4.2M</td>
+            <td>$4.8M</td>
+            <td>$5.1M</td>
+            <td>$5.9M</td>
+            <td>44%</td>
+            <td>$2.8M</td>
+            <td>$3.1M</td>
+            <td><strong>Outperforming</strong></td>
+          </tr>
+          <tr>
+            <td>EMEA</td>
+            <td>$3.1M</td>
+            <td>$3.4M</td>
+            <td>$3.6M</td>
+            <td>$4.0M</td>
+            <td>38%</td>
+            <td>$2.1M</td>
+            <td>$1.9M</td>
+            <td><strong>On Target</strong></td>
+          </tr>
+          <tr>
+            <td>Asia Pacific</td>
+            <td>$2.8M</td>
+            <td>$3.2M</td>
+            <td>$3.9M</td>
+            <td>$4.7M</td>
+            <td>42%</td>
+            <td>$1.9M</td>
+            <td>$2.8M</td>
+            <td><strong>Fast Growing</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const report = new AcReport({ element: document.getElementById('report-root') });
+    report.generate({ data: {} });
+  </script>
+</body>
+</html>

@@ -846,18 +846,6 @@ export class AcDatagridApi {
         }
       }
     });
-    this.hooks.subscribe({
-      hook: AC_DATAGRID_HOOK.BeforeHeaderColumnCellsCreate,
-      callback: (args: any) => {
-        if (!this.allowSelection) return;
-        const datagridApi = args.datagridApi;
-        const datagridHeader = args.datagridHeader;
-        if (datagridHeader) {
-          const cell = new AcDatagridRowSelectionHeaderCell({ datagridApi, datagridInternalColumn: this._rowSelectionInternalColumn });
-          datagridHeader.prepend(cell.element);
-        }
-      }
-    });
 
     // === Inlined: Row Numbers — inject row-number cell into each row/header ===
     this.hooks.subscribe({
@@ -869,18 +857,6 @@ export class AcDatagridApi {
         if (datagridRow && datagridRow.element) {
           const cell = new AcDatagridRowNumberCell({ datagridApi, datagridRow, datagridInternalColumn: this._rowNumbersInternalColumn });
           datagridRow.element.append(cell.element);
-        }
-      }
-    });
-    this.hooks.subscribe({
-      hook: AC_DATAGRID_HOOK.BeforeHeaderColumnCellsCreate,
-      callback: (args: any) => {
-        if (!this.showRowNumbers) return;
-        const datagridApi = args.datagridApi;
-        const datagridHeader = args.datagridHeader;
-        if (datagridHeader) {
-          const cell = new AcDatagridRowNumberHeaderCell({ datagridApi, datagridInternalColumn: this._rowNumbersInternalColumn });
-          datagridHeader.append(cell.element);
         }
       }
     });

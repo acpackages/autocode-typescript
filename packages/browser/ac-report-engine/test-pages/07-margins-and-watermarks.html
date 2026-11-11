@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>07 - Declarative Margins &amp; Document Watermarks</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #64748b; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    .btn { padding: 6px 14px; background: #0284c7; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .btn:hover { background: #0369a1; }
+    select { padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto; font-size: 13px; position: relative; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h3>Functionality 07: Custom Margins &amp; Diagonal Watermark</h3>
+      <span style="font-size: 12px; color: #64748b;">ac-page-margin="25mm 20mm" and scalable diagonal SVG watermark</span>
+    </div>
+    <div>
+      <label>Watermark: </label>
+      <select id="sel-watermark">
+        <option value="DRAFT">DRAFT</option>
+        <option value="CONFIDENTIAL" selected>CONFIDENTIAL</option>
+        <option value="PAID">PAID</option>
+        <option value="VOID">VOID</option>
+      </select>
+      <button class="btn" id="btn-update">Update Watermark</button>
+    </div>
+  </div>
+
+  <div id="report-root" ac-report ac:watermark="CONFIDENTIAL">
+    <div ac-page ac-page-size="A4" ac-page-margin="25mm 20mm">
+      <div style="border-bottom: 2px solid #0f172a; padding-bottom: 8px; display: flex; justify-content: space-between;">
+        <h2 style="margin: 0;">Internal Financial Forecast</h2>
+        <span style="color: #64748b;">Strictly Protected</span>
+      </div>
+
+      <div style="margin-top: 24px; line-height: 1.7;">
+        <h4>Notice of Proprietary Information</h4>
+        <p>This report contains trade secrets, projected margin ratios, and forward-looking forecasts of Acme Holdings. Unauthorized distribution, copying, or forwarding is strictly prohibited under international copyright laws.</p>
+
+        <h4 style="margin-top: 20px;">Q1 2027 Projections</h4>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <tr style="background: #f1f5f9;">
+            <th style="padding: 8px; text-align: left; border: 1px solid #cbd5e1;">Division</th>
+            <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">Target ARR</th>
+            <th style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">Operating Profit</th>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;">Cloud Solutions</td>
+            <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">$12.5M</td>
+            <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">34%</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;">Enterprise Data Hub</td>
+            <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">$8.2M</td>
+            <td style="padding: 8px; text-align: right; border: 1px solid #cbd5e1;">28%</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const container = document.getElementById('report-root');
+    let report = new AcReport({ element: container });
+
+    async function init() {
+      await report.generate({ data: {} });
+    }
+
+    document.getElementById('btn-update').addEventListener('click', async () => {
+      const text = document.getElementById('sel-watermark').value;
+      report.watermark = text;
+      await report.repaginate();
+    });
+
+    init();
+  </script>
+</body>
+</html>

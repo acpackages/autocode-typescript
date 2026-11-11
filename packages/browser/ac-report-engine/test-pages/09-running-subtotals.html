@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>09 - Running Subtotals: Brought &amp; Carried Forward</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #64748b; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto 30px auto; padding: 20mm; font-size: 13px; position: relative; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { background: #0f172a; color: white; padding: 8px 10px; text-align: left; }
+    td { padding: 8px 10px; border-bottom: 1px solid #cbd5e1; }
+    .subtotal-row { background: #fef9c3; font-weight: bold; }
+    .carried-row { background: #e0f2fe; font-weight: bold; }
+    .page-footer { position: absolute; bottom: 12mm; left: 20mm; right: 20mm; border-top: 1px solid #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <h3>Functionality 09: Running Subtotals (Brought Forward &amp; Carried Forward)</h3>
+    <span style="font-size: 12px; color: #64748b;">Notice how values carry over page boundaries seamlessly in accounting formats.</span>
+  </div>
+
+  <div id="report-root" ac-report>
+    <div ac-page ac-page-size="A4">
+      <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px;">
+        <h2 style="margin: 0;">Multi-Page Financial General Ledger</h2>
+        <span style="color: #64748b;">Account: 1010 - Operating Cash Disbursals</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 70px;">Date</th>
+            <th>Voucher &amp; Description</th>
+            <th style="width: 140px; text-align: right;">Amount (USD)</th>
+          </tr>
+          <!-- Brought forward appears at top of continuation pages -->
+          <tr class="carried-row" ac:hide-on-first-page>
+            <td colspan="2">Brought Forward from Page {{ page.number - 1 }}:</td>
+            <td style="text-align: right;">${{ page.broughtForward.total }}</td>
+          </tr>
+        </thead>
+        <tbody ac:for="let item of data.entries" ac:accumulate="item.amount; as total">
+          <tr>
+            <td>{{ item.date }}</td>
+            <td><strong>{{ item.voucher }}</strong> - {{ item.payee }}</td>
+            <td style="text-align: right;">${{ item.amount }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <!-- Page Subtotal and Carried Forward on intermediate pages -->
+          <tr class="subtotal-row" ac:hide-on-last-page>
+            <td colspan="2">Page {{ page.number }} Subtotal:</td>
+            <td style="text-align: right;">${{ page.subtotals.total }}</td>
+          </tr>
+          <tr class="carried-row" ac:hide-on-last-page>
+            <td colspan="2">Carried Forward to Page {{ page.number + 1 }}:</td>
+            <td style="text-align: right;">${{ page.carriedForward.total }}</td>
+          </tr>
+          <!-- Grand Total on Final Page -->
+          <tr style="background: #dcfce7; font-weight: 800; font-size: 14px;" ac:last-page-only>
+            <td colspan="2">GRAND TOTAL DISBURSED:</td>
+            <td style="text-align: right;">${{ page.carriedForward.total }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="page-footer">
+        <span>General Ledger Audit Form</span>
+        <span>Page {{ page.number }} of {{ report.pages }}</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const entries = [];
+    for (let i = 1; i <= 40; i++) {
+      entries.push({
+        date: `Nov ${((i % 28) + 1)}`,
+        voucher: `VCH-00${i}`,
+        payee: `Vendor Services Corp ${i}`,
+        amount: 100 + (i * 25)
+      });
+    }
+
+    const report = new AcReport({ element: document.getElementById('report-root') });
+    report.generate({
+      data: {
+        entries
+      }
+    });
+  </script>
+</body>
+</html>

@@ -97,9 +97,8 @@ export class AcConditionBinding {
     try {
       const switchExpr = this.element.getAttribute(AC_REPORT_ATTRIBUTE.templateSwitch);
       if (!switchExpr) return false;
-      const context = this.context.getContextValueObject();
+      const context = this.context;
       const switchValue = await AcExpression.evaluate({ expression: switchExpr, context: context });
-      const parent = this.element.parentElement!;
       let matched = false;
 
       const siblings = Array.from(this.element.children);
@@ -128,6 +127,4 @@ export class AcConditionBinding {
       return false;
     }
   }
-
-
 }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>12 - Custom Pipes &amp; Standalone HTML Export</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #64748b; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    .btn { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; margin-left: 8px; }
+    .btn-export { background: #16a34a; color: white; }
+    .btn-export:hover { background: #15803d; }
+    .btn-print { background: #0284c7; color: white; }
+    .btn-print:hover { background: #0369a1; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto; padding: 20mm; font-size: 13px; }
+    .metric-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h3>Functionality 12: Custom Engine Pipes &amp; Standalone HTML Export</h3>
+      <span style="font-size: 12px; color: #64748b;">Custom pipes (vatTax, maskCard, scoreGrade) &amp; self-contained HTML export</span>
+    </div>
+    <div>
+      <button class="btn btn-export" id="btn-export-html">Download Standalone HTML</button>
+      <button class="btn btn-print" id="btn-print">Print / PDF</button>
+    </div>
+  </div>
+
+  <div id="report-root" ac-report>
+    <div ac-page ac-page-size="A4">
+      <div style="border-bottom: 2px solid #16a34a; padding-bottom: 8px;">
+        <h2 style="margin: 0; color: #16a34a;">Tax Invoice &amp; Performance Metric Report</h2>
+        <span style="color: #64748b;">Invoice Reference: INV-2026-89</span>
+      </div>
+
+      <div class="metric-card">
+        <h4>1. Custom Formatting Pipes Demo</h4>
+        <p><strong>Subtotal Amount:</strong> ${{ data.subtotal }}</p>
+        <p><strong>Calculated VAT (18% Pipe):</strong> ${{ data.subtotal | vatTax:18 }}</p>
+        <p><strong>Customer Credit Card (Masked Pipe):</strong> {{ data.creditCard | maskCard }}</p>
+        <p><strong>Quality Assurance Score:</strong> {{ data.score }}% &rarr; <strong>Grade: {{ data.score | scoreGrade }}</strong></p>
+      </div>
+
+      <div class="metric-card">
+        <h4>2. Standalone HTML Export Feature</h4>
+        <p>Clicking <strong>[Download Standalone HTML]</strong> packages the exact rendered document, complete with all computed values, inline stylesheets, and print CSS rules into a single portable <code>.html</code> file that opens in any browser or can be archived offline.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport, AcReportEngine } from '@autocode-ts/ac-report-engine';
+
+    // 1. Register Custom Engine Pipes
+    AcReportEngine.registerPipe('vatTax', (amount, rate = 18) => {
+      return (Number(amount) * (rate / 100)).toFixed(2);
+    });
+
+    AcReportEngine.registerPipe('maskCard', (val) => {
+      const s = String(val);
+      return '•••• •••• •••• ' + s.slice(-4);
+    });
+
+    AcReportEngine.registerPipe('scoreGrade', (val) => {
+      const n = Number(val);
+      if (n >= 90) return 'A+ (Excellent)';
+      if (n >= 80) return 'A (Very Good)';
+      if (n >= 70) return 'B (Satisfactory)';
+      return 'C (Needs Review)';
+    });
+
+    const report = new AcReport({ element: document.getElementById('report-root') });
+
+    await report.generate({
+      data: {
+        subtotal: 1250,
+        creditCard: '4532891048209841',
+        score: 94
+      }
+    });
+
+    document.getElementById('btn-export-html').addEventListener('click', () => {
+      report.exportToHtml({
+        title: 'Tax-Invoice-INV-2026-89',
+        download: true
+      });
+    });
+
+    document.getElementById('btn-print').addEventListener('click', () => {
+      report.print({ title: 'Invoice-INV-2026-89' });
+    });
+  </script>
+</body>
+</html>

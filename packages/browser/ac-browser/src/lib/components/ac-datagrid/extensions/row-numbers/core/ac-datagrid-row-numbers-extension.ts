@@ -46,8 +46,8 @@ export class AcDatagridRowNumbersExtension extends AcDatagridExtension {
   handleBeforeHeaderColumnCellsCreated(args: IAcDatagridHeaderHookArgs) {
     const datagridApi = args.datagridApi;
     const datagridHeader = args.datagridHeader;
-    const datagriRowNumberCell = new AcDatagridRowNumberHeaderCell({ datagridApi: datagridApi, datagridInternalColumn: this.datagridInternalColumn });
-    datagridHeader.append(datagriRowNumberCell.element);
+    // const datagriRowNumberCell = new AcDatagridRowNumberHeaderCell({ datagridApi: datagridApi, datagridInternalColumn: this.datagridInternalColumn });
+    // datagridHeader.append(datagriRowNumberCell.element);
     // }
   }
 
@@ -55,8 +55,8 @@ export class AcDatagridRowNumbersExtension extends AcDatagridExtension {
     const datagridApi = args.datagridApi;
     const datagridRow = args.datagridRow;
     if (datagridRow.element) {
-      const datagriRowNumberCell = new AcDatagridRowNumberCell({ datagridApi: datagridApi, datagridRow: datagridRow, datagridInternalColumn: this.datagridInternalColumn });
-      datagridRow.element.append(datagriRowNumberCell.element);
+      // const datagriRowNumberCell = new AcDatagridRowNumberCell({ datagridApi: datagridApi, datagridRow: datagridRow, datagridInternalColumn: this.datagridInternalColumn });
+      // datagridRow.element.append(datagriRowNumberCell.element);
     }
   }
 

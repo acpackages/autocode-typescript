@@ -31,7 +31,9 @@
       "@autocode-ts/autocode": ["../../packages/common/autocode/src/autocode.ts"],
       "@autocode-ts/ac-data-dictionary-editor": ["../../packages/browser/ac-data-dictionary-editor/src/index.ts"],
       "@autocode-ts/ac-data-dictionary-components": ["../../packages/browser/ac-data-dictionary-components/src/ac-data-dictionary-components.ts"],
-      "@autocode-ts/ac-nodeflow-designer": ["../../packages/browser/ac-nodeflow-designer/src/index.ts"]
+      "@autocode-ts/ac-nodeflow-designer": ["../../packages/browser/ac-nodeflow-designer/src/index.ts"],
+      "@autocode-ts/ac-report-engine": ["../../packages/browser/ac-report-engine/src/ac-report-engine.ts"],
+      "@autocode-ts/ac-bwipjs-pipe": ["../../packages/common/pipes/ac-bwipjs-pipe/src/ac-bwipjs-pipe.ts"]
     }
   },
   "include": ["src/**/*.ts"]

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>06 - Selective Header &amp; Footer Visibility</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #64748b; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto 30px auto; padding: 20mm; font-size: 13px; position: relative; }
+    .cover-banner { background: #1e293b; color: white; padding: 24px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+    .page-header { border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+    .page-footer { position: absolute; bottom: 12mm; left: 20mm; right: 20mm; border-top: 1px solid #cbd5e1; padding-top: 8px; display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+    .final-summary { border: 2px solid #0284c7; background: #f0f9ff; padding: 16px; border-radius: 8px; margin-top: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <h3>Functionality 06: Selective Header &amp; Footer Visibility</h3>
+    <span style="font-size: 12px; color: #64748b;">Page 1 has cover banner (no running header). Intermediate pages have running header &amp; footer. Page 2 has the final summary without recurring footer.</span>
+  </div>
+
+  <div id="report-root" ac-report>
+    <div ac-page ac-page-size="A4">
+      <!-- 1. Running Header: Hidden on Page 1 -->
+      <div class="page-header" ac:hide-on-first-page>
+        <span>Annual Audit Report - Continued</span>
+        <span>Audit Reference #2026-AA</span>
+      </div>
+
+      <!-- 2. Cover Banner: Displayed ONLY on Page 1 -->
+      <div class="cover-banner" ac:first-page-only>
+        <h1 style="margin: 0; font-size: 24px; color: #38bdf8;">ACME FINANCIAL CORP</h1>
+        <p style="margin-top: 8px; color: #94a3b8;">FY2026 Comprehensive Annual Audit Report</p>
+      </div>
+
+      <div style="line-height: 1.6;">
+        <h3>Executive Summary</h3>
+        <p>The annual audit was conducted in compliance with International Financial Reporting Standards (IFRS). Operating margins improved 14.2% year-over-year driven by cloud automation and platform consolidation.</p>
+      </div>
+
+      <!-- Force Page Break to demonstrate multi-page selective visibility -->
+      <div ac:break-before style="padding-top: 10px;">
+        <h3>Detailed Segment Performance</h3>
+        <p>Segment revenues across North America, EMEA, and APAC met target forecasts. Capital expenditures remained within authorized budget boundaries.</p>
+
+        <!-- 3. Final Summary: Only on Last Page -->
+        <div class="final-summary" ac:last-page-only>
+          <h4 style="margin: 0; color: #0369a1;">Final Audit Sign-Off</h4>
+          <p style="font-size: 12px; margin-top: 4px; color: #475569;">Auditor: Price, Waters &amp; Partners LLP (Authorized)</p>
+        </div>
+      </div>
+
+      <!-- 4. Running Footer: Hidden on Last Page -->
+      <div class="page-footer" ac:hide-on-last-page>
+        <span>Page {{ page.number }} of {{ report.pages }} (Continued on next page...)</span>
+        <span>Confidential</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const report = new AcReport({ element: document.getElementById('report-root') });
+    report.generate({ data: {} });
+  </script>
+</body>
+</html>

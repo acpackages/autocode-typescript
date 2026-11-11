@@ -120,7 +120,20 @@ export const SIDEBAR_NAV: IAppNavItem[] = [
   {
     label: 'Reports',
     children: [
-      { label: 'Basic Report', route: APP_ROUTES.reports.basic }
+      { label: 'Basic Report', route: APP_ROUTES.reports.basic },
+      { label: 'Format Test', route: APP_ROUTES.reports.formatTest },
+      { label: 'Conditionals & Switch', route: APP_ROUTES.reports.conditional },
+      { label: 'Loops & Pagination', route: APP_ROUTES.reports.loopsPagination },
+      { label: 'Table Continuation', route: APP_ROUTES.reports.tableContinuation },
+      { label: 'Page Breaks & Keep Together', route: APP_ROUTES.reports.pageBreaksKeepTogether },
+      { label: 'Selective Headers & Footers', route: APP_ROUTES.reports.selectiveVisibility },
+      { label: 'Margins & Watermarks', route: APP_ROUTES.reports.marginsWatermark },
+      { label: 'Mixed Orientations', route: APP_ROUTES.reports.mixedOrientation },
+      { label: 'Running Subtotals', route: APP_ROUTES.reports.subtotals },
+      { label: 'Thermal Roll Paper', route: APP_ROUTES.reports.thermalRoll },
+      { label: 'Runtime Deletion & Reflow', route: APP_ROUTES.reports.runtimeReflow },
+      { label: 'Custom Pipes & HTML Export', route: APP_ROUTES.reports.customPipesExport },
+      { label: 'TOC & Dynamic Sections', route: APP_ROUTES.reports.tocAndSections }
     ]
   },
   {

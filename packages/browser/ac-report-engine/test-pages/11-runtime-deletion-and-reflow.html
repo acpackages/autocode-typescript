@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>11 - Runtime Row &amp; Page Deletion with Upward Content Reflow</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "@autocode-ts/autocode": "../../../../dist/packages/common/autocode/autocode.js",
+      "@autocode-ts/ac-extensions": "../../../../dist/packages/common/ac-extensions/ac-extensions.js",
+      "@autocode-ts/ac-pipes": "../../../../dist/packages/common/ac-pipes/ac-pipes.js",
+      "@autocode-ts/ac-report-engine": "../../../../dist/packages/browser/ac-report-engine/ac-report-engine.js",
+      "luxon": "https://cdn.jsdelivr.net/npm/luxon@3.6.1/+esm"
+    }
+  }
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #475569; margin: 0; padding: 24px; }
+    .toolbar { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .toolbar h3 { margin: 0; font-size: 16px; color: #1e293b; }
+    .btn-del-page { padding: 6px 12px; background: #dc2626; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-del-page:hover { background: #b91c1c; }
+    .btn-del-row { padding: 4px 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; }
+    [ac-page] { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin: 0 auto 30px auto; padding: 20mm; font-size: 13px; position: relative; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    th { background: #0f172a; color: white; padding: 8px 10px; text-align: left; }
+    td { padding: 8px 10px; border-bottom: 1px solid #cbd5e1; }
+    .page-footer { position: absolute; bottom: 12mm; left: 20mm; right: 20mm; border-top: 1px solid #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 11px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h3>Functionality 11: Dynamic Row Deletion, Upward Reflow &amp; Page Counters</h3>
+      <span style="font-size: 12px; color: #64748b;">Click [Delete] on Page 1 rows to see rows from Page 2 automatically pull up to fill the void!</span>
+    </div>
+    <div>
+      <button class="btn-del-page" id="btn-delete-page">Delete Last Page</button>
+    </div>
+  </div>
+
+  <div id="report-root" ac-report>
+    <div ac-page ac-page-size="A4">
+      <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0;">Interactive Manifest - Click Delete</h2>
+        <span style="color: #64748b; font-size: 12px;">Dynamic Document Reflow</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px;">ID</th>
+            <th>Item Details</th>
+            <th style="width: 110px;">Status</th>
+            <th style="width: 70px; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody ac:for="let item of data.items" id="manifest-tbody">
+          <tr>
+            <td>{{ item.id }}</td>
+            <td><strong>{{ item.title }}</strong> - Code: {{ item.code }}</td>
+            <td><span style="color: #16a34a; font-weight: bold;">Verified</span></td>
+            <td style="text-align: center;">
+              <button class="btn-del-row" onclick="deleteThisRow(this)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="page-footer">
+        <span>Manifest Manager</span>
+        <span>Page {{ page.number }} of {{ report.pages }}</span>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AcReport } from '@autocode-ts/ac-report-engine';
+
+    const items = [];
+    for (let i = 1; i <= 35; i++) {
+      items.push({
+        id: `#${100 + i}`,
+        title: `Asset Shipment Container Unit ${i}`,
+        code: `BOX-${2000 + i}`
+      });
+    }
+
+    const container = document.getElementById('report-root');
+    const report = new AcReport({ element: container });
+
+    window.reportInstance = report;
+
+    window.deleteThisRow = async function(btn) {
+      const row = btn.closest('tr');
+      if (row) {
+        await report.removeRow(row);
+      }
+    };
+
+    document.getElementById('btn-delete-page').addEventListener('click', async () => {
+      if (report.pages.length > 1) {
+        await report.removePage(report.pages.length - 1);
+      } else {
+        alert('Cannot remove the only remaining page.');
+      }
+    });
+
+    await report.generate({ data: { items } });
+  </script>
+</body>
+</html>

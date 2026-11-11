@@ -12,7 +12,8 @@ export class AcTemplateProcessor {
   element: HTMLElement;
   page: AcReportPage;
   report: AcReport;
-  constructor({ element, context, page }: { element: HTMLElement, context: any, page: AcReportPage }) {
+
+  constructor({ element, context, page }: { element: HTMLElement; context: any; page: AcReportPage }) {
     this.context = context;
     this.element = element;
     this.page = page;
@@ -24,20 +25,107 @@ export class AcTemplateProcessor {
     await this.processLoops(this.element);
   }
 
-  async processDataBindings(node: Node) {
-    const el = node as HTMLElement;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const conBinding = new AcConditionBinding({ element: el, context: this.context, processor: this });
-      await conBinding.apply();
-      const dataBinding = new AcDataBinding({ element: el, context: this.context });
-      await dataBinding.apply();
+  private hasConditionAttributes(el: HTMLElement): boolean {
+    return (
+      el.hasAttribute(AC_REPORT_ATTRIBUTE.templateIf) ||
+      el.hasAttribute(AC_REPORT_ATTRIBUTE.templateElseIf) ||
+      el.hasAttribute(AC_REPORT_ATTRIBUTE.templateElse) ||
+      el.hasAttribute(AC_REPORT_ATTRIBUTE.templateSwitch)
+    );
+  }
+
+  private hasDataBindingAttributes(el: HTMLElement): boolean {
+    if (!el.attributes || el.attributes.length === 0) return false;
+    for (let i = 0; i < el.attributes.length; i++) {
+      const name = el.attributes[i].name.toLowerCase();
+      if (
+        name.startsWith(AC_REPORT_ATTRIBUTE.templateBindAttribute) ||
+        name.startsWith(AC_REPORT_ATTRIBUTE.templateClass) ||
+        name.startsWith(AC_REPORT_ATTRIBUTE.templateStyle) ||
+        (name.startsWith('[') && name.endsWith(']'))
+      ) {
+        return true;
+      }
     }
-    else if (node.nodeType == Node.TEXT_NODE) {
+    return false;
+  }
+
+  async processDataBindings(node: Node) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement;
+
+      // Handle page-break-before
+      if (el.hasAttribute(AC_REPORT_ATTRIBUTE.pageBreakBefore)) {
+        el.removeAttribute(AC_REPORT_ATTRIBUTE.pageBreakBefore);
+        if (this.page.element && this.page.element.childNodes.length > 0) {
+          const next = this.report.getNextPage();
+          if (next) this.page = next;
+        }
+      }
+
+      // Handle keep-together / no-break
+      if (el.hasAttribute(AC_REPORT_ATTRIBUTE.keepTogether) || el.hasAttribute(AC_REPORT_ATTRIBUTE.noBreak)) {
+        if (this.page.isFixedHeight && this.page.element) {
+          const allocatedHeight = this.page.allocatedHeight > 0 ? this.page.allocatedHeight : this.report.pageHeight;
+          const currentHeight = this.page.pageHeight;
+          const elHeight = el.offsetHeight;
+          if (currentHeight + elHeight > allocatedHeight && this.page.element.childNodes.length > 1) {
+            const next = this.report.getNextPage();
+            if (next) this.page = next;
+          }
+        }
+      }
+
+      if (this.hasConditionAttributes(el)) {
+        const parentBefore = el.parentElement;
+        const conBinding = new AcConditionBinding({ element: el, context: this.context, processor: this });
+        await conBinding.apply();
+        // If removed by conditional logic, stop processing
+        if (parentBefore && !el.parentElement) {
+          return;
+        }
+      }
+
+      if (this.hasDataBindingAttributes(el)) {
+        const dataBinding = new AcDataBinding({ element: el, context: this.context });
+        await dataBinding.apply();
+      }
+
+      // Handle accumulate / subtotal
+      if (el.hasAttribute(AC_REPORT_ATTRIBUTE.accumulate) || el.hasAttribute(AC_REPORT_ATTRIBUTE.subtotal)) {
+        const attrExpr = el.getAttribute(AC_REPORT_ATTRIBUTE.accumulate) || el.getAttribute(AC_REPORT_ATTRIBUTE.subtotal)!;
+        const parts = attrExpr.split(';').map((p) => p.trim());
+        const expr = parts[0];
+        let key = 'total';
+        if (parts.length > 1 && parts[1].toLowerCase().startsWith('as ')) {
+          key = parts[1].slice(3).trim();
+        }
+        try {
+          const val = await AcExpression.evaluate({ expression: expr, context: this.context });
+          if (typeof val === 'number' || !isNaN(Number(val))) {
+            this.page.recordValue(key, Number(val));
+          }
+        } catch (e) {
+          AcReportEngine.logError('Accumulate error:', e);
+        }
+      }
+
+      // Handle page-break-after
+      if (el.hasAttribute(AC_REPORT_ATTRIBUTE.pageBreakAfter)) {
+        el.removeAttribute(AC_REPORT_ATTRIBUTE.pageBreakAfter);
+        const next = this.report.getNextPage();
+        if (next) this.page = next;
+      }
+    } else if (node.nodeType === Node.TEXT_NODE) {
       if (node.nodeValue) {
         const original = node.nodeValue;
-        const regex = /{{\s*(.*?)\s*}}/g; // match all {{ expression }}
 
-        // Find all matches
+        // Fast-path: skip text nodes without expression markers
+        if (!original.includes('{{')) {
+          return;
+        }
+
+        const regex = /{{\s*(.*?)\s*}}/g;
         const matches: { fullMatch: string; expression: string; start: number; end: number }[] = [];
         let match;
         while ((match = regex.exec(original)) !== null) {
@@ -50,23 +138,20 @@ export class AcTemplateProcessor {
         }
 
         if (matches.length === 0) {
-          return; // No expressions to evaluate
+          return;
         }
 
-        // Evaluate all expressions in parallel (async)
         const results = await Promise.all(
           matches.map(async ({ expression }) => {
             try {
-              if(expression.startsWith('page.') || expression.startsWith('report.')){
+              if (expression.startsWith('page.') || expression.startsWith('report.')) {
                 return `{{${expression}}}`;
-              }
-              else{
+              } else {
                 return await AcExpression.evaluate({
-                expression,
-                context: this.context,
-              });
+                  expression,
+                  context: this.context,
+                });
               }
-
             } catch (e) {
               AcReportEngine.logError("Expression error:", expression, e);
               return "";
@@ -74,47 +159,60 @@ export class AcTemplateProcessor {
           })
         );
 
-        // Build the final string by replacing matches
         let result = '';
         let lastIndex = 0;
-
         matches.forEach((match, i) => {
-          // Add text before the match
           result += original.slice(lastIndex, match.start);
-          // Add evaluated result
           result += results[i] ?? '';
-          // Update cursor
           lastIndex = match.end;
         });
-
-        // Add remaining text after last match
         result += original.slice(lastIndex);
         node.nodeValue = result;
       }
     }
-    for(const subNode of Array.from(node.childNodes)){
+
+    // Zero-allocation child traversal
+    let child = node.firstChild;
+    while (child) {
+      const next = child.nextSibling;
       let continueOperation = true;
-      if (subNode.nodeType === Node.ELEMENT_NODE) {
-        const el: HTMLElement = subNode as HTMLElement;
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        const el: HTMLElement = child as HTMLElement;
         if (el.hasAttribute(AC_REPORT_ATTRIBUTE.templateFor)) {
           continueOperation = false;
         }
       }
       if (continueOperation) {
-        await this.processDataBindings(subNode);
+        await this.processDataBindings(child);
       }
+      child = next;
     }
   }
 
+  private processedLoopTempIds = new Set<string>();
+
   async processLoops(node: Node) {
-    const el = node as HTMLElement;
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const tag = el.tagName.toLowerCase();
-      const loopBinding = new AcLoopBinding({ element: el, context: this.context, processor: this });
-      await loopBinding.apply();
+      const el = node as HTMLElement;
+      if (el.hasAttribute(AC_REPORT_ATTRIBUTE.templateFor)) {
+        const tempId = el.getAttribute(AC_REPORT_ATTRIBUTE.tempId);
+        if (tempId) {
+          if (this.processedLoopTempIds.has(tempId)) {
+            return;
+          }
+          this.processedLoopTempIds.add(tempId);
+        }
+        const loopBinding = new AcLoopBinding({ element: el, context: this.context, processor: this });
+        await loopBinding.apply();
+        return; // Loop handles child iterations internally
+      }
     }
-    for(const child of Array.from(node.childNodes)){
-     await this.processLoops(child as Node)
+
+    let child = node.firstChild;
+    while (child) {
+      const next = child.nextSibling;
+      await this.processLoops(child);
+      child = next;
     }
   }
 }
