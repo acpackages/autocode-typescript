@@ -73,18 +73,16 @@ export class AcReport {
     if (this.pages.length > 0) {
       const lastPageEl = this.pages[this.pages.length - 1].element as HTMLElement;
       const cloneEl = lastPageEl.cloneNode(true) as HTMLElement;
-      const reportHeaderEls = Array.from(cloneEl.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportHeader}]`)) as HTMLElement[];
+      const reportHeaderEls = Array.from(cloneEl.querySelectorAll(getAttrSelector(AC_REPORT_ATTRIBUTE.reportHeader))) as HTMLElement[];
       for (const reportHeader of reportHeaderEls) {
         reportHeader.remove();
       }
-      const cloneFooterEls = Array.from(cloneEl.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportFooter}]`)) as HTMLElement[];
+      const cloneFooterEls = Array.from(cloneEl.querySelectorAll(getAttrSelector(AC_REPORT_ATTRIBUTE.reportFooter))) as HTMLElement[];
       for (const footer of cloneFooterEls) {
-        footer.setAttribute('ac-temp-style-display', footer.style.display);
+        if (!footer.hasAttribute('ac-temp-style-display')) {
+          footer.setAttribute('ac-temp-style-display', footer.style.display);
+        }
         footer.style.display = 'none';
-      }
-      const reportFootererEls = Array.from(lastPageEl.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportFooter}]`)) as HTMLElement[];
-      for (const reportFooter of reportFootererEls) {
-        reportFooter.remove();
       }
       const page = new AcReportPage({ element: cloneEl, index: this.pages.length, report: this, isFixedHeight: this.pageSize.isRoll != true });
       if (this.pageMargin) {
@@ -136,9 +134,11 @@ export class AcReport {
         page.element.style.boxSizing = 'border-box';
       }
       this.suppressStretchingStyles(page.element);
-      const reportFooterEls = Array.from(page.element.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportFooter}]`)) as HTMLElement[];
+      const reportFooterEls = Array.from(page.element.querySelectorAll(getAttrSelector(AC_REPORT_ATTRIBUTE.reportFooter))) as HTMLElement[];
       for (const reportFooter of reportFooterEls) {
-        reportFooter.setAttribute('ac-temp-style-display', reportFooter.style.display);
+        if (!reportFooter.hasAttribute('ac-temp-style-display')) {
+          reportFooter.setAttribute('ac-temp-style-display', reportFooter.style.display);
+        }
         reportFooter.style.display = 'none';
       }
       this.element.append(page.element);
@@ -394,9 +394,18 @@ export class AcReport {
 
     if (this.pages.length > 0) {
       const lastPage = this.pages[this.pages.length - 1];
-      const reportFootererEls = Array.from(lastPage.element.querySelectorAll(`[${AC_REPORT_ATTRIBUTE.reportFooter}]`)) as HTMLElement[];
-      for (const reportFooter of reportFootererEls) {
-        reportFooter.style.display = reportFooter.getAttribute('ac-temp-style-display') || '';
+      for (const page of this.pages) {
+        const isLastPage = (page === lastPage);
+        const footerEls = Array.from(page.element.querySelectorAll(getAttrSelector(AC_REPORT_ATTRIBUTE.reportFooter))) as HTMLElement[];
+        for (const footer of footerEls) {
+          if (isLastPage) {
+            const origDisplay = footer.getAttribute('ac-temp-style-display');
+            footer.style.display = (origDisplay && origDisplay !== 'none') ? origDisplay : '';
+            footer.removeAttribute('ac-temp-style-display');
+          } else {
+            footer.remove();
+          }
+        }
       }
     }
 

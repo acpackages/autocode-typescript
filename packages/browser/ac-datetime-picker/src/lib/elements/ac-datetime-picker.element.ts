@@ -39,6 +39,7 @@ export class AcDateTimePickerElement extends AcInputBase {
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.min,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.max,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.disabledDates,
+      AC_DATETIME_PICKER_ATTRIBUTE_NAME.disabledDaysOfWeek,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.format,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.showSidebar,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.showFooter,
@@ -47,6 +48,7 @@ export class AcDateTimePickerElement extends AcInputBase {
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.minuteStep,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.outputType,
+      AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeparator,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeperator,
     ];
   }
@@ -98,6 +100,26 @@ export class AcDateTimePickerElement extends AcInputBase {
 
   // ── Public Getters & Setters ────────────────────────────────────
 
+  get isTimeRequired(): boolean {
+    return this._state.hasTime || this._showTime;
+  }
+
+  override get disabled(): boolean {
+    return super.disabled;
+  }
+  override set disabled(value: boolean) {
+    super.disabled = value;
+    this._applyDisabledReadonly();
+  }
+
+  override get readonly(): boolean {
+    return super.readonly;
+  }
+  override set readonly(value: boolean) {
+    super.readonly = value;
+    this._applyDisabledReadonly();
+  }
+
   get mode(): AcEnumDateTimePickerMode {
     return this._state.mode;
   }
@@ -105,7 +127,9 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._state.mode = value;
     this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.mode, value);
     this._applyModeClasses();
+    this._updateTimeSectionVisibility();
     this._updateInputDisplay();
+    this._updateHeader();
     this._renderCalendars();
   }
 
@@ -117,13 +141,20 @@ export class AcDateTimePickerElement extends AcInputBase {
     this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.outputType, value);
   }
 
-  get dateRangeSeperator(): string {
+  get dateRangeSeparator(): string {
     return this._dateRangeSeparator;
   }
-  set dateRangeSeperator(value: string) {
+  set dateRangeSeparator(value: string) {
     this._dateRangeSeparator = value;
-    this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeperator, value);
+    this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeparator, value);
     this._updateInputDisplay();
+  }
+
+  get dateRangeSeperator(): string {
+    return this.dateRangeSeparator;
+  }
+  set dateRangeSeperator(value: string) {
+    this.dateRangeSeparator = value;
   }
 
   get format(): string {
@@ -133,6 +164,7 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._format = value;
     this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.format, value);
     this._updateInputDisplay();
+    this._updateHeader();
   }
 
   get showSidebar(): boolean {
@@ -141,7 +173,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   set showSidebar(value: boolean) {
     this._showSidebar = value;
     if (this._sidebarEl) {
-      this._sidebarEl.style.display = value ? '' : 'none';
+      this._sidebarEl.style.display = value && this._state.isRangeMode ? '' : 'none';
     }
   }
 
@@ -160,10 +192,9 @@ export class AcDateTimePickerElement extends AcInputBase {
   }
   set showTime(value: boolean) {
     this._showTime = value;
-    if (this._timeSection) {
-      this._timeSection.style.display = (value || this._state.hasTime) ? 'flex' : 'none';
-    }
+    this._updateTimeSectionVisibility();
     this._updateInputDisplay();
+    this._updateHeader();
   }
 
   get showSeconds(): boolean {
@@ -172,6 +203,8 @@ export class AcDateTimePickerElement extends AcInputBase {
   set showSeconds(value: boolean) {
     this._showSeconds = value;
     this._rebuildTimePickers();
+    this._updateInputDisplay();
+    this._updateHeader();
   }
 
   get minuteStep(): number {
@@ -188,6 +221,8 @@ export class AcDateTimePickerElement extends AcInputBase {
   set hour12(value: boolean) {
     this._hour12 = value;
     this._rebuildTimePickers();
+    this._updateInputDisplay();
+    this._updateHeader();
   }
 
   get min(): string | null {
@@ -215,6 +250,22 @@ export class AcDateTimePickerElement extends AcInputBase {
       this.removeAttribute('max');
       this._state.maxDate = null;
     }
+    this._renderCalendars();
+  }
+
+  get disabledDates(): (Date | string)[] {
+    return this._state.disabledDates;
+  }
+  set disabledDates(value: (Date | string)[]) {
+    this._state.disabledDates = value || [];
+    this._renderCalendars();
+  }
+
+  get disabledDaysOfWeek(): number[] {
+    return this._state.disabledDaysOfWeek;
+  }
+  set disabledDaysOfWeek(value: number[]) {
+    this._state.disabledDaysOfWeek = value || [];
     this._renderCalendars();
   }
 
@@ -259,8 +310,9 @@ export class AcDateTimePickerElement extends AcInputBase {
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12:
         this.hour12 = newValue === 'true';
         break;
+      case AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeparator:
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeperator:
-        this.dateRangeSeperator = newValue || 'to';
+        this.dateRangeSeparator = newValue || 'to';
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.min:
         this.min = newValue;
@@ -268,8 +320,29 @@ export class AcDateTimePickerElement extends AcInputBase {
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.max:
         this.max = newValue;
         break;
+      case AC_DATETIME_PICKER_ATTRIBUTE_NAME.disabledDates:
+        try {
+          this.disabledDates = typeof newValue === 'string' && newValue.startsWith('[')
+            ? JSON.parse(newValue)
+            : (newValue ? newValue.split(',').map((s: string) => s.trim()) : []);
+        } catch {
+          this.disabledDates = [];
+        }
+        break;
+      case AC_DATETIME_PICKER_ATTRIBUTE_NAME.disabledDaysOfWeek:
+        try {
+          this.disabledDaysOfWeek = typeof newValue === 'string' && newValue.startsWith('[')
+            ? JSON.parse(newValue)
+            : (newValue ? newValue.split(',').map((s: string) => parseInt(s.trim(), 10)) : []);
+        } catch {
+          this.disabledDaysOfWeek = [];
+        }
+        break;
       default:
         super.attributeChangedCallback(name, oldValue, newValue);
+        if (name === 'disabled' || name === 'readonly') {
+          this._applyDisabledReadonly();
+        }
     }
   }
 
@@ -289,6 +362,8 @@ export class AcDateTimePickerElement extends AcInputBase {
       }
     }
     this._applyModeClasses();
+    this._updateTimeSectionVisibility();
+    this._applyDisabledReadonly();
     this._renderPresets();
 
     if (this._value) {
@@ -296,11 +371,13 @@ export class AcDateTimePickerElement extends AcInputBase {
     }
     this._updateInputDisplay();
     this._updateHeader();
+    this._renderCalendars();
   }
 
   override disconnectedCallback() {
     this._destroyPopper();
     this._unbindOutsideClickListener();
+    document.body.style.overflow = '';
     if (this._popup?.parentNode === document.body) {
       document.body.removeChild(this._popup);
     }
@@ -313,6 +390,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   override destroy(): void {
     this._destroyPopper();
     this._unbindOutsideClickListener();
+    document.body.style.overflow = '';
     if (this._popup?.parentNode === document.body) {
       document.body.removeChild(this._popup);
     }
@@ -323,7 +401,48 @@ export class AcDateTimePickerElement extends AcInputBase {
     super.destroy();
   }
 
+  override focus(options?: FocusOptions): void {
+    this._inputEl?.focus(options);
+  }
+
   // ── Public API Methods ──────────────────────────────────────────
+
+  setStart(iso: string): void {
+    const d = acDtpParseAnyDate(iso, this._format);
+    if (d) {
+      this._state.startDate = d;
+      this._state.syncViewDates();
+      this._syncTimePickersFromState();
+      this._updateHeader();
+      this._updateInputDisplay();
+      this._renderCalendars();
+      const isoVal = this._computeCurrentIsoValue();
+      super.setValue({ value: isoVal as any, emitEvent: true });
+    }
+  }
+
+  setEnd(iso: string): void {
+    const d = acDtpParseAnyDate(iso, this._format);
+    if (d) {
+      this._state.endDate = d;
+      this._state.syncViewDates();
+      this._syncTimePickersFromState();
+      this._updateHeader();
+      this._updateInputDisplay();
+      this._renderCalendars();
+      const isoVal = this._computeCurrentIsoValue();
+      super.setValue({ value: isoVal as any, emitEvent: true });
+    }
+  }
+
+  refresh(): void {
+    this._renderPresets();
+    this._renderCalendars();
+    this._updateHeader();
+    this._updateInputDisplay();
+    this._updateTimeSectionVisibility();
+    this._applyDisabledReadonly();
+  }
 
   open() {
     if (this._isOpen || this.disabled || this.readonly) return;
@@ -335,6 +454,9 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._syncTimePickersFromState();
 
     const isMobile = window.innerWidth < 600;
+
+    this._popup.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.mobileBottomSheet, isMobile);
+    this._popup.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.desktopPopup, !isMobile);
 
     if (isMobile) {
       document.body.style.overflow = 'hidden';
@@ -420,6 +542,7 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._inputEl.placeholder = this.placeholder || (this._state.isRangeMode ? 'Select date range' : 'Select date');
     this._inputEl.setAttribute('aria-haspopup', 'dialog');
     this._inputEl.setAttribute('aria-expanded', 'false');
+    this.inputElement = this._inputEl;
 
     this._clearBtn = document.createElement('button');
     this._clearBtn.type = 'button';
@@ -541,6 +664,7 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._timeSection = document.createElement('div');
     this._timeSection.className = 'ac-dtp__time-section';
     this._buildTimePickers();
+    this._updateTimeSectionVisibility();
 
     mainContent.appendChild(calendarsWrap);
     mainContent.appendChild(this._timeSection);
@@ -584,6 +708,31 @@ export class AcDateTimePickerElement extends AcInputBase {
     this.appendChild(this._root);
 
     document.body.appendChild(this._popup);
+
+    this._applyDisabledReadonly();
+  }
+
+  private _updateTimeSectionVisibility() {
+    if (this._timeSection) {
+      const visible = this.isTimeRequired;
+      this._timeSection.classList.toggle('ac-dtp__time-section--visible', visible);
+      this._timeSection.style.display = visible ? 'flex' : 'none';
+    }
+  }
+
+  private _applyDisabledReadonly() {
+    const dis = this.disabled;
+    const ro = this.readonly;
+    this.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.disabled, dis);
+    this.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.readonly, ro);
+    if (this._root) {
+      this._root.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.disabled, dis);
+      this._root.classList.toggle(AC_DATETIME_PICKER_CSS_CLASS.readonly, ro);
+    }
+    if (this._inputEl) {
+      this._inputEl.disabled = dis;
+      this._inputEl.readOnly = ro;
+    }
   }
 
   private _buildTimePickers() {
@@ -614,6 +763,7 @@ export class AcDateTimePickerElement extends AcInputBase {
     if (this._timeSection) {
       this._buildTimePickers();
       this._syncTimePickersFromState();
+      this._updateTimeSectionVisibility();
     }
   }
 
@@ -623,16 +773,19 @@ export class AcDateTimePickerElement extends AcInputBase {
     // Open picker on input trigger click
     this._inputWrap.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (this.disabled || this.readonly) return;
       this.toggle();
     });
 
     // Freeform manual typing
     this._inputEl.addEventListener('input', () => {
+      if (this.disabled || this.readonly) return;
       this._onManualInput();
     });
 
     // Enter to commit, Escape to revert/close
     this._inputEl.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (this.disabled || this.readonly) return;
       if (e.key === 'Enter') {
         e.preventDefault();
         this._commitManualInput();
@@ -651,6 +804,7 @@ export class AcDateTimePickerElement extends AcInputBase {
 
     // Clipboard paste support
     this._inputEl.addEventListener('paste', (e: ClipboardEvent) => {
+      if (this.disabled || this.readonly) return;
       setTimeout(() => {
         this._onManualInput();
       }, 0);
@@ -658,6 +812,7 @@ export class AcDateTimePickerElement extends AcInputBase {
 
     // Blur to commit display value
     this._inputEl.addEventListener('blur', () => {
+      if (this.disabled || this.readonly) return;
       if (!this._isOpen) {
         this._commitManualInput();
       }
@@ -668,12 +823,13 @@ export class AcDateTimePickerElement extends AcInputBase {
 
   private _onDaySelected() {
     this._updateHeader();
+    this._syncTimePickersFromState();
 
-    const hasTime = this._state.hasTime || this._showTime;
+    const hasTime = this.isTimeRequired;
 
     if (!this._state.isRangeMode) {
-      // In single date mode without time, auto-apply immediately
-      if (!hasTime) {
+      // In single date mode without time, auto-apply immediately only if footer is hidden
+      if (!hasTime && !this._showFooter) {
         this._commitSelection();
       }
     } else {
@@ -764,7 +920,7 @@ export class AcDateTimePickerElement extends AcInputBase {
 
   private _commitSelection(closePopup: boolean = true) {
     const isoValue = this._computeCurrentIsoValue();
-    super.setValue(isoValue as any);
+    super.setValue({ value: isoValue as any, emitEvent: true });
 
     this._updateInputDisplay();
     this._updateHeader();
@@ -778,6 +934,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _onStateChange() {
     this._renderCalendars();
     this._updateHeader();
+    this._renderPresets();
   }
 
   // ── Render Helpers ──────────────────────────────────────────────
@@ -806,6 +963,7 @@ export class AcDateTimePickerElement extends AcInputBase {
         this._state.endDate = this._state.isRangeMode ? end : null;
         this._state.activePresetLabel = preset.label;
         this._state.syncViewDates();
+        this._syncTimePickersFromState();
         this._renderCalendars();
         this._updateHeader();
         this._renderPresets();
@@ -825,11 +983,25 @@ export class AcDateTimePickerElement extends AcInputBase {
     }
   }
 
+  private _getEffectiveDisplayFormat(): string {
+    let fmt = this._format;
+    if (this.isTimeRequired) {
+      const hasTimeTokens = /HH|hh|mm/i.test(fmt);
+      if (!hasTimeTokens) {
+        if (this._hour12) {
+          fmt += this._showSeconds ? ' hh:mm:ss AA' : ' hh:mm AA';
+        } else {
+          fmt += this._showSeconds ? ' HH:mm:ss' : ' HH:mm';
+        }
+      }
+    }
+    return fmt;
+  }
+
   private _updateHeader() {
     if (!this._headerStartValue) return;
 
-    const includeTime = this._state.hasTime || this._showTime;
-    const fmt = this._format + (includeTime ? ' hh:mm AA' : '');
+    const fmt = this._getEffectiveDisplayFormat();
 
     if (this._state.startDate) {
       this._headerStartValue.textContent = acDtpFormatDisplay(this._state.startDate, fmt);
@@ -853,8 +1025,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _updateInputDisplay() {
     if (!this._inputEl) return;
 
-    const includeTime = this._state.hasTime || this._showTime;
-    const fmt = this._format + (includeTime ? ' hh:mm AA' : '');
+    const fmt = this._getEffectiveDisplayFormat();
 
     let text = '';
     if (this._state.isRangeMode) {
@@ -874,7 +1045,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   }
 
   private _computeCurrentIsoValue(): string | IAcDateTimePickerRangeValue | null {
-    const includeTime = this._state.hasTime || this._showTime;
+    const includeTime = this.isTimeRequired;
 
     if (this._state.isRangeMode) {
       if (!this._state.startDate && !this._state.endDate) return null;
@@ -895,9 +1066,17 @@ export class AcDateTimePickerElement extends AcInputBase {
       return;
     }
 
+    if (typeof val === 'string' && val.trim().startsWith('{')) {
+      try {
+        val = JSON.parse(val.trim());
+      } catch {
+        // continue
+      }
+    }
+
     if (typeof val === 'object' && ('start' in val || 'end' in val)) {
-      this._state.startDate = val.start ? acDtpParseAnyDate(val.start) : null;
-      this._state.endDate = val.end ? acDtpParseAnyDate(val.end) : null;
+      this._state.startDate = val.start ? acDtpParseAnyDate(String(val.start), this._format) : null;
+      this._state.endDate = val.end ? acDtpParseAnyDate(String(val.end), this._format) : null;
     } else if (typeof val === 'string') {
       if (this._state.isRangeMode) {
         const parsed = acDtpParseRange(val, this._dateRangeSeparator, this._format);
@@ -949,6 +1128,12 @@ export class AcDateTimePickerElement extends AcInputBase {
     if (this._calRightContainer) {
       this._calRightContainer.style.display = isRange ? '' : 'none';
     }
+
+    if (this._sidebarEl) {
+      this._sidebarEl.style.display = isRange && this._showSidebar ? '' : 'none';
+    }
+
+    this._updateTimeSectionVisibility();
   }
 
   // ── Popper Positioning ──────────────────────────────────────────

@@ -50,9 +50,13 @@ export function getAttrSelector(attrName: string): string {
   } else {
     escaped = attrName.replace(/:/g, '\\:');
   }
-  const hyphenVariant = attrName.replace(/^ac:/, 'ac-');
-  if (hyphenVariant !== attrName) {
+  if (attrName.startsWith('ac:')) {
+    const hyphenVariant = attrName.replace(/^ac:/, 'ac-');
     return `[${escaped}], [${hyphenVariant}]`;
+  }
+  if (attrName.startsWith('ac-')) {
+    const colonVariant = attrName.replace(/^ac-/, 'ac\\:');
+    return `[${escaped}], [${colonVariant}]`;
   }
   return `[${escaped}]`;
 }

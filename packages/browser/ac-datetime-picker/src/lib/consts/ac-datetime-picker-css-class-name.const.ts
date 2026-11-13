@@ -38,4 +38,7 @@ export const AC_DATETIME_PICKER_CSS_CLASS = {
   readonly: 'ac-dtp--readonly',
   singleMode: 'ac-dtp--single',
   rangeMode: 'ac-dtp--range',
+  // Display modes (desktop popover vs mobile bottom sheet)
+  desktopPopup: 'ac-dtp__popup--desktop',
+  mobileBottomSheet: 'ac-dtp__popup--bottomsheet',
 } as const;

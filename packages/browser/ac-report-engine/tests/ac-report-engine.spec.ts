@@ -656,4 +656,111 @@ describe('AcReportEngine Comprehensive Test Suite', () => {
       }
     }
   });
+
+  it('19. Multi-Page ac-report-footer & ac-report-header visibility', async () => {
+    const container = document.createElement('div');
+    container.setAttribute('ac-report', '');
+    container.innerHTML = `
+      <div ac-page>
+        <div id="rep-hdr" ac-report-header>Report Header (Cover)</div>
+        <div class="content">Content</div>
+        <div id="rep-ftr-hyphen" ac-report-footer>Report Footer Hyphen</div>
+        <div id="rep-ftr-colon" ac:report-footer>Report Footer Colon</div>
+      </div>
+    `;
+    document.body.append(container);
+
+    const report = new AcReport({ element: container });
+    report.addPage(); // Page 1
+    report.addPage(); // Page 2
+    report.addPage(); // Page 3
+    await report.finalizePages();
+
+    expect(report.pages.length).toBe(3);
+
+    const p1 = report.pages[0].element;
+    const p2 = report.pages[1].element;
+    const p3 = report.pages[2].element;
+
+    // Report Header only on Page 1
+    expect(p1.querySelector('#rep-hdr')).not.toBeNull();
+    expect(p2.querySelector('#rep-hdr')).toBeNull();
+    expect(p3.querySelector('#rep-hdr')).toBeNull();
+
+    // Report Footer removed from intermediate Pages 1 and 2
+    expect(p1.querySelector('#rep-ftr-hyphen')).toBeNull();
+    expect(p1.querySelector('#rep-ftr-colon')).toBeNull();
+    expect(p2.querySelector('#rep-ftr-hyphen')).toBeNull();
+    expect(p2.querySelector('#rep-ftr-colon')).toBeNull();
+
+    // Report Footer visible on Page 3 (the final page)
+    const p3Hyphen = p3.querySelector('#rep-ftr-hyphen') as HTMLElement;
+    const p3Colon = p3.querySelector('#rep-ftr-colon') as HTMLElement;
+    expect(p3Hyphen).not.toBeNull();
+    expect(p3Colon).not.toBeNull();
+    expect(p3Hyphen.style.display).not.toBe('none');
+    expect(p3Colon.style.display).not.toBe('none');
+  });
+
+  it('20. ac-report-footer with loop pagination via generate()', async () => {
+    const origOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      configurable: true,
+      get() {
+        if (this.getAttribute && this.hasAttribute('ac-page')) {
+          const rows = this.querySelectorAll('.item-row').length;
+          // Base header 200px + 40px per row. Target A4 ~1122px.
+          return 200 + rows * 40;
+        }
+        return 40;
+      },
+    });
+
+    try {
+      const container = document.createElement('div');
+      container.setAttribute('ac-report', '');
+      container.innerHTML = `
+        <div ac-page ac-page-size="A4" ac-page-orientation="portrait">
+          <table>
+            <tbody ac:for="let item of data.items; let i;">
+              <tr class="item-row">
+                <td>{{ item.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="grand-total" ac-report-footer>Grand Total: {{ data.total }}</div>
+        </div>
+      `;
+      document.body.append(container);
+
+      // 35 items: at 24 rows, 200 + 24*40 = 1160 > 1122 -> overflows to page 2
+      const items = Array.from({ length: 35 }, (_, i) => ({ name: `Item #${i + 1}` }));
+      const report = new AcReport({ element: container });
+      await report.generate({
+        data: {
+          items,
+          total: 3500,
+        },
+      });
+
+      expect(report.pages.length).toBe(2);
+      const page1 = report.pages[0];
+      const page2 = report.pages[1];
+
+      // Page 1 should NOT have #grand-total
+      expect(page1.element.querySelector('#grand-total')).toBeNull();
+
+      // Page 2 (the final page) MUST have #grand-total visible with correct binding
+      const lastFooter = page2.element.querySelector('#grand-total') as HTMLElement;
+      expect(lastFooter).not.toBeNull();
+      expect(lastFooter.style.display).not.toBe('none');
+      expect(lastFooter.textContent).toContain('Grand Total: 3500');
+    } finally {
+      if (origOffsetHeight) {
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', origOffsetHeight);
+      } else {
+        delete (HTMLElement.prototype as any).offsetHeight;
+      }
+    }
+  });
 });

@@ -1,6 +1,6 @@
 # @autocode-ts/ac-datetime-picker
 
-A lightweight, dependency-minimal DateTime Picker web component built on [Air Datepicker](https://air-datepicker.com/).
+A lightweight, zero-dependency custom DateTime Picker web component.
 Extends `AcInputBase` for seamless integration with AutoCode forms.
 
 ---
@@ -8,7 +8,7 @@ Extends `AcInputBase` for seamless integration with AutoCode forms.
 ## Installation
 
 ```bash
-npm install @autocode-ts/ac-datetime-picker air-datepicker
+npm install @autocode-ts/ac-datetime-picker
 ```
 
 ---
@@ -203,7 +203,9 @@ picker.addEventListener('presetSelect',e => console.log('preset', e.detail.prese
 | `value` | `value` | `string \| RangeValue \| null` | `null` | Current value |
 | `min` | `min` | `string` | — | Minimum selectable date (ISO) |
 | `max` | `max` | `string` | — | Maximum selectable date (ISO) |
-| `format` | `format` | `string` | `DD MMM YYYY` | Display format |
+| `disabledDates` | `disabled-dates` | `(Date \| string)[]` | `[]` | Disabled individual dates |
+| `disabledDaysOfWeek` | `disabled-days-of-week` | `number[]` | `[]` | Disabled days of week (0=Sun..6=Sat) |
+| `format` | `format` | `string` | `DD-MM-YYYY` | Display format |
 | `readonly` | `readonly` | `boolean` | `false` | Read-only mode |
 | `disabled` | `disabled` | `boolean` | `false` | Disabled state |
 | `showSidebar` | `show-sidebar` | `boolean` | `true` | Show preset sidebar |
@@ -213,6 +215,7 @@ picker.addEventListener('presetSelect',e => console.log('preset', e.detail.prese
 | `minuteStep` | `minute-step` | `number` | `1` | Minute increment |
 | `hour12` | `hour12` | `boolean` | `false` | 12-hour clock |
 | `outputType` | `output-type` | `AcEnumDateTimePickerOutputType` | `utc` | Output ISO format |
+| `dateRangeSeparator` | `range-separator` | `string` | `to` | Range delimiter |
 | `presets` | — | `IAcDateTimePickerPreset[]` | built-in | Custom sidebar presets |
 
 ### Methods
@@ -311,8 +314,8 @@ ac-datetime-picker {
 
 | Key | Action |
 |---|---|
-| `Enter` / `Space` | Open / close popup |
+| `Enter` / `Space` | Open / close popup or select day |
 | `Escape` | Close popup |
 | `Tab` | Close popup and move focus |
-| `Arrow keys` | Navigate days (via Air Datepicker) |
-| `Page Up / Down` | Navigate months (via Air Datepicker) |
+| `Arrow keys` | Navigate calendar days |
+| `Page Up / Down` | Navigate calendar months |

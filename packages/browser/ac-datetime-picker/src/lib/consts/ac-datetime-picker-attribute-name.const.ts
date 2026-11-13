@@ -15,5 +15,7 @@ export const AC_DATETIME_PICKER_ATTRIBUTE_NAME = {
   minuteStep: 'minute-step',
   hour12: 'hour12',
   outputType: 'output-type',
+  rangeSeparator: 'range-separator',
   rangeSeperator: 'range-seperator',
+  disabledDaysOfWeek: 'disabled-days-of-week',
 } as const;

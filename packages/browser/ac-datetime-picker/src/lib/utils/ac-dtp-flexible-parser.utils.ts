@@ -90,21 +90,24 @@ export function acDtpFormatDisplay(d: Date | null, format: string = 'DD-MM-YYYY'
   const sec = d.getSeconds();
   const ampm = h24 < 12 ? 'AM' : 'PM';
 
-  return format
-    .replace(/\bYYYY\b/g, String(y))
-    .replace(/\bYY\b/g, String(y).slice(-2))
-    .replace(/\bMMMM\b/g, AC_DTP_MONTH_NAMES_LONG[mo])
-    .replace(/\bMMM\b/g, AC_DTP_MONTH_NAMES_SHORT[mo])
-    .replace(/\bMM\b/g, pad2(mo + 1))
-    .replace(/\bM\b/g, String(mo + 1))
-    .replace(/\bDD\b/g, pad2(day))
-    .replace(/\bD\b/g, String(day))
-    .replace(/\bHH\b/g, pad2(h24))
-    .replace(/\bhh\b/g, pad2(h12))
-    .replace(/\bmm\b/g, pad2(min))
-    .replace(/\bss\b/g, pad2(sec))
-    .replace(/\bAA\b/g, ampm)
-    .replace(/\baa\b/g, ampm.toLowerCase());
+  const map: Record<string, string> = {
+    YYYY: String(y),
+    YY: String(y).slice(-2),
+    MMMM: AC_DTP_MONTH_NAMES_LONG[mo],
+    MMM: AC_DTP_MONTH_NAMES_SHORT[mo],
+    MM: pad2(mo + 1),
+    M: String(mo + 1),
+    DD: pad2(day),
+    D: String(day),
+    HH: pad2(h24),
+    hh: pad2(h12),
+    mm: pad2(min),
+    ss: pad2(sec),
+    AA: ampm,
+    aa: ampm.toLowerCase(),
+  };
+
+  return format.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D|HH|hh|mm|ss|AA|aa/g, (token) => map[token] ?? token);
 }
 
 /**
@@ -176,7 +179,16 @@ export function acDtpParseAnyDate(input: string, formatHint?: string): Date | nu
     return d;
   }
 
-  // 2. Separate date part and time part (if present)
+  // 2. Check if input has an explicit ISO timezone suffix (Z or +/-HH:mm offset)
+  // Standard Date() constructor parses UTC / offset dates accurately into local system time.
+  if (/(?:T|\d{2}:\d{2}).*(?:Z|[+-]\d{2}(?::?\d{2})?)$/i.test(text)) {
+    const parsedIso = new Date(text);
+    if (!isNaN(parsedIso.getTime())) {
+      return parsedIso;
+    }
+  }
+
+  // 3. Separate date part and time part (if present)
   let datePart = text;
   let timePart = '';
   // Check for trailing time: e.g. "14:30:00", "14:30", "2:30 PM", "2:30:15 pm"
@@ -191,7 +203,7 @@ export function acDtpParseAnyDate(input: string, formatHint?: string): Date | nu
   let monthZeroBased: number | null = null;
   let day: number | null = null;
 
-  // 3. Check for standard ISO date: YYYY-MM-DD or YYYY/MM/DD
+  // 4. Check for standard ISO date: YYYY-MM-DD or YYYY/MM/DD
   const isoMatch = datePart.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
   if (isoMatch) {
     year = parseInt(isoMatch[1], 10);
@@ -295,10 +307,12 @@ export function acDtpParseAnyDate(input: string, formatHint?: string): Date | nu
     return new Date(year, monthZeroBased, day, hours, minutes, seconds);
   }
 
-  // Fallback: test native Date parsing for standard RFC formats
-  const native = new Date(text);
-  if (!isNaN(native.getTime())) {
-    return native;
+  // Fallback: test native Date parsing for standard RFC formats (ignore short digit strings like "1")
+  if (text.length >= 8 && !/^\d+$/.test(text)) {
+    const native = new Date(text);
+    if (!isNaN(native.getTime())) {
+      return native;
+    }
   }
 
   return null;
@@ -325,6 +339,26 @@ export function acDtpParseRange(
   }
 
   const trimmed = input.trim();
+
+  // If input is a JSON string e.g. {"start":"...","end":"..."}
+  if (trimmed.startsWith('{')) {
+    try {
+      const obj = JSON.parse(trimmed);
+      if (obj && typeof obj === 'object') {
+        const start = obj.start ? acDtpParseAnyDate(String(obj.start), formatHint) : null;
+        const end = obj.end ? acDtpParseAnyDate(String(obj.end), formatHint) : null;
+        return {
+          start,
+          end,
+          isValid: start !== null || end !== null,
+          isComplete: start !== null && end !== null,
+        };
+      }
+    } catch {
+      // Not JSON, continue with string splitting
+    }
+  }
+
   const escapedSep = rangeSeparator ? rangeSeparator.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : 'to';
   const sepPattern = new RegExp(
     `\\s+(?:${escapedSep}|to|–|—|-|\\.\\.)(?:\\s+|$)|^(?:${escapedSep}|to|–|—|-|\\.\\.)\\s+`,

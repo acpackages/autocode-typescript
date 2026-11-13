@@ -235,6 +235,16 @@ export class AcDtpTimePicker {
       onValChange(cur);
     }, { passive: false });
 
+    input.addEventListener('input', () => {
+      const clean = input.value.replace(/\D/g, '');
+      if (clean.length > 0) {
+        let num = parseInt(clean, 10);
+        if (!isNaN(num) && num >= min && num <= max) {
+          onValChange(num);
+        }
+      }
+    });
+
     input.addEventListener('blur', () => {
       let num = parseInt(input.value.replace(/\D/g, ''), 10);
       if (isNaN(num)) num = min;

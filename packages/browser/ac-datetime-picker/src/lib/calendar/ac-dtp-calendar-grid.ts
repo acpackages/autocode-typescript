@@ -39,6 +39,14 @@ export class AcDtpCalendarGrid {
     this._state = options.state;
     this._onDayClick = options.onDayClick;
 
+    if (this._state.isYearMode) {
+      this._viewMode = 'years';
+    } else if (this._state.isMonthMode) {
+      this._viewMode = 'months';
+    } else {
+      this._viewMode = 'days';
+    }
+
     this._container = document.createElement('div');
     this._container.className = `ac-dtp__cal ac-dtp__cal--${this._side}`;
 
@@ -143,12 +151,18 @@ export class AcDtpCalendarGrid {
   }
 
   private _onTitleClick() {
-    if (this._viewMode === 'days') {
-      this._viewMode = 'months';
-    } else if (this._viewMode === 'months') {
+    if (this._state.isYearMode) {
       this._viewMode = 'years';
+    } else if (this._state.isMonthMode) {
+      this._viewMode = this._viewMode === 'months' ? 'years' : 'months';
     } else {
-      this._viewMode = 'days';
+      if (this._viewMode === 'days') {
+        this._viewMode = 'months';
+      } else if (this._viewMode === 'months') {
+        this._viewMode = 'years';
+      } else {
+        this._viewMode = 'days';
+      }
     }
     this.render();
   }
@@ -298,6 +312,41 @@ export class AcDtpCalendarGrid {
       btn.addEventListener('pointerenter', () => {
         this._state.handleDayHover(d);
       });
+
+      btn.addEventListener('keydown', (e: KeyboardEvent) => {
+        let deltaDays = 0;
+        if (e.key === 'ArrowLeft') deltaDays = -1;
+        else if (e.key === 'ArrowRight') deltaDays = 1;
+        else if (e.key === 'ArrowUp') deltaDays = -7;
+        else if (e.key === 'ArrowDown') deltaDays = 7;
+        else if (e.key === 'PageUp') {
+          e.preventDefault();
+          this._state.navigateView(this._side, -1);
+          return;
+        } else if (e.key === 'PageDown') {
+          e.preventDefault();
+          this._state.navigateView(this._side, 1);
+          return;
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._state.handleDayClick(d);
+          if (this._onDayClick) this._onDayClick(d);
+          return;
+        }
+
+        if (deltaDays !== 0) {
+          e.preventDefault();
+          const target = new Date(d);
+          target.setDate(target.getDate() + deltaDays);
+          const iso = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(target.getDate()).padStart(2, '0')}`;
+          const targetBtn = this._container.querySelector<HTMLButtonElement>(`button[data-date="${iso}"]`);
+          if (targetBtn) {
+            targetBtn.focus();
+          } else {
+            this._state.navigateView(this._side, deltaDays > 0 ? 1 : -1);
+          }
+        }
+      });
     }
 
     td.appendChild(btn);
@@ -318,21 +367,32 @@ export class AcDtpCalendarGrid {
       btn.className = 'ac-dtp__month-btn';
       btn.textContent = AC_DTP_MONTH_NAMES_SHORT[m];
 
-      const isCurMonth =
+      const isStartMonth =
         this._state.startDate &&
         this._state.startDate.getFullYear() === year &&
         this._state.startDate.getMonth() === m;
+      const isEndMonth =
+        this._state.endDate &&
+        this._state.endDate.getFullYear() === year &&
+        this._state.endDate.getMonth() === m;
 
-      if (isCurMonth) {
+      if (isStartMonth || isEndMonth) {
         btn.classList.add('ac-dtp__month-btn--active');
       }
 
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this._state.setView(year, m, this._side);
-        this._viewMode = 'days';
-        this.render();
+        if (this._state.isMonthMode) {
+          this._state.handleMonthClick(year, m);
+          if (this._onDayClick && this._state.startDate) {
+            this._onDayClick(this._state.startDate);
+          }
+        } else {
+          this._state.setView(year, m, this._side);
+          this._viewMode = 'days';
+          this.render();
+        }
       });
 
       grid.appendChild(btn);
@@ -359,20 +419,29 @@ export class AcDtpCalendarGrid {
         btn.classList.add('ac-dtp__year-btn--other');
       }
 
-      const isCurYear =
+      const isStartYear =
         this._state.startDate && this._state.startDate.getFullYear() === y;
+      const isEndYear =
+        this._state.endDate && this._state.endDate.getFullYear() === y;
 
-      if (isCurYear) {
+      if (isStartYear || isEndYear) {
         btn.classList.add('ac-dtp__year-btn--active');
       }
 
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const cur = this._getViewDate();
-        this._state.setView(y, cur.getMonth(), this._side);
-        this._viewMode = 'months';
-        this.render();
+        if (this._state.isYearMode) {
+          this._state.handleYearClick(y);
+          if (this._onDayClick && this._state.startDate) {
+            this._onDayClick(this._state.startDate);
+          }
+        } else {
+          const cur = this._getViewDate();
+          this._state.setView(y, cur.getMonth(), this._side);
+          this._viewMode = 'months';
+          this.render();
+        }
       });
 
       grid.appendChild(btn);

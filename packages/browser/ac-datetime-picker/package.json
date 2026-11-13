@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./ac-datetime-picker.js",
+  "module": "./ac-datetime-picker.js",
+  "types": "./ac-datetime-picker.d.ts",
   "dependencies": {
     "@autocode-ts/ac-browser": "^0.0.1",
     "@popperjs/core": "^2.11.8"
   },
   "exports": {
     ".": {
-      "import": "./index.js",
-      "require": "./index.js"
+      "import": "./ac-datetime-picker.js",
+      "require": "./ac-datetime-picker.cjs"
     },
     "./css/*": {
       "default": "./css/*"

@@ -49,6 +49,20 @@ export class AcDtpPickerState {
     );
   }
 
+  get isMonthMode(): boolean {
+    return (
+      this.mode === AcEnumDateTimePickerMode.Month ||
+      this.mode === AcEnumDateTimePickerMode.MonthRange
+    );
+  }
+
+  get isYearMode(): boolean {
+    return (
+      this.mode === AcEnumDateTimePickerMode.Year ||
+      this.mode === AcEnumDateTimePickerMode.YearRange
+    );
+  }
+
   get hasTime(): boolean {
     return (
       this.mode === AcEnumDateTimePickerMode.DateTime ||
@@ -159,6 +173,78 @@ export class AcDtpPickerState {
   }
 
   /**
+   * Select a month (for month or monthrange modes).
+   */
+  handleMonthClick(year: number, monthZeroBased: number): { complete: boolean } {
+    this.activePresetLabel = null;
+    const startOfMonth = new Date(year, monthZeroBased, 1, 0, 0, 0, 0);
+    const endOfMonth = new Date(year, monthZeroBased + 1, 0, 23, 59, 59, 999);
+
+    if (!this.isRangeMode) {
+      this.startDate = startOfMonth;
+      this.endDate = null;
+      this.hoverDate = null;
+      this.notify();
+      return { complete: true };
+    }
+
+    if (!this.startDate || (this.startDate && this.endDate)) {
+      this.startDate = startOfMonth;
+      this.endDate = null;
+      this.hoverDate = null;
+      this.notify();
+      return { complete: false };
+    }
+
+    if (startOfMonth < this.startDate) {
+      this.endDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, 0, 23, 59, 59, 999);
+      this.startDate = startOfMonth;
+    } else {
+      this.endDate = endOfMonth;
+    }
+
+    this.hoverDate = null;
+    this.notify();
+    return { complete: true };
+  }
+
+  /**
+   * Select a year (for year or yearrange modes).
+   */
+  handleYearClick(year: number): { complete: boolean } {
+    this.activePresetLabel = null;
+    const startOfYear = new Date(year, 0, 1, 0, 0, 0, 0);
+    const endOfYear = new Date(year, 11, 31, 23, 59, 59, 999);
+
+    if (!this.isRangeMode) {
+      this.startDate = startOfYear;
+      this.endDate = null;
+      this.hoverDate = null;
+      this.notify();
+      return { complete: true };
+    }
+
+    if (!this.startDate || (this.startDate && this.endDate)) {
+      this.startDate = startOfYear;
+      this.endDate = null;
+      this.hoverDate = null;
+      this.notify();
+      return { complete: false };
+    }
+
+    if (startOfYear < this.startDate) {
+      this.endDate = new Date(this.startDate.getFullYear(), 11, 31, 23, 59, 59, 999);
+      this.startDate = startOfYear;
+    } else {
+      this.endDate = endOfYear;
+    }
+
+    this.hoverDate = null;
+    this.notify();
+    return { complete: true };
+  }
+
+  /**
    * Hover over a calendar day during active range selection.
    */
   handleDayHover(hoveredDate: Date | null) {
@@ -189,6 +275,16 @@ export class AcDtpPickerState {
         minutes,
         seconds
       );
+    } else {
+      const today = new Date();
+      this.startDate = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+        hours,
+        minutes,
+        seconds
+      );
     }
     this.notify();
   }
@@ -202,6 +298,16 @@ export class AcDtpPickerState {
         this.endDate.getFullYear(),
         this.endDate.getMonth(),
         this.endDate.getDate(),
+        hours,
+        minutes,
+        seconds
+      );
+    } else {
+      const today = new Date();
+      this.endDate = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
         hours,
         minutes,
         seconds

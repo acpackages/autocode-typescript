@@ -42,7 +42,7 @@ export async function evaluateAcPipeExpression({
               const res = evaluateFunction({ expression: expr, context });
               return res instanceof Promise ? await res : res;
             } catch (err) {
-              console.warn(`Failed to evaluate expression argument: ${expr}`, err);
+              // console.warn(`Failed to evaluate expression argument: ${expr}`, err);
               return undefined;
             }
           }
@@ -59,7 +59,7 @@ export async function evaluateAcPipeExpression({
 
     return value ?? '';
   } catch (ex) {
-    console.error(`Expression evaluation failed: "${expression}"`, ex);
+    // console.error(`Expression evaluation failed: "${expression}"`, ex);
     return '';
   }
 }
@@ -85,7 +85,7 @@ export async function evaluateAcPipe({
       return value ?? '';
 
   } catch (ex) {
-    console.error(`Pipe evaluation failed: "${value}"|"${pipe}"`, ex);
+    // console.error(`Pipe evaluation failed: "${value}"|"${pipe}"`, ex);
     return '';
   }
 }

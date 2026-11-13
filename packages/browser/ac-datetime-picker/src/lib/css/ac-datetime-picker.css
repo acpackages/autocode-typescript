@@ -242,6 +242,7 @@ ac-datetime-picker {
   flex-direction: column;
   overflow: hidden;
   min-width: 580px;
+  max-height: calc(100vh - 32px);
 
   /* Hidden state */
   opacity: 0;
@@ -286,6 +287,8 @@ ac-datetime-picker {
   display: flex;
   flex-direction: column;
   min-width: 100px;
+  width: stretch;
+  align-items: center;
 }
 
 .ac-dtp__header-label {
@@ -331,6 +334,7 @@ ac-datetime-picker {
   display: flex;
   flex: 1;
   min-height: 0;
+  position: relative;
 }
 
 /* ── Sidebar (Presets) ─────────────────────────────────────── */
@@ -339,8 +343,39 @@ ac-datetime-picker {
   background: var(--ac-dtp-sidebar-bg);
   border-right: 1px solid var(--ac-dtp-border);
   overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
   padding: 8px 0;
+  box-sizing: border-box;
+
+  /* Custom styled scrollbar for large lists */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ac-dtp-border) transparent;
+}
+
+/* In desktop popup mode, pin sidebar absolutely so it matches calendar height without expanding popup */
+.ac-dtp__popup--desktop .ac-dtp__sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.ac-dtp__sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ac-dtp__sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ac-dtp__sidebar::-webkit-scrollbar-thumb {
+  background: var(--ac-dtp-border);
+  border-radius: 3px;
+}
+
+.ac-dtp__sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--ac-dtp-text-muted);
 }
 
 .ac-dtp__presets {
@@ -379,6 +414,19 @@ ac-datetime-picker {
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: 100%;
+  margin-left: 0;
+}
+
+/* On desktop popup mode, restrict width to content so popover hugs calendars */
+.ac-dtp__popup--desktop .ac-dtp__main-content {
+  width: min-content;
+  margin-left: var(--ac-dtp-sidebar-width);
+}
+
+.ac-dtp--no-sidebar .ac-dtp__main-content,
+.ac-dtp__popup--desktop.ac-dtp--no-sidebar .ac-dtp__main-content {
+  margin-left: 0;
 }
 
 .ac-dtp__calendars {
@@ -572,13 +620,17 @@ ac-datetime-picker {
 
 /* ── Dedicated Time Controls ───────────────────────────────── */
 .ac-dtp__time-section {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 24px;
   padding: 8px 16px;
   border-top: 1px solid var(--ac-dtp-border);
   background: var(--ac-dtp-bg-alt);
+}
+
+.ac-dtp__time-section--visible {
+  display: flex;
 }
 
 .ac-dtp__time-control {
@@ -701,6 +753,14 @@ ac-datetime-picker {
   display: none !important;
 }
 
+.ac-dtp--single .ac-dtp__sidebar {
+  display: none !important;
+}
+
+.ac-dtp--single .ac-dtp__main-content {
+  margin-left: 0 !important;
+}
+
 /* ── Mobile Touch Bottom Sheet (< 600px) ───────────────────── */
 @media (max-width: 599px) {
   .ac-dtp__popup {
@@ -731,13 +791,37 @@ ac-datetime-picker {
 
   /* Preset horizontal chips */
   .ac-dtp__sidebar {
+    position: static !important;
     width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
     border-right: none !important;
     border-bottom: 1px solid var(--ac-dtp-border) !important;
     padding: 6px 8px !important;
     display: flex !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ac-dtp-border) transparent;
+  }
+
+  .ac-dtp__main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .ac-dtp__sidebar::-webkit-scrollbar {
+    height: 4px;
+    width: 0;
+  }
+
+  .ac-dtp__sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .ac-dtp__sidebar::-webkit-scrollbar-thumb {
+    background: var(--ac-dtp-border);
+    border-radius: 2px;
   }
 
   .ac-dtp__presets {
