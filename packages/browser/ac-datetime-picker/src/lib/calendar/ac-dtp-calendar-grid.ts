@@ -48,15 +48,15 @@ export class AcDtpCalendarGrid {
     }
 
     this._container = document.createElement('div');
-    this._container.className = `ac-dtp__cal ac-dtp__cal--${this._side}`;
+    this._container.className = `ac-dtp-cal ac-dtp-cal-${this._side}`;
 
     // Header
     this._headerEl = document.createElement('div');
-    this._headerEl.className = 'ac-dtp__cal-header';
+    this._headerEl.className = 'ac-dtp-cal-header';
 
     this._prevBtn = document.createElement('button');
     this._prevBtn.type = 'button';
-    this._prevBtn.className = 'ac-dtp__cal-nav ac-dtp__cal-nav--prev';
+    this._prevBtn.className = 'ac-dtp-cal-nav ac-dtp-cal-nav-prev';
     this._prevBtn.setAttribute('aria-label', 'Previous Month');
     this._prevBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`;
     this._prevBtn.addEventListener('click', (e) => {
@@ -67,7 +67,7 @@ export class AcDtpCalendarGrid {
 
     this._titleBtn = document.createElement('button');
     this._titleBtn.type = 'button';
-    this._titleBtn.className = 'ac-dtp__cal-title';
+    this._titleBtn.className = 'ac-dtp-cal-title';
     this._titleBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -76,7 +76,7 @@ export class AcDtpCalendarGrid {
 
     this._nextBtn = document.createElement('button');
     this._nextBtn.type = 'button';
-    this._nextBtn.className = 'ac-dtp__cal-nav ac-dtp__cal-nav--next';
+    this._nextBtn.className = 'ac-dtp-cal-nav ac-dtp-cal-nav-next';
     this._nextBtn.setAttribute('aria-label', 'Next Month');
     this._nextBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
     this._nextBtn.addEventListener('click', (e) => {
@@ -91,7 +91,7 @@ export class AcDtpCalendarGrid {
 
     // Body
     this._bodyEl = document.createElement('div');
-    this._bodyEl.className = 'ac-dtp__cal-body';
+    this._bodyEl.className = 'ac-dtp-cal-body';
 
     this._container.appendChild(this._headerEl);
     this._container.appendChild(this._bodyEl);
@@ -173,18 +173,18 @@ export class AcDtpCalendarGrid {
     this._bodyEl.innerHTML = '';
 
     const table = document.createElement('table');
-    table.className = 'ac-dtp__grid-table';
+    table.className = 'ac-dtp-grid-table';
     table.setAttribute('role', 'grid');
 
     // Weekdays header
     const thead = document.createElement('thead');
     const trHead = document.createElement('tr');
-    trHead.className = 'ac-dtp__weekdays';
+    trHead.className = 'ac-dtp-weekdays';
     trHead.setAttribute('role', 'row');
 
     for (const w of AC_DTP_WEEKDAY_NAMES_SHORT) {
       const th = document.createElement('th');
-      th.className = 'ac-dtp__weekday';
+      th.className = 'ac-dtp-weekday';
       th.setAttribute('role', 'columnheader');
       th.textContent = w;
       trHead.appendChild(th);
@@ -199,14 +199,14 @@ export class AcDtpCalendarGrid {
     const matrix = acDtpBuildMonthMatrix(year, month, true);
 
     let row = document.createElement('tr');
-    row.className = 'ac-dtp__row';
+    row.className = 'ac-dtp-row';
     row.setAttribute('role', 'row');
 
     for (let i = 0; i < matrix.length; i++) {
       if (i > 0 && i % 7 === 0) {
         tbody.appendChild(row);
         row = document.createElement('tr');
-        row.className = 'ac-dtp__row';
+        row.className = 'ac-dtp-row';
         row.setAttribute('role', 'row');
       }
 
@@ -222,12 +222,12 @@ export class AcDtpCalendarGrid {
 
   private _createDayCell(cell: IAcDtpCalendarCell): HTMLTableCellElement {
     const td = document.createElement('td');
-    td.className = 'ac-dtp__cell-wrap';
+    td.className = 'ac-dtp-cell-wrap';
     td.setAttribute('role', 'gridcell');
 
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'ac-dtp__cell';
+    btn.className = 'ac-dtp-cell';
     btn.textContent = String(cell.dayNumber);
     btn.setAttribute('data-date', cell.isoString);
 
@@ -241,17 +241,17 @@ export class AcDtpCalendarGrid {
     );
 
     if (isDisabled) {
-      btn.classList.add('ac-dtp__cell--disabled');
+      btn.classList.add('ac-dtp-cell-disabled');
       btn.disabled = true;
       btn.setAttribute('aria-disabled', 'true');
     }
 
     if (!cell.isCurrentMonth) {
-      btn.classList.add('ac-dtp__cell--other-month');
+      btn.classList.add('ac-dtp-cell-other-month');
     }
 
     if (cell.isToday) {
-      btn.classList.add('ac-dtp__cell--today');
+      btn.classList.add('ac-dtp-cell-today');
     }
 
     // Range / Selection state
@@ -259,16 +259,16 @@ export class AcDtpCalendarGrid {
     const isEnd = acDtpIsSameDay(d, this._state.endDate);
 
     if (isStart) {
-      btn.classList.add('ac-dtp__cell--selected');
+      btn.classList.add('ac-dtp-cell-selected');
       if (this._state.isRangeMode) {
-        btn.classList.add('ac-dtp__cell--range-start');
+        btn.classList.add('ac-dtp-cell-range-start');
       }
       btn.setAttribute('aria-selected', 'true');
     }
 
     if (isEnd) {
-      btn.classList.add('ac-dtp__cell--selected');
-      btn.classList.add('ac-dtp__cell--range-end');
+      btn.classList.add('ac-dtp-cell-selected');
+      btn.classList.add('ac-dtp-cell-range-end');
       btn.setAttribute('aria-selected', 'true');
     }
 
@@ -279,8 +279,8 @@ export class AcDtpCalendarGrid {
       this._state.endDate &&
       acDtpIsBetweenDays(d, this._state.startDate, this._state.endDate)
     ) {
-      btn.classList.add('ac-dtp__cell--in-range');
-      td.classList.add('ac-dtp__cell-wrap--in-range');
+      btn.classList.add('ac-dtp-cell-in-range');
+      td.classList.add('ac-dtp-cell-wrap-in-range');
     }
 
     // Cross-calendar range hover preview!
@@ -291,10 +291,10 @@ export class AcDtpCalendarGrid {
       this._state.hoverDate &&
       acDtpIsBetweenDays(d, this._state.startDate, this._state.hoverDate)
     ) {
-      btn.classList.add('ac-dtp__cell--range-hover');
-      td.classList.add('ac-dtp__cell-wrap--range-hover');
+      btn.classList.add('ac-dtp-cell-range-hover');
+      td.classList.add('ac-dtp-cell-wrap-range-hover');
       if (acDtpIsSameDay(d, this._state.hoverDate)) {
-        btn.classList.add('ac-dtp__cell--hover-end');
+        btn.classList.add('ac-dtp-cell-hover-end');
       }
     }
 
@@ -359,12 +359,12 @@ export class AcDtpCalendarGrid {
     this._bodyEl.innerHTML = '';
 
     const grid = document.createElement('div');
-    grid.className = 'ac-dtp__month-grid';
+    grid.className = 'ac-dtp-month-grid';
 
     for (let m = 0; m < 12; m++) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'ac-dtp__month-btn';
+      btn.className = 'ac-dtp-month-btn';
       btn.textContent = AC_DTP_MONTH_NAMES_SHORT[m];
 
       const isStartMonth =
@@ -377,7 +377,7 @@ export class AcDtpCalendarGrid {
         this._state.endDate.getMonth() === m;
 
       if (isStartMonth || isEndMonth) {
-        btn.classList.add('ac-dtp__month-btn--active');
+        btn.classList.add('ac-dtp-month-btn-active');
       }
 
       btn.addEventListener('click', (e) => {
@@ -407,16 +407,16 @@ export class AcDtpCalendarGrid {
     this._bodyEl.innerHTML = '';
 
     const grid = document.createElement('div');
-    grid.className = 'ac-dtp__year-grid';
+    grid.className = 'ac-dtp-year-grid';
 
     for (let y = startYear - 1; y <= startYear + 10; y++) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'ac-dtp__year-btn';
+      btn.className = 'ac-dtp-year-btn';
       btn.textContent = String(y);
 
       if (y < startYear || y > startYear + 9) {
-        btn.classList.add('ac-dtp__year-btn--other');
+        btn.classList.add('ac-dtp-year-btn-other');
       }
 
       const isStartYear =
@@ -425,7 +425,7 @@ export class AcDtpCalendarGrid {
         this._state.endDate && this._state.endDate.getFullYear() === y;
 
       if (isStartYear || isEndYear) {
-        btn.classList.add('ac-dtp__year-btn--active');
+        btn.classList.add('ac-dtp-year-btn-active');
       }
 
       btn.addEventListener('click', (e) => {

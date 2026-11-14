@@ -340,13 +340,25 @@ export function acDtpParseRange(
 
   const trimmed = input.trim();
 
-  // If input is a JSON string e.g. {"start":"...","end":"..."}
-  if (trimmed.startsWith('{')) {
+  // If input is a JSON string e.g. {"start":"...","end":"..."} or ["...","..."]
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
     try {
       const obj = JSON.parse(trimmed);
+      if (Array.isArray(obj)) {
+        const start = obj[0] ? acDtpParseAnyDate(String(obj[0]), formatHint) : null;
+        const end = obj[1] ? acDtpParseAnyDate(String(obj[1]), formatHint) : null;
+        return {
+          start,
+          end,
+          isValid: start !== null || end !== null,
+          isComplete: start !== null && end !== null,
+        };
+      }
       if (obj && typeof obj === 'object') {
-        const start = obj.start ? acDtpParseAnyDate(String(obj.start), formatHint) : null;
-        const end = obj.end ? acDtpParseAnyDate(String(obj.end), formatHint) : null;
+        const s = obj.start ?? obj.from ?? obj.startDate;
+        const e = obj.end ?? obj.to ?? obj.endDate;
+        const start = s ? acDtpParseAnyDate(String(s), formatHint) : null;
+        const end = e ? acDtpParseAnyDate(String(e), formatHint) : null;
         return {
           start,
           end,

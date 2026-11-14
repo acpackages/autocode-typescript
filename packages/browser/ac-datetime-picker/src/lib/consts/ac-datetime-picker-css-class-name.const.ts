@@ -1,44 +1,76 @@
-/** CSS class names used throughout the picker DOM. */
+/** CSS class names used throughout the picker DOM (standard single-hyphen convention). */
 export const AC_DATETIME_PICKER_CSS_CLASS = {
   // Root wrapper
   root: 'ac-dtp',
+
   // Input trigger
-  inputWrap: 'ac-dtp__input-wrap',
-  input: 'ac-dtp__input',
-  icon: 'ac-dtp__icon',
+  inputWrap: 'ac-dtp-input-wrap',
+  inputWrapHasValue: 'ac-dtp-input-wrap-has-value',
+  input: 'ac-dtp-input',
+
+  // Dual range inputs
+  rangeInputs: 'ac-dtp-range-inputs',
+  inputStart: 'ac-dtp-input ac-dtp-input-start',
+  inputEnd: 'ac-dtp-input ac-dtp-input-end',
+  inputSeparator: 'ac-dtp-input-separator',
+
+  clearBtn: 'ac-dtp-clear-btn',
+  icon: 'ac-dtp-icon',
+
   // Popup
-  popup: 'ac-dtp__popup',
-  popupOpen: 'ac-dtp__popup--open',
+  popup: 'ac-dtp-popup',
+  popupOpen: 'ac-dtp-popup-open',
+
   // Header (selected values)
-  header: 'ac-dtp__header',
-  headerStart: 'ac-dtp__header-start',
-  headerEnd: 'ac-dtp__header-end',
-  headerLabel: 'ac-dtp__header-label',
-  headerValue: 'ac-dtp__header-value',
-  headerSeparator: 'ac-dtp__header-separator',
+  header: 'ac-dtp-header',
+  headerInfo: 'ac-dtp-header-info',
+  headerBlock: 'ac-dtp-header-block',
+  headerStart: 'ac-dtp-header-start',
+  headerEnd: 'ac-dtp-header-end',
+  headerLabel: 'ac-dtp-header-label',
+  headerValue: 'ac-dtp-header-value',
+  headerValueActive: 'ac-dtp-header-value-active',
+  headerSeparator: 'ac-dtp-header-separator',
+  headerClose: 'ac-dtp-header-close',
+
   // Body layout
-  body: 'ac-dtp__body',
+  body: 'ac-dtp-body',
+
   // Sidebar
-  sidebar: 'ac-dtp__sidebar',
-  presetList: 'ac-dtp__presets',
-  presetItem: 'ac-dtp__preset',
-  presetItemActive: 'ac-dtp__preset--active',
-  // Calendars
-  calendars: 'ac-dtp__calendars',
-  calLeft: 'ac-dtp__cal ac-dtp__cal--left',
-  calRight: 'ac-dtp__cal ac-dtp__cal--right',
+  sidebar: 'ac-dtp-sidebar',
+  presetList: 'ac-dtp-presets',
+  presetItem: 'ac-dtp-preset',
+  presetItemActive: 'ac-dtp-preset-active',
+
+  // Main content & calendars
+  mainContent: 'ac-dtp-main-content',
+  calendars: 'ac-dtp-calendars',
+  cal: 'ac-dtp-cal',
+  calLeft: 'ac-dtp-cal ac-dtp-cal-left',
+  calRight: 'ac-dtp-cal ac-dtp-cal-right',
+
+  // Time section
+  timeSection: 'ac-dtp-time-section',
+  timeSectionVisible: 'ac-dtp-time-section-visible',
+
   // Footer
-  footer: 'ac-dtp__footer',
-  btn: 'ac-dtp__btn',
-  btnCancel: 'ac-dtp__btn ac-dtp__btn--cancel',
-  btnClear: 'ac-dtp__btn ac-dtp__btn--clear',
-  btnApply: 'ac-dtp__btn ac-dtp__btn--apply',
+  footer: 'ac-dtp-footer',
+  btn: 'ac-dtp-btn',
+  btnCancel: 'ac-dtp-btn ac-dtp-btn-cancel',
+  btnClear: 'ac-dtp-btn ac-dtp-btn-clear',
+  btnApply: 'ac-dtp-btn ac-dtp-btn-apply',
+
   // State modifiers
-  disabled: 'ac-dtp--disabled',
-  readonly: 'ac-dtp--readonly',
-  singleMode: 'ac-dtp--single',
-  rangeMode: 'ac-dtp--range',
+  disabled: 'ac-dtp-disabled',
+  readonly: 'ac-dtp-readonly',
+  singleMode: 'ac-dtp-single',
+  rangeMode: 'ac-dtp-range',
+  noSidebar: 'ac-dtp-no-sidebar',
+  hasTime: 'ac-dtp-has-time',
+
   // Display modes (desktop popover vs mobile bottom sheet)
-  desktopPopup: 'ac-dtp__popup--desktop',
-  mobileBottomSheet: 'ac-dtp__popup--bottomsheet',
+  desktopPopup: 'ac-dtp-popup-desktop',
+  mobileBottomSheet: 'ac-dtp-popup-bottomsheet',
+  backdrop: 'ac-dtp-backdrop',
+  backdropVisible: 'ac-dtp-backdrop-visible',
 } as const;

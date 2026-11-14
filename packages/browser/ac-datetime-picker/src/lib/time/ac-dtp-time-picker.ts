@@ -46,17 +46,17 @@ export class AcDtpTimePicker {
     }
 
     this._container = document.createElement('div');
-    this._container.className = 'ac-dtp__time-control';
+    this._container.className = 'ac-dtp-time-control';
 
     if (options.label) {
       const labelEl = document.createElement('span');
-      labelEl.className = 'ac-dtp__time-label';
+      labelEl.className = 'ac-dtp-time-label';
       labelEl.textContent = options.label;
       this._container.appendChild(labelEl);
     }
 
     const wrap = document.createElement('div');
-    wrap.className = 'ac-dtp__time-wrap';
+    wrap.className = 'ac-dtp-time-wrap';
 
     // Hours
     this._hoursInput = this._createNumberInput(
@@ -71,7 +71,7 @@ export class AcDtpTimePicker {
 
     // Separator
     const sep1 = document.createElement('span');
-    sep1.className = 'ac-dtp__time-sep';
+    sep1.className = 'ac-dtp-time-sep';
     sep1.textContent = ':';
     wrap.appendChild(sep1);
 
@@ -89,7 +89,7 @@ export class AcDtpTimePicker {
     // Seconds (optional)
     if (this._showSeconds) {
       const sep2 = document.createElement('span');
-      sep2.className = 'ac-dtp__time-sep';
+      sep2.className = 'ac-dtp-time-sep';
       sep2.textContent = ':';
       wrap.appendChild(sep2);
 
@@ -108,7 +108,7 @@ export class AcDtpTimePicker {
     if (this._hour12) {
       this._ampmBtn = document.createElement('button');
       this._ampmBtn.type = 'button';
-      this._ampmBtn.className = 'ac-dtp__ampm-btn';
+      this._ampmBtn.className = 'ac-dtp-ampm-btn';
       this._ampmBtn.textContent = this._hours < 12 ? 'AM' : 'PM';
       this._ampmBtn.setAttribute('aria-label', 'Toggle AM/PM');
       this._ampmBtn.addEventListener('click', (e) => {
@@ -198,7 +198,7 @@ export class AcDtpTimePicker {
     const input = document.createElement('input');
     input.type = 'text';
     input.inputMode = 'numeric';
-    input.className = 'ac-dtp__time-input';
+    input.className = 'ac-dtp-time-input';
     input.value = String(initialVal).padStart(2, '0');
     input.setAttribute('aria-label', name);
 
@@ -259,7 +259,7 @@ export class AcDtpTimePicker {
 
   private _createInputColumn(input: HTMLInputElement, placeholderText: string): HTMLDivElement {
     const col = document.createElement('div');
-    col.className = 'ac-dtp__time-col';
+    col.className = 'ac-dtp-time-col';
     col.appendChild(input);
     return col;
   }

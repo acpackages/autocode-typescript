@@ -2,6 +2,7 @@
 export const AC_DATETIME_PICKER_ATTRIBUTE_NAME = {
   mode: 'mode',
   value: 'value',
+  defaultValue: 'default-value',
   min: 'min',
   max: 'max',
   disabledDates: 'disabled-dates',

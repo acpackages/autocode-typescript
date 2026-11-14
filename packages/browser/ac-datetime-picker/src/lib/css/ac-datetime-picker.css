@@ -126,7 +126,7 @@ ac-datetime-picker {
 }
 
 /* ── Input trigger ─────────────────────────────────────────── */
-.ac-dtp__input-wrap {
+.ac-dtp-input-wrap {
   display: flex;
   align-items: center;
   background: var(--ac-dtp-input-bg);
@@ -139,13 +139,13 @@ ac-datetime-picker {
   gap: 8px;
 }
 
-.ac-dtp__input-wrap:focus-within,
-.ac-dtp__input-wrap:hover {
+.ac-dtp-input-wrap:focus-within,
+.ac-dtp-input-wrap:hover {
   border-color: var(--ac-dtp-input-border-focus);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--ac-dtp-accent) 12%, transparent);
 }
 
-.ac-dtp__input {
+.ac-dtp-input {
   flex: 1;
   border: none;
   outline: none;
@@ -158,11 +158,34 @@ ac-datetime-picker {
   padding: 0;
 }
 
-.ac-dtp__input::placeholder {
+.ac-dtp-input::placeholder {
   color: var(--ac-dtp-input-placeholder);
 }
 
-.ac-dtp__clear-btn {
+/* Dual range inputs inside trigger */
+.ac-dtp-range-inputs {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+}
+
+.ac-dtp-input-start,
+.ac-dtp-input-end {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.ac-dtp-input-separator {
+  color: var(--ac-dtp-text-muted);
+  font-size: 12px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ac-dtp-clear-btn {
   display: none;
   align-items: center;
   justify-content: center;
@@ -179,16 +202,16 @@ ac-datetime-picker {
   transition: background var(--ac-dtp-transition), color var(--ac-dtp-transition);
 }
 
-.ac-dtp__clear-btn:hover {
+.ac-dtp-clear-btn:hover {
   background: #dc2626;
   color: #ffffff;
 }
 
-.ac-dtp__input-wrap--has-value:hover .ac-dtp__clear-btn {
+.ac-dtp-input-wrap-has-value:hover .ac-dtp-clear-btn {
   display: flex;
 }
 
-.ac-dtp__icon {
+.ac-dtp-icon {
   color: var(--ac-dtp-text-muted);
   font-size: 15px;
   flex-shrink: 0;
@@ -198,23 +221,23 @@ ac-datetime-picker {
   cursor: pointer;
 }
 
-.ac-dtp__input-wrap:hover .ac-dtp__icon {
+.ac-dtp-input-wrap:hover .ac-dtp-icon {
   color: var(--ac-dtp-accent);
 }
 
 /* ── Disabled / readonly ───────────────────────────────────── */
-.ac-dtp--disabled .ac-dtp__input-wrap {
+.ac-dtp-disabled .ac-dtp-input-wrap {
   opacity: 0.5;
   pointer-events: none;
 }
 
-.ac-dtp--readonly .ac-dtp__input-wrap {
+.ac-dtp-readonly .ac-dtp-input-wrap {
   cursor: default;
   background: var(--ac-dtp-bg-alt);
 }
 
 /* ── Backdrop Scrim (Mobile Overlay) ───────────────────────── */
-.ac-dtp__backdrop {
+.ac-dtp-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
@@ -225,13 +248,13 @@ ac-datetime-picker {
   backdrop-filter: blur(2px);
 }
 
-.ac-dtp__backdrop--visible {
+.ac-dtp-backdrop-visible {
   opacity: 1;
   pointer-events: auto;
 }
 
 /* ── Popup (Desktop Popover) ───────────────────────────────── */
-.ac-dtp__popup {
+.ac-dtp-popup {
   position: fixed;
   z-index: var(--ac-dtp-popup-z);
   background: var(--ac-dtp-bg);
@@ -251,23 +274,23 @@ ac-datetime-picker {
   transition: opacity var(--ac-dtp-transition), transform var(--ac-dtp-transition);
 }
 
-.ac-dtp__popup[data-popper-placement^='top'] {
+.ac-dtp-popup[data-popper-placement^='top'] {
   transform: translateY(-4px);
 }
 
-.ac-dtp__popup--open {
+.ac-dtp-popup-open {
   opacity: 1;
   pointer-events: all;
   transform: translateY(0);
 }
 
 /* Single Mode Popup Width */
-.ac-dtp--single.ac-dtp__popup {
+.ac-dtp-single.ac-dtp-popup {
   min-width: 0;
 }
 
 /* ── Header ────────────────────────────────────────────────── */
-.ac-dtp__header {
+.ac-dtp-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -276,14 +299,14 @@ ac-datetime-picker {
   padding: 10px 16px;
 }
 
-.ac-dtp__header-info {
+.ac-dtp-header-info {
   display: flex;
   align-items: center;
   gap: 16px;
   flex: 1;
 }
 
-.ac-dtp__header-block {
+.ac-dtp-header-block {
   display: flex;
   flex-direction: column;
   min-width: 100px;
@@ -291,7 +314,7 @@ ac-datetime-picker {
   align-items: center;
 }
 
-.ac-dtp__header-label {
+.ac-dtp-header-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -300,7 +323,7 @@ ac-datetime-picker {
   margin-bottom: 2px;
 }
 
-.ac-dtp__header-value {
+.ac-dtp-header-value {
   font-size: 14px;
   font-weight: 600;
   color: var(--ac-dtp-text);
@@ -308,17 +331,17 @@ ac-datetime-picker {
   white-space: nowrap;
 }
 
-.ac-dtp__header-value--active {
+.ac-dtp-header-value-active {
   color: var(--ac-dtp-accent);
 }
 
-.ac-dtp__header-separator {
+.ac-dtp-header-separator {
   width: 1px;
   height: 28px;
   background: var(--ac-dtp-border);
 }
 
-.ac-dtp__header-close {
+.ac-dtp-header-close {
   display: none;
   background: transparent;
   border: none;
@@ -330,7 +353,7 @@ ac-datetime-picker {
 }
 
 /* ── Body ──────────────────────────────────────────────────── */
-.ac-dtp__body {
+.ac-dtp-body {
   display: flex;
   flex: 1;
   min-height: 0;
@@ -338,7 +361,7 @@ ac-datetime-picker {
 }
 
 /* ── Sidebar (Presets) ─────────────────────────────────────── */
-.ac-dtp__sidebar {
+.ac-dtp-sidebar {
   width: var(--ac-dtp-sidebar-width);
   background: var(--ac-dtp-sidebar-bg);
   border-right: 1px solid var(--ac-dtp-border);
@@ -354,37 +377,37 @@ ac-datetime-picker {
 }
 
 /* In desktop popup mode, pin sidebar absolutely so it matches calendar height without expanding popup */
-.ac-dtp__popup--desktop .ac-dtp__sidebar {
+.ac-dtp-popup-desktop .ac-dtp-sidebar {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
 }
 
-.ac-dtp__sidebar::-webkit-scrollbar {
+.ac-dtp-sidebar::-webkit-scrollbar {
   width: 6px;
 }
 
-.ac-dtp__sidebar::-webkit-scrollbar-track {
+.ac-dtp-sidebar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.ac-dtp__sidebar::-webkit-scrollbar-thumb {
+.ac-dtp-sidebar::-webkit-scrollbar-thumb {
   background: var(--ac-dtp-border);
   border-radius: 3px;
 }
 
-.ac-dtp__sidebar::-webkit-scrollbar-thumb:hover {
+.ac-dtp-sidebar::-webkit-scrollbar-thumb:hover {
   background: var(--ac-dtp-text-muted);
 }
 
-.ac-dtp__presets {
+.ac-dtp-presets {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.ac-dtp__preset {
+.ac-dtp-preset {
   padding: 8px 14px;
   font-size: 12.5px;
   cursor: pointer;
@@ -393,24 +416,24 @@ ac-datetime-picker {
   user-select: none;
 }
 
-.ac-dtp__preset:hover {
+.ac-dtp-preset:hover {
   background: var(--ac-dtp-sidebar-hover);
   color: var(--ac-dtp-accent);
 }
 
-.ac-dtp__preset--active {
+.ac-dtp-preset-active {
   background: var(--ac-dtp-sidebar-active-bg);
   color: var(--ac-dtp-sidebar-active-text);
   font-weight: 600;
 }
 
-.ac-dtp__preset--active:hover {
+.ac-dtp-preset-active:hover {
   background: var(--ac-dtp-sidebar-active-bg);
   color: var(--ac-dtp-sidebar-active-text);
 }
 
 /* ── Calendars Section ─────────────────────────────────────── */
-.ac-dtp__main-content {
+.ac-dtp-main-content {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -419,24 +442,24 @@ ac-datetime-picker {
 }
 
 /* On desktop popup mode, restrict width to content so popover hugs calendars */
-.ac-dtp__popup--desktop .ac-dtp__main-content {
+.ac-dtp-popup-desktop .ac-dtp-main-content {
   width: min-content;
   margin-left: var(--ac-dtp-sidebar-width);
 }
 
-.ac-dtp--no-sidebar .ac-dtp__main-content,
-.ac-dtp__popup--desktop.ac-dtp--no-sidebar .ac-dtp__main-content {
+.ac-dtp-no-sidebar .ac-dtp-main-content,
+.ac-dtp-popup-desktop.ac-dtp-no-sidebar .ac-dtp-main-content {
   margin-left: 0;
 }
 
-.ac-dtp__calendars {
+.ac-dtp-calendars {
   display: flex;
   gap: 16px;
   padding: 12px 16px;
   flex: 1;
 }
 
-.ac-dtp__cal {
+.ac-dtp-cal {
   flex: 1;
   min-width: 240px;
   display: flex;
@@ -444,7 +467,7 @@ ac-datetime-picker {
 }
 
 /* Calendar Header */
-.ac-dtp__cal-header {
+.ac-dtp-cal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -452,7 +475,7 @@ ac-datetime-picker {
   height: 32px;
 }
 
-.ac-dtp__cal-title {
+.ac-dtp-cal-title {
   background: transparent;
   border: none;
   font-family: var(--ac-dtp-font);
@@ -465,11 +488,11 @@ ac-datetime-picker {
   transition: background var(--ac-dtp-transition);
 }
 
-.ac-dtp__cal-title:hover {
+.ac-dtp-cal-title:hover {
   background: var(--ac-dtp-bg-alt);
 }
 
-.ac-dtp__cal-nav {
+.ac-dtp-cal-nav {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -483,23 +506,23 @@ ac-datetime-picker {
   transition: background var(--ac-dtp-transition), border-color var(--ac-dtp-transition);
 }
 
-.ac-dtp__cal-nav:hover {
+.ac-dtp-cal-nav:hover {
   background: var(--ac-dtp-bg-alt);
   border-color: var(--ac-dtp-border-focus);
 }
 
 /* Days Grid Table */
-.ac-dtp__grid-table {
+.ac-dtp-grid-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.ac-dtp__weekdays {
+.ac-dtp-weekdays {
   height: 28px;
 }
 
-.ac-dtp__weekday {
+.ac-dtp-weekday {
   text-align: center;
   font-size: 11px;
   font-weight: 600;
@@ -507,22 +530,22 @@ ac-datetime-picker {
   text-transform: uppercase;
 }
 
-.ac-dtp__cell-wrap {
+.ac-dtp-cell-wrap {
   text-align: center;
   padding: 2px 0;
   position: relative;
 }
 
 /* Range background connectors */
-.ac-dtp__cell-wrap--in-range {
+.ac-dtp-cell-wrap-in-range {
   background: var(--ac-dtp-range-bg);
 }
 
-.ac-dtp__cell-wrap--range-hover {
+.ac-dtp-cell-wrap-range-hover {
   background: var(--ac-dtp-range-hover-bg);
 }
 
-.ac-dtp__cell {
+.ac-dtp-cell {
   width: var(--ac-dtp-cell-size);
   height: var(--ac-dtp-cell-size);
   border-radius: var(--ac-dtp-cell-radius);
@@ -542,45 +565,45 @@ ac-datetime-picker {
   z-index: 1;
 }
 
-.ac-dtp__cell:hover {
+.ac-dtp-cell:hover {
   background: var(--ac-dtp-accent-light);
 }
 
-.ac-dtp__cell--other-month {
+.ac-dtp-cell-other-month {
   color: var(--ac-dtp-text-muted);
   opacity: 0.4;
 }
 
-.ac-dtp__cell--today {
+.ac-dtp-cell-today {
   border-color: var(--ac-dtp-accent);
   font-weight: 700;
 }
 
-.ac-dtp__cell--selected,
-.ac-dtp__cell--range-start,
-.ac-dtp__cell--range-end {
+.ac-dtp-cell-selected,
+.ac-dtp-cell-range-start,
+.ac-dtp-cell-range-end {
   background: var(--ac-dtp-accent) !important;
   color: var(--ac-dtp-text-inverse) !important;
   font-weight: 600;
 }
 
-.ac-dtp__cell--range-hover {
+.ac-dtp-cell-range-hover {
   background: var(--ac-dtp-range-hover-bg);
 }
 
-.ac-dtp__cell--hover-end {
+.ac-dtp-cell-hover-end {
   border: 1px dashed var(--ac-dtp-accent);
 }
 
-.ac-dtp__cell--disabled {
+.ac-dtp-cell-disabled {
   opacity: 0.25;
   cursor: not-allowed;
   pointer-events: none;
 }
 
 /* Month & Year Select Grids */
-.ac-dtp__month-grid,
-.ac-dtp__year-grid {
+.ac-dtp-month-grid,
+.ac-dtp-year-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
@@ -589,8 +612,8 @@ ac-datetime-picker {
   align-content: center;
 }
 
-.ac-dtp__month-btn,
-.ac-dtp__year-btn {
+.ac-dtp-month-btn,
+.ac-dtp-year-btn {
   height: 40px;
   border-radius: var(--ac-dtp-btn-radius);
   border: 1px solid var(--ac-dtp-border);
@@ -603,23 +626,23 @@ ac-datetime-picker {
   transition: background var(--ac-dtp-transition);
 }
 
-.ac-dtp__month-btn:hover,
-.ac-dtp__year-btn:hover {
+.ac-dtp-month-btn:hover,
+.ac-dtp-year-btn:hover {
   background: var(--ac-dtp-bg-alt);
 }
 
-.ac-dtp__month-btn--active,
-.ac-dtp__year-btn--active {
+.ac-dtp-month-btn-active,
+.ac-dtp-year-btn-active {
   background: var(--ac-dtp-accent) !important;
   color: var(--ac-dtp-text-inverse) !important;
 }
 
-.ac-dtp__year-btn--other {
+.ac-dtp-year-btn-other {
   opacity: 0.4;
 }
 
 /* ── Dedicated Time Controls ───────────────────────────────── */
-.ac-dtp__time-section {
+.ac-dtp-time-section {
   display: none;
   align-items: center;
   justify-content: center;
@@ -629,24 +652,24 @@ ac-datetime-picker {
   background: var(--ac-dtp-bg-alt);
 }
 
-.ac-dtp__time-section--visible {
+.ac-dtp-time-section-visible {
   display: flex;
 }
 
-.ac-dtp__time-control {
+.ac-dtp-time-control {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.ac-dtp__time-label {
+.ac-dtp-time-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--ac-dtp-text-muted);
 }
 
-.ac-dtp__time-wrap {
+.ac-dtp-time-wrap {
   display: inline-flex;
   align-items: center;
   background: var(--ac-dtp-bg);
@@ -656,7 +679,7 @@ ac-datetime-picker {
   gap: 4px;
 }
 
-.ac-dtp__time-input {
+.ac-dtp-time-input {
   width: 26px;
   text-align: center;
   border: none;
@@ -669,12 +692,12 @@ ac-datetime-picker {
   padding: 2px 0;
 }
 
-.ac-dtp__time-sep {
+.ac-dtp-time-sep {
   font-weight: bold;
   color: var(--ac-dtp-text-muted);
 }
 
-.ac-dtp__ampm-btn {
+.ac-dtp-ampm-btn {
   border: none;
   background: var(--ac-dtp-bg-alt);
   font-family: var(--ac-dtp-font);
@@ -688,7 +711,7 @@ ac-datetime-picker {
 }
 
 /* ── Footer ────────────────────────────────────────────────── */
-.ac-dtp__footer {
+.ac-dtp-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -698,7 +721,7 @@ ac-datetime-picker {
   border-top: 1px solid var(--ac-dtp-footer-border);
 }
 
-.ac-dtp__btn {
+.ac-dtp-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -714,56 +737,76 @@ ac-datetime-picker {
   transition: background var(--ac-dtp-transition), border-color var(--ac-dtp-transition), color var(--ac-dtp-transition);
 }
 
-.ac-dtp__btn--cancel {
+.ac-dtp-btn-cancel {
   background: transparent;
   border-color: var(--ac-dtp-border);
   color: var(--ac-dtp-text-muted);
 }
 
-.ac-dtp__btn--cancel:hover {
+.ac-dtp-btn-cancel:hover {
   background: var(--ac-dtp-bg-alt);
   color: var(--ac-dtp-text);
 }
 
-.ac-dtp__btn--clear {
+.ac-dtp-btn-clear {
   background: transparent;
   border-color: var(--ac-dtp-border);
   color: var(--ac-dtp-text-muted);
   margin-right: auto;
 }
 
-.ac-dtp__btn--clear:hover {
+.ac-dtp-btn-clear:hover {
   background: #fff1f2;
   border-color: #fca5a5;
   color: #dc2626;
 }
 
-.ac-dtp__btn--apply {
+.ac-dtp-btn-apply {
   background: var(--ac-dtp-accent);
   border-color: var(--ac-dtp-accent);
   color: var(--ac-dtp-text-inverse);
 }
 
-.ac-dtp__btn--apply:hover {
+.ac-dtp-btn-apply:hover {
   background: var(--ac-dtp-accent-hover);
 }
 
 /* ── Single Mode Specific ──────────────────────────────────── */
-.ac-dtp--single .ac-dtp__cal--right {
+.ac-dtp-single .ac-dtp-header-info {
   display: none !important;
 }
 
-.ac-dtp--single .ac-dtp__sidebar {
+.ac-dtp-single.ac-dtp-popup-desktop .ac-dtp-header {
   display: none !important;
 }
 
-.ac-dtp--single .ac-dtp__main-content {
+.ac-dtp-single .ac-dtp-footer {
+  display: none !important;
+}
+
+.ac-dtp-single.ac-dtp-has-time .ac-dtp-footer {
+  display: flex !important;
+}
+
+.ac-dtp-single .ac-dtp-cal-right {
+  display: none !important;
+}
+
+.ac-dtp-single .ac-dtp-sidebar {
+  display: none !important;
+}
+
+.ac-dtp-single .ac-dtp-main-content {
   margin-left: 0 !important;
 }
 
 /* ── Mobile Touch Bottom Sheet (< 600px) ───────────────────── */
 @media (max-width: 599px) {
-  .ac-dtp__popup {
+  .ac-dtp-single .ac-dtp-header {
+    justify-content: flex-end !important;
+  }
+
+  .ac-dtp-popup {
     min-width: 0 !important;
     width: 100vw !important;
     left: 0 !important;
@@ -777,20 +820,20 @@ ac-datetime-picker {
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.25) !important;
   }
 
-  .ac-dtp__popup--open {
+  .ac-dtp-popup-open {
     transform: translateY(0) !important;
   }
 
-  .ac-dtp__header-close {
+  .ac-dtp-header-close {
     display: block !important;
   }
 
-  .ac-dtp__body {
+  .ac-dtp-body {
     flex-direction: column !important;
   }
 
   /* Preset horizontal chips */
-  .ac-dtp__sidebar {
+  .ac-dtp-sidebar {
     position: static !important;
     width: 100% !important;
     height: auto !important;
@@ -805,32 +848,32 @@ ac-datetime-picker {
     scrollbar-color: var(--ac-dtp-border) transparent;
   }
 
-  .ac-dtp__main-content {
+  .ac-dtp-main-content {
     margin-left: 0 !important;
     width: 100% !important;
   }
 
-  .ac-dtp__sidebar::-webkit-scrollbar {
+  .ac-dtp-sidebar::-webkit-scrollbar {
     height: 4px;
     width: 0;
   }
 
-  .ac-dtp__sidebar::-webkit-scrollbar-track {
+  .ac-dtp-sidebar::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  .ac-dtp__sidebar::-webkit-scrollbar-thumb {
+  .ac-dtp-sidebar::-webkit-scrollbar-thumb {
     background: var(--ac-dtp-border);
     border-radius: 2px;
   }
 
-  .ac-dtp__presets {
+  .ac-dtp-presets {
     display: flex !important;
     flex-direction: row !important;
     gap: 6px !important;
   }
 
-  .ac-dtp__preset {
+  .ac-dtp-preset {
     padding: 6px 14px !important;
     border-radius: 18px !important;
     background: var(--ac-dtp-bg-alt) !important;
@@ -838,28 +881,28 @@ ac-datetime-picker {
     white-space: nowrap !important;
   }
 
-  .ac-dtp__preset--active {
+  .ac-dtp-preset-active {
     background: var(--ac-dtp-sidebar-active-bg) !important;
     color: var(--ac-dtp-sidebar-active-text) !important;
   }
 
-  .ac-dtp__calendars {
+  .ac-dtp-calendars {
     flex-direction: column !important;
     padding: 8px !important;
   }
 
-  .ac-dtp__cal--right {
+  .ac-dtp-cal-right {
     display: none !important; /* On mobile, single calendar view with month jumper is best practice */
   }
 
   /* Larger touch targets (WCAG >= 44px) */
-  .ac-dtp__cell {
+  .ac-dtp-cell {
     width: 44px !important;
     height: 44px !important;
     font-size: 14px !important;
   }
 
-  .ac-dtp__time-section {
+  .ac-dtp-time-section {
     flex-direction: column !important;
     gap: 12px !important;
   }
