@@ -100,14 +100,20 @@ export function acDtpFormatDisplay(d: Date | null, format: string = 'DD-MM-YYYY'
     DD: pad2(day),
     D: String(day),
     HH: pad2(h24),
+    H: String(h24),
     hh: pad2(h12),
+    h: String(h12),
     mm: pad2(min),
+    m: String(min),
     ss: pad2(sec),
+    s: String(sec),
     AA: ampm,
     aa: ampm.toLowerCase(),
+    A: ampm,
+    a: ampm.toLowerCase(),
   };
 
-  return format.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D|HH|hh|mm|ss|AA|aa/g, (token) => map[token] ?? token);
+  return format.replace(/YYYY|YY|MMMM|MMM|MM|M|DD|D|HH|H|hh|h|mm|m|ss|s|AA|aa|A|a/g, (token) => map[token] ?? token);
 }
 
 /**

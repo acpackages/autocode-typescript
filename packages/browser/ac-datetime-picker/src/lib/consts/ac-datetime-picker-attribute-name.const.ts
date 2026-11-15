@@ -15,6 +15,7 @@ export const AC_DATETIME_PICKER_ATTRIBUTE_NAME = {
   showSeconds: 'show-seconds',
   minuteStep: 'minute-step',
   hour12: 'hour12',
+  hourTwelve: 'hour-12',
   outputType: 'output-type',
   rangeSeparator: 'range-separator',
   rangeSeperator: 'range-seperator',

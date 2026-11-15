@@ -48,6 +48,7 @@ export class AcDateTimePickerElement extends AcInputBase {
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.showSeconds,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.minuteStep,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12,
+      AC_DATETIME_PICKER_ATTRIBUTE_NAME.hourTwelve,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.outputType,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeparator,
       AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeperator,
@@ -61,9 +62,9 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _showSidebar: boolean = true;
   private _showFooter: boolean = true;
   private _showTime: boolean = false;
-  private _showSeconds: boolean = false;
+  private _showSeconds: boolean = true;
   private _minuteStep: number = 1;
-  private _hour12: boolean = false;
+  private _hour12: boolean = true;
   private _presets: IAcDateTimePickerPreset[] = acDtpGetDefaultPresets();
   private _isOpen: boolean = false;
   private _domBuilt: boolean = false;
@@ -149,6 +150,7 @@ export class AcDateTimePickerElement extends AcInputBase {
     this._state.mode = value;
     this.setAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.mode, value);
     this._applyModeClasses();
+    this._rebuildTimePickers();
     this._updateTimeSectionVisibility();
     this._updateFooterVisibility();
     this._updateInputDisplay();
@@ -324,16 +326,17 @@ export class AcDateTimePickerElement extends AcInputBase {
         this.showFooter = newValue !== 'false';
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.showTime:
-        this.showTime = newValue === 'true';
+        this.showTime = newValue !== null && newValue !== 'false';
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.showSeconds:
-        this.showSeconds = newValue === 'true';
+        this.showSeconds = newValue === null ? true : (newValue !== 'false');
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.minuteStep:
         this.minuteStep = parseInt(newValue, 10) || 1;
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12:
-        this.hour12 = newValue === 'true';
+      case AC_DATETIME_PICKER_ATTRIBUTE_NAME.hourTwelve:
+        this.hour12 = newValue === null ? true : (newValue !== 'false');
         break;
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeparator:
       case AC_DATETIME_PICKER_ATTRIBUTE_NAME.rangeSeperator:
@@ -378,6 +381,25 @@ export class AcDateTimePickerElement extends AcInputBase {
 
   override connectedCallback() {
     super.connectedCallback();
+    if (this.hasAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.showTime)) {
+      const st = this.getAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.showTime);
+      this._showTime = st !== 'false';
+    }
+    if (this.hasAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.showSeconds)) {
+      const ss = this.getAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.showSeconds);
+      this._showSeconds = ss !== 'false';
+    }
+    if (this.hasAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12)) {
+      const h12 = this.getAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.hour12);
+      this._hour12 = h12 !== 'false';
+    } else if (this.hasAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.hourTwelve)) {
+      const h12 = this.getAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.hourTwelve);
+      this._hour12 = h12 !== 'false';
+    }
+    if (this.hasAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.format)) {
+      const f = this.getAttribute(AC_DATETIME_PICKER_ATTRIBUTE_NAME.format);
+      if (f) this._format = f;
+    }
     if (!this._domBuilt) {
       this._buildDOM();
       this._bindEvents();
@@ -444,7 +466,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   // ── Public API Methods ──────────────────────────────────────────
 
   setStart(iso: string): void {
-    const d = acDtpParseAnyDate(iso, this._format);
+    const d = acDtpParseAnyDate(iso, this._getEffectiveDisplayFormat());
     if (d) {
       this._state.startDate = d;
       this._state.syncViewDates();
@@ -458,7 +480,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   }
 
   setEnd(iso: string): void {
-    const d = acDtpParseAnyDate(iso, this._format);
+    const d = acDtpParseAnyDate(iso, this._getEffectiveDisplayFormat());
     if (d) {
       this._state.endDate = d;
       this._state.syncViewDates();
@@ -1011,6 +1033,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _onDaySelected() {
     this._updateHeader();
     this._syncTimePickersFromState();
+    this._updateInputDisplay();
 
     const hasTime = this.isTimeRequired;
 
@@ -1030,11 +1053,13 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _onStartTimeChange(t: IAcDtpTimeValue) {
     this._state.setStartTime(t.hours, t.minutes, t.seconds);
     this._updateHeader();
+    this._updateInputDisplay();
   }
 
   private _onEndTimeChange(t: IAcDtpTimeValue) {
     this._state.setEndTime(t.hours, t.minutes, t.seconds);
     this._updateHeader();
+    this._updateInputDisplay();
   }
 
   private _onManualInputSingle() {
@@ -1046,10 +1071,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       return;
     }
 
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.startDate = parsed;
       this._state.endDate = null;
+      this._syncTimePickersFromState();
       this._updateHeader();
       this._renderCalendars();
     }
@@ -1062,10 +1088,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       return;
     }
 
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.startDate = parsed;
       this._state.endDate = null;
+      this._syncTimePickersFromState();
       this._commitSelection(false);
     } else {
       this._updateInputDisplay();
@@ -1080,10 +1107,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       this._renderCalendars();
       return;
     }
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.startDate = parsed;
       this._state.syncViewDates();
+      this._syncTimePickersFromState();
       this._updateHeader();
       this._renderCalendars();
     }
@@ -1096,10 +1124,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       this._commitSelection(false);
       return;
     }
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.startDate = parsed;
       this._state.syncViewDates();
+      this._syncTimePickersFromState();
       this._commitSelection(false);
     } else {
       this._updateInputDisplay();
@@ -1114,10 +1143,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       this._renderCalendars();
       return;
     }
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.endDate = parsed;
       this._state.syncViewDates();
+      this._syncTimePickersFromState();
       this._updateHeader();
       this._renderCalendars();
     }
@@ -1130,7 +1160,7 @@ export class AcDateTimePickerElement extends AcInputBase {
       this._commitSelection(false);
       return;
     }
-    const parsed = acDtpParseAnyDate(raw, this._format);
+    const parsed = acDtpParseAnyDate(raw, this._getEffectiveDisplayFormat());
     if (parsed) {
       this._state.endDate = parsed;
       this._state.syncViewDates();
@@ -1146,6 +1176,8 @@ export class AcDateTimePickerElement extends AcInputBase {
 
   private _onCancel() {
     this._applyValueToState(this._value);
+    this._syncTimePickersFromState();
+    this._updateInputDisplay();
     this._updateHeader();
     this._renderCalendars();
     this.close();
@@ -1201,6 +1233,7 @@ export class AcDateTimePickerElement extends AcInputBase {
         this._renderCalendars();
         this._updateHeader();
         this._renderPresets();
+        this._updateInputDisplay();
 
         this._dispatchEvent(AcEnumDateTimePickerEvent.PresetSelect, {
           preset: preset.label,
@@ -1220,7 +1253,7 @@ export class AcDateTimePickerElement extends AcInputBase {
   private _getEffectiveDisplayFormat(): string {
     let fmt = this._format;
     if (this.isTimeRequired) {
-      const hasTimeTokens = /HH|hh|mm/i.test(fmt);
+      const hasTimeTokens = /(?:HH|hh|mm|ss)/.test(fmt);
       if (!hasTimeTokens) {
         if (this._hour12) {
           fmt += this._showSeconds ? ' hh:mm:ss AA' : ' hh:mm AA';
@@ -1318,10 +1351,11 @@ export class AcDateTimePickerElement extends AcInputBase {
       }
     }
 
+    const effectiveFmt = this._getEffectiveDisplayFormat();
     if (Array.isArray(val)) {
       const [startRaw, endRaw] = val;
-      const s = startRaw ? (startRaw instanceof Date ? new Date(startRaw) : acDtpParseAnyDate(String(startRaw), this._format)) : null;
-      const e = endRaw ? (endRaw instanceof Date ? new Date(endRaw) : acDtpParseAnyDate(String(endRaw), this._format)) : null;
+      const s = startRaw ? (startRaw instanceof Date ? new Date(startRaw) : acDtpParseAnyDate(String(startRaw), effectiveFmt)) : null;
+      const e = endRaw ? (endRaw instanceof Date ? new Date(endRaw) : acDtpParseAnyDate(String(endRaw), effectiveFmt)) : null;
       this._state.startDate = s;
       this._state.endDate = this._state.isRangeMode ? e : null;
     } else if (typeof val === 'object' && val !== null) {
@@ -1330,17 +1364,17 @@ export class AcDateTimePickerElement extends AcInputBase {
       const startRaw = startKey ? (val as any)[startKey] : null;
       const endRaw = endKey ? (val as any)[endKey] : null;
 
-      const s = startRaw ? (startRaw instanceof Date ? new Date(startRaw) : acDtpParseAnyDate(String(startRaw), this._format)) : null;
-      const e = endRaw ? (endRaw instanceof Date ? new Date(endRaw) : acDtpParseAnyDate(String(endRaw), this._format)) : null;
+      const s = startRaw ? (startRaw instanceof Date ? new Date(startRaw) : acDtpParseAnyDate(String(startRaw), effectiveFmt)) : null;
+      const e = endRaw ? (endRaw instanceof Date ? new Date(endRaw) : acDtpParseAnyDate(String(endRaw), effectiveFmt)) : null;
       this._state.startDate = s;
       this._state.endDate = this._state.isRangeMode ? e : null;
     } else if (typeof val === 'string') {
       if (this._state.isRangeMode) {
-        const parsed = acDtpParseRange(val, this._dateRangeSeparator, this._format);
+        const parsed = acDtpParseRange(val, this._dateRangeSeparator, effectiveFmt);
         this._state.startDate = parsed.start;
         this._state.endDate = parsed.end;
       } else {
-        this._state.startDate = acDtpParseAnyDate(val, this._format);
+        this._state.startDate = acDtpParseAnyDate(val, effectiveFmt);
         this._state.endDate = null;
       }
     }

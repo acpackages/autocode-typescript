@@ -28,14 +28,14 @@ export class AcDtpTimePicker {
   private _hours: number = 0; // 0-23
   private _minutes: number = 0; // 0-59
   private _seconds: number = 0; // 0-59
-  private _hour12: boolean = false;
-  private _showSeconds: boolean = false;
+  private _hour12: boolean = true;
+  private _showSeconds: boolean = true;
   private _minuteStep: number = 1;
   private _onChange?: (val: IAcDtpTimeValue) => void;
 
   constructor(options: IAcDtpTimePickerOptions = {}) {
-    this._hour12 = options.hour12 ?? false;
-    this._showSeconds = options.showSeconds ?? false;
+    this._hour12 = options.hour12 ?? true;
+    this._showSeconds = options.showSeconds ?? true;
     this._minuteStep = options.minuteStep ?? 1;
     this._onChange = options.onChange;
 
@@ -65,9 +65,9 @@ export class AcDtpTimePicker {
       this._hour12 ? 1 : 0,
       this._hour12 ? 12 : 23,
       1,
-      (val) => this._onHoursChange(val)
+      (val, fromInput) => this._onHoursChange(val, fromInput)
     );
-    wrap.appendChild(this._createInputColumn(this._hoursInput, 'HH'));
+    wrap.appendChild(this._createInputColumn(this._hoursInput, this._hour12 ? 'hh' : 'HH'));
 
     // Separator
     const sep1 = document.createElement('span');
@@ -82,7 +82,7 @@ export class AcDtpTimePicker {
       0,
       59,
       this._minuteStep,
-      (val) => this._onMinutesChange(val)
+      (val, fromInput) => this._onMinutesChange(val, fromInput)
     );
     wrap.appendChild(this._createInputColumn(this._minutesInput, 'MM'));
 
@@ -99,7 +99,7 @@ export class AcDtpTimePicker {
         0,
         59,
         1,
-        (val) => this._onSecondsChange(val)
+        (val, fromInput) => this._onSecondsChange(val, fromInput)
       );
       wrap.appendChild(this._createInputColumn(this._secondsInput, 'SS'));
     }
@@ -150,7 +150,7 @@ export class AcDtpTimePicker {
     return h === 0 ? 12 : h;
   }
 
-  private _onHoursChange(val: number) {
+  private _onHoursChange(val: number, fromInput: boolean = false) {
     if (this._hour12) {
       const isPm = this._hours >= 12;
       let h = val % 12;
@@ -159,19 +159,19 @@ export class AcDtpTimePicker {
     } else {
       this._hours = Math.max(0, Math.min(23, val));
     }
-    this._updateInputs();
+    this._updateInputs(fromInput);
     this._notify();
   }
 
-  private _onMinutesChange(val: number) {
+  private _onMinutesChange(val: number, fromInput: boolean = false) {
     this._minutes = Math.max(0, Math.min(59, val));
-    this._updateInputs();
+    this._updateInputs(fromInput);
     this._notify();
   }
 
-  private _onSecondsChange(val: number) {
+  private _onSecondsChange(val: number, fromInput: boolean = false) {
     this._seconds = Math.max(0, Math.min(59, val));
-    this._updateInputs();
+    this._updateInputs(fromInput);
     this._notify();
   }
 
@@ -193,7 +193,7 @@ export class AcDtpTimePicker {
     min: number,
     max: number,
     step: number,
-    onValChange: (v: number) => void
+    onValChange: (v: number, fromInput?: boolean) => void
   ): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'text';
@@ -209,13 +209,13 @@ export class AcDtpTimePicker {
         cur += step;
         if (cur > max) cur = min;
         input.value = String(cur).padStart(2, '0');
-        onValChange(cur);
+        onValChange(cur, false);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         cur -= step;
         if (cur < min) cur = max;
         input.value = String(cur).padStart(2, '0');
-        onValChange(cur);
+        onValChange(cur, false);
       } else if (e.key === 'Enter') {
         input.blur();
       }
@@ -232,15 +232,15 @@ export class AcDtpTimePicker {
         if (cur < min) cur = max;
       }
       input.value = String(cur).padStart(2, '0');
-      onValChange(cur);
+      onValChange(cur, false);
     }, { passive: false });
 
     input.addEventListener('input', () => {
       const clean = input.value.replace(/\D/g, '');
       if (clean.length > 0) {
-        let num = parseInt(clean, 10);
+        const num = parseInt(clean, 10);
         if (!isNaN(num) && num >= min && num <= max) {
-          onValChange(num);
+          onValChange(num, true);
         }
       }
     });
@@ -251,7 +251,7 @@ export class AcDtpTimePicker {
       if (num < min) num = min;
       if (num > max) num = max;
       input.value = String(num).padStart(2, '0');
-      onValChange(num);
+      onValChange(num, false);
     });
 
     return input;
@@ -260,14 +260,20 @@ export class AcDtpTimePicker {
   private _createInputColumn(input: HTMLInputElement, placeholderText: string): HTMLDivElement {
     const col = document.createElement('div');
     col.className = 'ac-dtp-time-col';
+    input.placeholder = placeholderText;
+    input.title = placeholderText;
     col.appendChild(input);
     return col;
   }
 
-  private _updateInputs() {
-    this._hoursInput.value = String(this._getDisplayHours()).padStart(2, '0');
-    this._minutesInput.value = String(this._minutes).padStart(2, '0');
-    if (this._secondsInput) {
+  private _updateInputs(skipActive: boolean = false) {
+    if (!skipActive || (typeof document !== 'undefined' && document.activeElement !== this._hoursInput)) {
+      this._hoursInput.value = String(this._getDisplayHours()).padStart(2, '0');
+    }
+    if (!skipActive || (typeof document !== 'undefined' && document.activeElement !== this._minutesInput)) {
+      this._minutesInput.value = String(this._minutes).padStart(2, '0');
+    }
+    if (this._secondsInput && (!skipActive || (typeof document !== 'undefined' && document.activeElement !== this._secondsInput))) {
       this._secondsInput.value = String(this._seconds).padStart(2, '0');
     }
     if (this._ampmBtn) {

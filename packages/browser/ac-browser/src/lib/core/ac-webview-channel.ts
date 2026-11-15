@@ -7,12 +7,29 @@ export class AcWebviewChannel {
   webviewEvents: AcEvents = new AcEvents();
   private actions: AcHooks = new AcHooks();
   private callbacks: any = {};
-  type: 'cefBrowser' | 'webviewBrowser' | 'inappWebview' | undefined = undefined;
+  type: 'cefBrowser' | 'webviewBrowser' | 'inappWebview' | 'iframeBrowser' | undefined = undefined;
   webviewBrowser: any;
   cefBrowser: any;
 
+  constructor() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('message', (event) => {
+        try {
+          const parsed = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          if (parsed && parsed.type === 'acWebviewFlutterMessage' && parsed.payload !== undefined) {
+            let payload = parsed.payload;
+            if (typeof payload === 'string') {
+              try { payload = JSON.parse(payload); } catch (e) {}
+            }
+            this.receive({ data: payload });
+          }
+        } catch (e) {}
+      });
+    }
+  }
+
   isAppBrowser() {
-    return this.isCefBrowser() || this.isWebviewBrowser() || this.isInappWebview();
+    return this.isCefBrowser() || this.isWebviewBrowser() || this.isInappWebview() || this.isIframeBrowser();
   }
 
   isCefBrowser() {
@@ -20,6 +37,20 @@ export class AcWebviewChannel {
     if (typeof this.cefBrowser != "undefined") {
       result = true;
       this.type = 'cefBrowser';
+    }
+    return result;
+  }
+
+  isIframeBrowser() {
+    let result = false;
+    try {
+      if (typeof window !== 'undefined' && window !== window.parent) {
+        result = true;
+        this.type = 'iframeBrowser';
+      }
+    } catch (ex) {
+      result = true;
+      this.type = 'iframeBrowser';
     }
     return result;
   }
@@ -32,6 +63,21 @@ export class AcWebviewChannel {
         result = true;
         this.webviewBrowser = (window as any).acWebviewJavascriptChannel;
         this.type = 'webviewBrowser';
+      } else if ((window as any).chrome?.webview) {
+        result = true;
+        this.type = 'webviewBrowser';
+        this.webviewBrowser = {
+          postMessage: (msg: string) => {
+            if ((window as any).acWebviewJavascriptChannel) {
+              (window as any).acWebviewJavascriptChannel.postMessage(msg);
+            } else {
+              (window as any).chrome.webview.postMessage({
+                'JkChannelName': 'acWinFloatingWebviewChannel',
+                'msg': msg
+              });
+            }
+          }
+        };
       }
     } catch (ex) {
       //
@@ -129,6 +175,15 @@ export class AcWebviewChannel {
         'acWebviewJavascriptChannel',
         JSON.stringify(dataResult)
       );
+    } else if (this.type === 'iframeBrowser') {
+      try {
+        window.parent.postMessage(JSON.stringify({
+          type: 'acWebviewMessage',
+          payload: dataResult
+        }), '*');
+      } catch (e) {
+        console.error('Error posting to parent window:', e);
+      }
     }
 
     this.events.execute({ event: 'send', args: dataResult });

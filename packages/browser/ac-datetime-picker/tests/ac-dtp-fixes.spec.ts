@@ -458,4 +458,129 @@ describe('ac-datetime-picker comprehensive fixes', () => {
       document.body.removeChild(picker);
     });
   });
+
+  describe('Time in Input and 12-Hour Format Support', () => {
+    it('shows time with seconds in 12-hour format in input when showTime is enabled (single date mode)', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.Date;
+      picker.showTime = true;
+      picker.setValue('2026-05-15T14:30:00');
+
+      const input = picker.querySelector('.ac-dtp-input') as HTMLInputElement;
+      expect(input.value).toBe('15-05-2026 02:30:00 PM');
+
+      document.body.removeChild(picker);
+    });
+
+    it('shows time with seconds in 12-hour format for range mode inputs when showTime is enabled', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.DateTimeRange;
+      picker.setValue({ start: '2026-05-15T09:15:00', end: '2026-05-20T18:45:00' });
+
+      const startInput = picker.querySelector('.ac-dtp-input-start') as HTMLInputElement;
+      const endInput = picker.querySelector('.ac-dtp-input-end') as HTMLInputElement;
+      expect(startInput.value).toBe('15-05-2026 09:15:00 AM');
+      expect(endInput.value).toBe('20-05-2026 06:45:00 PM');
+
+      document.body.removeChild(picker);
+    });
+
+    it('defaults to 12-hour format with seconds in time picker and updates input on toggle', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.DateTime;
+      picker.setValue('2026-05-15T15:30:45');
+
+      expect(picker.hour12).toBe(true);
+      expect(picker.showSeconds).toBe(true);
+
+      const ampmBtn = (picker as any)._popup.querySelector('.ac-dtp-ampm-btn') as HTMLButtonElement;
+      expect(ampmBtn).not.toBeNull();
+      expect(ampmBtn.textContent).toBe('PM');
+
+      const timeInputs = (picker as any)._popup.querySelectorAll('.ac-dtp-time-input') as NodeListOf<HTMLInputElement>;
+      expect(timeInputs.length).toBe(3); // hours, minutes, seconds
+      expect(timeInputs[0].value).toBe('03');
+      expect(timeInputs[1].value).toBe('30');
+      expect(timeInputs[2].value).toBe('45');
+
+      // Click AM/PM button to toggle to AM
+      ampmBtn.click();
+      expect(ampmBtn.textContent).toBe('AM');
+
+      const input = picker.querySelector('.ac-dtp-input') as HTMLInputElement;
+      expect(input.value).toBe('15-05-2026 03:30:45 AM');
+
+      document.body.removeChild(picker);
+    });
+
+    it('switches to 24-hour format with seconds when hour12 is false', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.DateTime;
+      picker.hour12 = false;
+      picker.setValue('2026-05-15T15:30:25');
+
+      const input = picker.querySelector('.ac-dtp-input') as HTMLInputElement;
+      expect(input.value).toBe('15-05-2026 15:30:25');
+
+      const ampmBtn = (picker as any)._popup.querySelector('.ac-dtp-ampm-btn');
+      expect(ampmBtn).toBeNull();
+
+      document.body.removeChild(picker);
+    });
+
+    it('allows disabling seconds via showSeconds = false', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.DateTime;
+      picker.showSeconds = false;
+      picker.setValue('2026-05-15T15:30:00');
+
+      const input = picker.querySelector('.ac-dtp-input') as HTMLInputElement;
+      expect(input.value).toBe('15-05-2026 03:30 PM');
+
+      const timeInputs = (picker as any)._popup.querySelectorAll('.ac-dtp-time-input') as NodeListOf<HTMLInputElement>;
+      expect(timeInputs.length).toBe(2); // hours, minutes only
+
+      document.body.removeChild(picker);
+    });
+
+    it('updates input live when day is selected and time is enabled', () => {
+      const picker = new AcDateTimePickerElement();
+      document.body.appendChild(picker);
+
+      picker.mode = AcEnumDateTimePickerMode.DateTime;
+      picker.open();
+
+      const dayBtn = (picker as any)._calLeftContainer.querySelector('.ac-dtp-cell:not(.ac-dtp-cell-other-month)') as HTMLButtonElement;
+      expect(dayBtn).not.toBeNull();
+      dayBtn.click();
+
+      const input = picker.querySelector('.ac-dtp-input') as HTMLInputElement;
+      expect(input.value).toMatch(/\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2} (AM|PM)/);
+
+      picker.close();
+      document.body.removeChild(picker);
+    });
+
+    it('supports boolean attributes show-time and hour-12 from HTML attributes', () => {
+      const picker = new AcDateTimePickerElement();
+      picker.setAttribute('show-time', '');
+      picker.setAttribute('hour-12', 'false');
+      document.body.appendChild(picker);
+
+      expect(picker.showTime).toBe(true);
+      expect(picker.hour12).toBe(false);
+
+      document.body.removeChild(picker);
+    });
+  });
 });
