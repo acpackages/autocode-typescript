@@ -157,11 +157,11 @@ export class AcPaginationElement extends AcElementBase {
       if (this.setDisplayedRows &&this.dataManager && !this.dataManager.isWorking) {
         if (this.dataManager.type == 'ondemand') {
           this.dataManager.getData({ startIndex: this.startRow - 1, rowsCount: this.activePageSize }).then((res: any) => {
-            this.dataManager?.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
+            this.dataManager?.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize, force: true });
           });
         }
         else {
-          this.dataManager.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize });
+          this.dataManager.setDisplayedRows({ startIndex: this.startRow - 1, rowsCount: this.activePageSize, force: true });
         }
       }
     }

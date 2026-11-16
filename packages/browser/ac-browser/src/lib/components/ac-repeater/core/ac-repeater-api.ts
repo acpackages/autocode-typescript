@@ -10,6 +10,7 @@ import { IIAcRepeaterRowEvent } from "../interfaces/event-args/ac-repeater-row-e
 import { IIAcRepeaterRowPositionChangeEvent } from "../interfaces/event-args/ac-repeater-row-position-change-event.interface";
 import { IAcRepeaterTotalRowsChangeEvent } from "../interfaces/event-args/ac-repeater-total-rows-change-event.interface";
 import { IAcRepeaterExtensionEnabledHookArgs } from "../interfaces/hook-args/ac-repeater-extension-enabled-hook-args.interface";
+import { IIAcRepeaterRowAddHookArgs } from "../interfaces/hook-args/ac-repeater-row-add-hook-args.interface";
 import { IIAcRepeaterRowDeleteHookArgs } from "../interfaces/hook-args/ac-repeater-row-delete-hook-args.interface";
 import { IIAcRepeaterRowFocusHookArgs } from "../interfaces/hook-args/ac-repeater-row-focus-hook-args.interface";
 import { IIAcRepeaterRowUpdateHookArgs } from "../interfaces/hook-args/ac-repeater-row-update-hook-args.interface";
@@ -142,7 +143,7 @@ export class AcRepeaterApi {
       event: AC_DATA_MANAGER_EVENT.DisplayedRowsChange,
       callback: (args: IAcDataManagerDisplayedRowsChangeEvent) => {
         const hookArgs: IAcRepeaterDisplayedRowsChangeEvent = {
-          displayedRows: args.displayedRows as any[],
+          displayedRows: (args.displayedRows ?? this.displayedRepeaterRows) as any[],
           repeaterApi: this
         };
         // PERF FIX (1.4): Rebuild O(1) lookup Maps on each displayed rows change
@@ -180,12 +181,14 @@ export class AcRepeaterApi {
     if (index === undefined) {
       index = append ? this.dataManager.totalRows : 0;
     }
+    const isAppend = index >= this.dataManager.totalRows;
     const dataRow = this.dataManager.addRow({ data, index });
     const repeaterRow = dataRow as IAcRepeaterRow;
 
-    const hookArgs: IIAcRepeaterRowUpdateHookArgs = {
+    const hookArgs: IIAcRepeaterRowAddHookArgs = {
       repeaterApi: this,
       repeaterRow: repeaterRow,
+      append: isAppend,
       highlightRow: highlightRow
     };
     this.hooks.execute({ hook: AcEnumRepeaterHook.RowAdd, args: hookArgs });

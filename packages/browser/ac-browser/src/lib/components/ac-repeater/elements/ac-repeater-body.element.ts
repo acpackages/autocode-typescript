@@ -39,6 +39,18 @@ export class AcRepeaterBodyElement extends AcElementBase {
             this.setDisplayedRows();
           },
         });
+        this.repeaterApi.hooks.subscribe({
+          hook: AcEnumRepeaterHook.RowAdd,
+          callback: () => {
+            this.setDisplayedRows();
+          },
+        });
+        this.repeaterApi.hooks.subscribe({
+          hook: AcEnumRepeaterHook.RowDelete,
+          callback: () => {
+            this.setDisplayedRows();
+          },
+        });
         // PERF FIX (2.1): Single delegated RowUpdate subscription instead of N per-row subscriptions.
         // This eliminates the accumulation of dangling subscriptions when rows are destroyed and recreated.
         this.repeaterApi.hooks.subscribe({
@@ -138,18 +150,52 @@ export class AcRepeaterBodyElement extends AcElementBase {
 
     // Step 1: Remove rows no longer in the displayed set
     for (const [rowId, el] of this._renderedRowMap) {
-      el.remove();
-      el.destroy();
-      this._renderedRowMap.delete(rowId);
+       el.remove();
+        el.destroy();
+        this._renderedRowMap.delete(rowId);
     }
 
     // Step 2: Re-append ALL rows in correct data order.
     // appendChild on an already-attached node moves it, fixing order for existing rows too.
     const newCurrentRows: AcRepeaterRowElement[] = [];
     for (const row of newRows) {
+      // let el = this._renderedRowMap.get(row.rowId);
+      // if (!el) {
+
+      // }
       const el = new AcRepeaterRowElement();
+        this._renderedRowMap.set(row.rowId, el);
       el.setRow({ repeaterApi: this.repeaterApi, repeaterRow: row });
-      this._renderedRowMap.set(row.rowId, el);
+      newCurrentRows.push(el);
+      this.appendChild(el);
+    }
+    this.currentRows = newCurrentRows;
+  }
+
+  setDisplayedRowsOld() {
+    // Key-based reconciliation: reuse existing row elements, re-append all in data order.
+    const newRows = this.repeaterApi.displayedRepeaterRows;
+    const newIds = new Set(newRows.map((r) => r.rowId));
+
+    // Step 1: Remove rows no longer in the displayed set
+    for (const [rowId, el] of this._renderedRowMap) {
+      if (!newIds.has(rowId)) {
+        el.remove();
+        el.destroy();
+        this._renderedRowMap.delete(rowId);
+      }
+    }
+
+    // Step 2: Re-append ALL rows in correct data order.
+    // appendChild on an already-attached node moves it, fixing order for existing rows too.
+    const newCurrentRows: AcRepeaterRowElement[] = [];
+    for (const row of newRows) {
+      let el = this._renderedRowMap.get(row.rowId);
+      if (!el) {
+        el = new AcRepeaterRowElement();
+        this._renderedRowMap.set(row.rowId, el);
+      }
+      el.setRow({ repeaterApi: this.repeaterApi, repeaterRow: row });
       newCurrentRows.push(el);
       this.appendChild(el);
     }

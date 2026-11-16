@@ -238,10 +238,14 @@ export class AcDataManager {
         totalRows: value,
         dataManager: this
       };
+      const displayedEventArgs: IAcDataManagerDisplayedRowsChangeEvent = {
+        displayedRows: this.displayedRows,
+        dataManager: this
+      };
       this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.TotalRowsChange, args: eventArgs });
-      this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.DisplayedRowsChange, args: eventArgs });
+      this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.DisplayedRowsChange, args: displayedEventArgs });
       this.events.execute({ event: AC_DATA_MANAGER_EVENT.TotalRowsChange, args: eventArgs });
-      this.events.execute({ event: AC_DATA_MANAGER_EVENT.DisplayedRowsChange, args: eventArgs });
+      this.events.execute({ event: AC_DATA_MANAGER_EVENT.DisplayedRowsChange, args: displayedEventArgs });
     }
   }
 
@@ -353,8 +357,21 @@ export class AcDataManager {
 
     this.allRows.splice(index, 0, dataRow);
 
-    // PERF FIX (T1.9): Remove O(n) originalIndex re-numbering loop after insert.
-    // originalIndex is only used during initial load; after addRow it is not meaningful.
+    for (let i = index + 1; i < this.allRows.length; i++) {
+      const r = this.allRows[i];
+      if (r && r.index >= 0) {
+        r.index++;
+      }
+      if (this.type === 'ondemand' && r && r.originalIndex !== undefined) {
+        r.originalIndex++;
+      }
+    }
+    if (index === 0) {
+      dataRow.isFirst = true;
+      if (this.allRows.length > 1 && this.allRows[1]) {
+        this.allRows[1].isFirst = false;
+      }
+    }
 
     // Update lookup maps
     this._rowById.set(dataRow.rowId, dataRow);
@@ -364,6 +381,13 @@ export class AcDataManager {
 
     this._invalidateRowCache();
     this.totalRows = this.allRows.length;
+    if (this.type === 'offline') {
+      this.setDisplayedRows({
+        startIndex: this.displayStartIndex >= 0 ? this.displayStartIndex : 0,
+        rowsCount: this.displayCount > 0 ? this.displayCount : this.allRows.length,
+        force: true
+      });
+    }
     this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.RowCreate, args: hookArgs });
     this.events.execute({ event: AC_DATA_MANAGER_EVENT.RowCreate, args: hookArgs });
     this.hooks.execute({ hook: AC_DATA_MANAGER_HOOK.RowAdd, args: { dataRow: dataRow, data: data } });
@@ -500,12 +524,15 @@ export class AcDataManager {
 
     if (dataRow) {
       const deletedRowId = dataRow.rowId;
+      const deletedIndex = dataRow.index;
       arrayRemoveByKey(this.allRows, 'rowId', deletedRowId);
 
-      // PERF FIX (H6 / T1.7): Remove full O(n) re-index loop.
-      // The row cache is dirty — next access to this.rows will recompute indices correctly
-      // via applyFilter()/applySort(). Only update _totalRows directly to avoid
-      // triggering unnecessary events during bulk deletions.
+      for (let i = 0; i < this.allRows.length; i++) {
+        const r = this.allRows[i];
+        if (r && r.index > deletedIndex) {
+          r.index--;
+        }
+      }
       this._totalRows = this.allRows.length;
 
       // Remove from lookup maps
