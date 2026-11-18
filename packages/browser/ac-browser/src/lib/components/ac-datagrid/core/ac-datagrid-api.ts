@@ -2423,6 +2423,7 @@ export class AcDatagridApi {
       c.index = idx;
       c.columnDefinition.index = idx;
     });
+    this._columnDefinitions = this.datagridColumns.map(c => c.columnDefinition);
     this.updatePinnedOffsets();
     if (this.datagrid?.datagridHeader) {
       this.datagrid.datagridHeader.render();
@@ -2434,20 +2435,41 @@ export class AcDatagridApi {
     this.notifyStateChange({ source: 'columnReorder' });
   }
 
-  moveRow({ fromIndex, toIndex }: { fromIndex: number, toIndex: number }) {
-    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+  moveRow({ fromIndex, toIndex, fromRowId, toRowId }: { fromIndex?: number, toIndex?: number, fromRowId?: string, toRowId?: string }) {
     const rows = this.dataManager.allRows;
-    if (fromIndex >= rows.length || toIndex >= rows.length) return;
-    const [moved] = rows.splice(fromIndex, 1);
-    rows.splice(toIndex, 0, moved);
+    if (!rows || rows.length === 0) return;
+
+    let fIdx = fromIndex ?? -1;
+    let tIdx = toIndex ?? -1;
+
+    if (fromRowId) {
+      fIdx = rows.findIndex(r => r && r.rowId === fromRowId);
+    }
+    if (toRowId) {
+      tIdx = rows.findIndex(r => r && r.rowId === toRowId);
+    }
+
+    if (fIdx === tIdx || fIdx < 0 || tIdx < 0 || fIdx >= rows.length || tIdx >= rows.length) return;
+
+    const [moved] = rows.splice(fIdx, 1);
+    rows.splice(tIdx, 0, moved);
     rows.forEach((r, idx) => {
       if (r) {
         r.originalIndex = idx;
         r.index = idx;
       }
     });
+
+    if (this.dataManager.sortOrder?.sortOrders?.length) {
+      this.dataManager.sortOrder.sortOrders = [];
+      this.refreshColumnSortIndicators();
+    }
+
     this.dataManager.processRows();
-    this.events.execute({ event: AC_DATAGRID_EVENT.RowPositionChange, args: { oldIndex: fromIndex, newIndex: toIndex, row: moved, datagridApi: this } });
+    if (this.datagrid?.datagridBody) {
+      this.datagrid.datagridBody.setDisplayedRows();
+    }
+    this.events.execute({ event: AC_DATAGRID_EVENT.RowPositionChange, args: { oldIndex: fIdx, newIndex: tIdx, row: moved, datagridApi: this } });
     this.notifyStateChange({ source: 'rowReorder' });
   }
 

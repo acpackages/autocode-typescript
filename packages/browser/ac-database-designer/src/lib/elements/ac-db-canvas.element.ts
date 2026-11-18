@@ -456,8 +456,9 @@ export class AcDbCanvasElement extends HTMLElement {
     this.addEventListener('wheel', (e) => {
       e.preventDefault();
       const cr = this.getBoundingClientRect();
+      const delta = e.deltaMode === 1 ? e.deltaY * 20 : e.deltaY;
       this._viewport.zoom(
-        e.deltaY < 0 ? 1 : -1,
+        delta < 0 ? 1 : -1,
         e.clientX - cr.left,
         e.clientY - cr.top,
       );

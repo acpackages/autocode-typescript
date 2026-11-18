@@ -73,7 +73,8 @@
 }
 
 .ac-dde-table-details-wrapper {
-  width: -webkit-fill-available;
+  width: 70%;
+  flex: 1 1 auto;
   height: 100%;
 }
 

@@ -440,11 +440,6 @@ export class AcReport {
       pageEl.style.minWidth = `${pageW}px`;
       pageEl.style.width = `${pageW}px`;
       page.allocatedWidth = pageW;
-
-      if (!this.pageSize.isRoll && typeof window !== 'undefined') {
-        pageEl.style.contentVisibility = 'auto';
-        pageEl.style.containIntrinsicSize = `${widthMm}mm ${heightMm}mm`;
-      }
     }
 
     this.restoreStretchingStyles();
@@ -603,6 +598,10 @@ export class AcReport {
 
   async generate({ data, callback }: { data: any, callback?: Function }) {
     await AcReport.preloadImages(this.element);
+    if (typeof document !== 'undefined' && (document as any).fonts?.ready) {
+      await (document as any).fonts.ready;
+      this.setPageHeightWidth();
+    }
     const previousContain = this.element.style.contain;
     this.element.style.contain = 'layout style';
     this.data = data;

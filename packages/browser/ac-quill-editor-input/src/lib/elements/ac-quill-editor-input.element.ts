@@ -86,7 +86,7 @@ export class AcQuillEditorInput extends AcInputBase {
   override connectedCallback() {
     super.connectedCallback();
     if (!this.isEditorInitialized) {
-      this.innerHTML = `<div class="ac-quill-container" style="display: flex;flex-direction: column;height: -webkit-fill-available;"><div class="ac-quill-editor"></div></div>`;
+      this.innerHTML = `<div class="ac-quill-container" style="display: flex;flex-direction: column;height: 100%;flex: 1 1 auto;min-height: 0;"><div class="ac-quill-editor"></div></div>`;
       this.editorEl = this.querySelector('.ac-quill-editor')!;
       this.editor = new Quill(this.editorEl, {
         ...AC_QUILL_EDITOR_OPTIONS,

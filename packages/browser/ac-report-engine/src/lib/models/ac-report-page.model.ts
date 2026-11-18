@@ -25,7 +25,7 @@ export class AcReportPage {
       if (this.element && this.report) {
         const targetHeight = this.allocatedHeight > 0 ? this.allocatedHeight : this.report.pageHeight;
         this.cachedPageHeight = this.pageHeight;
-        result = this.cachedPageHeight > targetHeight;
+        result = (this.cachedPageHeight - targetHeight) > 1.5;
       }
     }
     return result;
@@ -39,9 +39,9 @@ export class AcReportPage {
       this.cachedPageHeight += addedHeight;
       return false;
     }
-    // Near boundary or unmeasured: perform real DOM measurement
+    // Near boundary or unmeasured: perform real DOM measurement with 1.5px subpixel tolerance
     this.cachedPageHeight = this.pageHeight;
-    return this.cachedPageHeight > targetHeight;
+    return (this.cachedPageHeight - targetHeight) > 1.5;
   }
 
   get pageHeight(): number {

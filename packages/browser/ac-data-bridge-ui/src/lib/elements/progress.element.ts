@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcDataBridge, IAcDataBridgeEntity, IAcDataBridgeProcesedRow } from '../../../ac-data-bridge/ac-data-bridge';
+import { AcDataBridge, IAcDataBridgeEntity, IAcDataBridgeProcesedRow } from '@autocode-ts/ac-data-bridge';
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
-import { AcElement, AcEventEmitter, AcInput, AcOutput } from '../../../ac-runtime/src/ac-runtime';
+import { AcElement, AcEventEmitter, AcInput, AcOutput } from '@autocode-ts/ac-runtime';
 import { IAcDataBridgeProgress } from '@autocode-ts/ac-data-bridge';
 @AcElement({
   selector: 'ac-data-bridge-progress',

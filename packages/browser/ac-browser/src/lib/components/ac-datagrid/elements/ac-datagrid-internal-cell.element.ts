@@ -87,11 +87,13 @@ export class AcDatagridInternalCellElement extends AcElementBase {
         if (e.button !== 0 || !this.datagridRow) return;
         e.stopPropagation();
         e.preventDefault();
-        handle.setPointerCapture(e.pointerId);
+        try {
+          handle.setPointerCapture(e.pointerId);
+        } catch (_) {}
         const startY = e.clientY;
-        const startIdx = this.datagridRow.index;
+        const sourceRow = this.datagridRow;
         let hasMoved = false;
-        let targetDropIdx = startIdx;
+        let targetDropIdx: number | undefined;
 
         const sourceRowEl = this.closest('ac-datagrid-row') as any;
         const bodyEl = this.closest('ac-datagrid-body') as any;
@@ -108,8 +110,17 @@ export class AcDatagridInternalCellElement extends AcElementBase {
           }
 
           if (hasMoved && bodyEl) {
-            const targetEl = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY);
-            const targetRowEl = targetEl?.closest(`.${AC_DATAGRID_CLASS_NAME.acDatagridRow}`) as any;
+            let targetRowEl = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY)?.closest(`.${AC_DATAGRID_CLASS_NAME.acDatagridRow}`) as any;
+            if (!targetRowEl && bodyEl.currentRows?.length) {
+              const bodyRect = bodyEl.getBoundingClientRect();
+              if (moveEvt.clientY >= bodyRect.top && moveEvt.clientY <= bodyRect.bottom) {
+                targetRowEl = bodyEl.currentRows.find((r: any) => {
+                  const b = r.getBoundingClientRect();
+                  return moveEvt.clientY >= b.top && moveEvt.clientY <= b.bottom;
+                });
+              }
+            }
+
             if (targetRowEl && targetRowEl.datagridRow) {
               const rect = targetRowEl.getBoundingClientRect();
               const bodyRect = bodyEl.getBoundingClientRect();
@@ -119,13 +130,9 @@ export class AcDatagridInternalCellElement extends AcElementBase {
               bodyEl.showRowDropIndicator?.(indicatorTop);
 
               const trgIdx = targetRowEl.datagridRow.index;
-              if (startIdx < trgIdx) {
-                targetDropIdx = isAboveMid ? trgIdx - 1 : trgIdx;
-              } else if (startIdx > trgIdx) {
-                targetDropIdx = isAboveMid ? trgIdx : trgIdx + 1;
-              } else {
-                targetDropIdx = startIdx;
-              }
+              const fromIndex = sourceRow.index;
+              const insertionPoint = isAboveMid ? trgIdx : trgIdx + 1;
+              targetDropIdx = insertionPoint > fromIndex ? insertionPoint - 1 : insertionPoint;
             }
           }
         };
@@ -134,8 +141,8 @@ export class AcDatagridInternalCellElement extends AcElementBase {
           try {
             handle.releasePointerCapture(upEvt.pointerId);
           } catch (_) {}
-          handle.removeEventListener('pointermove', onPointerMove);
-          handle.removeEventListener('pointerup', onPointerUp);
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
           document.body.classList.remove('ac-datagrid-dragging-active');
           document.body.style.cursor = '';
           if (sourceRowEl) {
@@ -143,13 +150,13 @@ export class AcDatagridInternalCellElement extends AcElementBase {
           }
           bodyEl?.hideRowDropIndicator?.();
 
-          if (hasMoved && targetDropIdx !== undefined && targetDropIdx !== startIdx) {
-            this.datagridApi?.moveRow({ fromIndex: startIdx, toIndex: targetDropIdx });
+          if (hasMoved && targetDropIdx !== undefined && targetDropIdx !== sourceRow.index) {
+            this.datagridApi?.moveRow({ fromIndex: sourceRow.index, toIndex: targetDropIdx });
           }
         };
 
-        handle.addEventListener('pointermove', onPointerMove);
-        handle.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
       });
 
       container.appendChild(handle);

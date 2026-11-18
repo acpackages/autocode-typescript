@@ -1,5 +1,5 @@
-import { AcElement, AcEventEmitter, AcInput, AcOutput } from '../../../ac-runtime/src/ac-runtime';
-import { AcDataBridge }  from '../../../ac-data-bridge/ac-data-bridge';
+import { AcElement, AcEventEmitter, AcInput, AcOutput } from '@autocode-ts/ac-runtime';
+import { AcDataBridge }  from '@autocode-ts/ac-data-bridge';
 import { ACI_SVG_SOLID }  from '@autocode-ts/ac-icons';
 
 @AcElement({

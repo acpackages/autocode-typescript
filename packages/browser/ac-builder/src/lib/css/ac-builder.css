@@ -55,7 +55,7 @@ body {
 }
 .ac-builder-center-container{
   display: block;
-  width: -webkit-fill-available;
+  width: 100%;
 }
 .ac-builder-sidebar {
   width: 350px;
@@ -65,7 +65,7 @@ body {
   padding: 0px;
   display: flex;
   flex-direction: column;
-  height: -webkit-fill-available;
+  height: 100%;
 }
 .ac-builder-sidebar-input{
   background-color: transparent;
@@ -94,7 +94,8 @@ body {
   border:none
 }
 .ac-builder-sidebar .tab-content{
-  height: -webkit-fill-available;
+  height: 100%;
+  flex: 1 1 auto;
   overflow-y: auto;
 }
 .ac-builder-canvas {
@@ -118,7 +119,8 @@ body {
   flex-direction: column;
 }
 .ac-builder-elements-panel, .ac-builder-styles-tab, .ac-builder-events-panel, .ac-builder-properties-panel{
-  height: -webkit-fill-available;
+  height: 100%;
+  flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -159,7 +161,8 @@ body {
 }
 
 .ac-builder-script-editor-body{
-  height: -webkit-fill-available;
+  height: 100%;
+  flex: 1 1 auto;
   display: flex;
 }
 

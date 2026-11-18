@@ -5,8 +5,10 @@ type ChangeCallback = (key: string, newValue: any, oldValue: any) => void;
 
 export class AcStorage {
   private __acVersion__: number = 1;
+  private memoryStore: Map<string, string> = new Map<string, string>();
+
   constructor() {
-    const object:any = this;
+    const object: any = this;
     function getAllProps(obj: any) {
       let props: string[] = [];
       let current = obj;
@@ -16,59 +18,75 @@ export class AcStorage {
       }
       return Array.from(new Set(props));
     }
-    const objectKeys:string[] = getAllProps(this);
+    const objectKeys: string[] = getAllProps(this);
     const proxy = new Proxy(this, {
       get: (target, prop: string | symbol, receiver) => {
         if (typeof prop === 'string' && !objectKeys.includes(prop)) {
-          return target.getItem({key:prop});
+          return target.getItem({ key: prop });
         }
         return Reflect.get(target, prop, receiver);
       },
       set: (target, prop: string | symbol, value, receiver) => {
-        if(!objectKeys.includes(prop.toString())){
+        if (!objectKeys.includes(prop.toString())) {
           if (typeof prop === 'string' && !objectKeys.includes(prop)) {
             target.setItem({ key: prop, value: value });
           }
           return Reflect.set(target, prop, value, receiver);
-        }
-        else{
+        } else {
           console.error(`Cannot set ${prop.toString()} on AcStorage.`);
           return true;
         }
-
       },
     });
-    for(const key of this.keys()){
-      object[key] = this.getItem({key});
+    for (const key of this.keys()) {
+      object[key] = this.getItem({ key });
     }
     return proxy;
   }
 
-  getItem({ key }: { key: string }):any {
-    const valueString: string | null = localStorage.getItem(key);
+  getItem({ key }: { key: string }): any {
+    let valueString: string | null = null;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        valueString = localStorage.getItem(key);
+      }
+    } catch {
+      valueString = this.memoryStore.get(key) ?? null;
+    }
+    if (!valueString && this.memoryStore.has(key)) {
+      valueString = this.memoryStore.get(key) ?? null;
+    }
     if (valueString) {
       try {
         const valueObject = JSON.parse(valueString);
-        if (valueObject["acStorageVersion"]) {
+        if (valueObject['acStorageVersion']) {
           return valueObject['value'];
         }
-      }
-      catch (ex) {
+      } catch (ex) {
         //
       }
     }
   }
 
   hasItem({ key }: { key: string }) {
-    const valueString: string | null = localStorage.getItem(key);
+    let valueString: string | null = null;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        valueString = localStorage.getItem(key);
+      }
+    } catch {
+      valueString = this.memoryStore.get(key) ?? null;
+    }
+    if (!valueString && this.memoryStore.has(key)) {
+      valueString = this.memoryStore.get(key) ?? null;
+    }
     if (valueString) {
       try {
         const valueObject = JSON.parse(valueString);
-        if (valueObject["acStorageVersion"]) {
+        if (valueObject['acStorageVersion']) {
           return true;
         }
-      }
-      catch (ex) {
+      } catch (ex) {
         //
       }
     }
@@ -76,26 +94,49 @@ export class AcStorage {
   }
 
   setItem({ key, value }: { key: string, value: any }): void {
-    const valueObject = { "value": value, "valueType": typeof value, "acStorageVersion": this.__acVersion__ };
-    localStorage.setItem(key, JSON.stringify(valueObject));
+    const valueObject = { 'value': value, 'valueType': typeof value, 'acStorageVersion': this.__acVersion__ };
+    const serialized = JSON.stringify(valueObject);
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(key, serialized);
+      } else {
+        this.memoryStore.set(key, serialized);
+      }
+    } catch {
+      this.memoryStore.set(key, serialized);
+    }
   }
 
-  values():any {
+  values(): any {
     return Object.values(this.toJson());
   }
 
-  keys():string[] {
+  keys(): string[] {
     return Object.keys(this.toJson());
   }
 
-  toJson():any {
+  toJson(): any {
     const values: any = {};
-    Object.keys(localStorage).forEach((key) => {
-      const value = this.getItem({key});
-      if (value != undefined) {
-        values[key] = value;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        Object.keys(localStorage).forEach((key) => {
+          const value = this.getItem({ key });
+          if (value != undefined) {
+            values[key] = value;
+          }
+        });
       }
-    });
+    } catch {
+      //
+    }
+    for (const key of this.memoryStore.keys()) {
+      if (values[key] === undefined) {
+        const value = this.getItem({ key });
+        if (value != undefined) {
+          values[key] = value;
+        }
+      }
+    }
     return values;
   }
 
@@ -104,6 +145,6 @@ export class AcStorage {
   }
 }
 
-export const acStorage:any = new AcStorage();
-const _window:any = window;
-_window["acStorage"] = acStorage;
+export const acStorage: any = new AcStorage();
+const _window: any = typeof window !== 'undefined' ? window : {};
+_window['acStorage'] = acStorage;

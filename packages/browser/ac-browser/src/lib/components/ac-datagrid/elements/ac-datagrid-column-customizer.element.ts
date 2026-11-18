@@ -52,7 +52,9 @@ export class AcDatagridColumnCustomizerElement extends AcElementBase {
 
       const dragHandle = document.createElement('span');
       dragHandle.className = 'ac-column-customizer-drag-handle';
-      dragHandle.innerHTML = '&#9776;'; // Hamburger icon
+      dragHandle.innerHTML = '⋮⋮';
+      dragHandle.style.cursor = 'grab';
+      dragHandle.style.userSelect = 'none';
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -61,7 +63,12 @@ export class AcDatagridColumnCustomizerElement extends AcElementBase {
       checkbox.addEventListener('change', () => {
         col.columnDefinition.visible = checkbox.checked;
         col.visible = checkbox.checked;
-        this.datagridApi.columnDefinitions = [...this.datagridApi.columnDefinitions];
+        if (this.datagridApi.datagrid?.datagridHeader) {
+          this.datagridApi.datagrid.datagridHeader.render();
+        }
+        if (this.datagridApi.datagrid?.datagridBody) {
+          this.datagridApi.datagrid.datagridBody.setDisplayedRows();
+        }
       });
 
       const label = document.createElement('span');
@@ -72,63 +79,95 @@ export class AcDatagridColumnCustomizerElement extends AcElementBase {
       item.append(checkbox);
       item.append(label);
 
-      // Drag and drop logic
-      item.addEventListener('dragstart', (e) => {
-        this.draggingIndex = idx;
-        item.classList.add('dragging');
-        if (e.dataTransfer) {
-            e.dataTransfer.effectAllowed = 'move';
-        }
-      });
-
-      item.addEventListener('dragend', () => {
-        item.classList.remove('dragging');
-        this.draggingIndex = -1;
-        this.render();
-      });
-
-      item.addEventListener('dragover', (e) => {
+      // Pointer-based drag and drop logic
+      dragHandle.addEventListener('pointerdown', (e: PointerEvent) => {
+        if (e.button !== 0) return;
+        e.stopPropagation();
         e.preventDefault();
-        const draggingItem = this.querySelector('.dragging') as HTMLElement;
-        if (draggingItem && draggingItem !== item) {
-            const bounding = item.getBoundingClientRect();
-            const offset = e.clientY - bounding.top;
-            if (offset > bounding.height / 2) {
-                item.after(draggingItem);
-            } else {
-                item.before(draggingItem);
+        try {
+          dragHandle.setPointerCapture(e.pointerId);
+        } catch (_) {}
+        item.style.opacity = '0.5';
+        document.body.classList.add('ac-datagrid-dragging-active');
+        const startY = e.clientY;
+        const fromIdx = col.index;
+        let targetIdx = fromIdx;
+        let hasMoved = false;
+
+        let indicator = list.querySelector('.ac-column-customizer-drop-indicator') as HTMLElement;
+        if (!indicator) {
+          indicator = document.createElement('div');
+          indicator.className = 'ac-column-customizer-drop-indicator';
+          indicator.style.position = 'absolute';
+          indicator.style.left = '8px';
+          indicator.style.right = '8px';
+          indicator.style.height = '3px';
+          indicator.style.backgroundColor = '#2196f3';
+          indicator.style.zIndex = '100';
+          indicator.style.pointerEvents = 'none';
+          indicator.style.borderRadius = '2px';
+          list.style.position = 'relative';
+          list.appendChild(indicator);
+        }
+        indicator.style.display = 'none';
+
+        const onMove = (moveEvt: PointerEvent) => {
+          if (!hasMoved && Math.abs(moveEvt.clientY - startY) > 4) {
+            hasMoved = true;
+          }
+          if (hasMoved) {
+            let underItem = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY)?.closest('.ac-column-customizer-item') as HTMLElement;
+            if (!underItem && list) {
+              const listRect = list.getBoundingClientRect();
+              if (moveEvt.clientY >= listRect.top && moveEvt.clientY <= listRect.bottom) {
+                const items = Array.from(list.querySelectorAll('.ac-column-customizer-item')) as HTMLElement[];
+                underItem = items.find(it => {
+                  const r = it.getBoundingClientRect();
+                  return moveEvt.clientY >= r.top && moveEvt.clientY <= r.bottom;
+                }) || null;
+              }
             }
-        }
-      });
+            if (underItem && underItem.dataset['index']) {
+              const uIdx = parseInt(underItem.dataset['index'], 10);
+              const targetColItem = columns[uIdx];
+              if (!targetColItem) return;
+              const rect = underItem.getBoundingClientRect();
+              const listRect = list.getBoundingClientRect();
+              const midY = rect.top + rect.height / 2;
+              const isAboveMid = moveEvt.clientY < midY;
+              const topPx = (isAboveMid ? rect.top : rect.bottom) - listRect.top + list.scrollTop;
+              indicator.style.top = `${topPx}px`;
+              indicator.style.display = 'block';
 
-      item.addEventListener('drop', (e) => {
-        e.preventDefault();
-        this.applyNewOrder();
+              const insertionPoint = isAboveMid ? targetColItem.index : targetColItem.index + 1;
+              targetIdx = insertionPoint > fromIdx ? insertionPoint - 1 : insertionPoint;
+            }
+          }
+        };
+
+        const onUp = (upEvt: PointerEvent) => {
+          try {
+            dragHandle.releasePointerCapture(upEvt.pointerId);
+          } catch (_) {}
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
+          document.body.classList.remove('ac-datagrid-dragging-active');
+          item.style.opacity = '';
+          indicator.remove();
+          if (hasMoved && targetIdx !== undefined && targetIdx !== fromIdx && targetIdx >= 0) {
+            this.datagridApi.moveColumn({ fromIndex: fromIdx, toIndex: targetIdx });
+            this.render();
+          }
+        };
+
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
       });
 
       list.append(item);
     });
 
     this.append(list);
-  }
-
-  private applyNewOrder() {
-    const items = Array.from(this.querySelectorAll('.ac-column-customizer-item')) as HTMLElement[];
-    const newOrderKeys = items.map(item => {
-        const label = item.querySelector('.ac-column-customizer-label') as HTMLElement;
-        return label.innerText;
-    });
-
-    const colDefs = [...this.datagridApi.columnDefinitions];
-    colDefs.forEach(cd => {
-        const title = cd.title || cd.field;
-        const newIdx = newOrderKeys.indexOf(title);
-        if (newIdx !== -1) {
-            cd.index = newIdx;
-        }
-    });
-
-    this.datagridApi.columnDefinitions = colDefs;
   }
 }
 

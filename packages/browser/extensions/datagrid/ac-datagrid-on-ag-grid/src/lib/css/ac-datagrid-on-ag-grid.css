@@ -60,7 +60,7 @@
 }
 .text-center{
   .ag-header-cell-text{
-    width: -webkit-fill-available!important;
+    width: 100%!important;
   }
 }
 .ag-row-last{

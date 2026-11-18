@@ -1,6 +1,6 @@
-import { AcDataBridge, IAcDataBridgeProgress } from '../../../ac-data-bridge/ac-data-bridge';
+import { AcDataBridge, IAcDataBridgeProgress } from '@autocode-ts/ac-data-bridge';
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
-import { AcElement, AcInput } from '../../../ac-runtime/src/ac-runtime';
+import { AcElement, AcInput } from '@autocode-ts/ac-runtime';
 @AcElement({
   selector: 'ac-data-bridge-data-processing',
   template: `

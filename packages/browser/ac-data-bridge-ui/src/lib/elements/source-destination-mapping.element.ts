@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { AcDataBridge } from '../../../ac-data-bridge/ac-data-bridge';
-import { AcElement, AcInput } from '../../../ac-runtime/src/ac-runtime';
+import { AcDataBridge } from '@autocode-ts/ac-data-bridge';
+import { AcElement, AcInput } from '@autocode-ts/ac-runtime';
 import { AcDelayedCallback } from '@autocode-ts/autocode';
 @AcElement({
   selector: 'ac-data-bridge-source-destination-mapping',
@@ -74,7 +74,8 @@ import { AcDelayedCallback } from '@autocode-ts/autocode';
   :host {
     display: flex;
     flex-direction: column;
-    height: -webkit-fill-available;
+    height: 100%;
+    flex: 1 1 auto;
   }
   .flex-fill {
     flex: 1 1 auto !important;

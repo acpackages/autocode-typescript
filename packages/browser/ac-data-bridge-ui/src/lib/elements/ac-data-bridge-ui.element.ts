@@ -1,6 +1,6 @@
-import { AcDataBridge, IAcDataBridgeProgress } from '../../../ac-data-bridge/ac-data-bridge';
+import { AcDataBridge, IAcDataBridgeProgress } from '@autocode-ts/ac-data-bridge';
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
-import { AcElement, AcEventEmitter, AcInput, AcOutput, IAcOnPropertyChange } from '../../../ac-runtime/src/ac-runtime';
+import { AcElement, AcEventEmitter, AcInput, AcOutput, IAcOnPropertyChange } from '@autocode-ts/ac-runtime';
 @AcElement({
   selector: 'ac-data-bridge-ui',
   template: `

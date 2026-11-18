@@ -9,17 +9,37 @@ AcPipeRegistry.register({
   transform: (
     v: any,
     format: 'short' | 'long' | 'medium' | 'full' | string = 'short',
-    locale: string = navigator.language
+    locale: string = 'en-IN'
   ) => {
     if (!v) return '';
-    const d = new Date(v);
-    if (isNaN(d.getTime())) return v;
 
-    if (typeof format === 'string' && ['short', 'medium', 'long', 'full'].includes(format)) {
-      return new Intl.DateTimeFormat(locale, { dateStyle: format as any }).format(d);
+    // Prefer ISO parsing via Luxon to avoid UTC day-shift bugs in Western timezones
+    let dt: DateTime;
+    if (typeof v === 'string') {
+      dt = DateTime.fromISO(v, { setZone: true });
+      if (!dt.isValid) {
+        const d = new Date(v);
+        if (!isNaN(d.getTime())) {
+          dt = DateTime.fromJSDate(d);
+        }
+      }
+    } else if (v instanceof Date) {
+      dt = DateTime.fromJSDate(v);
+    } else {
+      const d = new Date(v);
+      if (!isNaN(d.getTime())) {
+        dt = DateTime.fromJSDate(d);
+      } else {
+        return v;
+      }
     }
 
-    // Custom format fallback or advanced (you can integrate date-fns later)
-    return DateTime.fromJSDate(d).toFormat(format);
+    if (!dt.isValid) return v;
+
+    if (typeof format === 'string' && ['short', 'medium', 'long', 'full'].includes(format)) {
+      return new Intl.DateTimeFormat(locale, { dateStyle: format as any }).format(dt.toJSDate());
+    }
+
+    return dt.toFormat(format);
   }
 });

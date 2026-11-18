@@ -167,8 +167,17 @@ export class AcDatagridSidePanelElement extends AcElementBase {
             hasMoved = true;
           }
           if (hasMoved) {
-            const underEl = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY);
-            const underItem = underEl?.closest('[data-col-index]') as HTMLElement;
+            let underItem = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY)?.closest('[data-col-index]') as HTMLElement;
+            if (!underItem && list) {
+              const listRect = list.getBoundingClientRect();
+              if (moveEvt.clientY >= listRect.top && moveEvt.clientY <= listRect.bottom) {
+                const items = Array.from(list.querySelectorAll('[data-col-index]')) as HTMLElement[];
+                underItem = items.find(it => {
+                  const r = it.getBoundingClientRect();
+                  return moveEvt.clientY >= r.top && moveEvt.clientY <= r.bottom;
+                }) || null;
+              }
+            }
             if (underItem && underItem.dataset['colIndex']) {
               const uIdx = parseInt(underItem.dataset['colIndex'], 10);
               const rect = underItem.getBoundingClientRect();
@@ -179,13 +188,8 @@ export class AcDatagridSidePanelElement extends AcElementBase {
               indicator.style.top = `${topPx}px`;
               indicator.style.display = 'block';
 
-              if (fromIdx < uIdx) {
-                targetIdx = isAboveMid ? uIdx - 1 : uIdx;
-              } else if (fromIdx > uIdx) {
-                targetIdx = isAboveMid ? uIdx : uIdx + 1;
-              } else {
-                targetIdx = fromIdx;
-              }
+              const insertionPoint = isAboveMid ? uIdx : uIdx + 1;
+              targetIdx = insertionPoint > fromIdx ? insertionPoint - 1 : insertionPoint;
             }
           }
         };
@@ -194,19 +198,19 @@ export class AcDatagridSidePanelElement extends AcElementBase {
           try {
             dragHandle.releasePointerCapture(upEvt.pointerId);
           } catch (_) {}
-          dragHandle.removeEventListener('pointermove', onMove);
-          dragHandle.removeEventListener('pointerup', onUp);
+          window.removeEventListener('pointermove', onMove);
+          window.removeEventListener('pointerup', onUp);
           document.body.classList.remove('ac-datagrid-dragging-active');
           item.style.opacity = '';
           indicator.remove();
-          if (hasMoved && targetIdx !== fromIdx && targetIdx >= 0) {
+          if (hasMoved && targetIdx !== undefined && targetIdx !== fromIdx && targetIdx >= 0) {
             this.datagridApi.moveColumn({ fromIndex: fromIdx, toIndex: targetIdx });
             this.renderColumnList();
           }
         };
 
-        dragHandle.addEventListener('pointermove', onMove);
-        dragHandle.addEventListener('pointerup', onUp);
+        window.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onUp);
       });
       item.appendChild(dragHandle);
 
@@ -273,4 +277,3 @@ export class AcDatagridSidePanelElement extends AcElementBase {
 }
 
 acRegisterCustomElement({ tag: AC_DATAGRID_TAG.datagridSidePanel, type: AcDatagridSidePanelElement });
-acRegisterCustomElement({ tag: AC_DATAGRID_TAG.datagridColumnCustomizer, type: AcDatagridSidePanelElement });

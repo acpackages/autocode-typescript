@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AcDataBridge, IAcDataBridgeEntity, IAcDataBridgeProcesedRow } from '../../../ac-data-bridge/ac-data-bridge';
+import { AcDataBridge, IAcDataBridgeEntity, IAcDataBridgeProcesedRow } from '@autocode-ts/ac-data-bridge';
 import { ACI_SVG_SOLID } from '@autocode-ts/ac-icons';
-import { AcElement, AcEventEmitter, AcInput, AcOutput, AcViewChild } from '../../../ac-runtime/src/ac-runtime';
+import { AcElement, AcEventEmitter, AcInput, AcOutput, AcViewChild } from '@autocode-ts/ac-runtime';
 import { AcScrollable } from '@autocode-ts/ac-browser';
 @AcElement({
   selector: 'ac-data-bridge-convert-to-destination-sheet-details',

@@ -36,6 +36,7 @@ export class AcDatagridBody extends AcElementBase {
       this.appendChild(this.rowDropIndicator);
     }
     this.rowDropIndicator.style.top = `${topPx}px`;
+    this.rowDropIndicator.style.width = `${Math.max(this.scrollWidth, this.clientWidth)}px`;
     this.rowDropIndicator.classList.add('show');
   }
 

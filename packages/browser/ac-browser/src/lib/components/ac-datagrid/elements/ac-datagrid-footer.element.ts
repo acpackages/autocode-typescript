@@ -9,20 +9,22 @@ import { AcDatagridApi } from "../core/ac-datagrid-api";
 
 export class AcDatagridFooterElement extends AcElementBase {
   private _datagridApi?: AcDatagridApi;
+  private isBound: boolean = false;
+
   get datagridApi(): AcDatagridApi | undefined {
     return this._datagridApi;
   }
   set datagridApi(value: AcDatagridApi | undefined) {
     this._datagridApi = value;
-    if (this._datagridApi) {
+    if (this._datagridApi && this.isInitialized) {
       this.bindDatagridApi();
     }
   }
 
   searchInput!: HTMLInputElement;
-  paginationContainer!: HTMLElement;
   searchContainer!: HTMLElement;
   aggregatesContainer!: HTMLElement;
+  buttonsContainer!: HTMLElement;
   settingsBtn!: HTMLElement;
   exportBtn?: HTMLElement;
 
@@ -31,7 +33,6 @@ export class AcDatagridFooterElement extends AcElementBase {
     acAddClassToElement({ class_: AC_DATAGRID_CLASS_NAME.acDatagridFooter, element: this });
 
     this.searchInput = this.ownerDocument.createElement('input');
-    this.paginationContainer = this.ownerDocument.createElement('div');
     this.searchContainer = this.ownerDocument.createElement('div');
     this.aggregatesContainer = this.ownerDocument.createElement('div');
     this.aggregatesContainer.className = 'ac-datagrid-footer-aggregates';
@@ -39,6 +40,13 @@ export class AcDatagridFooterElement extends AcElementBase {
     this.aggregatesContainer.style.gap = '12px';
     this.aggregatesContainer.style.fontSize = '12px';
     this.aggregatesContainer.style.color = '#475569';
+
+    this.buttonsContainer = this.ownerDocument.createElement('div');
+    this.buttonsContainer.className = 'ac-datagrid-footer-buttons';
+    this.buttonsContainer.style.display = 'flex';
+    this.buttonsContainer.style.alignItems = 'center';
+    this.buttonsContainer.style.gap = '4px';
+    this.buttonsContainer.style.marginLeft = 'auto';
 
     this.searchInput.classList.add('ac-datagrid-search-input');
     this.searchInput.placeholder = "Search...";
@@ -58,48 +66,50 @@ export class AcDatagridFooterElement extends AcElementBase {
     });
 
     this.exportBtn = this.ownerDocument.createElement('button');
-      this.exportBtn.innerHTML = `<i class="${AC_DATAGRID_ICON_CLASS.download}"></i>`;
-      this.exportBtn.setAttribute('type','button' );
-      this.exportBtn.title = 'Export Data';
-      this.exportBtn.classList.add('ac-datagrid-footer-btn');
-      this.exportBtn.addEventListener('click', () => {
-        const ext: any =
-          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExport] ||
-          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] ||
-          this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportCsv];
+    this.exportBtn.innerHTML = `<i class="${AC_DATAGRID_ICON_CLASS.download}"></i>`;
+    this.exportBtn.setAttribute('type', 'button');
+    this.exportBtn.title = 'Export Data';
+    this.exportBtn.classList.add('ac-datagrid-footer-btn');
+    this.exportBtn.addEventListener('click', () => {
+      const ext: any =
+        this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExport] ||
+        this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] ||
+        this.datagridApi?.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportCsv];
 
-        if (ext && ext.allowXlsxExport !== false) {
-          this.datagridApi?.exportDataAsExcel({ fileName: ext.fileName });
-        } else {
-          this.datagridApi?.exportDataAsCsv({ fileName: ext?.fileName });
-        }
-      });
+      if (ext && ext.allowXlsxExport !== false) {
+        this.datagridApi?.exportDataAsExcel({ fileName: ext.fileName });
+      } else {
+        this.datagridApi?.exportDataAsCsv({ fileName: ext?.fileName });
+      }
+    });
 
     this.settingsBtn = this.ownerDocument.createElement('button');
     this.settingsBtn.innerHTML = `<i class="${AC_DATAGRID_ICON_CLASS.settings}"></i>`;
-    this.settingsBtn.setAttribute('type','button' );
+    this.settingsBtn.setAttribute('type', 'button');
     this.settingsBtn.classList.add('ac-datagrid-footer-btn');
     this.settingsBtn.title = 'Customize Columns';
     this.settingsBtn.addEventListener('click', () => {
-      this.datagridApi?.openColumnCustomizer();
+      this.datagridApi?.toggleSidePanel();
     });
 
-    this.append(this.paginationContainer);
-    // this.append(this.searchContainer);
+    this.buttonsContainer.append(this.exportBtn);
+    this.buttonsContainer.append(this.settingsBtn);
+
     this.append(this.aggregatesContainer);
+    this.append(this.buttonsContainer);
 
-    // this.append(settingsBtn);
-
-    // this.setPagination();
     if (this.datagridApi) {
       this.bindDatagridApi();
     }
   }
 
   private bindDatagridApi() {
-    if (!this.datagridApi) return;
+    if (!this.datagridApi || !this.isInitialized) return;
+    this.setPagination();
     this.renderAggregates();
     this.renderExportButton();
+    if (this.isBound) return;
+    this.isBound = true;
     this.datagridApi.hooks.subscribe({
       hook: AC_DATAGRID_HOOK.DisplayedRowsChange,
       callback: () => {
@@ -113,7 +123,7 @@ export class AcDatagridFooterElement extends AcElementBase {
       }
     });
     this.datagridApi.hooks.subscribe({
-      hook: AC_DATAGRID_HOOK.PaginationChange,
+      hook: AC_DATAGRID_HOOK.UsePaginationChange,
       callback: () => {
         this.setPagination();
       }
@@ -134,21 +144,13 @@ export class AcDatagridFooterElement extends AcElementBase {
       this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportXlsx] ||
       this.datagridApi.extensions[AC_DATAGRID_EXTENSION_NAME.DataExportCsv];
 
-    // if (!hasExportExt) {
-    //   if (this.exportBtn && this.exportBtn.parentElement) {
-    //     this.exportBtn.parentElement.removeChild(this.exportBtn);
-    //   }
-    //   return;
-    // }
-    if(this.exportBtn){
+    if (this.exportBtn) {
       if (!hasExportExt) {
-      this.exportBtn.style.display = 'd-none';
+        this.exportBtn.style.display = 'none';
+      } else {
+        this.exportBtn.style.display = '';
+      }
     }
-    else{
-      this.exportBtn.style.display = '';
-    }
-    }
-
   }
 
   renderAggregates() {
@@ -174,14 +176,42 @@ export class AcDatagridFooterElement extends AcElementBase {
   }
 
   setPagination() {
-    acClearElement({ element: this.paginationContainer });
-    if (this.datagridApi && this.datagridApi.usePagination && this.datagridApi.pagination) {
-      this.append(this.datagridApi.pagination);
-      const leftContainer: HTMLElement = this.datagridApi.pagination.querySelector('.ac-pagination-left-container');
-      const rightContainer: HTMLElement = this.datagridApi.pagination.querySelector('.ac-pagination-right-container');
-      // leftContainer.append(this.searchInput);
-      rightContainer.append(this.exportBtn);
-      rightContainer.append(this.settingsBtn);
+    if (!this.datagridApi || !this.isInitialized) return;
+    const pagination = this.datagridApi.pagination;
+    if (this.datagridApi.usePagination && pagination) {
+      if (!this.contains(pagination)) {
+        this.insertBefore(pagination, this.aggregatesContainer || this.buttonsContainer || null);
+      }
+      if (!pagination.querySelector('.ac-pagination-left-container')) {
+        pagination.init();
+      }
+      pagination.style.display = '';
+
+      const rightContainer: HTMLElement | null = pagination.querySelector('.ac-pagination-right-container');
+      if (rightContainer) {
+        if (this.exportBtn && !rightContainer.contains(this.exportBtn)) {
+          rightContainer.append(this.exportBtn);
+        }
+        if (this.settingsBtn && !rightContainer.contains(this.settingsBtn)) {
+          rightContainer.append(this.settingsBtn);
+        }
+      }
+      if (this.buttonsContainer) {
+        this.buttonsContainer.style.display = 'none';
+      }
+    } else {
+      if (pagination && this.contains(pagination)) {
+        pagination.style.display = 'none';
+      }
+      if (this.buttonsContainer) {
+        this.buttonsContainer.style.display = 'flex';
+        if (this.exportBtn && !this.buttonsContainer.contains(this.exportBtn)) {
+          this.buttonsContainer.append(this.exportBtn);
+        }
+        if (this.settingsBtn && !this.buttonsContainer.contains(this.settingsBtn)) {
+          this.buttonsContainer.append(this.settingsBtn);
+        }
+      }
     }
   }
 }

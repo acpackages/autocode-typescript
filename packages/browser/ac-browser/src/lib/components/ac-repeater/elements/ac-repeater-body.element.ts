@@ -172,35 +172,6 @@ export class AcRepeaterBodyElement extends AcElementBase {
     this.currentRows = newCurrentRows;
   }
 
-  setDisplayedRowsOld() {
-    // Key-based reconciliation: reuse existing row elements, re-append all in data order.
-    const newRows = this.repeaterApi.displayedRepeaterRows;
-    const newIds = new Set(newRows.map((r) => r.rowId));
-
-    // Step 1: Remove rows no longer in the displayed set
-    for (const [rowId, el] of this._renderedRowMap) {
-      if (!newIds.has(rowId)) {
-        el.remove();
-        el.destroy();
-        this._renderedRowMap.delete(rowId);
-      }
-    }
-
-    // Step 2: Re-append ALL rows in correct data order.
-    // appendChild on an already-attached node moves it, fixing order for existing rows too.
-    const newCurrentRows: AcRepeaterRowElement[] = [];
-    for (const row of newRows) {
-      let el = this._renderedRowMap.get(row.rowId);
-      if (!el) {
-        el = new AcRepeaterRowElement();
-        this._renderedRowMap.set(row.rowId, el);
-      }
-      el.setRow({ repeaterApi: this.repeaterApi, repeaterRow: row });
-      newCurrentRows.push(el);
-      this.appendChild(el);
-    }
-    this.currentRows = newCurrentRows;
-  }
 }
 
 acRegisterCustomElement({

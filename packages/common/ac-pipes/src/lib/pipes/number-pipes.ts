@@ -8,7 +8,7 @@ AcPipeRegistry.register({
   transform: (
     v: any,
     currency: string = 'INR',
-    locale: string = navigator.language
+    locale: string = 'en-IN'
   ) => {
     if (v == null) return '';
     const num = parseFloat(v);
@@ -43,13 +43,14 @@ AcPipeRegistry.register({
 AcPipeRegistry.register({
   name: 'number',
   pure: true,
-  transform: (v: any, fractionDigits: number = 2, locale: string = navigator.language) => {
+  transform: (v: any, fractionDigits: any = 2, locale: string = 'en-IN') => {
     if (v == null) return '';
     const num = parseFloat(v);
     if (isNaN(num)) return v;
+    const digits = typeof fractionDigits === 'number' && !isNaN(fractionDigits) ? fractionDigits : 2;
     return new Intl.NumberFormat(locale, {
-      minimumFractionDigits: fractionDigits,
-      maximumFractionDigits: fractionDigits,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
     }).format(num);
   }
 });
@@ -57,14 +58,15 @@ AcPipeRegistry.register({
 AcPipeRegistry.register({
   name: 'percent',
   pure: true,
-  transform: (v: any, fractionDigits: number = 2, locale: string = navigator.language) => {
+  transform: (v: any, fractionDigits: any = 2, locale: string = 'en-IN') => {
     if (v == null) return '';
     const num = parseFloat(v);
     if (isNaN(num)) return v;
+    const digits = typeof fractionDigits === 'number' && !isNaN(fractionDigits) ? fractionDigits : 2;
     return new Intl.NumberFormat(locale, {
       style: 'percent',
-      minimumFractionDigits: fractionDigits,
-      maximumFractionDigits: fractionDigits,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
     }).format(num / 100);
   }
 });

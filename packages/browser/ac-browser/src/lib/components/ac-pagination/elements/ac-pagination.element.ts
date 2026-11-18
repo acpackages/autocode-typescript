@@ -104,6 +104,13 @@ export class AcPaginationElement extends AcElementBase {
     });
   }
 
+  override connectedCallback(): void {
+    if (!this.querySelector('.ac-pagination-left-container')) {
+      this.isInitialized = false;
+    }
+    super.connectedCallback();
+  }
+
   override init() {
     super.init();
     this.navigationButtons.pagination = this;

@@ -220,6 +220,7 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
       let isDraggingCol = false;
       const sourceCol = this.datagridColumn;
       const headerEl = this.closest('ac-datagrid-header') as any;
+      let targetDropIndex: number | undefined;
 
       const onPointerMove = (moveEvt: PointerEvent) => {
         if (!isDraggingCol && Math.abs(moveEvt.clientX - startX) > 6) {
@@ -229,34 +230,42 @@ export class AcDatagridHeaderCellElement extends AcElementBase {
           window.getSelection()?.removeAllRanges();
         }
         if (isDraggingCol && headerEl) {
-          const targetEl = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY);
-          const targetCell = targetEl?.closest('ac-datagrid-header-cell') as AcDatagridHeaderCellElement;
+          let targetCell = document.elementFromPoint(moveEvt.clientX, moveEvt.clientY)?.closest('ac-datagrid-header-cell') as AcDatagridHeaderCellElement;
+          if (!targetCell && headerEl.datagridHeaderCells?.length) {
+            const headerRect = headerEl.getBoundingClientRect();
+            if (moveEvt.clientY >= headerRect.top - 30 && moveEvt.clientY <= headerRect.bottom + 30) {
+              targetCell = headerEl.datagridHeaderCells.find((c: AcDatagridHeaderCellElement) => {
+                const r = c.getBoundingClientRect();
+                return moveEvt.clientX >= r.left && moveEvt.clientX <= r.right;
+              }) ?? null;
+            }
+          }
           if (targetCell && targetCell.datagridColumn) {
             const rect = targetCell.getBoundingClientRect();
             const headerRect = headerEl.getBoundingClientRect();
             const midX = rect.left + rect.width / 2;
-            const lineX = (moveEvt.clientX < midX ? rect.left : rect.right) - headerRect.left;
+            const isBefore = moveEvt.clientX < midX;
+            const headerScrollLeft = headerEl.scrollLeft ?? 0;
+            const lineX = (isBefore ? rect.left : rect.right) - headerRect.left + headerScrollLeft;
             headerEl.showDropIndicator?.(lineX);
+
+            const targetCol = targetCell.datagridColumn;
+            const fromIndex = sourceCol.index;
+            const insertionPoint = isBefore ? targetCol.index : targetCol.index + 1;
+            targetDropIndex = insertionPoint > fromIndex ? insertionPoint - 1 : insertionPoint;
           }
         }
       };
 
-      const onPointerUp = (upEvt: PointerEvent) => {
+      const onPointerUp = () => {
         window.removeEventListener('pointermove', onPointerMove);
         window.removeEventListener('pointerup', onPointerUp);
         document.body.classList.remove('ac-datagrid-dragging-active');
         this.style.opacity = '';
         headerEl?.hideDropIndicator?.();
 
-        if (isDraggingCol) {
-          const targetEl = document.elementFromPoint(upEvt.clientX, upEvt.clientY);
-          const targetCell = targetEl?.closest('ac-datagrid-header-cell') as AcDatagridHeaderCellElement;
-          if (targetCell && targetCell.datagridColumn) {
-            const targetCol = targetCell.datagridColumn;
-            if (targetCol && targetCol.columnId !== sourceCol.columnId) {
-              this.datagridApi?.moveColumn({ fromIndex: sourceCol.index, toIndex: targetCol.index });
-            }
-          }
+        if (isDraggingCol && targetDropIndex !== undefined && targetDropIndex !== sourceCol.index) {
+          this.datagridApi?.moveColumn({ fromIndex: sourceCol.index, toIndex: targetDropIndex });
         }
       };
 
